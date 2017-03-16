@@ -1,4 +1,4 @@
-package com.kuaizhan.dao;
+package com.kuaizhan.dao.mapper;
 
 import com.kuaizhan.dao.mapper.AccountDao;
 import com.kuaizhan.pojo.DO.AccountDO;

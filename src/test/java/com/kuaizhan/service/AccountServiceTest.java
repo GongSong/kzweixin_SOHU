@@ -19,6 +19,8 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/*.xml")
 public class AccountServiceTest {
+
+
     @Resource
     AccountService accountService;
     @Resource
@@ -44,5 +46,8 @@ public class AccountServiceTest {
     public void getAccountBySiteId() throws Exception {
         System.out.println(accountService.getAccountBySiteId(123456L));
     }
+    @Test
+    public void unbindAccount() throws Exception {
 
+    }
 }

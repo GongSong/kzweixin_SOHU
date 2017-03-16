@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping(value = ApplicationConfig.VERSION + "/weixin")
-public class WeixinController {
+public class WeixinController extends BaseController{
 
     @Resource
     WeixinAuthService weixinAuthService;

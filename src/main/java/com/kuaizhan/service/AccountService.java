@@ -3,6 +3,7 @@ package com.kuaizhan.service;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.DO.UnbindDO;
 import com.kuaizhan.pojo.VO.AccountVO;
 
 /**
@@ -24,5 +25,12 @@ public interface AccountService {
      * @param siteId 站点id
      * @return
      */
-    AccountVO getAccountBySiteId(long siteId) throws RedisException, DaoException;
+    AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException;
+
+    /**
+     * 解绑账号
+     *
+     * @param account 账号
+     */
+    void unbindAccount(AccountDO account,UnbindDO unbindDO) throws RedisException, DaoException;
 }

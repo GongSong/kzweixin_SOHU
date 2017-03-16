@@ -1,10 +1,12 @@
 package com.kuaizhan.service.impl;
 
 import com.kuaizhan.dao.mapper.AccountDao;
+import com.kuaizhan.dao.mapper.UnbindDao;
 import com.kuaizhan.dao.redis.RedisAccountDao;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.DO.UnbindDO;
 import com.kuaizhan.pojo.VO.AccountVO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.utils.IdGeneratorUtil;
@@ -22,6 +24,8 @@ public class AccountServiceImpl implements AccountService {
     RedisAccountDao redisAccountDao;
     @Resource
     AccountDao accountDao;
+    @Resource
+    UnbindDao unbindDao;
 
     @Override
     public void bindAccount(AccountDO account) throws RedisException, DaoException {
@@ -43,6 +47,7 @@ public class AccountServiceImpl implements AccountService {
         //存在记录 恢复记录 更新数据库
         if (accountDO != null) {
             account.setIsDel(0);
+            account.setUnbindTime(0L);
             try {
                 accountDao.updateAccountBySiteId(account);
             } catch (Exception e) {
@@ -68,9 +73,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountVO getAccountBySiteId(long siteId) throws RedisException, DaoException {
+    public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException {
         AccountDO accountDO;
-        AccountVO accountVO = null;
         //从缓存拿
         try {
             accountDO = redisAccountDao.getAccountInfo(siteId);
@@ -79,26 +83,44 @@ public class AccountServiceImpl implements AccountService {
         }
         if (accountDO == null) {
             //从数据库拿
-            accountDO = accountDao.getAccountBySiteId(siteId);
+            try {
+                accountDO = accountDao.getAccountBySiteId(siteId);
+            } catch (Exception e) {
+                throw new DaoException(e.getMessage());
+            }
+            return accountDO;
         }
-
         //存缓存
-        if (accountDO != null) {
-            accountVO = new AccountVO();
-            accountVO.setAppId(accountDO.getWeixinAppId());
-            accountVO.setAppSecret(accountDO.getAppSecret());
-            accountVO.setHeadImg(accountDO.getHeadImg());
-            accountVO.setInterest(accountDO.getInterestJson());
-            accountVO.setName(accountDO.getNickName());
-            accountVO.setQrcode(accountDO.getQrcodeUrl());
-            accountVO.setType(accountDO.getServiceType());
-
-        }
         try {
             redisAccountDao.setAccountInfo(accountDO);
         } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
+        return accountDO;
+    }
+
+    @Override
+    public void unbindAccount(AccountDO account, UnbindDO unbindDO) throws RedisException, DaoException {
+        UnbindDO unbind;
+        //删缓存
+        try {
+            redisAccountDao.deleteAccountInfo(account.getSiteId());
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
+        try {
+            unbind = unbindDao.getUnbindByWeixinAppId(account.getWeixinAppId());
+            unbindDO.setWeixinAppId(account.getWeixinAppId());
+            if (unbind == null) {
+                unbindDao.insertUnbind(unbindDO);
+            } else {
+                unbindDao.updateUnbindByWeixinAppId(unbindDO);
+            }
+            account.setUnbindTime(System.currentTimeMillis() / 1000);
+            account.setIsDel(1);
+            accountDao.updateAccountBySiteId(account);
+        } catch (Exception e) {
             throw new DaoException(e.getMessage());
         }
-        return accountVO;
     }
 }
