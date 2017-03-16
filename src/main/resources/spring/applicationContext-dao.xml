@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- 扫描包加载Dao实现类 -->
+    <context:component-scan base-package="com.kuaizhan.dao.mapper,com.kuaizhan.dao.redis.impl"/>
+    <!--数据源的相关配置-->
+    <context:property-placeholder location="classpath:datasource.properties"/>
+    <!-- 数据库连接池 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="maxActive" value="10"/>
+        <property name="minIdle" value="5"/>
+    </bean>
+    <!-- 配置sqlsessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <property name="typeAliasesPackage" value="com.kuaizhan.pojo.DO"></property>
+    </bean>
+
+    <!-- 配置扫描包，加载mapper代理对象 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.kuaizhan.dao.mapper"/>
+    </bean>
+    <!--配置redis的连接池-->
+    <bean id="redisPool" class="org.apache.commons.pool2.impl.GenericObjectPoolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="maxTotal" value="${redis.maxTotal}"/>
+        <property name="minIdle" value="${redis.minIdle}"/>
+        <property name="maxWaitMillis" value="${redis.maxWait}"/>
+        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+    </bean>
+    <!-- 配置redis客户端集群版 -->
+    <bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+        <constructor-arg>
+            <set>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg name="host" value="${redis.host}"/>
+                    <constructor-arg name="port" value="${redis.port1}"/>
+                </bean>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg name="host" value="${redis.host}"/>
+                    <constructor-arg name="port" value="${redis.port2}"/>
+                </bean>
+            </set>
+        </constructor-arg>
+        <!--设置超时时间-->
+        <constructor-arg index="1" value="${redis.timeout}"/>
+        <constructor-arg type="org.apache.commons.pool2.impl.GenericObjectPoolConfig" ref="redisPool"/>
+
+    </bean>
+
+</beans>
