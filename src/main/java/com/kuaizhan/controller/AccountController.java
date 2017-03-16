@@ -68,7 +68,7 @@ public class AccountController extends BaseController {
             type = jsonObject.getInt("type");
             text = jsonObject.getString("text");
         } catch (Exception e) {
-            throw new ParamException(e.getMessage());
+            throw new ParamException();
         }
 
         UnbindDO unbind = new UnbindDO();
@@ -93,7 +93,7 @@ public class AccountController extends BaseController {
             JSONObject jsonObject = new JSONObject(postData);
             appSecret = jsonObject.getString("appSecret");
         } catch (Exception e) {
-            throw new ParamException(e.getMessage());
+            throw new ParamException();
         }
         accountService.updataAppSecrect(siteId, appSecret);
         return new JsonResponse(null);

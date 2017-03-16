@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kuaizhan.dao.mapper.FanDao">
+    <!--查询数目-->
+    <select id="count" resultType="long">
+        <foreach collection="tables" item="tableName" separator="union all">
+            select count(*)
+            from ${tableName}
+            where
+            app_id=#{appId}
+            and in_blacklist=#{inBlackList}
+            and status=1
+            <if test="keyword != null">
+                and nick_name like concat ('%',#{keyword},'%')
+            </if>
+            <if test="tagIds!=null">
+                <foreach collection="tagIds" item="tagId" index="index">
+                    and tag_ids_json like CONCAT('%',#{tagId},'%')
+                </foreach>
+            </if>
+        </foreach>
+    </select>
+    <!--分页查询-->
+    <select id="listFansByPagination" parameterType="com.kuaizhan.pojo.DTO.Page"
+            resultType="com.kuaizhan.pojo.DO.FanDO">
+        <foreach collection="tables" item="tableName" separator="union all">
+            (select *
+            from ${tableName}
+            where
+            app_id=#{pageEntity.params.appId}
+            and in_blacklist=#{pageEntity.params.inBlackList}
+            and status=1
+            and nick_name like concat ('%',#{pageEntity.params.keyword},'%')
+            <foreach collection="pageEntity.params.tagIds" item="tagId" index="index">
+                and tag_ids_json like CONCAT('%',#{tagId},'%')
+            </foreach>
+            )
+        </foreach>
+        order by subscribe_time desc
+        limit #{pageEntity.offset}, #{pageEntity.limit}
+    </select>
+    <!--根据openId批量查找-->
+    <select id="listFansByOpenIds" resultType="com.kuaizhan.pojo.DO.FanDO">
+        <foreach collection="tables" item="tableName" separator="union all">
+            (select *
+            from ${tableName}
+            where
+            app_id=#{appId}
+            and
+            <foreach collection="openIds" item="openId" index="index" separator="or">
+                open_id=#{openId}
+            </foreach>)
+        </foreach>
+
+    </select>
+    <!--批量更新-->
+    <update id="updateFansBatch">
+        <foreach collection="fanses" item="fans" index="index" separator=";">
+            <foreach collection="tables" item="tableName" separator=";">
+                update ${tableName}
+                set
+                <if test="fans.tagIdsJson != null">
+                    tag_ids_json=#{fans.tagIdsJson},
+                </if>
+                <if test="fans.inBlackList != null">
+                    in_blacklist=#{fans.inBlackList},
+                </if>
+
+                <if test="fans.status != null">
+                    status=#{fans.status},
+                </if>
+                update_time=#{fans.updateTime}
+                where
+                open_id = #{fans.openId}
+            </foreach>
+        </foreach>
+    </update>
+    <!--查询粉丝信息（参数）-->
+    <select id="listFansByParam" resultType="com.kuaizhan.pojo.DO.FanDO">
+        <foreach collection="tables" item="tableName" separator="union all">
+            (select *
+            from ${tableName}
+            where
+            app_id=#{param.appId}
+            <if test="param.openId != null">
+                and open_id=#{param.openId}
+            </if>
+            <if test="param.inBlackList != null">
+                and in_blacklist=#{param.inBlackList}
+            </if>
+            and status=1
+            <if test="param.keyword != null">
+                and nick_name like concat ('%',#{param.keyword},'%')
+            </if>
+            <if test="param.tagId!=null">
+                and tag_ids_json like CONCAT('%',#{param.tagId},'%')
+            </if>
+            <if test="param.tagIds!=null">
+                <foreach collection="tagIds" item="tagId" index="index">
+                    and tag_ids_json like CONCAT('%',#{tagId},'%')
+                </foreach>
+            </if>
+            )
+        </foreach>
+    </select>
+    <!--获取被删除的粉丝-->
+    <select id="getDeleteFanByOpenId" resultType="com.kuaizhan.pojo.DO.FanDO">
+        <foreach collection="tables" item="tableName" separator="union all">
+            (select *
+            from ${tableName}
+            where
+            app_id=#{appId}
+            and open_id=#{openId}
+            and status=2)
+        </foreach>
+    </select>
+    <!--添加粉丝-->
+    <insert id="insertFan" parameterType="com.kuaizhan.pojo.DO.FanDO">
+            insert into ${tableName}
+            set app_id=#{fans.appId},
+            open_id=#{fans.openId},
+            nick_name=#{fans.nickName},
+            sex=#{fans.sex},
+            city=#{fans.city},
+            province=#{fans.province},
+            country=#{fans.country},
+            language=#{fans.language},
+            head_img_url=#{fans.headImgUrl},
+            subscribe_time=#{fans.subscribeTime},
+            union_id=#{fans.unionId},
+            group_id=#{fans.groupId},
+            tag_ids_json=#{fans.tagIdsJson},
+            in_blacklist=#{fans.inBlackList},
+            last_interact_time=#{fans.lastInteractTime},
+            status=#{fans.status},
+            remark=#{fans.remark},
+            create_time=#{fans.createTime},
+            update_time=#{fans.createTime}
+    </insert>
+    <!--更新粉丝-->
+    <update id="updateFan" parameterType="com.kuaizhan.pojo.DO.FanDO">
+        <foreach collection="tables" item="tableName" separator=";">
+            update ${tableName}
+            set
+            <if test="fans.appId != null">
+                app_id=#{fans.appId},
+            </if>
+            <if test="fans.openId != null">
+                open_id=#{fans.openId},
+            </if>
+            <if test="fans.nickName != null">
+                nick_name=#{fans.nickName},
+            </if>
+            <if test="fans.sex != null">
+                sex=#{fans.sex},
+            </if>
+            <if test="fans.city != null">
+                city=#{fans.city},
+            </if>
+            <if test="fans.province != null">
+                province=#{fans.province},
+            </if>
+            <if test="fans.country != null">
+                country=#{fans.country},
+            </if>
+            <if test="fans.language != null">
+                language=#{fans.language},
+            </if>
+            <if test="fans.headImgUrl != null">
+                head_img_url=#{fans.headImgUrl},
+            </if>
+            <if test="fans.subscribeTime!= null">
+                subscribe_time=#{fans.subscribeTime},
+            </if>
+            <if test="fans.unionId != null">
+                union_id=#{fans.unionId},
+            </if>
+            <if test="fans.groupId != null">
+                group_id=#{fans.groupId},
+            </if>
+            <if test="fans.tagIdsJson != null">
+                tag_ids_json=#{fans.tagIdsJson},
+            </if>
+            <if test="fans.inBlackList != null">
+                in_blacklist=#{fans.inBlackList},
+            </if>
+            <if test="fans.lastInteractTime!= null">
+                last_interact_time=#{fans.lastInteractTime},
+            </if>
+            <if test="fans.status != null">
+                status=#{fans.status},
+            </if>
+            <if test="fans.remark != null">
+                remark=#{fans.remark},
+            </if>
+            <if test="fans.createTime != null">
+                create_time=#{fans.createTime},
+            </if>
+            <if test="fans.updateTime != null">
+                update_time=#{fans.updateTime}
+            </if>
+            where
+            <if test="fans.fanId != null">
+                fan_id = #{fans.fanId}
+            </if>
+        </foreach>
+    </update>
+
+</mapper>

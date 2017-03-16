@@ -13,7 +13,4 @@ public class ParamException extends BaseException {
         super(ErrorCodeConfig.PARAM_ERROR.getCode(), ErrorCodeConfig.PARAM_ERROR.getMsg(),null);
     }
 
-    public ParamException(String errorStack) {
-        super(ErrorCodeConfig.PARAM_ERROR.getCode(), ErrorCodeConfig.PARAM_ERROR.getMsg(), errorStack);
-    }
 }

@@ -2,15 +2,16 @@ package com.kuaizhan.pojo.DTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Mybatis分页参数及查询结果封装. 注意所有序号从1开始.
- * 
+ *
  * @param <T> Page中记录的类型.
  * @author StarZou
  * @since 2014年5月18日 下午1:34:32
  **/
-public class Page<T>{
+public class Page<T> {
     // --分页参数 --//
     /**
      * 页编号 : 第几页
@@ -47,7 +48,21 @@ public class Page<T>{
      */
     protected int totalPages;
 
+    /**
+     * 数据参数
+     */
+    public Map params;
+
+    public Map getParams() {
+        return params;
+    }
+
+    public void setParams(Map params) {
+        this.params = params;
+    }
+
     // --计算 数据库 查询的参数 : LIMIT 3, 3; LIMIT offset, limit; --//
+
     /**
      * 计算偏移量
      */
@@ -62,11 +77,6 @@ public class Page<T>{
         this.limit = pageSize;
     }
 
-    // -- 构造函数 --//
-    public Page() {
-        this.calcOffset();
-        this.calcLimit();
-    }
 
     public Page(int pageNo, int pageSize) {
         this.pageNo = pageNo;
@@ -76,6 +86,7 @@ public class Page<T>{
     }
 
     // -- 访问查询参数函数 --//
+
     /**
      * 获得当前页的页号,序号从1开始,默认为1.
      */
@@ -109,6 +120,7 @@ public class Page<T>{
     }
 
     // -- 访问查询结果函数 --//
+
     /**
      * 取得页内的记录列表.
      */

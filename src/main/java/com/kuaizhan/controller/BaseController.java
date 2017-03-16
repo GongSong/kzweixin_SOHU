@@ -1,5 +1,6 @@
 package com.kuaizhan.controller;
 
+import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.system.*;
 import com.kuaizhan.pojo.VO.JsonResponse;
@@ -32,6 +33,8 @@ public abstract class BaseController {
         //业务级
         else if (ex instanceof ParamException) {
             return new JsonResponse(((ParamException) ex).getCode(), ((ParamException) ex).getMsg(), null);
+        } else if (ex instanceof AccountNotExistException) {
+            return new JsonResponse(((AccountNotExistException) ex).getCode(), ((AccountNotExistException) ex).getMsg(), null);
         }
         return null;
     }

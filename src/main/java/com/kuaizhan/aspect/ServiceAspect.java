@@ -1,5 +1,6 @@
 package com.kuaizhan.aspect;
 
+import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.system.*;
 import org.apache.log4j.Logger;
@@ -51,6 +52,9 @@ public class ServiceAspect {
         //业务级
         else if (ex instanceof ParamException) {
             logger.error(output(((ParamException) ex).getDate(), ((ParamException) ex).getMsg(), ((ParamException) ex).getErrorStack()));
+        }
+        else if (ex instanceof AccountNotExistException) {
+            logger.error(output(((AccountNotExistException) ex).getDate(), ((AccountNotExistException) ex).getMsg(), ((AccountNotExistException) ex).getErrorStack()));
         }
     }
 

@@ -16,7 +16,8 @@ public enum ErrorCodeConfig {
     JSON_PARSE_ERROR(500, "JSON解析错误"),
 
     //业务级
-    PARAM_ERROR(406, "请求参数错误");
+    PARAM_ERROR(406, "请求参数错误"),
+    ACCOUNT_NULL_ERROR(404, "公众号不存在或未绑定公众号");
 
     private int code;
     private String msg;
