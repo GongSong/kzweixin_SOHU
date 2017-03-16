@@ -9,7 +9,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class DaoException extends BaseException {
 
-
     public DaoException(String errorStack) {
         super(ErrorCodeConfig.DATABASE_ERROR.getCode(), ErrorCodeConfig.DATABASE_ERROR.getMsg(), errorStack);
 

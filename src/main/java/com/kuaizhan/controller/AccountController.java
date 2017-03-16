@@ -95,7 +95,7 @@ public class AccountController extends BaseController {
         } catch (Exception e) {
             throw new ParamException();
         }
-        accountService.updataAppSecrect(siteId, appSecret);
+        accountService.updateAppSecrect(siteId, appSecret);
         return new JsonResponse(null);
     }
 

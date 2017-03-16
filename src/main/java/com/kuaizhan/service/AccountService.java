@@ -40,5 +40,5 @@ public interface AccountService {
      * @param appSecret
      * @return
      */
-    void updataAppSecrect(long siteId, String appSecret) throws DaoException;
+    void updateAppSecrect(long siteId, String appSecret) throws DaoException;
 }

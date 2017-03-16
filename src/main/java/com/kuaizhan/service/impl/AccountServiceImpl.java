@@ -124,7 +124,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updataAppSecrect(long siteId, String appSecret) throws DaoException {
+    public void updateAppSecrect(long siteId, String appSecret) throws DaoException {
         AccountDO account = new AccountDO();
         account.setSiteId(siteId);
         account.setAppSecret(appSecret);

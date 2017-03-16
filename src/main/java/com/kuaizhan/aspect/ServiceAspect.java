@@ -1,8 +1,6 @@
 package com.kuaizhan.aspect;
 
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.ParamException;
-import com.kuaizhan.exception.system.*;
+import com.kuaizhan.exception.BaseException;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
@@ -35,26 +33,8 @@ public class ServiceAspect {
      */
     @AfterThrowing(value = "serviceMethod()", throwing = "ex")
     public void afterThrowing(Throwable ex) {
-        //系统级
-        if (ex instanceof DaoException) {
-            logger.error(output(((DaoException) ex).getDate(), ((DaoException) ex).getMsg(), ((DaoException) ex).getErrorStack()));
-        } else if (ex instanceof RedisException) {
-            logger.error(output(((RedisException) ex).getDate(), ((RedisException) ex).getMsg(), ((RedisException) ex).getErrorStack()));
-        } else if (ex instanceof XMLParseException) {
-            logger.error(output(((XMLParseException) ex).getDate(), ((XMLParseException) ex).getMsg(), ((XMLParseException) ex).getErrorStack()));
-        } else if (ex instanceof JsonParseException) {
-            logger.error(output(((JsonParseException) ex).getDate(), ((JsonParseException) ex).getMsg(), ((JsonParseException) ex).getErrorStack()));
-        } else if (ex instanceof DecryptException) {
-            logger.error(output(((DecryptException) ex).getDate(), ((DecryptException) ex).getMsg(), ((DecryptException) ex).getErrorStack()));
-        } else if (ex instanceof EncryptException) {
-            logger.error(output(((EncryptException) ex).getDate(), ((EncryptException) ex).getMsg(), ((EncryptException) ex).getErrorStack()));
-        }
-        //业务级
-        else if (ex instanceof ParamException) {
-            logger.error(output(((ParamException) ex).getDate(), ((ParamException) ex).getMsg(), ((ParamException) ex).getErrorStack()));
-        }
-        else if (ex instanceof AccountNotExistException) {
-            logger.error(output(((AccountNotExistException) ex).getDate(), ((AccountNotExistException) ex).getMsg(), ((AccountNotExistException) ex).getErrorStack()));
+        if (ex instanceof BaseException) {
+            logger.error(output(((BaseException) ex).getDate(), ((BaseException) ex).getMsg(), ((BaseException) ex).getErrorStack()));
         }
     }
 

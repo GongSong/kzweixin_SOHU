@@ -3,7 +3,7 @@ package com.kuaizhan.dao.redis;
 /**
  * Created by Mr.Jadyn on 2017/1/19.
  */
-public interface RedisAuthDao extends RedisBaseDao {
+public interface RedisAuthDao {
 
     String getComponentVerifyTicket();
 

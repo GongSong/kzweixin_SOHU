@@ -49,7 +49,7 @@ public class WeixinController extends BaseController{
     public JsonResponse getAuthPage(@PathVariable long siteId) throws RedisException, JsonParseException {
         String componentAccessToken = weixinAuthService.getComponentAccessToken();
         String preAuthCode = weixinAuthService.getPreAuthCode(componentAccessToken);
-        String redirectUrl = ApplicationConfig.API_PREFIX +"/" + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
+        String redirectUrl = ApplicationConfig.getApiPrefix() +"/" + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
         String authPageUrl = ApiConfig.getAuthEntranceUrl(preAuthCode, redirectUrl);
         return new JsonResponse(authPageUrl);
     }
