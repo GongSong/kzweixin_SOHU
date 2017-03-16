@@ -81,4 +81,22 @@ public class AccountController extends BaseController {
         return new JsonResponse(null);
     }
 
+    /**
+     * 修改app_secret
+     *
+     * @return
+     */
+    @RequestMapping(value = "/account", method = RequestMethod.PUT)
+    public JsonResponse modifyAppSecret(@RequestParam long siteId, @RequestBody String postData) throws ParamException, DaoException {
+        String appSecret;
+        try {
+            JSONObject jsonObject = new JSONObject(postData);
+            appSecret = jsonObject.getString("appSecret");
+        } catch (Exception e) {
+            throw new ParamException(e.getMessage());
+        }
+        accountService.updataAppSecrect(siteId, appSecret);
+        return new JsonResponse(null);
+    }
+
 }

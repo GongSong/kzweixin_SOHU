@@ -7,7 +7,6 @@ import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
-import com.kuaizhan.pojo.VO.AccountVO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.utils.IdGeneratorUtil;
 import org.springframework.stereotype.Service;
@@ -122,5 +121,18 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             throw new DaoException(e.getMessage());
         }
+    }
+
+    @Override
+    public void updataAppSecrect(long siteId, String appSecret) throws DaoException {
+        AccountDO account = new AccountDO();
+        account.setSiteId(siteId);
+        account.setAppSecret(appSecret);
+        try {
+            accountDao.updateAccountBySiteId(account);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+
     }
 }

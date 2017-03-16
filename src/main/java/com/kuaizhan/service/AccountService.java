@@ -4,7 +4,6 @@ import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
-import com.kuaizhan.pojo.VO.AccountVO;
 
 /**
  * 账号服务
@@ -33,4 +32,13 @@ public interface AccountService {
      * @param account 账号
      */
     void unbindAccount(AccountDO account,UnbindDO unbindDO) throws RedisException, DaoException;
+
+    /**
+     * 修改appSecret
+     *
+     * @param siteId
+     * @param appSecret
+     * @return
+     */
+    void updataAppSecrect(long siteId, String appSecret) throws DaoException;
 }
