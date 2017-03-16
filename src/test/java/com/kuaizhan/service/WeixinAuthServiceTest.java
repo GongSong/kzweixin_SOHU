@@ -1,6 +1,8 @@
 package com.kuaizhan.service;
 
+import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisAuthDao;
+import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,27 +48,29 @@ public class WeixinAuthServiceTest {
 
     @Test
     public void getComponentAccessToken() throws Exception {
-        System.out.println("----->"+weixinAuthService.getComponentAccessToken());
+        System.out.println("----->" + weixinAuthService.getComponentAccessToken());
     }
 
     @Test
     public void getPreAuthCode() throws Exception {
-        System.out.println("----->"+weixinAuthService.getPreAuthCode(weixinAuthService.getComponentAccessToken()));
+        System.out.println("----->" + weixinAuthService.getPreAuthCode(weixinAuthService.getComponentAccessToken()));
     }
 
     @Test
     public void getAuthorizationInfo() throws Exception {
-
+        System.out.println("----->" + weixinAuthService.getAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, "queryauthcode@@@NDrTsyBqHI8zJJAVgF4LBXIvCjtgSeTDYNCASfx6DPDXJMBkQ9DshST0kulpVeIzmq775nrH1xz1Wx-I8sTCHQ"));
     }
 
     @Test
     public void refreshAuthorizationInfo() throws Exception {
-
+        AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.getAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, "queryauthcode@@@NDrTsyBqHI8zJJAVgF4LBXIvCjtgSeTDYNCASfx6DPDXJMBkQ9DshST0kulpVeIzmq775nrH1xz1Wx-I8sTCHQ");
+        System.out.println("----->" + weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, authorizationInfoDTO.getAppId(), "refreshtoken@@@Y1CmG5YdxtVmweb62be3NUoaFAZGb2CP8l1GMuF5gcA"));
     }
 
     @Test
     public void getAuthorizerInfo() throws Exception {
-
+        AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.getAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, "queryauthcode@@@NDrTsyBqHI8zJJAVgF4LBXIvCjtgSeTDYNCASfx6DPDXJMBkQ9DshST0kulpVeIzmq775nrH1xz1Wx-I8sTCHQ");
+        System.out.println("----->" + weixinAuthService.getAuthorizerInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, authorizationInfoDTO.getAppId()));
     }
 
 }

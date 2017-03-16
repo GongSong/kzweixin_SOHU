@@ -1,32 +1,34 @@
 package com.kuaizhan.pojo.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 公众号帐号基本信息业务对象
  * Created by liangjiateng on 2017/3/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthorizerInfoDTO {
     @JsonProperty("nick_name")
     private String nickName;
     @JsonProperty("head_img")
     private String headImg;
-    @JsonProperty("service_type_info")
+
     private String serviceTypeInfo;
-    @JsonProperty("verify_type_info")
+
     private String verifyTypeInfo;
+
     @JsonProperty("user_name")
     private String username;
     @JsonProperty("principal_name")
     private String principalName;
-    @JsonProperty("business_info")
+
     private String businessInfo;
+
     @JsonProperty("alias")
     private String alias;
     @JsonProperty("qrcode_url")
     private String qrcodeUrl;
-    @JsonProperty("authorization_info")
-    private AuthorizationInfoDTO authorizationInfoDTO;
 
     public String getNickName() {
         return nickName;
@@ -100,14 +102,6 @@ public class AuthorizerInfoDTO {
         this.qrcodeUrl = qrcodeUrl;
     }
 
-    public AuthorizationInfoDTO getAuthorizationInfoDTO() {
-        return authorizationInfoDTO;
-    }
-
-    public void setAuthorizationInfoDTO(AuthorizationInfoDTO authorizationInfoDTO) {
-        this.authorizationInfoDTO = authorizationInfoDTO;
-    }
-
     @Override
     public String toString() {
         return "AuthorizerInfoDTO{" +
@@ -120,7 +114,6 @@ public class AuthorizerInfoDTO {
                 ", businessInfo='" + businessInfo + '\'' +
                 ", alias='" + alias + '\'' +
                 ", qrcodeUrl='" + qrcodeUrl + '\'' +
-                ", authorizationInfoDTO=" + authorizationInfoDTO +
                 '}';
     }
 }

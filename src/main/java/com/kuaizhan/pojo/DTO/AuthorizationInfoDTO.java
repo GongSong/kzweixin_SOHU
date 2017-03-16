@@ -1,27 +1,24 @@
 package com.kuaizhan.pojo.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.json.JSONObject;
 
 /**
  * 授权信息业务对象
  * Created by liangjiateng on 2017/3/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthorizationInfoDTO {
     @JsonProperty("authorizer_appid")
-    @JsonIgnore
     private String appId;
     @JsonProperty("authorizer_access_token")
-    @JsonIgnore
     private String accessToken;
     @JsonProperty("expires_in")
-    @JsonIgnore
     private Integer expiresIn;
     @JsonProperty("authorizer_refresh_token")
-    @JsonIgnore
     private String refreshToken;
-    @JsonProperty("func_info")
-    @JsonIgnore
+
     private String funcInfo;
 
     public String getAppId() {
@@ -64,6 +61,8 @@ public class AuthorizationInfoDTO {
         this.funcInfo = funcInfo;
     }
 
+
+
     @Override
     public String toString() {
         return "AuthorizationInfoDTO{" +
@@ -74,4 +73,5 @@ public class AuthorizationInfoDTO {
                 ", funcInfo='" + funcInfo + '\'' +
                 '}';
     }
+
 }

@@ -55,7 +55,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     @Override
     public void getComponentVerifyTicket(String signature, String timestamp, String nonce, String postData) throws DecryptException, XMLParseException, RedisException {
         //对消息进行解密
-        String msg ;
+        String msg;
         try {
             WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN, ApplicationConfig.WEIXIN_AES_KEY, ApplicationConfig.WEIXIN_APPID_THIRD);
             msg = wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
@@ -159,9 +159,10 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             jsonObject.put("authorization_code", authCode);
             String result = HttpClientUtil.postJson(ApiConfig.getQueryAuthUrl(componentAccessToken), jsonObject.toString());
             JSONObject jsonObject1 = new JSONObject(result);
-            result = jsonObject1.getString("authorization_info");
+            result = jsonObject1.get("authorization_info").toString();
             //反序列化
             authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
+            authorizationInfoDTO.setFuncInfo(jsonObject1.getJSONObject("authorization_info").get("func_info").toString());
         } catch (Exception e) {
             throw new JsonParseException(e.getMessage());
         }
@@ -193,8 +194,11 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             jsonObject.put("authorizer_appid", authorizerAppId);
             String result = HttpClientUtil.postJson(ApiConfig.getAuthorizerInfoUrl(componentAccessToken), jsonObject.toString());
             JSONObject jsonObject1 = new JSONObject(result);
-            result = jsonObject1.getString("authorizer_info");
-            authorizerInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
+            result = jsonObject1.get("authorizer_info").toString();
+            authorizerInfoDTO = JsonUtil.string2Bean(result, AuthorizerInfoDTO.class);
+            authorizerInfoDTO.setBusinessInfo(jsonObject1.getJSONObject("authorizer_info").get("business_info").toString());
+            authorizerInfoDTO.setServiceTypeInfo(jsonObject1.getJSONObject("authorizer_info").get("service_type_info").toString());
+            authorizerInfoDTO.setVerifyTypeInfo(jsonObject1.getJSONObject("authorizer_info").get("verify_type_info").toString());
         } catch (Exception e) {
             throw new JsonParseException(e.getMessage());
         }

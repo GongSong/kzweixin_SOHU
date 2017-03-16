@@ -64,12 +64,6 @@ public class AccountServiceImpl implements AccountService {
             } catch (Exception e) {
                 throw new DaoException(e.getMessage());
             }
-            //刷新缓存
-            try {
-                redisAccountDao.setAccountInfo(accountDO);
-            } catch (Exception e) {
-                throw new RedisException(e.getMessage());
-            }
         }
     }
 

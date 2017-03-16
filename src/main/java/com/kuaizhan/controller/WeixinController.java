@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping(value = ApplicationConfig.VERSION + "/weixin")
-public class WeixinController extends BaseController{
+public class WeixinController {
 
     @Resource
     WeixinAuthService weixinAuthService;
@@ -49,7 +49,7 @@ public class WeixinController extends BaseController{
     public JsonResponse getAuthPage(@PathVariable long siteId) throws RedisException, JsonParseException {
         String componentAccessToken = weixinAuthService.getComponentAccessToken();
         String preAuthCode = weixinAuthService.getPreAuthCode(componentAccessToken);
-        String redirectUrl = ApplicationConfig.API_PREFIX + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
+        String redirectUrl = ApplicationConfig.API_PREFIX +"/" + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
         String authPageUrl = ApiConfig.getAuthEntranceUrl(preAuthCode, redirectUrl);
         return new JsonResponse(authPageUrl);
     }
@@ -72,7 +72,7 @@ public class WeixinController extends BaseController{
             account.setAppId(authorizationInfoDTO.getAppId());
             account.setAppSecret("");
             account.setAccessToken(authorizationInfoDTO.getAccessToken());
-            account.setExpiresTime(System.currentTimeMillis() / 1000 + 7200);
+            account.setExpiresTime(System.currentTimeMillis() / 1000 + authorizationInfoDTO.getExpiresIn());
             account.setRefreshToken(authorizationInfoDTO.getRefreshToken());
             account.setFuncInfoJson(authorizationInfoDTO.getFuncInfo());
             if (authorizerInfoDTO != null) {
@@ -95,6 +95,6 @@ public class WeixinController extends BaseController{
             }
             accountService.bindAccount(account);
         }
-        return "success";
+       return "success";
     }
 }
