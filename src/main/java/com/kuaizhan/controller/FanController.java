@@ -132,7 +132,7 @@ public class FanController extends BaseController {
      * @param postData
      * @return
      */
-    @RequestMapping(value = "/tags/user", method = RequestMethod.PUT)
+    @RequestMapping(value = "/fans/tag", method = RequestMethod.PUT)
     public JsonResponse updateUserTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, OpenIdNumberException, OpenIdException, FanTagNumberException, TagException, ServerException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         if (accountDO == null) {
@@ -194,6 +194,72 @@ public class FanController extends BaseController {
         tag.setId(tagId);
         tag.setName(newName);
         fansService.renameTag(siteId, tag, accountDO.getAccessToken());
+        return new JsonResponse(null);
+
+    }
+
+    /**
+     * 将用户加入黑名单
+     *
+     * @param siteId 站点id
+     * @return
+     */
+    @RequestMapping(value = "/fans/black", method = RequestMethod.POST)
+    public JsonResponse insertBlack(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, ServerException, BlackAddNumberException, OpenIdException {
+        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+        if (accountDO == null) {
+            throw new AccountNotExistException();
+        }
+        List<Long> fanIds;
+        List<String> openIds;
+        try {
+            JSONObject jsonObject = new JSONObject(postData);
+            fanIds = JsonUtil.string2List(jsonObject.get("fanIds").toString(), Long.class);
+            openIds = JsonUtil.string2List(jsonObject.get("openIds").toString(), String.class);
+        } catch (Exception e) {
+            throw new ParamException();
+        }
+        List<FanDO> fanDOList = new ArrayList<>();
+        for (int i = 0; i < fanIds.size(); i++) {
+            FanDO fan = new FanDO();
+            fan.setFanId(fanIds.get(i));
+            fan.setOpenId(openIds.get(i));
+            fanDOList.add(fan);
+        }
+        fansService.insertBlack(siteId, accountDO.getAccessToken(), fanDOList);
+        return new JsonResponse(null);
+
+    }
+
+    /**
+     * 将用户移除黑名单
+     *
+     * @param siteId 站点id
+     * @return
+     */
+    @RequestMapping(value = "/fans/black", method = RequestMethod.DELETE)
+    public JsonResponse deleteBlack(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, ServerException, BlackAddNumberException, OpenIdException {
+        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+        if (accountDO == null) {
+            throw new AccountNotExistException();
+        }
+        List<FanDO> fanDOList = new ArrayList<>();
+        List<Long> fanIds;
+        List<String> openIds;
+        try {
+            JSONObject jsonObject = new JSONObject(postData);
+            openIds = JsonUtil.string2List(jsonObject.get("openIds").toString(), String.class);
+            fanIds = JsonUtil.string2List(jsonObject.get("fanIds").toString(), Long.class);
+        } catch (Exception e) {
+            throw new ParamException();
+        }
+        for (int i = 0; i < fanIds.size(); i++) {
+            FanDO fans = new FanDO();
+            fans.setOpenId(openIds.get(i));
+            fans.setFanId(fanIds.get(i));
+            fanDOList.add(fans);
+        }
+        fansService.deleteBlack(siteId, fanDOList, accountDO.getAccessToken());
         return new JsonResponse(null);
 
     }

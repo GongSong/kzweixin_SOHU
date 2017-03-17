@@ -34,7 +34,8 @@ public enum ErrorCodeConfig {
     OPEN_ID_ERROR(103007, "传入非法的openid"),
     TAG_ERROR(103008, "非法的标签"),
     TAG_MODIFY_ERROR(103009, "不能修改默认标签"),
-    TAG_DELETE_FANS_NUMBER_ERROR(103010, "该标签下粉丝数超过10w，不允许直接删除");
+    TAG_DELETE_FANS_NUMBER_ERROR(103010, "该标签下粉丝数超过10w，不允许直接删除"),
+    BLACK_ADD_NUMBER_ERROR(103011,"一次只能拉黑20个用户");
 
     private int code;
     private String msg;

@@ -9,6 +9,8 @@ import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,11 +88,33 @@ public class WeixinFanServiceImpl implements WeixinFanService {
 
     @Override
     public int insertBlack(String accessToken, List<FanDO> fanDOList) {
-        return 0;
+        List<String> openIdList=new ArrayList<>();
+        for(FanDO fan:fanDOList){
+            openIdList.add(fan.getOpenId());
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("openid_list", openIdList);
+        String result = HttpClientUtil.postJson(ApiConfig.insertBlackUrl(accessToken), jsonObject.toString());
+        JSONObject returnJson = new JSONObject(result);
+        if (Integer.parseInt(returnJson.get("errcode").toString()) == 0)
+            return 1;
+        else
+            return Integer.parseInt(returnJson.get("errcode").toString());
     }
 
     @Override
     public int removeBlack(String accessToken, List<FanDO> fanDOList) {
-        return 0;
+        List<String> openIdList=new ArrayList<>();
+        for(FanDO fans:fanDOList){
+            openIdList.add(fans.getOpenId());
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("openid_list", openIdList);
+        String result = HttpClientUtil.postJson(ApiConfig.deleteBlackUrl(accessToken), jsonObject.toString());
+        JSONObject returnJson = new JSONObject(result);
+        if (Integer.parseInt(returnJson.get("errcode").toString()) == 0)
+            return 1;
+        else
+            return Integer.parseInt(returnJson.get("errcode").toString());
     }
 }

@@ -92,26 +92,25 @@ public interface FanService {
      * @param accessToken 公众号accessToken
      * @return -2标签名过长 1成功 40013无效appId -1传参错误 40001无效accessToken 45058无法修改该标签 45159无效标签id 45157标签名重复
      */
-    void renameTag(long siteId,TagDTO newTag, String accessToken) throws TagDuplicateNameException, ServerException, TagNameLengthException, TagModifyException;
+    void renameTag(long siteId,TagDTO newTag, String accessToken) throws TagDuplicateNameException, ServerException, TagNameLengthException, TagModifyException, RedisException;
 
     /**
      * 将用户移入黑名单
      *
-     * @param appId       公众号appId
      * @param accessToken 公众号accessToken
      * @param fanDOList   粉丝列表
      * @return -1传参错误 40003 传入非法的openid 49003传入的openid不属于此AppID -2一次只能拉黑20个用户 40001无效accessToken
      */
-    void insertBlack(String appId, String accessToken, List<FanDO> fanDOList);
+    void insertBlack(long siteId, String accessToken, List<FanDO> fanDOList) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException;
 
     /**
      * 移除黑名单
      *
-     * @param appId       公众号appId
+     * @param siteId       公众号appId
      * @param fanDOList   粉丝列表
      * @param accessToken 公众号accessToken
      * @return 40003    传入非法的openid 49003传入的openid不属于此AppID 	-2一次只能拉黑20个用户
      */
-    void deleteBlack(String appId, List<FanDO> fanDOList, String accessToken);
+    void deleteBlack(long siteId, List<FanDO> fanDOList, String accessToken) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException;
 
 }

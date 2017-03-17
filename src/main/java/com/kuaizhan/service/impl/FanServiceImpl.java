@@ -255,7 +255,7 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void renameTag(long siteId,TagDTO newTag, String accessToken) throws TagDuplicateNameException, ServerException, TagNameLengthException, TagModifyException {
+    public void renameTag(long siteId, TagDTO newTag, String accessToken) throws TagDuplicateNameException, ServerException, TagNameLengthException, TagModifyException, RedisException {
         //微信后台重命名
         int result = weixinFanService.renameTag(accessToken, newTag.getId(), newTag.getName());
         switch (result) {
@@ -268,16 +268,79 @@ public class FanServiceImpl implements FanService {
             case 45058:
                 throw new TagModifyException();
         }
-        redisFanDao.deleteTag(siteId);
+        try {
+            redisFanDao.deleteTag(siteId);
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
     }
 
     @Override
-    public void insertBlack(String appId, String accessToken, List<FanDO> fanDOList) {
+    public void insertBlack(long siteId, String accessToken, List<FanDO> fanDOList) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException {
 
+        //注意需要保持fansId与openId的一致性
+        //微信后台加入黑名单
+        int result = weixinFanService.insertBlack(accessToken, fanDOList);
+        switch (result) {
+            case -1:
+                throw new ServerException("微信服务器错误");
+            case 40003:
+                throw new OpenIdException();
+            case 49003:
+                throw new OpenIdException();
+            case 40032:
+                throw new BlackAddNumberException();
+        }
+        for (FanDO fans : fanDOList) {
+            fans.setInBlackList(1);
+        }
+        List<String> tables = ApplicationConfig.getFanTableNames();
+
+        //更新mysql
+        try {
+            fanDao.updateFansBatch(fanDOList, tables);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+        try {
+            redisFanDao.deleteFanByPagination(siteId);
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
     }
 
     @Override
-    public void deleteBlack(String appId, List<FanDO> fanDOList, String accessToken) {
+    public void deleteBlack(long siteId, List<FanDO> fanDOList, String accessToken) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException {
+        //注意需要保持fansId与openId的一致性
+        //微信后台加入黑名单
+        int result = weixinFanService.removeBlack(accessToken, fanDOList);
+        switch (result) {
+            case -1:
+                throw new ServerException("微信服务器错误");
+            case 40003:
+                throw new OpenIdException();
+            case 40032:
+                throw new BlackAddNumberException();
+            case 49003:
+                throw new OpenIdException();
 
+        }
+        //更新mysql
+        for (FanDO fan : fanDOList) {
+            fan.setInBlackList(0);
+        }
+
+        List<String> tables = ApplicationConfig.getFanTableNames();
+
+        try {
+            fanDao.updateFansBatch(fanDOList, tables);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+        try {
+            redisFanDao.deleteFanByPagination(siteId);
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
     }
 }
