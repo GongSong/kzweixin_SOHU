@@ -134,7 +134,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tags/user", method = RequestMethod.PUT)
-    public JsonResponse updateTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, OpenIdNumberException, OpenIdException, FanTagNumberException, TagException, ServerException {
+    public JsonResponse updateUserTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, OpenIdNumberException, OpenIdException, FanTagNumberException, TagException, ServerException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         if (accountDO == null) {
             throw new AccountNotExistException();
@@ -150,6 +150,24 @@ public class FanController extends BaseController {
         }
         fansService.updateUserTag(siteId, accountDO.getAppId(), openIds, tagIds, accountDO.getAccessToken());
         return new JsonResponse(null);
+    }
+
+    /**
+     * 删除标签
+     *
+     * @param siteId      站点id
+     * @param tagId       标签id
+     * @return
+     */
+    @RequestMapping(value = "/tags/{tagId}", method = RequestMethod.DELETE)
+    public JsonResponse deleteTag(@RequestParam long siteId, @PathVariable int tagId) throws RedisException, DaoException, AccountNotExistException, ServerException, TagDeleteFansNumberException, TagDeleteException {
+        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+        if (accountDO == null) {
+            throw new AccountNotExistException();
+        }
+        fansService.deleteTag(siteId,accountDO.getAppId(),tagId,accountDO.getAccessToken());
+        return new JsonResponse( null);
+
     }
 }
 

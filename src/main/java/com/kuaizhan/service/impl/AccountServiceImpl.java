@@ -82,6 +82,7 @@ public class AccountServiceImpl implements AccountService {
         //从缓存拿
         try {
             accountDO = redisAccountDao.getAccountInfo(siteId);
+
         } catch (Exception e) {
             throw new RedisException(e.getMessage());
         }
@@ -99,12 +100,12 @@ public class AccountServiceImpl implements AccountService {
             } catch (Exception e) {
                 throw new DaoException(e.getMessage());
             }
-        }
-        //存缓存
-        try {
-            redisAccountDao.setAccountInfo(accountDO);
-        } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            //存缓存
+            try {
+                redisAccountDao.setAccountInfo(accountDO);
+            } catch (Exception e) {
+                throw new RedisException(e.getMessage());
+            }
         }
         return accountDO;
     }

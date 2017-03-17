@@ -138,14 +138,18 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void insertTag(long siteId, String tagName, String accessToken) throws ServerException, TagNameLengthException, TagDuplicateNameException, TagNumberException {
+    public void insertTag(long siteId, String tagName, String accessToken) throws ServerException, TagNameLengthException, TagDuplicateNameException, TagNumberException, RedisException {
         //通过微信接口创建
         int result = weixinFanService.insertTag(accessToken, tagName);
         switch (result) {
             case -1:
                 throw new ServerException("微信服务器错误");
             case 1:
-                redisFanDao.deleteTag(siteId);
+                try {
+                    redisFanDao.deleteTag(siteId);
+                } catch (Exception e) {
+                    throw new RedisException(e.getMessage());
+                }
                 break;
             case 45157:
                 throw new TagDuplicateNameException();
@@ -157,7 +161,7 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void updateUserTag(long siteId, String appId, List<String> openIds, List<Integer> tagIds, String accessToken) throws ServerException, OpenIdNumberException, TagException, FanTagNumberException, OpenIdException {
+    public void updateUserTag(long siteId, String appId, List<String> openIds, List<Integer> tagIds, String accessToken) throws ServerException, OpenIdNumberException, TagException, FanTagNumberException, OpenIdException, DaoException {
 
         //微信后台更新
         for (Integer tagId : tagIds) {
@@ -180,25 +184,74 @@ public class FanServiceImpl implements FanService {
         }
         List<String> tables = ApplicationConfig.getFanTableNames();
         //更新数据库
-        List<FanDO> fanses = fanDao.listFansByOpenIds(appId, openIds, tables);
-
-        JSONArray jsonArray = new JSONArray();
-        //json_tag里添加数据
-        for (Integer tagId : tagIds) {
-            jsonArray.put(tagId);
+        try {
+            List<FanDO> fanses = fanDao.listFansByOpenIds(appId, openIds, tables);
+            JSONArray jsonArray = new JSONArray();
+            //json_tag里添加数据
+            for (Integer tagId : tagIds) {
+                jsonArray.put(tagId);
+            }
+            for (FanDO fans : fanses) {
+                fans.setTagIdsJson(jsonArray.toString());
+            }
+            //设置mysql数据
+            fanDao.updateFansBatch(fanses, tables);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
         }
-        for (FanDO fans : fanses) {
-            fans.setTagIdsJson(jsonArray.toString());
+        try {
+            //清空redis缓存
+            redisFanDao.deleteFanByPagination(siteId);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
         }
-        //设置mysql数据
-        fanDao.updateFansBatch(fanses, tables);
-        //清空redis缓存
-        redisFanDao.deleteFanByPagination(siteId);
     }
 
     @Override
-    public void deleteTag(String appId, Integer tagId, String accessToken) {
-
+    public void deleteTag(long siteId, String appId, Integer tagId, String accessToken) throws ServerException, TagDeleteFansNumberException, TagDeleteException, DaoException, RedisException {
+        //微信后台移除标签
+        int result = weixinFanService.deleteTag(accessToken, tagId);
+        switch (result) {
+            case -1:
+                throw new ServerException("微信服务器错误");
+            case 45058:
+                throw new TagDeleteException();
+            case 45057:
+                throw new TagDeleteFansNumberException();
+            case 1:
+                List<String> tables = ApplicationConfig.getFanTableNames();
+                Map<String, Object> map = new HashMap<>();
+                map.put("appId", appId);
+                map.put("tagId", tagId);
+                //获取粉丝数据
+                try {
+                    List<FanDO> fanses = fanDao.listFansByParam(map, tables);
+                    if (fanses != null) {
+                        //更新用户数据
+                        for (FanDO fanDO : fanses) {
+                            JSONArray jsonArray = new JSONArray(fanDO.getTagIdsJson());
+                            //遍历jsonarray找tagId 删除
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                if (tagId == jsonArray.getInt(i)) {
+                                    jsonArray.remove(i);
+                                }
+                            }
+                            fanDO.setTagIdsJson(jsonArray.toString());
+                            //设置mysql数据
+                            fanDao.updateFansBatch(fanses, tables);
+                        }
+                    }
+                } catch (Exception e) {
+                    throw new DaoException(e.getMessage());
+                }
+                try {
+                    //删除缓存
+                    redisFanDao.deleteTag(siteId);
+                    redisFanDao.deleteFanByPagination(siteId);
+                } catch (Exception e) {
+                    throw new RedisException(e.getMessage());
+                }
+        }
     }
 
     @Override

@@ -42,7 +42,6 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
 
     @Override
     public void deleteAccountInfo(long siteId) {
-        if (exist(ApplicationConfig.KEY_ACCOUNT_INFO + siteId))
-            deleteData(ApplicationConfig.KEY_ACCOUNT_INFO + siteId);
+        deleteData(ApplicationConfig.KEY_ACCOUNT_INFO + siteId);
     }
 }

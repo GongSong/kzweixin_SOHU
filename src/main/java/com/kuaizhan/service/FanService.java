@@ -59,7 +59,7 @@ public interface FanService {
      * @return -2标签名长度超过30个字节  1为成功 40013无效appId 40001无效accessToken 45157标签名非法，请注意不能和其他标签重名 45056创建的标签数过多，请注意不能超过100个
      */
 
-    void insertTag(long siteId, String tagName, String accessToken) throws ServerException, TagNameLengthException, TagDuplicateNameException, TagNumberException;
+    void insertTag(long siteId, String tagName, String accessToken) throws ServerException, TagNameLengthException, TagDuplicateNameException, TagNumberException, RedisException;
 
     /**
      * 更新用户标签
@@ -71,7 +71,7 @@ public interface FanService {
      * 45059 有粉丝身上的标签数已经超过限制 40003 传入非法的openid 49003 传入的openid不属于此AppID
      */
 
-    void updateUserTag(long siteId,String appId, List<String> openIds, List<Integer> tagIds, String accessToken) throws ServerException, OpenIdNumberException, TagException, FanTagNumberException, OpenIdException;
+    void updateUserTag(long siteId,String appId, List<String> openIds, List<Integer> tagIds, String accessToken) throws ServerException, OpenIdNumberException, TagException, FanTagNumberException, OpenIdException, DaoException;
 
 
     /**
@@ -82,7 +82,7 @@ public interface FanService {
      * @return 1成功 40013无效appId -1传参错误 40001无效accessToken 45058不能修改0/1/2这三个系统默认保留的标签 45057该标签下粉丝数超过10w，不允许直接删除
      */
 
-    void deleteTag(String appId, Integer tagId, String accessToken);
+    void deleteTag(long siteId,String appId, Integer tagId, String accessToken) throws ServerException, TagDeleteFansNumberException, TagDeleteException, DaoException, RedisException;
 
 
     /**

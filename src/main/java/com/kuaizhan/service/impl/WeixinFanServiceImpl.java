@@ -9,8 +9,6 @@ import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +57,16 @@ public class WeixinFanServiceImpl implements WeixinFanService {
 
     @Override
     public int deleteTag(String accessToken, int tagId) {
-        return 0;
+        JSONObject jsonObject = new JSONObject();
+        Map<String, Object> id = new HashMap<>();
+        id.put("id", tagId);
+        jsonObject.put("tag", id);
+        String result = HttpClientUtil.postJson(ApiConfig.deleteTagsUrl(accessToken), jsonObject.toString());
+        JSONObject returnJson = new JSONObject(result);
+        if (Integer.parseInt(returnJson.get("errcode").toString()) == 0)
+            return 1;
+        else
+            return Integer.parseInt(returnJson.get("errcode").toString());
     }
 
     @Override
