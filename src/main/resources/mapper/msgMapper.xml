@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kuaizhan.dao.mapper.MsgDao">
+
+    <!--查询数目-->
+    <select id="count" resultType="long">
+        <foreach collection="tables" item="tableName" index="index" separator="union all">
+            select count(*)
+            from ${tableName}
+            where
+            app_id=#{appId}
+            and status=#{status}
+            <if test="isHide==0">
+                and content like concat('%','content','%',#{keyword},'%')
+            </if>
+            <if test="isHide==1">
+                and content not like concat('%','content','%',#{keyword},'%')
+            </if>
+        </foreach>
+    </select>
+    <!--分页查询-->
+    <select id="getMsgByPagination" resultType="com.kuaizhan.pojo.DO.MsgDO">
+        <foreach collection="tables" item="tableName" index="index" separator="union all">
+            (select *
+            from ${tableName}
+            where
+            app_id=#{pageEntity.params.appId}
+            <if test="pageEntity.params.status!= null">
+                and status=#{pageEntity.params.status}
+            </if>
+            <if test="pageEntity.params.sendType != null">
+                and send_type=#{pageEntity.params.sendType}
+            </if>
+            <if test="pageEntity.params.isHide!=null">
+                and content not like concat('%','content','%',#{pageEntity.params.keyword},'%')
+            </if>
+            <if test="pageEntity.params.isHide==null">
+                and content like concat('%','content','%',#{pageEntity.params.keyword},'%')
+            </if>
+            )
+        </foreach>
+        order by create_time desc
+        limit #{pageEntity.offset} , #{pageEntity.limit}
+    </select>
+    <!--获取新消息列表-->
+    <select id="getNewMsg" resultType="com.kuaizhan.pojo.DO.MsgDO">
+        <foreach collection="tables" item="tableName" index="index" separator="union all">
+            (select *
+            from ${tableName}
+            where app_id=#{appId}
+            and status=1)
+        </foreach>
+        order by create_time desc
+    </select>
+    <!--根据openid获取消息-->
+    <select id="getMsgByOpenId" resultType="com.kuaizhan.pojo.DO.MsgDO">
+        <foreach collection="tables" item="tableName" index="index" separator="union all">
+            (select *
+            from ${tableName}
+            where app_id=#{pageEntity.params.appId}
+            and open_id=#{pageEntity.params.openId})
+        </foreach>
+        order by create_time desc
+        limit #{pageEntity.offset},#{pageEntity.limit}
+    </select>
+    <!--批量更新-->
+    <update id="updateMsgBatch">
+        <foreach collection="tables" item="tableName" index="index" separator=";">
+            <foreach collection="msgs" item="msg" index="index" separator=";">
+                update ${tableName}
+                set
+                <if test="msg.type!= null">
+                    type=#{msg.type},
+                </if>
+                <if test="msg.status!= null">
+                    status=#{msg.status},
+                </if>
+                update_time=unix_timestamp(now())
+                where
+                msg_id = #{msg.msgId}
+            </foreach>
+        </foreach>
+    </update>
+
+    <!--添加一条消息-->
+    <insert id="addMsg">
+        insert ${tableName}(app_id,open_id,type,content,send_type,create_time,update_time,status)
+        values (#{msg.appId},#{msg.openId},#{msg.type},#{msg.content},#{msg.sendType},unix_timestamp(now()),unix_timestamp(now()),1);
+    </insert>
+
+</mapper>

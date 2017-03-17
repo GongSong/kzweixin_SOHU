@@ -8,7 +8,7 @@ package com.kuaizhan.pojo.DO;
 public class FanDO {
 
 
-    private long fanId;
+    private Long fanId;
     private String appId;
     private String openId;
     private String nickName;
@@ -18,17 +18,17 @@ public class FanDO {
     private String country;
     private String language;
     private String headImgUrl;
-    private long subscribeTime;
+    private Long subscribeTime;
     private String unionId;
     private String remark;
-    private long groupId;
+    private Long groupId;
     private String tagIdsJson;
 
     private Integer inBlackList;
-    private long lastInteractTime;
+    private Long lastInteractTime;
     private Integer status;
-    private long createTime;
-    private long updateTime;
+    private Long createTime;
+    private Long updateTime;
 
     public Integer getSex() {
         return sex;

@@ -2,6 +2,7 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisAuthDao;
+import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
 import org.junit.After;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 
@@ -25,6 +27,8 @@ public class WeixinAuthServiceTest {
     WeixinAuthService weixinAuthService;
     @Resource
     RedisAuthDao redisAuthDao;
+    @Resource
+    AccountService accountService;
 
     @Before
     public void setUp() throws Exception {
@@ -63,8 +67,8 @@ public class WeixinAuthServiceTest {
 
     @Test
     public void refreshAuthorizationInfo() throws Exception {
-        AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.getAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, "queryauthcode@@@NDrTsyBqHI8zJJAVgF4LBXIvCjtgSeTDYNCASfx6DPDXJMBkQ9DshST0kulpVeIzmq775nrH1xz1Wx-I8sTCHQ");
-        System.out.println("----->" + weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, authorizationInfoDTO.getAppId(), "refreshtoken@@@Y1CmG5YdxtVmweb62be3NUoaFAZGb2CP8l1GMuF5gcA"));
+        AccountDO accountDO=accountService.getAccountBySiteId(123456L);
+        System.out.println("----->" + weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken()));
     }
 
     @Test

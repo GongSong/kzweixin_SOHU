@@ -69,7 +69,7 @@
                 <if test="fans.status != null">
                     status=#{fans.status},
                 </if>
-                update_time=#{fans.updateTime}
+                update_time=unix_timestamp(now())
                 where
                 open_id = #{fans.openId}
             </foreach>
@@ -134,8 +134,8 @@
             last_interact_time=#{fans.lastInteractTime},
             status=#{fans.status},
             remark=#{fans.remark},
-            create_time=#{fans.createTime},
-            update_time=#{fans.createTime}
+            create_time=unix_timestamp(now()),
+            update_time=unix_timestamp(now())
     </insert>
     <!--更新粉丝-->
     <update id="updateFan" parameterType="com.kuaizhan.pojo.DO.FanDO">
@@ -193,12 +193,7 @@
             <if test="fans.remark != null">
                 remark=#{fans.remark},
             </if>
-            <if test="fans.createTime != null">
-                create_time=#{fans.createTime},
-            </if>
-            <if test="fans.updateTime != null">
-                update_time=#{fans.updateTime}
-            </if>
+              update_time=unix_timestamp(now())
             where
             <if test="fans.fanId != null">
                 fan_id = #{fans.fanId}

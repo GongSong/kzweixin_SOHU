@@ -78,11 +78,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException {
+        //TODO：高并发场景下access_token失效 锁
         AccountDO accountDO;
         //从缓存拿
         try {
             accountDO = redisAccountDao.getAccountInfo(siteId);
-
         } catch (Exception e) {
             throw new RedisException(e.getMessage());
         }
