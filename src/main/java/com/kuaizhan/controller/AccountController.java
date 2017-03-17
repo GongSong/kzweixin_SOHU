@@ -2,6 +2,7 @@ package com.kuaizhan.controller;
 
 
 import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
@@ -36,19 +37,22 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account", method = RequestMethod.GET)
-    public JsonResponse getAccountInfo(@RequestParam long siteId) throws RedisException, DaoException {
-        AccountVO accountVO = null;
+    public JsonResponse getAccountInfo(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException {
+
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
-        if (accountDO != null) {
-            accountVO = new AccountVO();
-            accountVO.setAppId(accountDO.getWeixinAppId());
-            accountVO.setAppSecret(accountDO.getAppSecret());
-            accountVO.setHeadImg(accountDO.getHeadImg());
-            accountVO.setInterest(accountDO.getInterestJson());
-            accountVO.setName(accountDO.getNickName());
-            accountVO.setQrcode(accountDO.getQrcodeUrl());
-            accountVO.setType(accountDO.getServiceType());
+        if (accountDO == null) {
+            throw new AccountNotExistException();
         }
+
+        AccountVO accountVO = new AccountVO();
+        accountVO.setAppId(accountDO.getWeixinAppId());
+        accountVO.setAppSecret(accountDO.getAppSecret());
+        accountVO.setHeadImg(accountDO.getHeadImg());
+        accountVO.setInterest(accountDO.getInterestJson());
+        accountVO.setName(accountDO.getNickName());
+        accountVO.setQrcode(accountDO.getQrcodeUrl());
+        accountVO.setType(accountDO.getServiceType());
+
         return new JsonResponse(accountVO);
     }
 
@@ -59,10 +63,13 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public JsonResponse unbind(@RequestParam long siteId, @RequestBody String postData) throws ParamException, RedisException, DaoException {
+    public JsonResponse unbind(@RequestParam long siteId, @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException {
         int type;
         String text;
         AccountDO account = accountService.getAccountBySiteId(siteId);
+        if (account == null) {
+            throw new AccountNotExistException();
+        }
         try {
             JSONObject jsonObject = new JSONObject(postData);
             type = jsonObject.getInt("type");
@@ -74,10 +81,7 @@ public class AccountController extends BaseController {
         UnbindDO unbind = new UnbindDO();
         unbind.setUnbindText(text);
         unbind.setUnbindType(type);
-        if (account != null) {
-            accountService.unbindAccount(account, unbind);
-        }
-
+        accountService.unbindAccount(account, unbind);
         return new JsonResponse(null);
     }
 
