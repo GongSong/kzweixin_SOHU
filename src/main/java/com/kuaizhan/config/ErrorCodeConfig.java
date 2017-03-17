@@ -11,6 +11,7 @@ public enum ErrorCodeConfig {
 
     //系统级(00)
     SUCCESS(200, "ok"),
+    SERVER_ERROR(100000, "服务器未知错误"),
     DATABASE_ERROR(100001, "数据库存储错误"),
     REDIS_ERROR(100002, "redis缓存错误"),
     JSON_PARSE_ERROR(100003, "JSON解析错误"),
@@ -24,7 +25,10 @@ public enum ErrorCodeConfig {
     //消息(02)
 
     //粉丝(03)
-    GET_TAG_ERROR(103001,"获取标签失败，请重试");
+    GET_TAG_ERROR(103001, "获取标签失败，请重试"),
+    TAG_DUPLICATE_NAME_ERROR(103002, "标签名非法或重复标签名"),
+    TAG_NAME_LENGTH_ERROR(103003, "标签名不能超过30字节"),
+    TAG_NUMBER_ERROR(103004, "创建的标签数过多，请注意不能超过100个");
 
     private int code;
     private String msg;

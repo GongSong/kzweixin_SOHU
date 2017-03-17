@@ -1,6 +1,7 @@
 package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.ApiConfig;
+import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DTO.TagDTO;
 import com.kuaizhan.service.WeixinFanService;
@@ -10,7 +11,9 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by liangjiateng on 2017/3/17.
@@ -28,7 +31,16 @@ public class WeixinFanServiceImpl implements WeixinFanService {
 
     @Override
     public int insertTag(String accessToken, String tagName) {
-        return 0;
+        JSONObject jsonObject = new JSONObject();
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", tagName);
+        jsonObject.put("tag", map);
+        String result = HttpClientUtil.postJson(ApiConfig.getCreateTagsUrl(accessToken), jsonObject.toString());
+        JSONObject returnJson = new JSONObject(result);
+        if (returnJson.has("tag"))
+            return 1;
+        else
+            return Integer.parseInt(new JSONObject(result).get("errcode").toString());
     }
 
     @Override

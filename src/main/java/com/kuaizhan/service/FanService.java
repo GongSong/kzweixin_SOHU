@@ -1,8 +1,12 @@
 package com.kuaizhan.service;
 
+import com.kuaizhan.exception.business.TagDuplicateNameException;
 import com.kuaizhan.exception.business.TagException;
+import com.kuaizhan.exception.business.TagNameLengthException;
+import com.kuaizhan.exception.business.TagNumberException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.exception.system.ServerException;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.TagDTO;
@@ -54,12 +58,11 @@ public interface FanService {
     /**
      * 创建新标签
      *
-     * @param appId   公众号的appId
      * @param tagName 标签名
      * @return -2标签名长度超过30个字节  1为成功 40013无效appId 40001无效accessToken 45157标签名非法，请注意不能和其他标签重名 45056创建的标签数过多，请注意不能超过100个
      */
 
-    void insertTag(String appId, String tagName, String accessToken);
+    void insertTag(long siteId, String tagName, String accessToken) throws ServerException, TagNameLengthException, TagDuplicateNameException, TagNumberException;
 
     /**
      * 更新用户标签

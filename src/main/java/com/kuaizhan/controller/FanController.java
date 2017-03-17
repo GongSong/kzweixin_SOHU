@@ -2,11 +2,10 @@ package com.kuaizhan.controller;
 
 
 import com.kuaizhan.config.ApplicationConfig;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.ParamException;
-import com.kuaizhan.exception.business.TagException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.exception.system.ServerException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DTO.Page;
@@ -16,6 +15,7 @@ import com.kuaizhan.pojo.VO.FanVO;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.FanService;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -84,8 +84,31 @@ public class FanController extends BaseController {
         if (accountDO == null) {
             throw new AccountNotExistException();
         }
-        List<TagDTO> list = fansService.listTags(siteId,accountDO.getAccessToken());
+        List<TagDTO> list = fansService.listTags(siteId, accountDO.getAccessToken());
         return new JsonResponse(list);
+    }
+
+    /**
+     * 创建标签
+     *
+     * @param siteId 站点id
+     * @return
+     */
+    @RequestMapping(value = "/tags", method = RequestMethod.POST)
+    public JsonResponse insertTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, TagDuplicateNameException, TagNameLengthException, TagNumberException, ServerException {
+        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+        if (accountDO == null) {
+            throw new AccountNotExistException();
+        }
+        String tagName;
+        try {
+            JSONObject jsonObject = new JSONObject(postData);
+            tagName = jsonObject.getString("tagName");
+        } catch (Exception e) {
+            throw new ParamException();
+        }
+        fansService.insertTag(siteId, tagName, accountDO.getAccessToken());
+        return new JsonResponse(null);
     }
 
 }

@@ -3,9 +3,13 @@ package com.kuaizhan.service.impl;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.dao.redis.RedisFanDao;
+import com.kuaizhan.exception.business.TagDuplicateNameException;
 import com.kuaizhan.exception.business.TagException;
+import com.kuaizhan.exception.business.TagNameLengthException;
+import com.kuaizhan.exception.business.TagNumberException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.exception.system.ServerException;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.TagDTO;
@@ -136,8 +140,22 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void insertTag(String appId, String tagName, String accessToken) {
-
+    public void insertTag(long siteId, String tagName, String accessToken) throws ServerException, TagNameLengthException, TagDuplicateNameException, TagNumberException {
+        //通过微信接口创建
+        int result = weixinFanService.insertTag(accessToken, tagName);
+        switch (result) {
+            case -1:
+                throw new ServerException("微信服务器错误");
+            case 1:
+                redisFanDao.deleteTag(siteId);
+                break;
+            case 45157:
+                throw new TagDuplicateNameException();
+            case 45158:
+                throw new TagNameLengthException();
+            case 45056:
+                throw new TagNumberException();
+        }
     }
 
     @Override
