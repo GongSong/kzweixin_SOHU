@@ -3,10 +3,7 @@ package com.kuaizhan.service.impl;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.dao.redis.RedisFanDao;
-import com.kuaizhan.exception.business.TagDuplicateNameException;
-import com.kuaizhan.exception.business.TagException;
-import com.kuaizhan.exception.business.TagNameLengthException;
-import com.kuaizhan.exception.business.TagNumberException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.exception.system.ServerException;
@@ -15,6 +12,7 @@ import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.TagDTO;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.WeixinFanService;
+import org.json.JSONArray;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -106,7 +104,7 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public List<TagDTO> listTags(long siteId, String accessToken) throws RedisException, TagException {
+    public List<TagDTO> listTags(long siteId, String accessToken) throws RedisException, TagGetException {
 
         List<TagDTO> tagDTOList;
         //从redis拿数据
@@ -124,7 +122,7 @@ public class FanServiceImpl implements FanService {
         try {
             tags = weixinFanService.listTags(accessToken);
         } catch (Exception e) {
-            throw new TagException();
+            throw new TagGetException();
         }
 
         //存到redis
@@ -159,8 +157,43 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void updateUserTag(String appId, List<String> openIds, List<Integer> tagIds, String accessToken) {
+    public void updateUserTag(long siteId, String appId, List<String> openIds, List<Integer> tagIds, String accessToken) throws ServerException, OpenIdNumberException, TagException, FanTagNumberException, OpenIdException {
 
+        //微信后台更新
+        for (Integer tagId : tagIds) {
+            int result = weixinFanService.updateTag(accessToken, openIds, tagId);
+            switch (result) {
+                case -1:
+                    throw new ServerException("微信服务器错误");
+                case 40032:
+                    throw new OpenIdNumberException();
+                case 45159:
+                    throw new TagException();
+                case 45059:
+                    throw new FanTagNumberException();
+                case 40003:
+                    throw new OpenIdException();
+                case 49003:
+                    throw new OpenIdException();
+
+            }
+        }
+        List<String> tables = ApplicationConfig.getFanTableNames();
+        //更新数据库
+        List<FanDO> fanses = fanDao.listFansByOpenIds(appId, openIds, tables);
+
+        JSONArray jsonArray = new JSONArray();
+        //json_tag里添加数据
+        for (Integer tagId : tagIds) {
+            jsonArray.put(tagId);
+        }
+        for (FanDO fans : fanses) {
+            fans.setTagIdsJson(jsonArray.toString());
+        }
+        //设置mysql数据
+        fanDao.updateFansBatch(fanses, tables);
+        //清空redis缓存
+        redisFanDao.deleteFanByPagination(siteId);
     }
 
     @Override

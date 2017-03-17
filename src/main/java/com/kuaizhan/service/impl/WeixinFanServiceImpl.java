@@ -45,7 +45,16 @@ public class WeixinFanServiceImpl implements WeixinFanService {
 
     @Override
     public int updateTag(String accessToken, List<String> openIdList, int tagId) {
-        return 0;
+        JSONObject jsonObject = new JSONObject();
+        if (openIdList != null)
+            jsonObject.put("openid_list", openIdList);
+        jsonObject.put("tagid", tagId);
+        String result = HttpClientUtil.postJson(ApiConfig.setTagsUrl(accessToken), jsonObject.toString());
+        JSONObject returnJson = new JSONObject(result);
+        if (Integer.parseInt(returnJson.get("errcode").toString()) == 0)
+            return 1;
+        else
+            return Integer.parseInt(returnJson.get("errcode").toString());
     }
 
     @Override

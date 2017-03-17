@@ -15,10 +15,13 @@ import com.kuaizhan.pojo.VO.FanVO;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.FanService;
+import com.kuaizhan.utils.JsonUtil;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,7 +44,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/fans", method = RequestMethod.GET)
-    public JsonResponse listFanByPagination(@RequestParam long siteId, @RequestParam int page, @RequestParam(required = false) List<Integer> tagIds, @RequestParam int isBlack, @RequestParam(required = false) String keyword) throws RedisException, DaoException, AccountNotExistException, ParamException {
+    public JsonResponse listFanByPagination(@RequestParam long siteId, @RequestParam int page, @RequestParam(required = false) List<Integer> tagIds, @RequestParam int isBlack, @RequestParam(required = false) String keyword) throws RedisException, DaoException, AccountNotExistException, ParamException, TagGetException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         if (accountDO == null) {
             throw new AccountNotExistException();
@@ -49,13 +52,17 @@ public class FanController extends BaseController {
         if (page < 1) {
             throw new ParamException();
         }
-        Page<FanDO> fanDOPage = fansService.listFanByPagination(siteId, accountDO.getAppId(), page, isBlack, tagIds, keyword);
+        String appId = accountDO.getAppId();
+        String accessToken = accountDO.getAccessToken();
+
+        Page<FanDO> fanDOPage = fansService.listFanByPagination(siteId, appId, page, isBlack, tagIds, keyword);
         List<FanDO> fanDOList = fanDOPage.getResult();
         FanListVO fanListVO = new FanListVO();
         if (fanDOList != null) {
             fanListVO.setTotalNum(fanDOPage.getTotalCount());
             fanListVO.setCurrentPage(fanDOPage.getPageNo());
             fanListVO.setTotalPage(fanDOPage.getTotalPages());
+            List<TagDTO> tags = fansService.listTags(siteId, accessToken);
             for (FanDO fanDO : fanDOList) {
                 FanVO fanVO = new FanVO();
                 fanVO.setId(fanDO.getFanId());
@@ -65,7 +72,15 @@ public class FanController extends BaseController {
                 fanVO.setAvatar(fanDO.getHeadImgUrl());
                 fanVO.setFocusTime(fanDO.getSubscribeTime());
                 fanVO.setOpenId(fanDO.getOpenId());
-                fanVO.setTags(fanDO.getTagIdsJson());
+                List<String> userTags = new ArrayList<>();
+                if (tags != null) {
+                    for (TagDTO tag : tags) {
+                        if (fanDO.getTagIdsJson().contains(tag.getId() + "")) {
+                            userTags.add(tag.getName());
+                        }
+                    }
+                }
+                fanVO.setTags(userTags);
                 fanListVO.getFans().add(fanVO);
             }
         }
@@ -79,7 +94,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
-    public JsonResponse listTags(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, TagException {
+    public JsonResponse listTags(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, TagGetException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         if (accountDO == null) {
             throw new AccountNotExistException();
@@ -111,6 +126,31 @@ public class FanController extends BaseController {
         return new JsonResponse(null);
     }
 
+    /**
+     * 更新用户标签
+     *
+     * @param siteId
+     * @param postData
+     * @return
+     */
+    @RequestMapping(value = "/tags/user", method = RequestMethod.PUT)
+    public JsonResponse updateTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, OpenIdNumberException, OpenIdException, FanTagNumberException, TagException, ServerException {
+        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+        if (accountDO == null) {
+            throw new AccountNotExistException();
+        }
+        List<String> openIds;
+        List<Integer> tagIds;
+        try {
+            JSONObject jsonObject = new JSONObject(postData);
+            openIds = JsonUtil.string2List(jsonObject.get("openIds").toString(), String.class);
+            tagIds = JsonUtil.string2List(jsonObject.get("tagIds").toString(), Integer.class);
+        } catch (Exception e) {
+            throw new ParamException();
+        }
+        fansService.updateUserTag(siteId, accountDO.getAppId(), openIds, tagIds, accountDO.getAccessToken());
+        return new JsonResponse(null);
+    }
 }
 
 

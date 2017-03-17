@@ -1,9 +1,6 @@
 package com.kuaizhan.service;
 
-import com.kuaizhan.exception.business.TagDuplicateNameException;
-import com.kuaizhan.exception.business.TagException;
-import com.kuaizhan.exception.business.TagNameLengthException;
-import com.kuaizhan.exception.business.TagNumberException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.exception.system.ServerException;
@@ -52,7 +49,7 @@ public interface FanService {
      * @throws IOException
      */
 
-    List<TagDTO> listTags(long siteId, String accessToken) throws RedisException, TagException;
+    List<TagDTO> listTags(long siteId, String accessToken) throws RedisException, TagGetException;
 
 
     /**
@@ -74,7 +71,7 @@ public interface FanService {
      * 45059 有粉丝身上的标签数已经超过限制 40003 传入非法的openid 49003 传入的openid不属于此AppID
      */
 
-    void updateUserTag(String appId, List<String> openIds, List<Integer> tagIds, String accessToken);
+    void updateUserTag(long siteId,String appId, List<String> openIds, List<Integer> tagIds, String accessToken) throws ServerException, OpenIdNumberException, TagException, FanTagNumberException, OpenIdException;
 
 
     /**

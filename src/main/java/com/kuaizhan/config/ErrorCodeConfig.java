@@ -28,7 +28,11 @@ public enum ErrorCodeConfig {
     GET_TAG_ERROR(103001, "获取标签失败，请重试"),
     TAG_DUPLICATE_NAME_ERROR(103002, "标签名非法或重复标签名"),
     TAG_NAME_LENGTH_ERROR(103003, "标签名不能超过30字节"),
-    TAG_NUMBER_ERROR(103004, "创建的标签数过多，请注意不能超过100个");
+    TAG_NUMBER_ERROR(103004, "创建的标签数过多，请注意不能超过100个"),
+    OPEN_ID_NUMBER_ERROR(103005, "每次传入的openid列表个数不能超过50个"),
+    FAN_TAG_NUMBER_ERROR(103006, "有粉丝身上的标签数已经超过限制"),
+    OPEN_ID_ERROR(103007, "传入非法的openid"),
+    TAG_ERROR(103008, "非法的标签");
 
     private int code;
     private String msg;

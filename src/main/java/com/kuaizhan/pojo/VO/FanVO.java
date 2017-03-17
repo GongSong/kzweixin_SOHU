@@ -17,7 +17,7 @@ public class FanVO {
     private String address;
     private Long focusTime;
 
-    private String tags;
+    private List<String> tags;
 
     public Integer getSex() {
         return sex;
@@ -75,11 +75,11 @@ public class FanVO {
         this.avatar = avatar;
     }
 
-    public String getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(String tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

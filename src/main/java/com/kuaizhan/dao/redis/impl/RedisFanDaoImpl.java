@@ -38,12 +38,12 @@ public class RedisFanDaoImpl extends RedisBaseDaoImpl implements RedisFanDao {
 
     @Override
     public boolean existFanByPagination(long siteId, String field) {
-        return false;
+        return exist(ApplicationConfig.KEY_FAN_LIST + siteId);
     }
 
     @Override
     public void deleteFanByPagination(long siteId) {
-
+        deleteData(ApplicationConfig.KEY_FAN_LIST + siteId);
     }
 
     @Override
