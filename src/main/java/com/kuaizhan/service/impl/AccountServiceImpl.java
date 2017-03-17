@@ -1,5 +1,6 @@
 package com.kuaizhan.service.impl;
 
+import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mapper.AccountDao;
 import com.kuaizhan.dao.mapper.UnbindDao;
 import com.kuaizhan.dao.redis.RedisAccountDao;
@@ -7,7 +8,9 @@ import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
+import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
 import com.kuaizhan.service.AccountService;
+import com.kuaizhan.service.WeixinAuthService;
 import com.kuaizhan.utils.IdGeneratorUtil;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,8 @@ public class AccountServiceImpl implements AccountService {
     AccountDao accountDao;
     @Resource
     UnbindDao unbindDao;
+    @Resource
+    WeixinAuthService weixinAuthService;
 
     @Override
     public void bindAccount(AccountDO account) throws RedisException, DaoException {
@@ -84,10 +89,16 @@ public class AccountServiceImpl implements AccountService {
             //从数据库拿
             try {
                 accountDO = accountDao.getAccountBySiteId(siteId);
+                //查看access_token是否失效
+                if (System.currentTimeMillis() / 1000 > accountDO.getExpiresTime()) {
+                    AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
+                    accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
+                    accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+                    accountDao.updateAccountBySiteId(accountDO);
+                }
             } catch (Exception e) {
                 throw new DaoException(e.getMessage());
             }
-            return accountDO;
         }
         //存缓存
         try {

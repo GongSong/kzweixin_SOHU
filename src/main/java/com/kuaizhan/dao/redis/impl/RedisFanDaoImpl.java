@@ -48,21 +48,31 @@ public class RedisFanDaoImpl extends RedisBaseDaoImpl implements RedisFanDao {
 
     @Override
     public List<TagDTO> listTags(long siteId) throws IOException {
+        String key = ApplicationConfig.KEY_TAG + siteId;
+        String result = getData(key);
+        if (result != null) {
+            List<TagDTO> tags = JsonUtil.string2List(result, TagDTO.class);
+            return tags;
+        }
         return null;
     }
 
     @Override
     public void setTag(long siteId, List<TagDTO> tags) throws JsonProcessingException {
-
+        String key = ApplicationConfig.KEY_TAG + siteId;
+        String json = JsonUtil.bean2String(tags);
+        setData(key, json, 10 * 60 * 60);
     }
 
     @Override
     public boolean existTag(long siteId) {
-        return false;
+        String key = ApplicationConfig.KEY_TAG + siteId;
+        return exist(key);
     }
 
     @Override
     public void deleteTag(long siteId) {
-
+        String key = ApplicationConfig.KEY_TAG + siteId;
+        deleteData(key);
     }
 }

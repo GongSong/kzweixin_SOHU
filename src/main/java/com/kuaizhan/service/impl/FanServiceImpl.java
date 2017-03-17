@@ -3,12 +3,14 @@ package com.kuaizhan.service.impl;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.dao.redis.RedisFanDao;
+import com.kuaizhan.exception.business.TagException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.TagDTO;
 import com.kuaizhan.service.FanService;
+import com.kuaizhan.service.WeixinFanService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,6 +29,8 @@ public class FanServiceImpl implements FanService {
     FanDao fanDao;
     @Resource
     RedisFanDao redisFanDao;
+    @Resource
+    WeixinFanService weixinFanService;
 
     @Override
     public long countFan(String appId, int isBlack, List<Integer> tagIds, String keyword) throws DaoException {
@@ -44,7 +48,7 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public Page<FanDO> listFanByPagination(long siteId,String appId, Integer page, Integer isBlack, List<Integer> tagIds, String keyword) throws DaoException, RedisException {
+    public Page<FanDO> listFanByPagination(long siteId, String appId, Integer page, Integer isBlack, List<Integer> tagIds, String keyword) throws DaoException, RedisException {
         if (tagIds == null) {
             tagIds = new ArrayList<>();
         }
@@ -98,8 +102,37 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public List<TagDTO> listTag(String appId, String accessToken) {
-        return null;
+    public List<TagDTO> listTags(long siteId, String accessToken) throws RedisException, TagException {
+
+        List<TagDTO> tagDTOList;
+        //从redis拿数据
+        try {
+            tagDTOList = redisFanDao.listTags(siteId);
+            if (tagDTOList != null) {
+                return tagDTOList;
+            }
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
+
+        List<TagDTO> tags;
+        //没有redis数据源,从微信后台拿数据
+        try {
+            tags = weixinFanService.listTags(accessToken);
+        } catch (Exception e) {
+            throw new TagException();
+        }
+
+        //存到redis
+        if (tags != null) {
+            try {
+                redisFanDao.setTag(siteId, tags);
+            } catch (Exception e) {
+                throw new RedisException(e.getMessage());
+            }
+        }
+        return tags;
+
     }
 
     @Override

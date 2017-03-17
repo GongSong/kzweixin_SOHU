@@ -1,26 +1,25 @@
 package com.kuaizhan.controller;
 
 
+import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.ParamException;
+import com.kuaizhan.exception.business.TagException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.DTO.TagDTO;
 import com.kuaizhan.pojo.VO.FanListVO;
 import com.kuaizhan.pojo.VO.FanVO;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.FanService;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -28,7 +27,7 @@ import java.util.Map;
  * Created by Mr.Jadyn on 2016/12/29.
  */
 @RestController
-@RequestMapping(value = "/v1", produces = "application/json")
+@RequestMapping(value = ApplicationConfig.VERSION, produces = "application/json")
 public class FanController extends BaseController {
 
     @Resource
@@ -41,8 +40,8 @@ public class FanController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/fan", method = RequestMethod.GET)
-    public JsonResponse fansList(@RequestParam long siteId, @RequestParam int page, @RequestParam(required = false) List<Integer> tagIds, @RequestParam int isBlack, @RequestParam(required = false) String keyword) throws RedisException, DaoException, AccountNotExistException, ParamException {
+    @RequestMapping(value = "/fans", method = RequestMethod.GET)
+    public JsonResponse listFanByPagination(@RequestParam long siteId, @RequestParam int page, @RequestParam(required = false) List<Integer> tagIds, @RequestParam int isBlack, @RequestParam(required = false) String keyword) throws RedisException, DaoException, AccountNotExistException, ParamException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         if (accountDO == null) {
             throw new AccountNotExistException();
@@ -71,6 +70,22 @@ public class FanController extends BaseController {
             }
         }
         return new JsonResponse(fanListVO);
+    }
+
+    /**
+     * 获取所有标签
+     *
+     * @param siteId 站点Id
+     * @return
+     */
+    @RequestMapping(value = "/tags", method = RequestMethod.GET)
+    public JsonResponse listTags(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, TagException {
+        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+        if (accountDO == null) {
+            throw new AccountNotExistException();
+        }
+        List<TagDTO> list = fansService.listTags(siteId,accountDO.getAccessToken());
+        return new JsonResponse(list);
     }
 
 }

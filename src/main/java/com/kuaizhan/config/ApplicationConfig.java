@@ -57,6 +57,8 @@ public class ApplicationConfig {
 
     //redis缓存前缀
     public static final String REDIS_PREFIX = "plf-dev-";
+    //账户
+
     //缓存component_verify_ticket
     public static final String KEY_WEIXIN_COMPONENT_VERIFY_TICKET = REDIS_PREFIX + "component_verify_ticket:";
     //缓存component_access_token
@@ -65,6 +67,11 @@ public class ApplicationConfig {
     public static final String KEY_WEIXIN_PRE_AUTH_CODE = REDIS_PREFIX + "pre_auth_code:";
     //缓存账户信息
     public static final String KEY_ACCOUNT_INFO = REDIS_PREFIX + "account_info:";
+
+    //粉丝
+
     //缓存粉丝列表
     public static final String KEY_FAN_LIST = REDIS_PREFIX + "fan_list:";
+    //缓存标签
+    public static final String KEY_TAG = REDIS_PREFIX+"tag:";
 }

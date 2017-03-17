@@ -1,5 +1,6 @@
 package com.kuaizhan.service;
 
+import com.kuaizhan.exception.business.TagException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.FanDO;
@@ -37,18 +38,17 @@ public interface FanService {
      * @throws IOException
      */
 
-    Page<FanDO> listFanByPagination(long siteId,String appId, Integer page, Integer isBlack, List<Integer> tagIds, String keyword) throws DaoException, RedisException;
+    Page<FanDO> listFanByPagination(long siteId, String appId, Integer page, Integer isBlack, List<Integer> tagIds, String keyword) throws DaoException, RedisException;
 
     /**
      * 获取所有标签
      *
-     * @param appId       公众号appId
      * @param accessToken 公众号accessToken
      * @return
      * @throws IOException
      */
 
-    List<TagDTO> listTag(String appId, String accessToken);
+    List<TagDTO> listTags(long siteId, String accessToken) throws RedisException, TagException;
 
 
     /**

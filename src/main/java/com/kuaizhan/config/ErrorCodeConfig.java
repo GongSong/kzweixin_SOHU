@@ -19,7 +19,12 @@ public enum ErrorCodeConfig {
     DECRYPT_ERROR(100006, "解密错误"),
     //账号(01)
     PARAM_ERROR(101001, "请求参数错误"),
-    ACCOUNT_NULL_ERROR(101002, "公众号不存在或未绑定公众号");
+    ACCOUNT_NULL_ERROR(101002, "公众号不存在或未绑定公众号"),
+
+    //消息(02)
+
+    //粉丝(03)
+    GET_TAG_ERROR(103001,"获取标签失败，请重试");
 
     private int code;
     private String msg;

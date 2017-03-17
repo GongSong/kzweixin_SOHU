@@ -37,7 +37,7 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
     public void setAccountInfo(AccountDO account) throws JsonProcessingException {
         String key = ApplicationConfig.KEY_ACCOUNT_INFO + account.getSiteId();
         String str = JsonUtil.bean2String(account);
-        setData(key, str, 24 * 60 * 60);
+        setData(key, str, 7000);
     }
 
     @Override
