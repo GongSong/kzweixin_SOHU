@@ -82,18 +82,17 @@ public interface FanService {
      * @return 1成功 40013无效appId -1传参错误 40001无效accessToken 45058不能修改0/1/2这三个系统默认保留的标签 45057该标签下粉丝数超过10w，不允许直接删除
      */
 
-    void deleteTag(long siteId,String appId, Integer tagId, String accessToken) throws ServerException, TagDeleteFansNumberException, TagDeleteException, DaoException, RedisException;
+    void deleteTag(long siteId,String appId, Integer tagId, String accessToken) throws ServerException, TagDeleteFansNumberException, TagModifyException, DaoException, RedisException;
 
 
     /**
      * 重命名标签
      *
-     * @param appId       公众号appId
      * @param newTag      新标签
      * @param accessToken 公众号accessToken
      * @return -2标签名过长 1成功 40013无效appId -1传参错误 40001无效accessToken 45058无法修改该标签 45159无效标签id 45157标签名重复
      */
-    void renameTag(String appId, TagDTO newTag, String accessToken);
+    void renameTag(long siteId,TagDTO newTag, String accessToken) throws TagDuplicateNameException, ServerException, TagNameLengthException, TagModifyException;
 
     /**
      * 将用户移入黑名单

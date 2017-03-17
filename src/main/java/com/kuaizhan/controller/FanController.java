@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,18 +154,47 @@ public class FanController extends BaseController {
     /**
      * 删除标签
      *
-     * @param siteId      站点id
-     * @param tagId       标签id
+     * @param siteId 站点id
+     * @param tagId  标签id
      * @return
      */
     @RequestMapping(value = "/tags/{tagId}", method = RequestMethod.DELETE)
-    public JsonResponse deleteTag(@RequestParam long siteId, @PathVariable int tagId) throws RedisException, DaoException, AccountNotExistException, ServerException, TagDeleteFansNumberException, TagDeleteException {
+    public JsonResponse deleteTag(@RequestParam long siteId, @PathVariable int tagId) throws RedisException, DaoException, AccountNotExistException, ServerException, TagDeleteFansNumberException, TagModifyException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         if (accountDO == null) {
             throw new AccountNotExistException();
         }
-        fansService.deleteTag(siteId,accountDO.getAppId(),tagId,accountDO.getAccessToken());
-        return new JsonResponse( null);
+        fansService.deleteTag(siteId, accountDO.getAppId(), tagId, accountDO.getAccessToken());
+        return new JsonResponse(null);
+
+    }
+
+    /**
+     * 修改标签
+     *
+     * @param siteId 站点id
+     * @return
+     */
+    @RequestMapping(value = "/tags", method = RequestMethod.PUT)
+    public JsonResponse renameTag(@RequestParam long siteId, @RequestBody String postData) throws AccountNotExistException, RedisException, DaoException, ParamException, TagDuplicateNameException, TagNameLengthException, TagModifyException, ServerException {
+        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+        if (accountDO == null) {
+            throw new AccountNotExistException();
+        }
+        int tagId;
+        String newName;
+        try {
+            JSONObject jsonObject = new JSONObject(postData);
+            tagId = jsonObject.getInt("tagId");
+            newName = jsonObject.getString("newName");
+        } catch (Exception e) {
+            throw new ParamException();
+        }
+        TagDTO tag = new TagDTO();
+        tag.setId(tagId);
+        tag.setName(newName);
+        fansService.renameTag(siteId, tag, accountDO.getAccessToken());
+        return new JsonResponse(null);
 
     }
 }

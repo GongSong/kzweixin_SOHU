@@ -71,7 +71,17 @@ public class WeixinFanServiceImpl implements WeixinFanService {
 
     @Override
     public int renameTag(String accessToken, int tagId, String newName) {
-        return 0;
+        JSONObject jsonObject = new JSONObject();
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", tagId);
+        data.put("name", newName);
+        jsonObject.put("tag", data);
+        String result = HttpClientUtil.postJson(ApiConfig.updateTagsUrl(accessToken), jsonObject.toString());
+        JSONObject returnJson = new JSONObject(result);
+        if (Integer.parseInt(returnJson.get("errcode").toString()) == 0)
+            return 1;
+        else
+            return Integer.parseInt(returnJson.get("errcode").toString());
     }
 
     @Override

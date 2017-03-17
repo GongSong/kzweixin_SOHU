@@ -208,14 +208,14 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void deleteTag(long siteId, String appId, Integer tagId, String accessToken) throws ServerException, TagDeleteFansNumberException, TagDeleteException, DaoException, RedisException {
+    public void deleteTag(long siteId, String appId, Integer tagId, String accessToken) throws ServerException, TagDeleteFansNumberException, TagModifyException, DaoException, RedisException {
         //微信后台移除标签
         int result = weixinFanService.deleteTag(accessToken, tagId);
         switch (result) {
             case -1:
                 throw new ServerException("微信服务器错误");
             case 45058:
-                throw new TagDeleteException();
+                throw new TagModifyException();
             case 45057:
                 throw new TagDeleteFansNumberException();
             case 1:
@@ -255,8 +255,20 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void renameTag(String appId, TagDTO newTag, String accessToken) {
-
+    public void renameTag(long siteId,TagDTO newTag, String accessToken) throws TagDuplicateNameException, ServerException, TagNameLengthException, TagModifyException {
+        //微信后台重命名
+        int result = weixinFanService.renameTag(accessToken, newTag.getId(), newTag.getName());
+        switch (result) {
+            case -1:
+                throw new ServerException("微信服务器错误");
+            case 45157:
+                throw new TagDuplicateNameException();
+            case 45158:
+                throw new TagNameLengthException();
+            case 45058:
+                throw new TagModifyException();
+        }
+        redisFanDao.deleteTag(siteId);
     }
 
     @Override
