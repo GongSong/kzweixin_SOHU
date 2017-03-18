@@ -10,8 +10,11 @@
             where
             app_id=#{appId}
             and status=#{status}
+            and send_type=#{sendType}
             <if test="isHide==0">
-                and content like concat('%','content','%',#{keyword},'%')
+                <if test="keyword!= ''">
+                    and content like concat('%','content','%',#{keyword},'%')
+                </if>
             </if>
             <if test="isHide==1">
                 and content not like concat('%','content','%',#{keyword},'%')
@@ -19,7 +22,7 @@
         </foreach>
     </select>
     <!--分页查询-->
-    <select id="getMsgByPagination" resultType="com.kuaizhan.pojo.DO.MsgDO">
+    <select id="listMsgsByPagination" resultType="com.kuaizhan.pojo.DO.MsgDO">
         <foreach collection="tables" item="tableName" index="index" separator="union all">
             (select *
             from ${tableName}
@@ -31,11 +34,13 @@
             <if test="pageEntity.params.sendType != null">
                 and send_type=#{pageEntity.params.sendType}
             </if>
-            <if test="pageEntity.params.isHide!=null">
+            <if test="pageEntity.params.isHide==1">
                 and content not like concat('%','content','%',#{pageEntity.params.keyword},'%')
             </if>
-            <if test="pageEntity.params.isHide==null">
-                and content like concat('%','content','%',#{pageEntity.params.keyword},'%')
+            <if test="pageEntity.params.isHide==0">
+                <if test="pageEntity.params.keyword!= ''">
+                    and content like concat('%','content','%',#{pageEntity.params.keyword},'%')
+                </if>
             </if>
             )
         </foreach>

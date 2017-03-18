@@ -12,8 +12,6 @@ public interface RedisAccountDao {
 
     AccountDO getAccountInfo(long siteId) throws IOException;
 
-    boolean existAccountInfo(long siteId);
-
     void setAccountInfo(AccountDO account) throws JsonProcessingException;
 
     void deleteAccountInfo(long siteId);

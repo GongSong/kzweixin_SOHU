@@ -17,7 +17,7 @@ public abstract class BaseController {
     @ExceptionHandler
     @ResponseBody
     public JsonResponse handleException(BaseException ex) {
-        return new JsonResponse(ex.getCode(), ex.getMsg(), null);
+        return new JsonResponse(ex.getCode(), ex.getErrorStack(), null);
     }
 
 }

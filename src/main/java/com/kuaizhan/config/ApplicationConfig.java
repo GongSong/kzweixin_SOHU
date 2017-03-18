@@ -20,6 +20,7 @@ public class ApplicationConfig {
     private static int getMsgTableNum() {
         return PropertiesUtil.getInt(PROP, "table.num.msg");
     }
+
     public static List<String> getMsgTableNames() {
         List<String> tables = new ArrayList<>();
         for (int i = 0; i < getMsgTableNum(); i++) {
@@ -27,9 +28,11 @@ public class ApplicationConfig {
         }
         return tables;
     }
+
     private static int getFanTableNum() {
         return PropertiesUtil.getInt(PROP, "table.num.fan");
     }
+
     public static List<String> getFanTableNames() {
         List<String> tables = new ArrayList<>();
         for (int i = 0; i < getFanTableNum(); i++) {
@@ -54,9 +57,9 @@ public class ApplicationConfig {
     public static final String WEIXIN_AES_KEY = "1234567890123456789012345678901234567890123";
 
 
-
     //redis缓存前缀
     public static final String REDIS_PREFIX = "plf-dev-";
+
     //账户
 
     //缓存component_verify_ticket
@@ -73,5 +76,10 @@ public class ApplicationConfig {
     //缓存粉丝列表
     public static final String KEY_FAN_LIST = REDIS_PREFIX + "fan_list:";
     //缓存标签
-    public static final String KEY_TAG = REDIS_PREFIX+"tag:";
+    public static final String KEY_TAG = REDIS_PREFIX + "tag:";
+
+    //消息
+
+    //缓存消息列表
+    public static final String KEY_MSG_LIST = "msg_list:";
 }

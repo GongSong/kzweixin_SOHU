@@ -28,10 +28,6 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
         }
     }
 
-    @Override
-    public boolean existAccountInfo(long siteId) {
-        return exist(ApplicationConfig.KEY_ACCOUNT_INFO + siteId);
-    }
 
     @Override
     public void setAccountInfo(AccountDO account) throws JsonProcessingException {

@@ -2,8 +2,12 @@ package com.kuaizhan.service.impl;
 
 
 import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.dao.mapper.MsgDao;
+import com.kuaizhan.dao.redis.RedisMsgDao;
 import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DO.MsgDO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.service.MsgService;
@@ -23,16 +27,20 @@ public class MsgServiceImpl implements MsgService {
 
     @Resource
     MsgDao msgDao;
+    @Resource
+    RedisMsgDao redisMsgDao;
+    @Resource
+    FanDao fanDao;
 
     @Override
-    public long countMsg(String appId, int status, String keyword, int isHide) throws DaoException {
+    public long countMsg(String appId, int status, int sendType, String keyword, int isHide) throws DaoException {
         if (keyword == null) {
             keyword = "";
         }
         List<String> tableNames = ApplicationConfig.getMsgTableNames();
         long total = 0;
         try {
-            List<Long> counts = msgDao.count(appId, status, keyword, isHide, tableNames);
+            List<Long> counts = msgDao.count(appId,  sendType,status, keyword, isHide, tableNames);
             for (Long count : counts) {
                 total += count;
             }
@@ -43,8 +51,83 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public Page<MsgDO> listMsgsByPagination(String appId, int page, String keyword, int isHide) throws IOException {
-        return null;
+    public Page<MsgDO> listMsgsByPagination(long siteId, String appId, int page, String keyword, int isHide) throws DaoException, RedisException {
+        if (keyword == null)
+            keyword = "";
+        String field = "page:" + page + "keyword:" + keyword + "isHide:" + isHide;
+        Page<MsgDO> pagingResult = new Page<>(page, ApplicationConfig.PAGE_SIZE_LARGE);
+        pagingResult.setTotalCount(countMsg(appId, 2,1, keyword, isHide));
+
+        //从redis拿数据
+        try {
+            List<MsgDO> msgDOList = redisMsgDao.listMsgsByPagination(siteId, field);
+            if (msgDOList != null) {
+                pagingResult.setResult(msgDOList);
+                return pagingResult;
+            }
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
+
+        //未命中,从数据库拿数据,并且缓存到redis,缓存两个小时
+        Map<String, Object> map = new HashMap<>();
+        map.put("appId", appId);
+        map.put("status", 2);
+        map.put("sendType", 1);
+        map.put("keyword", keyword);
+        map.put("isHide", isHide);
+        pagingResult.setParams(map);
+
+        List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
+        List<String> openIds = new ArrayList<>();
+        List<MsgDO> msgs;
+        try {
+            msgs = msgDao.listMsgsByPagination(msgTableNames, pagingResult);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+        for (MsgDO msgDO : msgs) {
+            openIds.add(msgDO.getOpenId());
+        }
+
+        List<String> fansTableNames = ApplicationConfig.getFanTableNames();
+
+        if (openIds.size() > 0) {
+
+            List<FanDO> fanDOList;
+            try {
+                fanDOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
+            } catch (Exception e) {
+                throw new DaoException(e.getMessage());
+            }
+
+            for (MsgDO msgDO : msgs) {
+                for (FanDO fanDO : fanDOList) {
+                    if (msgDO.getOpenId().equals(fanDO.getOpenId())) {
+                        msgDO.setNickName(fanDO.getNickName());
+                        msgDO.setHeadImgUrl(fanDO.getHeadImgUrl());
+                        msgDO.setIsFoucs(fanDO.getStatus());
+                    }
+                }
+            }
+
+            if (msgs.size() > 20) {
+                try {
+                    redisMsgDao.setMsgsByPagination(siteId, field, msgs.subList(0, 20));
+                    pagingResult.setResult(msgs.subList(0, 20));
+                } catch (Exception e) {
+                    throw new RedisException(e.getMessage());
+                }
+            } else {
+                try {
+                    redisMsgDao.setMsgsByPagination(siteId, field, msgs.subList(0, msgs.size()));
+                    pagingResult.setResult(msgs.subList(0, msgs.size()));
+                } catch (Exception e) {
+                    throw new RedisException(e.getMessage());
+                }
+            }
+        }
+        return pagingResult;
     }
 
     @Override

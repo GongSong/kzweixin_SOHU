@@ -29,15 +29,6 @@ public interface RedisFanDao {
     void setFanByPagination(long siteId, String field, List<FanDO> fanses) throws JsonProcessingException;
 
     /**
-     * 存在分页缓存
-     *
-     * @param siteId
-     * @param field
-     * @return
-     */
-    boolean existFanByPagination(long siteId, String field);
-
-    /**
      * 删除分页缓存
      * @param siteId
      */
@@ -57,13 +48,7 @@ public interface RedisFanDao {
      */
     void setTag(long siteId, List<TagDTO> tags) throws JsonProcessingException;
 
-    /**
-     * 判断存在tag
-     *
-     * @param siteId
-     * @return
-     */
-    boolean existTag(long siteId);
+
 
     /**
      * 清除tag

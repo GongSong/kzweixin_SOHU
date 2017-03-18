@@ -26,25 +26,4 @@ public interface RedisAuthDao {
     boolean equalPreAuthCode(String preAuthCode);
 
 
-//
-//    String getAccessToken(Long siteId);
-//
-//    void setAccessToken(Long siteId, String accessToken);
-//
-//    boolean existAccessToken(Long siteId);
-//
-//    boolean equalAccessToken(Long siteId, String accessToken);
-//
-//    void deleteAccessToken(Long siteId);
-//
-//    String getAppId(Long siteId);
-//
-//    void setAppId(Long siteId, String appId);
-//
-//    boolean existAppId(Long siteId);
-//
-//    void deleteAppId(Long siteId);
-//
-//    boolean equalAppId(Long siteId, String appId);
-
 }

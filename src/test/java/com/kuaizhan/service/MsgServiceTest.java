@@ -1,6 +1,9 @@
 package com.kuaizhan.service;
 
+import com.kuaizhan.dao.mapper.MsgDao;
+import com.kuaizhan.dao.redis.RedisMsgDao;
 import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.DO.MsgDO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +26,10 @@ public class MsgServiceTest {
     MsgService msgService;
     @Resource
     AccountService accountService;
+    @Resource
+    RedisMsgDao redisMsgDao;
+    @Resource
+    MsgDao msgDao;
 
     @Before
     public void setUp() throws Exception {
@@ -37,12 +44,13 @@ public class MsgServiceTest {
     @Test
     public void countMsg() throws Exception {
         AccountDO accountDO = accountService.getAccountBySiteId(123456L);
-        System.out.println("----->"+msgService.countMsg(accountDO.getAppId(),2,null,0));
+        System.out.println("----->"+msgService.countMsg(accountDO.getAppId(),2,1,null,0));
     }
 
     @Test
     public void listMsgsByPagination() throws Exception {
 
+        System.out.println("------>"+msgService.listMsgsByPagination(123456L,"wx1a4ff9ec0e369bd1",1,null,0));
     }
 
     @Test

@@ -36,10 +36,6 @@ public class RedisFanDaoImpl extends RedisBaseDaoImpl implements RedisFanDao {
         setData(key, field, json, 2 * 60 * 60);
     }
 
-    @Override
-    public boolean existFanByPagination(long siteId, String field) {
-        return exist(ApplicationConfig.KEY_FAN_LIST + siteId);
-    }
 
     @Override
     public void deleteFanByPagination(long siteId) {
@@ -64,11 +60,6 @@ public class RedisFanDaoImpl extends RedisBaseDaoImpl implements RedisFanDao {
         setData(key, json, 10 * 60 * 60);
     }
 
-    @Override
-    public boolean existTag(long siteId) {
-        String key = ApplicationConfig.KEY_TAG + siteId;
-        return exist(key);
-    }
 
     @Override
     public void deleteTag(long siteId) {

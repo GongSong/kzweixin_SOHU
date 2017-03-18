@@ -2,6 +2,7 @@ package com.kuaizhan.service;
 
 
 import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.MsgDO;
 import com.kuaizhan.pojo.DTO.Page;
 import org.json.JSONObject;
@@ -24,7 +25,7 @@ public interface MsgService {
      * @param isHide  是否隐藏关键词查询
      * @return
      */
-    long countMsg(String appId, int status, String keyword, int isHide) throws DaoException;
+    long countMsg(String appId, int status, int sendType, String keyword, int isHide) throws DaoException;
 
     /**
      * 分页查询
@@ -36,7 +37,7 @@ public interface MsgService {
      * @return
      * @throws IOException
      */
-    Page<MsgDO> listMsgsByPagination(String appId, int page, String keyword, int isHide) throws IOException;
+    Page<MsgDO> listMsgsByPagination(long siteId, String appId, int page, String keyword, int isHide) throws DaoException, RedisException;
 
 
     /**

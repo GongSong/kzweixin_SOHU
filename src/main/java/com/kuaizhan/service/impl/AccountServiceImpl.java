@@ -4,6 +4,7 @@ import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mapper.AccountDao;
 import com.kuaizhan.dao.mapper.UnbindDao;
 import com.kuaizhan.dao.redis.RedisAccountDao;
+import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
@@ -77,7 +78,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException {
+    public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException {
         //TODO：高并发场景下access_token失效 锁
         AccountDO accountDO;
         //从缓存拿
@@ -90,6 +91,13 @@ public class AccountServiceImpl implements AccountService {
             //从数据库拿
             try {
                 accountDO = accountDao.getAccountBySiteId(siteId);
+            } catch (Exception e) {
+                throw new DaoException(e.getMessage());
+            }
+            if (accountDO == null) {
+                throw new AccountNotExistException();
+            }
+            try {
                 //查看access_token是否失效
                 if (System.currentTimeMillis() / 1000 > accountDO.getExpiresTime()) {
                     AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
@@ -100,6 +108,7 @@ public class AccountServiceImpl implements AccountService {
             } catch (Exception e) {
                 throw new DaoException(e.getMessage());
             }
+
             //存缓存
             try {
                 redisAccountDao.setAccountInfo(accountDO);

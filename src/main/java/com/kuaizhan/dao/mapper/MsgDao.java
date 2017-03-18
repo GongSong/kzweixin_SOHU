@@ -23,7 +23,7 @@ public interface MsgDao {
      * @param tables  表集合
      * @return
      */
-    List<Long> count(@Param("appId") String appId, @Param("status") int status, @Param("keyword") String keyword, @Param("isHide") Integer isHide, @Param("tables") List<String> tables);
+    List<Long> count(@Param("appId") String appId, @Param("sendType") int sendType, @Param("status") int status, @Param("keyword") String keyword, @Param("isHide") Integer isHide, @Param("tables") List<String> tables);
 
     /**
      * 分页查询
@@ -32,7 +32,7 @@ public interface MsgDao {
      * @param pageEntity 分页实体
      * @return
      */
-    List<MsgDO> getMsgByPagination(@Param("tables") List<String> tables, @Param("pageEntity") Page pageEntity);
+    List<MsgDO> listMsgsByPagination(@Param("tables") List<String> tables, @Param("pageEntity") Page pageEntity);
 
     /**
      * 获取新的消息
