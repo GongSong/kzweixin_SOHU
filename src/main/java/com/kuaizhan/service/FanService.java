@@ -27,6 +27,8 @@ public interface FanService {
      */
     long countFan(String appId, int isBlack, List<Integer> tagIds, String keyword) throws DaoException;
 
+    FanDO getFanByOpenId(String appId, String openId) throws DaoException;
+
     /**
      * 分页查询粉丝列表
      *
@@ -71,7 +73,7 @@ public interface FanService {
      * 45059 有粉丝身上的标签数已经超过限制 40003 传入非法的openid 49003 传入的openid不属于此AppID
      */
 
-    void updateUserTag(long siteId,String appId, List<String> openIds, List<Integer> tagIds, String accessToken) throws ServerException, OpenIdNumberException, TagException, FanTagNumberException, OpenIdException, DaoException;
+    void updateUserTag(long siteId, String appId, List<String> openIds, List<Integer> tagIds, String accessToken) throws ServerException, OpenIdNumberException, TagException, FanTagNumberException, OpenIdException, DaoException;
 
 
     /**
@@ -82,7 +84,7 @@ public interface FanService {
      * @return 1成功 40013无效appId -1传参错误 40001无效accessToken 45058不能修改0/1/2这三个系统默认保留的标签 45057该标签下粉丝数超过10w，不允许直接删除
      */
 
-    void deleteTag(long siteId,String appId, Integer tagId, String accessToken) throws ServerException, TagDeleteFansNumberException, TagModifyException, DaoException, RedisException;
+    void deleteTag(long siteId, String appId, Integer tagId, String accessToken) throws ServerException, TagDeleteFansNumberException, TagModifyException, DaoException, RedisException;
 
 
     /**
@@ -92,7 +94,7 @@ public interface FanService {
      * @param accessToken 公众号accessToken
      * @return -2标签名过长 1成功 40013无效appId -1传参错误 40001无效accessToken 45058无法修改该标签 45159无效标签id 45157标签名重复
      */
-    void renameTag(long siteId,TagDTO newTag, String accessToken) throws TagDuplicateNameException, ServerException, TagNameLengthException, TagModifyException, RedisException;
+    void renameTag(long siteId, TagDTO newTag, String accessToken) throws TagDuplicateNameException, ServerException, TagNameLengthException, TagModifyException, RedisException;
 
     /**
      * 将用户移入黑名单
@@ -106,7 +108,7 @@ public interface FanService {
     /**
      * 移除黑名单
      *
-     * @param siteId       公众号appId
+     * @param siteId      公众号appId
      * @param fanDOList   粉丝列表
      * @param accessToken 公众号accessToken
      * @return 40003    传入非法的openid 49003传入的openid不属于此AppID 	-2一次只能拉黑20个用户

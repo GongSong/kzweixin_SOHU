@@ -41,7 +41,7 @@ public interface MsgDao {
      * @param tables 表列表
      * @return
      */
-    List<MsgDO> getNewMsg(@Param("appId") String appId, @Param("tables") List<String> tables);
+    List<MsgDO> listNewMsgs(@Param("appId") String appId, @Param("tables") List<String> tables);
 
     /**
      * 获取用户已发消息列表
@@ -49,7 +49,7 @@ public interface MsgDao {
      * @param tables 表列表
      * @return
      */
-    List<MsgDO> getMsgByOpenId(@Param("pageEntity") Page pageEntity, @Param("tables") List<String> tables);
+    List<MsgDO> listMsgsByOpenId(@Param("pageEntity") Page pageEntity, @Param("tables") List<String> tables);
 
     /**
      * 对消息进行批量更新

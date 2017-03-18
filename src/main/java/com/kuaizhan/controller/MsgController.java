@@ -2,19 +2,20 @@ package com.kuaizhan.controller;
 
 
 import com.kuaizhan.config.ApplicationConfig;
+
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
+
+import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DO.MsgDO;
 import com.kuaizhan.pojo.DTO.Page;
-import com.kuaizhan.pojo.VO.JsonResponse;
-import com.kuaizhan.pojo.VO.MsgListVO;
-import com.kuaizhan.pojo.VO.MsgVO;
+import com.kuaizhan.pojo.VO.*;
 import com.kuaizhan.service.AccountService;
+import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.MsgService;
 
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -34,6 +35,8 @@ public class MsgController extends BaseController {
     MsgService msgService;
     @Resource
     AccountService accountService;
+    @Resource
+    FanService fanService;
 
     /**
      * 获取消息列表
@@ -79,6 +82,39 @@ public class MsgController extends BaseController {
         }
         Page<MsgDO> pagingResult = msgService.listMsgsByPagination(siteId, accountDO.getAppId(), 1, null, 0);
         return new JsonResponse(handleData(pagingResult));
+    }
+
+    /**
+     * 获取单个用户的消息
+     *
+     * @param siteId 站点id
+     * @param openId 用户的openId
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/msgs/{openId}", method = RequestMethod.GET)
+    public JsonResponse listMsgsByOpenId(@RequestParam long siteId, @RequestParam int page, @PathVariable String openId) throws DaoException, AccountNotExistException, RedisException {
+        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+        Page<MsgDO> msgs = msgService.listMsgsByOpenId(siteId, accountDO.getAppId(), openId, page);
+        if (msgs.getResult() != null) {
+            UserMsgListVO userMsgListVO = new UserMsgListVO();
+
+            for (MsgDO msgDO : msgs.getResult()) {
+                UserMsgVO userMsgVO = new UserMsgVO();
+                userMsgVO.setId(msgDO.getMsgId());
+                userMsgVO.setSendType(msgDO.getSendType());
+                userMsgVO.setContent(msgDO.getContent());
+                userMsgVO.setTime(msgDO.getCreateTime());
+                userMsgListVO.getMsgs().add(userMsgVO);
+            }
+            FanDO fanDO = fanService.getFanByOpenId(accountDO.getAppId(), openId);
+            if ((System.currentTimeMillis() / 1000 - fanDO.getLastInteractTime()) > 48 * 3600)
+                userMsgListVO.setIsExpire(1);
+            else
+                userMsgListVO.setIsExpire(0);
+            return new JsonResponse(userMsgListVO);
+        }
+        return new JsonResponse(null);
     }
 
 

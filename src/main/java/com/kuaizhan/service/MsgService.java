@@ -56,7 +56,7 @@ public interface MsgService {
      * @param openId 用户openId
      * @return
      */
-    List<MsgDO> listMsgsByOpenId(String appId, String openId, int page) throws IOException;
+    Page<MsgDO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException;
 
     /**
      * 批量更新消息状态
@@ -64,7 +64,7 @@ public interface MsgService {
      * @param appId 公众号appid
      * @param msgs  消息列表
      */
-    void updateMsgsStatus(long siteId, String appId, List<MsgDO> msgs);
+    void updateMsgsStatus(long siteId, String appId, List<MsgDO> msgs) throws DaoException, RedisException;
 
 
     /**

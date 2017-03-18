@@ -50,7 +50,7 @@
         limit #{pageEntity.offset} , #{pageEntity.limit}
     </select>
     <!--获取新消息列表-->
-    <select id="getNewMsg" resultType="com.kuaizhan.pojo.DO.MsgDO">
+    <select id="listNewMsgs" resultType="com.kuaizhan.pojo.DO.MsgDO">
         <foreach collection="tables" item="tableName" index="index" separator="union all">
             (select *
             from ${tableName}
@@ -60,7 +60,7 @@
         order by create_time desc
     </select>
     <!--根据openid获取消息-->
-    <select id="getMsgByOpenId" resultType="com.kuaizhan.pojo.DO.MsgDO">
+    <select id="listMsgsByOpenId" resultType="com.kuaizhan.pojo.DO.MsgDO">
         <foreach collection="tables" item="tableName" index="index" separator="union all">
             (select *
             from ${tableName}

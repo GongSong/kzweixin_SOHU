@@ -35,5 +35,10 @@ public interface RedisMsgDao {
      */
     void deleteMsgsByPagination(long siteId);
 
+    List<MsgDO> listMsgsByOpenId(long siteId, String openId, int page) throws IOException;
+
+    void setMsgsByOpenId(long siteId, String openId, int page, List<MsgDO> msgs) throws JsonProcessingException;
+
+    void deleteMsgsByOpenId(long siteId, String openId);
 
 }

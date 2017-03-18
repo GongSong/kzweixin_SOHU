@@ -103,6 +103,17 @@
             )
         </foreach>
     </select>
+    <!--获取粉丝-->
+    <select id="getFanByOpenId" resultType="com.kuaizhan.pojo.DO.FanDO">
+        <foreach collection="tables" item="tableName" separator="union all">
+            (select *
+            from ${tableName}
+            where
+            app_id=#{appId}
+            and open_id=#{openId}
+            and status=1)
+        </foreach>
+    </select>
     <!--获取被删除的粉丝-->
     <select id="getDeleteFanByOpenId" resultType="com.kuaizhan.pojo.DO.FanDO">
         <foreach collection="tables" item="tableName" separator="union all">

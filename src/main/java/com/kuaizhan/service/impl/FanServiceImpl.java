@@ -50,6 +50,16 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
+    public FanDO getFanByOpenId(String appId, String openId) throws DaoException {
+        try {
+            return fanDao.getFanByOpenId(openId, appId, ApplicationConfig.getFanTableNames());
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+
+    }
+
+    @Override
     public Page<FanDO> listFanByPagination(long siteId, String appId, Integer page, Integer isBlack, List<Integer> tagIds, String keyword) throws DaoException, RedisException {
         if (tagIds == null) {
             tagIds = new ArrayList<>();

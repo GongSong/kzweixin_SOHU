@@ -49,7 +49,8 @@ public class ApplicationConfig {
 
     //大分页
     public static final int PAGE_SIZE_LARGE = 20;
-
+    //中分页
+    public static final int PAGE_SIZE_MIDDLE = 10;
     //微信配置
     public static final String WEIXIN_TOKEN = "kuaizhan";
     public static final String WEIXIN_APPID_THIRD = "wxe07a6ac6045c62a7";
@@ -82,4 +83,6 @@ public class ApplicationConfig {
 
     //缓存消息列表
     public static final String KEY_MSG_LIST = "msg_list:";
+    //缓存单个用户消息
+    public static final String KEY_MSG_USER = "msg_user:";
 }

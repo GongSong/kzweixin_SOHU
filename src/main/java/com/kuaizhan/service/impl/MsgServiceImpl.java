@@ -136,7 +136,7 @@ public class MsgServiceImpl implements MsgService {
         List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
         List<MsgDO> msgs;
         try {
-            msgs = msgDao.getNewMsg(appId, msgTableNames);
+            msgs = msgDao.listNewMsgs(appId, msgTableNames);
         } catch (Exception e) {
             throw new DaoException(e.getMessage());
         }
@@ -167,19 +167,65 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public List<MsgDO> listMsgsByOpenId(String appId, String openId, int page) throws IOException {
-        return null;
+    public Page<MsgDO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException {
+        Page<MsgDO> pageEntity = new Page<>(page, ApplicationConfig.PAGE_SIZE_MIDDLE);
+        try {
+            List<MsgDO> msgDOList = redisMsgDao.listMsgsByOpenId(siteId, openId, page);
+            if (msgDOList != null) {
+                pageEntity.setResult(msgDOList);
+                return pageEntity;
+            }
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
+
+        List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("appId", appId);
+        param.put("openId", openId);
+        pageEntity.setParams(param);
+        List<MsgDO> msgs;
+        try {
+            msgs = msgDao.listMsgsByOpenId(pageEntity, msgTableNames);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+        try {
+            if (msgs.size() > 20) {
+                //缓存2个小时
+                redisMsgDao.setMsgsByOpenId(siteId, openId, page, msgs.subList(0, 20));
+                pageEntity.setResult(msgs.subList(0, 20));
+                return pageEntity;
+            } else {
+                //缓存2个小时
+                redisMsgDao.setMsgsByOpenId(siteId, openId, page, msgs);
+                pageEntity.setResult(msgs);
+                return pageEntity;
+            }
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
     }
 
     @Override
-    public void updateMsgsStatus(long siteId, String appId, List<MsgDO> msgs) {
+    public void updateMsgsStatus(long siteId, String appId, List<MsgDO> msgs) throws DaoException, RedisException {
         for (MsgDO msg : msgs) {
             msg.setStatus(2);
         }
         List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
-        msgDao.updateMsgBatch(msgTableNames, msgs);
-        //删除redis
-        redisMsgDao.deleteMsgsByPagination(siteId);
+        try {
+            msgDao.updateMsgBatch(msgTableNames, msgs);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+        try {
+            //删除redis
+            redisMsgDao.deleteMsgsByPagination(siteId);
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
+
     }
 
     @Override

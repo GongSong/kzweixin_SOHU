@@ -39,4 +39,30 @@ public class RedisMsgDaoImpl extends RedisBaseDaoImpl implements RedisMsgDao {
         deleteData(key);
     }
 
+    @Override
+    public List<MsgDO> listMsgsByOpenId(long siteId, String openId, int page) throws IOException {
+        String key = ApplicationConfig.KEY_MSG_USER + siteId + openId;
+        String field = "page:" + page;
+        String result = getData(key, field);
+        if (result != null) {
+            List<MsgDO> msgs = JsonUtil.string2List(result, MsgDO.class);
+            return msgs;
+        }
+        return null;
+    }
+
+    @Override
+    public void setMsgsByOpenId(long siteId, String openId, int page, List<MsgDO> msgs) throws JsonProcessingException {
+        String key = ApplicationConfig.KEY_MSG_USER + siteId + openId;
+        String field = "page:" + page;
+        String json = JsonUtil.bean2String(msgs);
+        setData(key, field, json, 2 * 60 * 60);
+    }
+
+    @Override
+    public void deleteMsgsByOpenId(long siteId, String openId) {
+        String key = ApplicationConfig.KEY_MSG_USER + siteId + openId;
+        deleteData(key);
+    }
+
 }
