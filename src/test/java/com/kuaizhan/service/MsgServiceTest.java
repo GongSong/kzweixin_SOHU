@@ -55,7 +55,7 @@ public class MsgServiceTest {
 
     @Test
     public void listNewMsgs() throws Exception {
-
+        msgService.listNewMsgs("wx1a4ff9ec0e369bd1");
     }
 
     @Test

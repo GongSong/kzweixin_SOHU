@@ -46,7 +46,8 @@ public interface MsgService {
      * @param appId 公众号appId
      * @return
      */
-    List<MsgDO> listNewMsgs(String appId);
+    List<MsgDO> listNewMsgs(String appId) throws DaoException;
+
 
     /**
      * 获取单个用户的消息列表
@@ -63,7 +64,7 @@ public interface MsgService {
      * @param appId 公众号appid
      * @param msgs  消息列表
      */
-    void updateMsgsStatus(String appId, List<MsgDO> msgs);
+    void updateMsgsStatus(long siteId, String appId, List<MsgDO> msgs);
 
 
     /**

@@ -40,7 +40,7 @@ public class MsgServiceImpl implements MsgService {
         List<String> tableNames = ApplicationConfig.getMsgTableNames();
         long total = 0;
         try {
-            List<Long> counts = msgDao.count(appId,  sendType,status, keyword, isHide, tableNames);
+            List<Long> counts = msgDao.count(appId, sendType, status, keyword, isHide, tableNames);
             for (Long count : counts) {
                 total += count;
             }
@@ -56,7 +56,7 @@ public class MsgServiceImpl implements MsgService {
             keyword = "";
         String field = "page:" + page + "keyword:" + keyword + "isHide:" + isHide;
         Page<MsgDO> pagingResult = new Page<>(page, ApplicationConfig.PAGE_SIZE_LARGE);
-        pagingResult.setTotalCount(countMsg(appId, 2,1, keyword, isHide));
+        pagingResult.setTotalCount(countMsg(appId, 2, 1, keyword, isHide));
 
         //从redis拿数据
         try {
@@ -131,8 +131,39 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public List<MsgDO> listNewMsgs(String appId) {
-        return null;
+    public List<MsgDO> listNewMsgs(String appId) throws DaoException {
+
+        List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
+        List<MsgDO> msgs;
+        try {
+            msgs = msgDao.getNewMsg(appId, msgTableNames);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+
+        List<String> openIds = new ArrayList<>();
+        for (MsgDO msg : msgs) {
+            openIds.add(msg.getOpenId());
+        }
+        List<String> fansTableNames = ApplicationConfig.getFanTableNames();
+
+        if (openIds.size() > 0) {
+            try {
+                List<FanDO> fanDOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
+                for (MsgDO msgDO : msgs) {
+                    for (FanDO fanDO : fanDOList) {
+                        if (msgDO.getOpenId().equals(fanDO.getOpenId())) {
+                            msgDO.setNickName(fanDO.getNickName());
+                            msgDO.setHeadImgUrl(fanDO.getHeadImgUrl());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw new DaoException(e.getMessage());
+            }
+        }
+
+        return msgs;
     }
 
     @Override
@@ -141,8 +172,14 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public void updateMsgsStatus(String appId, List<MsgDO> msgs) {
-
+    public void updateMsgsStatus(long siteId, String appId, List<MsgDO> msgs) {
+        for (MsgDO msg : msgs) {
+            msg.setStatus(2);
+        }
+        List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
+        msgDao.updateMsgBatch(msgTableNames, msgs);
+        //删除redis
+        redisMsgDao.deleteMsgsByPagination(siteId);
     }
 
     @Override

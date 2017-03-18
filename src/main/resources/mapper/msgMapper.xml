@@ -10,7 +10,9 @@
             where
             app_id=#{appId}
             and status=#{status}
-            and send_type=#{sendType}
+            <if test="sendType!=0">
+                and send_type=#{sendType}
+            </if>
             <if test="isHide==0">
                 <if test="keyword!= ''">
                     and content like concat('%','content','%',#{keyword},'%')
