@@ -4,6 +4,8 @@ package com.kuaizhan.controller;
 import com.kuaizhan.config.ApplicationConfig;
 
 import com.kuaizhan.exception.business.AccountNotExistException;
+import com.kuaizhan.exception.business.ParamException;
+import com.kuaizhan.exception.business.SendCustomMsgException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
@@ -16,6 +18,7 @@ import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.MsgService;
 
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -114,6 +117,36 @@ public class MsgController extends BaseController {
                 userMsgListVO.setIsExpire(0);
             return new JsonResponse(userMsgListVO);
         }
+        return new JsonResponse(null);
+    }
+
+    /**
+     * 给用户发送客服消息
+     *
+     * @param siteId 站点id
+     * @param openId 用户openId
+     * @return
+     */
+    @RequestMapping(value = "/msgs/{openId}", method = RequestMethod.POST)
+    public JsonResponse insertCustomMsg(@RequestParam long siteId, @PathVariable String openId, @RequestBody String postData) throws ParamException, DaoException, AccountNotExistException, RedisException, SendCustomMsgException {
+        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+
+        int msgType;
+        JSONObject afterValidation = new JSONObject();
+        JSONObject jsonObject = new JSONObject(postData);
+        if (jsonObject.has("content")) {
+            msgType = 1;
+            afterValidation.put("content", jsonObject.getString("content"));
+        } else if (jsonObject.has("media_id")) {
+            msgType = 2;
+            afterValidation.put("media_id", jsonObject.getString("media_id"));
+        } else if (jsonObject.has("articles")) {
+            msgType = 10;
+            afterValidation.put("articles", jsonObject.getJSONArray("articles"));
+        } else {
+            throw new ParamException();
+        }
+        msgService.insertCustomMsg(accountDO, openId, msgType, afterValidation);
         return new JsonResponse(null);
     }
 

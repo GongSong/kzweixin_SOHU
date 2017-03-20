@@ -5,12 +5,15 @@ import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.dao.mapper.MsgDao;
 import com.kuaizhan.dao.redis.RedisMsgDao;
+import com.kuaizhan.exception.business.SendCustomMsgException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DO.MsgDO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.service.MsgService;
+import com.kuaizhan.service.WeixinMsgService;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,8 @@ public class MsgServiceImpl implements MsgService {
     RedisMsgDao redisMsgDao;
     @Resource
     FanDao fanDao;
+    @Resource
+    WeixinMsgService weixinMsgService;
 
     @Override
     public long countMsg(String appId, int status, int sendType, String keyword, int isHide) throws DaoException {
@@ -247,7 +252,27 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public int sendMsgByOpenId(String appId, String accessToken, String openId, int msgType, JSONObject content) {
-        return 0;
+    public void insertCustomMsg(AccountDO accountDO, String openId, int msgType, JSONObject content) throws SendCustomMsgException, DaoException, RedisException {
+        weixinMsgService.sendCustomMsg(accountDO.getAppId(), accountDO.getAccessToken(), openId, msgType, content);
+        MsgDO msg = new MsgDO();
+        msg.setAppId(accountDO.getAppId());
+        msg.setContent(content.toString());
+        msg.setOpenId(openId);
+        msg.setType(msgType);
+        msg.setSendType(2);
+        msg.setStatus(2);
+        try {
+            msgDao.insertMsg(ApplicationConfig.chooseMsgTable(System.currentTimeMillis()), msg);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+        try {
+            //清除redis
+            redisMsgDao.deleteMsgsByOpenId(accountDO.getSiteId(), openId);
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
+
     }
+
 }

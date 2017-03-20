@@ -34,6 +34,8 @@ public class ApiConfig {
     private static final String DOMAIN_WEIXIN_API = "https://api.weixin.qq.com";
     private static final String DOMAIN_WEIXIN_MP = "https://mp.weixin.qq.com";
 
+    //账户
+
     //获取access_token
     private static final String WEIXIN_GET_ACCESS_TOKEN = "/cgi-bin/token?grant_type=client_credential&appid=";
     //获取第三方平台component_access_token
@@ -133,6 +135,8 @@ public class ApiConfig {
         return DOMAIN_WEIXIN_API + WEIXIN_GET_AUTHORIZATION_INFO + componentAccessToken;
     }
 
+    //粉丝
+
     //获取公众号已创建的标签
     private static final String WEIXIN_GET_TAGS = "/cgi-bin/tags/get?access_token=";
     //创建新的标签
@@ -231,5 +235,20 @@ public class ApiConfig {
      */
     public static String getFanInfoUrl(String accessToken, String openId) {
         return DOMAIN_WEIXIN_API + WEIXIN_GET_FAN_INFO + accessToken + "&openId=" + openId + "&lang=zh_CN";
+    }
+
+    //消息
+
+    //客服消息发送
+    private static final String WEIXIN_SEND_BY_OPENID = "/cgi-bin/message/custom/send?access_token=";
+
+    /**
+     * 根据openid发送客服消息
+     *
+     * @param accessToken
+     * @return
+     */
+    public static String sendByOpenIdUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_SEND_BY_OPENID + accessToken;
     }
 }

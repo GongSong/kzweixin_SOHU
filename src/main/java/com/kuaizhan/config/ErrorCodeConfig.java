@@ -23,6 +23,7 @@ public enum ErrorCodeConfig {
     ACCOUNT_NULL_ERROR(101002, "公众号不存在或未绑定公众号"),
 
     //消息(02)
+    SEND_CUSTOM_MSG_ERROR(102001, "发送客服消息失败"),
 
     //粉丝(03)
     GET_TAG_ERROR(103001, "获取标签失败，请重试"),
@@ -35,7 +36,7 @@ public enum ErrorCodeConfig {
     TAG_ERROR(103008, "非法的标签"),
     TAG_MODIFY_ERROR(103009, "不能修改默认标签"),
     TAG_DELETE_FANS_NUMBER_ERROR(103010, "该标签下粉丝数超过10w，不允许直接删除"),
-    BLACK_ADD_NUMBER_ERROR(103011,"一次只能拉黑20个用户");
+    BLACK_ADD_NUMBER_ERROR(103011, "一次只能拉黑20个用户");
 
     private int code;
     private String msg;

@@ -4,6 +4,7 @@ package com.kuaizhan.controller;
 import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.AccountNotExistException;
+import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.system.*;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
@@ -119,4 +120,6 @@ public class WeixinController extends BaseController {
         }
         return "success";
     }
+
+
 }

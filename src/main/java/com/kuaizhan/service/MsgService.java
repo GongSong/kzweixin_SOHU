@@ -1,8 +1,10 @@
 package com.kuaizhan.service;
 
 
+import com.kuaizhan.exception.business.SendCustomMsgException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.MsgDO;
 import com.kuaizhan.pojo.DTO.Page;
 import org.json.JSONObject;
@@ -68,6 +70,7 @@ public interface MsgService {
 
     /**
      * 插入消息
+     *
      * @param siteId
      * @param appId
      * @param msgDO
@@ -76,15 +79,9 @@ public interface MsgService {
 
 
     /**
-     * 给用户发送客服消息
+     * 插入客服消息
      *
-     * @param appId       公众号appid
-     * @param accessToken 公众号accessToken
-     * @param openId      用户openId
-     * @param msgType     1非关键词文字2图片3语音4视频5小视频6地理位置7链接8音乐9微信图文10外链图文11卡券12关键词文字13红包14点击菜单15模板消息
-     * @param content     请求数据json
-     * @return
      */
-    int sendMsgByOpenId(String appId, String accessToken, String openId, int msgType, JSONObject content);
+    void insertCustomMsg(AccountDO accountDO, String openId, int msgType, JSONObject content) throws SendCustomMsgException, DaoException, RedisException;
 
 }
