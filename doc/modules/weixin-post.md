@@ -23,4 +23,7 @@
 
 ## 数据结构
 5.1 [weixin_post](http://c.sohuno.com/kuaizhan/kuaizhan-doc/blob/master/internal/modules/mysql/kuaizhan_weixin_*/weixin_post.md) 存储微信图文消息主题
-5.2 
+5.2
+
+## 统计锚点
+6.1 发表图文数
