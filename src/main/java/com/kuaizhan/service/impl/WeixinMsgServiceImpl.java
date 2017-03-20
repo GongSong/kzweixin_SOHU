@@ -79,13 +79,13 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
 
         } else if (msgType != null) {
             Element openId = root.element("FromUserName");
+            JSONObject jsonObject = new JSONObject();
+            MsgDO msgDO = new MsgDO();
+
             switch (msgType.getText()) {
                 case "text":
                     Element content = root.element("Content");
-                    //做一层json封装
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("content", content.getText());
-                    MsgDO msgDO = new MsgDO();
+                    jsonObject.put("content", content.getText().replaceAll("[\\ud800\\udc00-\\udbff\\udfff\\ud800-\\udfff]", "【表情】"));
                     msgDO.setAppId(appId);
                     msgDO.setContent(jsonObject.toString());
                     msgDO.setOpenId(openId.getText());
@@ -94,6 +94,69 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     msgDO.setSendType(1);
                     msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
                     break;
+                case "image":
+                    Element mediaId = root.element("MediaId");
+                    Element picUrl = root.element("PicUrl");
+                    //做一层json封装
+                    jsonObject.put("media_id", mediaId.getText());
+                    jsonObject.put("pic_url", picUrl.getText());
+                    //存到mysql
+                    msgDO.setAppId(appId);
+                    msgDO.setContent(jsonObject.toString());
+                    msgDO.setOpenId(openId.getText());
+                    msgDO.setType(2);
+                    msgDO.setStatus(1);
+                    msgDO.setSendType(1);
+                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    break;
+                case "location":
+                    Element x = root.element("Location_X");
+                    Element y = root.element("Location_Y");
+                    Element scale = root.element("Scale");
+                    Element label = root.element("Label");
+                    //做一层json封装
+                    jsonObject.put("location_x", x.getText());
+                    jsonObject.put("location_y", y.getText());
+                    jsonObject.put("scale", scale.getText());
+                    jsonObject.put("label", label.getText());
+                    //存到mysql
+                    msgDO.setAppId(appId);
+                    msgDO.setContent(jsonObject.toString());
+                    msgDO.setOpenId(openId.getText());
+                    msgDO.setType(6);
+                    msgDO.setStatus(1);
+                    msgDO.setSendType(1);
+                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    break;
+                case "link":
+                    Element title = root.element("Title");
+                    Element description = root.element("Description");
+                    Element url = root.element("Url");
+                    //做一层json封装
+                    jsonObject.put("title", title.getText());
+                    jsonObject.put("description", description.getText());
+                    jsonObject.put("url", url.getText());
+                    //存到mysql
+                    msgDO.setAppId(appId);
+                    msgDO.setContent(jsonObject.toString());
+                    msgDO.setOpenId(openId.getText());
+                    msgDO.setType(7);
+                    msgDO.setStatus(1);
+                    msgDO.setSendType(1);
+                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    break;
+                default:
+                    //做一层json封装
+                    jsonObject.put("content", "【收到不支持的消息类型，暂无法显示】");
+                    msgDO.setAppId(appId);
+                    msgDO.setContent(jsonObject.toString());
+                    msgDO.setOpenId(openId.getText());
+                    msgDO.setStatus(1);
+                    msgDO.setType(1);
+                    msgDO.setSendType(1);
+                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    break;
+
             }
         }
         return "success";
