@@ -120,6 +120,16 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public AccountDO getAccountByAppId(String appId) throws DaoException {
+        try {
+            AccountDO account = accountDao.getAccountByAppId(appId);
+            return getAccountBySiteId(account.getSiteId());
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+    }
+
+    @Override
     public void unbindAccount(AccountDO account, UnbindDO unbindDO) throws RedisException, DaoException {
         UnbindDO unbind;
         //删缓存

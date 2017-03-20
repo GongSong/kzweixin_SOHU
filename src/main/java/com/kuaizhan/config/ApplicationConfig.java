@@ -29,6 +29,10 @@ public class ApplicationConfig {
         return tables;
     }
 
+    public static String chooseMsgTable(long time) {
+        return "weixin_msg_" + (time % getMsgTableNum());
+    }
+
     private static int getFanTableNum() {
         return PropertiesUtil.getInt(PROP, "table.num.fan");
     }
@@ -39,6 +43,10 @@ public class ApplicationConfig {
             tables.add("weixin_fans_" + i);
         }
         return tables;
+    }
+
+    public static String chooseFanTable(long time) {
+        return "weixin_fans_" + (time % getFanTableNum());
     }
 
 

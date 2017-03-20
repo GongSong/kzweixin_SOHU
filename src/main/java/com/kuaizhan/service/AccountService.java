@@ -28,11 +28,19 @@ public interface AccountService {
     AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException;
 
     /**
+     * 根据appId获取账号信息
+     *
+     * @param appId
+     * @return
+     */
+    AccountDO getAccountByAppId(String appId) throws DaoException;
+
+    /**
      * 解绑账号
      *
      * @param account 账号
      */
-    void unbindAccount(AccountDO account,UnbindDO unbindDO) throws RedisException, DaoException;
+    void unbindAccount(AccountDO account, UnbindDO unbindDO) throws RedisException, DaoException;
 
     /**
      * 修改appSecret

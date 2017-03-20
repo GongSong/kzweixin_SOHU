@@ -147,6 +147,9 @@ public class ApiConfig {
     private static final String WEIXIN_ADD_BALCK = "/cgi-bin/tags/members/batchblacklist?access_token=";
     //移除黑名单
     private static final String WEIXIN_REMOVE_BLACK = "/cgi-bin/tags/members/batchunblacklist?access_token=";
+    //获取用户基本信息
+    private static final String WEIXIN_GET_FAN_INFO = "/cgi-bin/user/info?access_token=";
+
 
 
     /**
@@ -219,5 +222,14 @@ public class ApiConfig {
         return DOMAIN_WEIXIN_API + WEIXIN_REMOVE_BLACK + accessToken;
     }
 
-
+    /**
+     * 获取用户基本信息
+     *
+     * @param accessToken
+     * @param openId      openId
+     * @return
+     */
+    public static String getFanInfoUrl(String accessToken, String openId) {
+        return DOMAIN_WEIXIN_API + WEIXIN_GET_FAN_INFO + accessToken + "&openId=" + openId + "&lang=zh_CN";
+    }
 }

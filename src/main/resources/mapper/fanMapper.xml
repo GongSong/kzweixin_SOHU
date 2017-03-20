@@ -142,7 +142,7 @@
             group_id=#{fans.groupId},
             tag_ids_json=#{fans.tagIdsJson},
             in_blacklist=#{fans.inBlackList},
-            last_interact_time=#{fans.lastInteractTime},
+            last_interact_time=unix_timestamp(now()),
             status=#{fans.status},
             remark=#{fans.remark},
             create_time=unix_timestamp(now()),

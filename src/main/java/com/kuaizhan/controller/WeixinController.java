@@ -3,6 +3,7 @@ package com.kuaizhan.controller;
 
 import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.system.*;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
@@ -10,6 +11,13 @@ import com.kuaizhan.pojo.DTO.AuthorizerInfoDTO;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.WeixinAuthService;
+import com.kuaizhan.service.WeixinFanService;
+import com.kuaizhan.service.WeixinMsgService;
+import com.kuaizhan.utils.weixin.AesException;
+import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +30,14 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping(value = ApplicationConfig.VERSION + "/weixin")
-public class WeixinController extends BaseController{
+public class WeixinController extends BaseController {
 
     @Resource
     WeixinAuthService weixinAuthService;
     @Resource
     AccountService accountService;
+    @Resource
+    WeixinMsgService weixinMsgService;
 
     /**
      * 获取微信推送的component_verify_ticket
@@ -49,10 +59,22 @@ public class WeixinController extends BaseController{
     public JsonResponse getAuthPage(@PathVariable long siteId) throws RedisException, JsonParseException {
         String componentAccessToken = weixinAuthService.getComponentAccessToken();
         String preAuthCode = weixinAuthService.getPreAuthCode(componentAccessToken);
-        String redirectUrl = ApplicationConfig.getApiPrefix() +"/" + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
+        String redirectUrl = ApplicationConfig.getApiPrefix() + "/" + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
         String authPageUrl = ApiConfig.getAuthEntranceUrl(preAuthCode, redirectUrl);
         return new JsonResponse(authPageUrl);
     }
+
+    /**
+     * 微信消息推送
+     *
+     * @return
+     */
+    @RequestMapping(value = "/msgs/{appId}/callback", method = RequestMethod.POST, produces = "application/xml;charset=UTF-8")
+    public String weixinPush(@PathVariable String appId, @RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody(required = false) String postData) throws EncryptException, DaoException, AccountNotExistException, XMLParseException {
+        //检查消息是否来自微信
+        return weixinMsgService.handlePushMsg(appId, signature, timestamp, nonce, postData);
+    }
+
 
     /**
      * 获取authCode和expires
@@ -95,6 +117,6 @@ public class WeixinController extends BaseController{
             }
             accountService.bindAccount(account);
         }
-       return "success";
+        return "success";
     }
 }

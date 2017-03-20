@@ -1,6 +1,9 @@
 package com.kuaizhan.service;
 
 
+import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.XMLParseException;
+import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DTO.TagDTO;
 
@@ -68,4 +71,21 @@ public interface WeixinFanService {
      * @return
      */
     int removeBlack(String accessToken, List<FanDO> fanDOList);
+
+    /**
+     * 获取用户信息
+     *
+     * @return
+     */
+    FanDO getFan(String appId, String accessToken, String openId);
+
+    /**
+     * 用户关注
+     */
+    void subscribe(AccountDO accountDO, String msg) throws DaoException, XMLParseException;
+
+    /**
+     * 用户取消关注
+     */
+    void unSubscribe(AccountDO accountDO, String msg) throws XMLParseException, DaoException;
 }
