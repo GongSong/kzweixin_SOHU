@@ -1,5 +1,7 @@
 package com.kuaizhan.pojo.VO;
 
+import java.util.List;
+
 /**
  * 账户信息展示对象
  * Created by liangjiateng on 2017/3/16.
@@ -8,7 +10,7 @@ public class AccountVO {
     private Long appId;
     private String appSecret;
     private String headImg;
-    private String interest;
+    private List<String> interest;
     private String qrcode;
     private String name;
     private Integer type;
@@ -37,11 +39,11 @@ public class AccountVO {
         this.headImg = headImg;
     }
 
-    public String getInterest() {
+    public List<String> getInterest() {
         return interest;
     }
 
-    public void setInterest(String interest) {
+    public void setInterest(List<String> interest) {
         this.interest = interest;
     }
 

@@ -12,12 +12,15 @@ import com.kuaizhan.pojo.VO.AccountVO;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 
+import com.kuaizhan.utils.JsonUtil;
 import org.apache.ibatis.annotations.Param;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,7 +40,7 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account", method = RequestMethod.GET)
-    public JsonResponse getAccountInfo(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException {
+    public JsonResponse getAccountInfo(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, IOException {
 
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         if (accountDO == null) {
@@ -48,7 +51,8 @@ public class AccountController extends BaseController {
         accountVO.setAppId(accountDO.getWeixinAppId());
         accountVO.setAppSecret(accountDO.getAppSecret());
         accountVO.setHeadImg(accountDO.getHeadImg());
-        accountVO.setInterest(accountDO.getInterestJson());
+        List<String> list = JsonUtil.string2List(accountDO.getInterestJson(), String.class);
+        accountVO.setInterest(list);
         accountVO.setName(accountDO.getNickName());
         accountVO.setQrcode(accountDO.getQrcodeUrl());
         accountVO.setType(accountDO.getServiceType());
