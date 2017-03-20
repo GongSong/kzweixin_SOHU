@@ -66,6 +66,14 @@ public interface MsgService {
      */
     void updateMsgsStatus(long siteId, String appId, List<MsgDO> msgs) throws DaoException, RedisException;
 
+    /**
+     * 插入消息
+     * @param siteId
+     * @param appId
+     * @param msgDO
+     */
+    void insertMsg(long siteId, String appId, MsgDO msgDO) throws DaoException, RedisException;
+
 
     /**
      * 给用户发送客服消息

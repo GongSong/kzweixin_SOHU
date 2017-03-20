@@ -70,9 +70,9 @@ public class WeixinController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/msgs/{appId}/callback", method = RequestMethod.POST, produces = "application/xml;charset=UTF-8")
-    public String weixinPush(@PathVariable String appId, @RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody(required = false) String postData) throws EncryptException, DaoException, AccountNotExistException, XMLParseException {
+    public String weixinPush(@PathVariable String appId, @RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody(required = false) String postData) throws EncryptException, DaoException, AccountNotExistException, XMLParseException, RedisException {
         //检查消息是否来自微信
-        return weixinMsgService.handlePushMsg(appId, signature, timestamp, nonce, postData);
+        return weixinMsgService.handleWeixinPushMsg(appId, signature, timestamp, nonce, postData);
     }
 
 

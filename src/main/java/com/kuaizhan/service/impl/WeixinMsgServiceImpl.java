@@ -1,18 +1,23 @@
 package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.dao.redis.RedisMsgDao;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.EncryptException;
+import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.exception.system.XMLParseException;
 import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.DO.MsgDO;
 import com.kuaizhan.service.AccountService;
+import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.WeixinFanService;
 import com.kuaizhan.service.WeixinMsgService;
 import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,9 +32,13 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
     WeixinFanService weixinFanService;
     @Resource
     AccountService accountService;
+    @Resource
+    MsgService msgService;
+    @Resource
+    RedisMsgDao redisMsgDao;
 
     @Override
-    public String handlePushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException, DaoException, AccountNotExistException {
+    public String handleWeixinPushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException, DaoException, AccountNotExistException, RedisException {
         //TODO:使用MQ进行处理
         AccountDO accountDO = accountService.getAccountByAppId(appId);
         if (accountDO == null) {
@@ -69,8 +78,26 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
             }
 
         } else if (msgType != null) {
-
+            Element openId = root.element("FromUserName");
+            switch (msgType.getText()) {
+                case "text":
+                    Element content = root.element("Content");
+                    //做一层json封装
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("content", content.getText());
+                    MsgDO msgDO = new MsgDO();
+                    msgDO.setAppId(appId);
+                    msgDO.setContent(jsonObject.toString());
+                    msgDO.setOpenId(openId.getText());
+                    msgDO.setStatus(1);
+                    msgDO.setType(1);
+                    msgDO.setSendType(1);
+                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    break;
+            }
         }
         return "success";
     }
+
+
 }

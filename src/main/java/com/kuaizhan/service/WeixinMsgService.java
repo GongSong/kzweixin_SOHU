@@ -3,6 +3,7 @@ package com.kuaizhan.service;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.EncryptException;
+import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.exception.system.XMLParseException;
 
 /**
@@ -16,5 +17,6 @@ public interface WeixinMsgService {
      *
      * @return
      */
-    String handlePushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException, DaoException, AccountNotExistException;
+    String handleWeixinPushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException, DaoException, AccountNotExistException, RedisException;
+
 }

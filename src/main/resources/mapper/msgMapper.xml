@@ -90,9 +90,9 @@
     </update>
 
     <!--添加一条消息-->
-    <insert id="addMsg">
+    <insert id="insertMsg">
         insert ${tableName}(app_id,open_id,type,content,send_type,create_time,update_time,status)
-        values (#{msg.appId},#{msg.openId},#{msg.type},#{msg.content},#{msg.sendType},unix_timestamp(now()),unix_timestamp(now()),1);
+        values (#{msg.appId},#{msg.openId},#{msg.type},#{msg.content},#{msg.sendType},unix_timestamp(now()),unix_timestamp(now()),#{msg.status});
     </insert>
 
 </mapper>

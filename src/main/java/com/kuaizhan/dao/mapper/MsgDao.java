@@ -67,7 +67,7 @@ public interface MsgDao {
      * @param msg       消息
      * @return
      */
-    int addMsg(@Param("tableName") String tableName, @Param("msg") MsgDO msg);
+    int insertMsg(@Param("tableName") String tableName, @Param("msg") MsgDO msg);
 
 
 }

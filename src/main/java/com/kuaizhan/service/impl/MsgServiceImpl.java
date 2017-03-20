@@ -229,6 +229,24 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
+    public void insertMsg(long siteId, String appId, MsgDO msgDO) throws DaoException, RedisException {
+        String tableName = ApplicationConfig.chooseMsgTable(System.currentTimeMillis());
+        try {
+            msgDao.insertMsg(tableName, msgDO);
+        } catch (Exception e) {
+            throw new DaoException(e.getMessage());
+        }
+        //删除缓存
+        try {
+            redisMsgDao.deleteMsgsByPagination(siteId);
+            redisMsgDao.deleteMsgsByOpenId(siteId, msgDO.getOpenId());
+        } catch (Exception e) {
+            throw new RedisException(e.getMessage());
+        }
+
+    }
+
+    @Override
     public int sendMsgByOpenId(String appId, String accessToken, String openId, int msgType, JSONObject content) {
         return 0;
     }
