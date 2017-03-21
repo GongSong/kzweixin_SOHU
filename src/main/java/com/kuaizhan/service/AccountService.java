@@ -2,6 +2,7 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
@@ -25,7 +26,7 @@ public interface AccountService {
      * @param siteId 站点id
      * @return
      */
-    AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException;
+    AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException, JsonParseException;
 
     /**
      * 根据appId获取账号信息

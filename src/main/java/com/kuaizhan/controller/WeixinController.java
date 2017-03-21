@@ -78,13 +78,13 @@ public class WeixinController extends BaseController {
 
 
     /**
-     * 获取authCode和expires
+     * 获取authCode和expires 账号绑定
      *
      * @return
      */
     @RequestMapping(value = "/authcode/callback", method = RequestMethod.GET)
     public String getAuthCode(@RequestParam("auth_code") String authCode, @RequestParam("expires_in") String expire, @RequestParam long siteId) throws RedisException, JsonParseException, DaoException {
-
+        //TODO:绑定后数据同步 粉丝数据 引导关注 模板消息 rambitmq
         String componentAccessToken = weixinAuthService.getComponentAccessToken();
         AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.getAuthorizationInfo(componentAccessToken, ApplicationConfig.WEIXIN_APPID_THIRD, authCode);
         if (authorizationInfoDTO != null) {

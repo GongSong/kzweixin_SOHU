@@ -44,7 +44,7 @@ public class AccountServiceTest {
 
     @Test
     public void getAccountBySiteId() throws Exception {
-        System.out.println(accountService.getAccountBySiteId(123456L));
+        System.out.println(accountService.getAccountBySiteId(12345L));
     }
     @Test
     public void unbindAccount() throws Exception {

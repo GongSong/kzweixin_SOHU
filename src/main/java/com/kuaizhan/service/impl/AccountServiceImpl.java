@@ -6,6 +6,7 @@ import com.kuaizhan.dao.mapper.UnbindDao;
 import com.kuaizhan.dao.redis.RedisAccountDao;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
@@ -78,7 +79,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException {
+    public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
         //TODO：高并发场景下access_token失效 锁
         AccountDO accountDO;
         //从缓存拿
@@ -97,16 +98,17 @@ public class AccountServiceImpl implements AccountService {
             if (accountDO == null) {
                 throw new AccountNotExistException();
             }
-            try {
-                //查看access_token是否失效
-                if (System.currentTimeMillis() / 1000 > accountDO.getExpiresTime()) {
-                    AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
-                    accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
-                    accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+
+            //查看access_token是否失效
+            if (System.currentTimeMillis() / 1000 > accountDO.getExpiresTime()) {
+                AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
+                accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
+                accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+                try {
                     accountDao.updateAccountBySiteId(accountDO);
+                } catch (Exception e) {
+                    throw new DaoException(e.getMessage());
                 }
-            } catch (Exception e) {
-                throw new DaoException(e.getMessage());
             }
 
             //存缓存

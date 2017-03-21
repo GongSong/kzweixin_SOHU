@@ -4,6 +4,7 @@ package com.kuaizhan.controller;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.exception.system.ServerException;
 import com.kuaizhan.pojo.DO.AccountDO;
@@ -43,7 +44,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/fans", method = RequestMethod.GET)
-    public JsonResponse listFanByPagination(@RequestParam long siteId, @RequestParam int page, @RequestParam(required = false) List<Integer> tagIds, @RequestParam int isBlack, @RequestParam(required = false) String keyword) throws RedisException, DaoException, AccountNotExistException, ParamException, TagGetException {
+    public JsonResponse listFanByPagination(@RequestParam long siteId, @RequestParam int page, @RequestParam(required = false) List<Integer> tagIds, @RequestParam int isBlack, @RequestParam(required = false) String keyword) throws RedisException, DaoException, AccountNotExistException, ParamException, TagGetException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
 
         if (page < 1) {
@@ -91,7 +92,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
-    public JsonResponse listTags(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, TagGetException {
+    public JsonResponse listTags(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, TagGetException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         List<TagDTO> list = fansService.listTags(siteId, accountDO.getAccessToken());
         return new JsonResponse(list);
@@ -104,7 +105,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tags", method = RequestMethod.POST)
-    public JsonResponse insertTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, TagDuplicateNameException, TagNameLengthException, TagNumberException, ServerException {
+    public JsonResponse insertTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, TagDuplicateNameException, TagNameLengthException, TagNumberException, ServerException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         String tagName;
         try {
@@ -125,7 +126,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/fans/tag", method = RequestMethod.PUT)
-    public JsonResponse updateUserTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, OpenIdNumberException, OpenIdException, FanTagNumberException, TagException, ServerException {
+    public JsonResponse updateUserTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, OpenIdNumberException, OpenIdException, FanTagNumberException, TagException, ServerException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         List<String> openIds;
         List<Integer> tagIds;
@@ -148,7 +149,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tags/{tagId}", method = RequestMethod.DELETE)
-    public JsonResponse deleteTag(@RequestParam long siteId, @PathVariable int tagId) throws RedisException, DaoException, AccountNotExistException, ServerException, TagDeleteFansNumberException, TagModifyException {
+    public JsonResponse deleteTag(@RequestParam long siteId, @PathVariable int tagId) throws RedisException, DaoException, AccountNotExistException, ServerException, TagDeleteFansNumberException, TagModifyException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         fansService.deleteTag(siteId, accountDO.getAppId(), tagId, accountDO.getAccessToken());
         return new JsonResponse(null);
@@ -162,7 +163,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tags", method = RequestMethod.PUT)
-    public JsonResponse renameTag(@RequestParam long siteId, @RequestBody String postData) throws AccountNotExistException, RedisException, DaoException, ParamException, TagDuplicateNameException, TagNameLengthException, TagModifyException, ServerException {
+    public JsonResponse renameTag(@RequestParam long siteId, @RequestBody String postData) throws AccountNotExistException, RedisException, DaoException, ParamException, TagDuplicateNameException, TagNameLengthException, TagModifyException, ServerException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         int tagId;
         String newName;
@@ -188,7 +189,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/fans/black", method = RequestMethod.POST)
-    public JsonResponse insertBlack(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, ServerException, BlackAddNumberException, OpenIdException {
+    public JsonResponse insertBlack(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, ServerException, BlackAddNumberException, OpenIdException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         List<Long> fanIds;
         List<String> openIds;
@@ -218,7 +219,7 @@ public class FanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/fans/black", method = RequestMethod.DELETE)
-    public JsonResponse deleteBlack(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, ServerException, BlackAddNumberException, OpenIdException {
+    public JsonResponse deleteBlack(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, AccountNotExistException, ParamException, ServerException, BlackAddNumberException, OpenIdException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         List<FanDO> fanDOList = new ArrayList<>();
         List<Long> fanIds;

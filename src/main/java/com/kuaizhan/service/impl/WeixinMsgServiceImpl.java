@@ -88,6 +88,9 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
             switch (msgType.getText()) {
                 case "text":
                     Element content = root.element("Content");
+
+                    //TODO: emoji表情不能存入数据库的问题
+
                     jsonObject.put("content", content.getText().replaceAll("[\\ud800\\udc00-\\udbff\\udfff\\ud800-\\udfff]", "【表情】"));
                     msgDO.setAppId(appId);
                     msgDO.setContent(jsonObject.toString());

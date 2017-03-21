@@ -5,6 +5,7 @@ import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
@@ -40,12 +41,9 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account", method = RequestMethod.GET)
-    public JsonResponse getAccountInfo(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, IOException {
+    public JsonResponse getAccountInfo(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, IOException, JsonParseException {
 
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
-        if (accountDO == null) {
-            throw new AccountNotExistException();
-        }
 
         AccountVO accountVO = new AccountVO();
         accountVO.setAppId(accountDO.getWeixinAppId());
@@ -67,13 +65,11 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public JsonResponse unbind(@RequestParam long siteId, @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException {
+    public JsonResponse unbind(@RequestParam long siteId, @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException, JsonParseException {
         int type;
         String text;
         AccountDO account = accountService.getAccountBySiteId(siteId);
-        if (account == null) {
-            throw new AccountNotExistException();
-        }
+
         try {
             JSONObject jsonObject = new JSONObject(postData);
             type = jsonObject.getInt("type");
