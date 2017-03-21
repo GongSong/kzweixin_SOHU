@@ -263,6 +263,7 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+            <!--jetty-->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
