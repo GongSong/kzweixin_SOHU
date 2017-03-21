@@ -7,7 +7,10 @@ import com.kuaizhan.exception.BaseException;
  * Created by liangjiateng on 2017/3/17.
  */
 public class ServerException extends BaseException {
-    public ServerException(String errorStack) {
-        super(ErrorCodeConfig.SERVER_ERROR.getCode(), ErrorCodeConfig.SERVER_ERROR.getMsg(), errorStack);
+    public ServerException() {
+        super(ErrorCodeConfig.SERVER_ERROR.getCode(), ErrorCodeConfig.SERVER_ERROR.getMsg(), null);
+    }
+    public ServerException(Exception e) {
+        super(ErrorCodeConfig.SERVER_ERROR.getCode(), ErrorCodeConfig.SERVER_ERROR.getMsg(), e);
     }
 }

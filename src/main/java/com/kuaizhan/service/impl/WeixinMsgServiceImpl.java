@@ -53,14 +53,14 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
             WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN, ApplicationConfig.WEIXIN_AES_KEY, ApplicationConfig.WEIXIN_APPID_THIRD);
             msg = wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
         } catch (Exception e) {
-            throw new EncryptException(e.getMessage());
+            throw new EncryptException(e);
         }
         //解析消息
         Document document;
         try {
             document = DocumentHelper.parseText(msg);
         } catch (Exception e) {
-            throw new XMLParseException(e.getMessage());
+            throw new XMLParseException(e);
         }
         Element root = document.getRootElement();
         Element msgType = root.element("MsgType");

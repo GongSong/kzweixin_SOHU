@@ -44,7 +44,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         try {
             pwd = EncryptUtil.sha1(sb.toString());
         } catch (NoSuchAlgorithmException e) {
-            throw new EncryptException(e.getMessage());
+            throw new EncryptException(e);
         }
         if (pwd.equals(signature)) {
             return true;
@@ -60,14 +60,14 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN, ApplicationConfig.WEIXIN_AES_KEY, ApplicationConfig.WEIXIN_APPID_THIRD);
             msg = wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
         } catch (AesException e) {
-            throw new DecryptException(e.getMessage());
+            throw new DecryptException(e);
         }
         //解析xml
         Document document;
         try {
             document = DocumentHelper.parseText(msg);
         } catch (DocumentException e) {
-            throw new XMLParseException(e.getMessage());
+            throw new XMLParseException(e);
         }
         Element root = document.getRootElement();
         Element ticket = root.element("ComponentVerifyTicket");
@@ -76,7 +76,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             try {
                 redisAuthDao.setComponentVerifyTicket(ticket.getText());
             } catch (Exception e) {
-                throw new RedisException(e.getMessage());
+                throw new RedisException(e);
             }
         }
     }
@@ -92,7 +92,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             //从缓存中拿ticket
             ticket = redisAuthDao.getComponentVerifyTicket();
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
         String componentAccessToken;
         try {
@@ -105,7 +105,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             JSONObject result = new JSONObject(returnJson);
             componentAccessToken = result.getString("component_access_token");
         } catch (Exception e) {
-            throw new JsonParseException(e.getMessage());
+            throw new JsonParseException(e);
         }
         try {
             //检查token是否一样
@@ -113,7 +113,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
                 redisAuthDao.setComponentAccessToken(componentAccessToken);
             return componentAccessToken;
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
 
     }
@@ -126,7 +126,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
                 return redisAuthDao.getPreAuthCode();
             }
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
         //从微信调取
         String preAuthCode;
@@ -137,14 +137,14 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             JSONObject result = new JSONObject(returnJson);
             preAuthCode = result.getString("pre_auth_code");
         } catch (Exception e) {
-            throw new JsonParseException(e.getMessage());
+            throw new JsonParseException(e);
         }
         //存缓存
         try {
             if (!redisAuthDao.equalPreAuthCode(preAuthCode))
                 redisAuthDao.setPreAuthCode(preAuthCode);
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
         return preAuthCode;
     }
@@ -164,7 +164,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
             authorizationInfoDTO.setFuncInfo(jsonObject1.getJSONObject("authorization_info").get("func_info").toString());
         } catch (Exception e) {
-            throw new JsonParseException(e.getMessage());
+            throw new JsonParseException(e);
         }
         return authorizationInfoDTO;
     }
@@ -180,7 +180,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             String result = HttpClientUtil.postJson(ApiConfig.getRefreshAuthUrl(componentAccessToken), jsonObject.toString());
             authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
         } catch (Exception e) {
-            throw new JsonParseException(e.getMessage());
+            throw new JsonParseException(e);
         }
         return authorizationInfoDTO;
     }
@@ -200,7 +200,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             authorizerInfoDTO.setServiceTypeInfo(jsonObject1.getJSONObject("authorizer_info").get("service_type_info").toString());
             authorizerInfoDTO.setVerifyTypeInfo(jsonObject1.getJSONObject("authorizer_info").get("verify_type_info").toString());
         } catch (Exception e) {
-            throw new JsonParseException(e.getMessage());
+            throw new JsonParseException(e);
         }
         return authorizerInfoDTO;
     }

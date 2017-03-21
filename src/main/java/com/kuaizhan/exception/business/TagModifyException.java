@@ -8,6 +8,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class TagModifyException extends BaseException {
     public TagModifyException() {
-        super(ErrorCodeConfig.TAG_MODIFY_ERROR.getCode(), ErrorCodeConfig.TAG_MODIFY_ERROR.getMsg(), null);
+        super(ErrorCodeConfig.TAG_MODIFY_ERROR.getCode(), ErrorCodeConfig.TAG_MODIFY_ERROR.getMsg());
     }
 }

@@ -8,7 +8,7 @@ import com.kuaizhan.exception.BaseException;
  * Created by liangjiateng on 2017/3/15.
  */
 public class EncryptException extends BaseException {
-    public EncryptException(String errorStack) {
-        super(ErrorCodeConfig.ENCRYPT_ERROR.getCode(), ErrorCodeConfig.ENCRYPT_ERROR.getMsg(), errorStack);
+    public EncryptException(Exception e) {
+        super(ErrorCodeConfig.ENCRYPT_ERROR.getCode(), ErrorCodeConfig.ENCRYPT_ERROR.getMsg(), e);
     }
 }

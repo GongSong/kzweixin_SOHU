@@ -8,6 +8,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class FanTagNumberException extends BaseException {
     public FanTagNumberException() {
-        super(ErrorCodeConfig.FAN_TAG_NUMBER_ERROR.getCode(), ErrorCodeConfig.FAN_TAG_NUMBER_ERROR.getMsg(),null);
+        super(ErrorCodeConfig.FAN_TAG_NUMBER_ERROR.getCode(), ErrorCodeConfig.FAN_TAG_NUMBER_ERROR.getMsg());
     }
 }

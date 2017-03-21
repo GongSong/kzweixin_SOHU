@@ -8,6 +8,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class TagException extends BaseException{
     public TagException() {
-        super(ErrorCodeConfig.TAG_ERROR.getCode(), ErrorCodeConfig.TAG_ERROR.getMsg(),null);
+        super(ErrorCodeConfig.TAG_ERROR.getCode(), ErrorCodeConfig.TAG_ERROR.getMsg());
     }
 }

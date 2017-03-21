@@ -9,6 +9,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class TagDuplicateNameException extends BaseException {
     public TagDuplicateNameException() {
-        super(ErrorCodeConfig.TAG_DUPLICATE_NAME_ERROR.getCode(), ErrorCodeConfig.TAG_DUPLICATE_NAME_ERROR.getMsg(), null);
+        super(ErrorCodeConfig.TAG_DUPLICATE_NAME_ERROR.getCode(), ErrorCodeConfig.TAG_DUPLICATE_NAME_ERROR.getMsg());
     }
 }

@@ -8,6 +8,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class OpenIdNumberException extends BaseException {
     public OpenIdNumberException() {
-        super(ErrorCodeConfig.OPEN_ID_NUMBER_ERROR.getCode(), ErrorCodeConfig.OPEN_ID_NUMBER_ERROR.getMsg(),null);
+        super(ErrorCodeConfig.OPEN_ID_NUMBER_ERROR.getCode(), ErrorCodeConfig.OPEN_ID_NUMBER_ERROR.getMsg());
     }
 }

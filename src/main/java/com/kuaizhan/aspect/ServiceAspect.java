@@ -4,6 +4,7 @@ import com.kuaizhan.exception.BaseException;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +21,11 @@ public class ServiceAspect {
 
     private static Logger logger = Logger.getLogger(ServiceAspect.class);
 
-    @Pointcut("execution(* cn.liangjiateng.service.impl.*.*(..))")
+    @Pointcut("execution(* com.kuaizhan.service.impl.*.*(..))")
     private void serviceMethod() {
 
     }
+
 
 
     /**
@@ -33,6 +35,7 @@ public class ServiceAspect {
      */
     @AfterThrowing(value = "serviceMethod()", throwing = "ex")
     public void afterThrowing(Throwable ex) {
+
         if (ex instanceof BaseException) {
             logger.error(output(((BaseException) ex).getDate(), ((BaseException) ex).getMsg(), ((BaseException) ex).getErrorStack()));
         }

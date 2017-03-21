@@ -10,7 +10,7 @@ import com.kuaizhan.exception.BaseException;
 public class ParamException extends BaseException {
 
     public ParamException() {
-        super(ErrorCodeConfig.PARAM_ERROR.getCode(), ErrorCodeConfig.PARAM_ERROR.getMsg(),null);
+        super(ErrorCodeConfig.PARAM_ERROR.getCode(), ErrorCodeConfig.PARAM_ERROR.getMsg());
     }
 
 }

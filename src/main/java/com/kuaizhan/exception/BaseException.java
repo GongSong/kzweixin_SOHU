@@ -1,4 +1,6 @@
 package com.kuaizhan.exception;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * 系统级异常
@@ -25,11 +27,18 @@ public abstract class BaseException extends Exception {
      */
     private String errorStack;
 
-
-    public BaseException(int code, String msg, String errorStack) {
+    public BaseException(int code, String msg, Exception e) {
         this.code = code;
         this.msg = msg;
-        this.errorStack = errorStack;
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        this.errorStack = sw.toString();
+    }
+
+    public BaseException(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
+        this.errorStack = null;
     }
 
     public String getErrorStack() {

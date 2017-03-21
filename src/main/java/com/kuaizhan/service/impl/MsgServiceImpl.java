@@ -50,7 +50,7 @@ public class MsgServiceImpl implements MsgService {
                 total += count;
             }
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         return total;
     }
@@ -71,7 +71,7 @@ public class MsgServiceImpl implements MsgService {
                 return pagingResult;
             }
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
 
         //未命中,从数据库拿数据,并且缓存到redis,缓存两个小时
@@ -89,7 +89,7 @@ public class MsgServiceImpl implements MsgService {
         try {
             msgs = msgDao.listMsgsByPagination(msgTableNames, pagingResult);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         for (MsgDO msgDO : msgs) {
             openIds.add(msgDO.getOpenId());
@@ -103,7 +103,7 @@ public class MsgServiceImpl implements MsgService {
             try {
                 fanDOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
             } catch (Exception e) {
-                throw new DaoException(e.getMessage());
+                throw new DaoException(e);
             }
 
             for (MsgDO msgDO : msgs) {
@@ -121,14 +121,14 @@ public class MsgServiceImpl implements MsgService {
                     redisMsgDao.setMsgsByPagination(siteId, field, msgs.subList(0, 20));
                     pagingResult.setResult(msgs.subList(0, 20));
                 } catch (Exception e) {
-                    throw new RedisException(e.getMessage());
+                    throw new RedisException(e);
                 }
             } else {
                 try {
                     redisMsgDao.setMsgsByPagination(siteId, field, msgs.subList(0, msgs.size()));
                     pagingResult.setResult(msgs.subList(0, msgs.size()));
                 } catch (Exception e) {
-                    throw new RedisException(e.getMessage());
+                    throw new RedisException(e);
                 }
             }
         }
@@ -143,7 +143,7 @@ public class MsgServiceImpl implements MsgService {
         try {
             msgs = msgDao.listNewMsgs(appId, msgTableNames);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
 
         List<String> openIds = new ArrayList<>();
@@ -164,7 +164,7 @@ public class MsgServiceImpl implements MsgService {
                     }
                 }
             } catch (Exception e) {
-                throw new DaoException(e.getMessage());
+                throw new DaoException(e);
             }
         }
 
@@ -181,7 +181,7 @@ public class MsgServiceImpl implements MsgService {
                 return pageEntity;
             }
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
 
         List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
@@ -194,7 +194,7 @@ public class MsgServiceImpl implements MsgService {
         try {
             msgs = msgDao.listMsgsByOpenId(pageEntity, msgTableNames);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         try {
             if (msgs.size() > 20) {
@@ -209,7 +209,7 @@ public class MsgServiceImpl implements MsgService {
                 return pageEntity;
             }
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
     }
 
@@ -222,13 +222,13 @@ public class MsgServiceImpl implements MsgService {
         try {
             msgDao.updateMsgBatch(msgTableNames, msgs);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         try {
             //删除redis
             redisMsgDao.deleteMsgsByPagination(siteId);
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
 
     }
@@ -239,14 +239,14 @@ public class MsgServiceImpl implements MsgService {
         try {
             msgDao.insertMsg(tableName, msgDO);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         //删除缓存
         try {
             redisMsgDao.deleteMsgsByPagination(siteId);
             redisMsgDao.deleteMsgsByOpenId(siteId, msgDO.getOpenId());
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
 
     }
@@ -264,13 +264,13 @@ public class MsgServiceImpl implements MsgService {
         try {
             msgDao.insertMsg(ApplicationConfig.chooseMsgTable(System.currentTimeMillis()), msg);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         try {
             //清除redis
             redisMsgDao.deleteMsgsByOpenId(accountDO.getSiteId(), openId);
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
 
     }

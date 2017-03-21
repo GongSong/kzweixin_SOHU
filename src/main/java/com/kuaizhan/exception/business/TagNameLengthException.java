@@ -9,6 +9,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class TagNameLengthException extends BaseException {
     public TagNameLengthException() {
-        super(ErrorCodeConfig.TAG_NAME_LENGTH_ERROR.getCode(), ErrorCodeConfig.TAG_NAME_LENGTH_ERROR.getMsg(), null);
+        super(ErrorCodeConfig.TAG_NAME_LENGTH_ERROR.getCode(), ErrorCodeConfig.TAG_NAME_LENGTH_ERROR.getMsg());
     }
 }

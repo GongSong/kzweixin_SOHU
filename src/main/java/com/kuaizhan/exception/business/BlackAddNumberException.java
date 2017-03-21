@@ -8,6 +8,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class BlackAddNumberException extends BaseException {
     public BlackAddNumberException() {
-        super(ErrorCodeConfig.BLACK_ADD_NUMBER_ERROR.getCode(), ErrorCodeConfig.BLACK_ADD_NUMBER_ERROR.getMsg(),null);
+        super(ErrorCodeConfig.BLACK_ADD_NUMBER_ERROR.getCode(), ErrorCodeConfig.BLACK_ADD_NUMBER_ERROR.getMsg());
     }
 }

@@ -8,7 +8,7 @@ import com.kuaizhan.exception.BaseException;
  * Created by liangjiateng on 2017/3/15.
  */
 public class XMLParseException extends BaseException {
-    public XMLParseException(String errorStack) {
-        super(ErrorCodeConfig.XML_PARSE_ERROR.getCode(), ErrorCodeConfig.XML_PARSE_ERROR.getMsg(), errorStack);
+    public XMLParseException(Exception e) {
+        super(ErrorCodeConfig.XML_PARSE_ERROR.getCode(), ErrorCodeConfig.XML_PARSE_ERROR.getMsg(), e);
     }
 }

@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
             //删缓存
             redisAccountDao.deleteAccountInfo(account.getSiteId());
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
         AccountDO accountDO;
         try {
@@ -48,7 +48,7 @@ public class AccountServiceImpl implements AccountService {
             //先查数据库存不存在
             accountDO = accountDao.getDeleteAccountBySiteId(account.getSiteId());
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         //存在记录 恢复记录 更新数据库
         if (accountDO != null) {
@@ -57,13 +57,13 @@ public class AccountServiceImpl implements AccountService {
             try {
                 accountDao.updateAccountBySiteId(account);
             } catch (Exception e) {
-                throw new DaoException(e.getMessage());
+                throw new DaoException(e);
             }
             //刷新缓存
             try {
                 redisAccountDao.setAccountInfo(accountDO);
             } catch (Exception e) {
-                throw new RedisException(e.getMessage());
+                throw new RedisException(e);
             }
         }
         //不存在则创建新的数据
@@ -73,7 +73,7 @@ public class AccountServiceImpl implements AccountService {
             try {
                 accountDao.insertAccount(account);
             } catch (Exception e) {
-                throw new DaoException(e.getMessage());
+                throw new DaoException(e);
             }
         }
     }
@@ -86,14 +86,14 @@ public class AccountServiceImpl implements AccountService {
         try {
             accountDO = redisAccountDao.getAccountInfo(siteId);
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
         if (accountDO == null) {
             //从数据库拿
             try {
                 accountDO = accountDao.getAccountBySiteId(siteId);
             } catch (Exception e) {
-                throw new DaoException(e.getMessage());
+                throw new DaoException(e);
             }
             if (accountDO == null) {
                 throw new AccountNotExistException();
@@ -107,7 +107,7 @@ public class AccountServiceImpl implements AccountService {
                 try {
                     accountDao.updateAccountBySiteId(accountDO);
                 } catch (Exception e) {
-                    throw new DaoException(e.getMessage());
+                    throw new DaoException(e);
                 }
             }
 
@@ -115,7 +115,7 @@ public class AccountServiceImpl implements AccountService {
             try {
                 redisAccountDao.setAccountInfo(accountDO);
             } catch (Exception e) {
-                throw new RedisException(e.getMessage());
+                throw new RedisException(e);
             }
         }
         return accountDO;
@@ -127,7 +127,7 @@ public class AccountServiceImpl implements AccountService {
             AccountDO account = accountDao.getAccountByAppId(appId);
             return getAccountBySiteId(account.getSiteId());
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
     }
 
@@ -138,7 +138,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             redisAccountDao.deleteAccountInfo(account.getSiteId());
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
         try {
             unbind = unbindDao.getUnbindByWeixinAppId(account.getWeixinAppId());
@@ -152,7 +152,7 @@ public class AccountServiceImpl implements AccountService {
             account.setIsDel(1);
             accountDao.updateAccountBySiteId(account);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
     }
 
@@ -164,7 +164,7 @@ public class AccountServiceImpl implements AccountService {
         try {
             accountDao.updateAccountBySiteId(account);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
 
     }

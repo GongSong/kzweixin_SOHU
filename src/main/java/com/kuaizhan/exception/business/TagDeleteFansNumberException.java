@@ -8,6 +8,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class TagDeleteFansNumberException extends BaseException{
     public TagDeleteFansNumberException() {
-        super(ErrorCodeConfig.TAG_DELETE_FANS_NUMBER_ERROR.getCode(), ErrorCodeConfig.TAG_DELETE_FANS_NUMBER_ERROR.getMsg(), null);
+        super(ErrorCodeConfig.TAG_DELETE_FANS_NUMBER_ERROR.getCode(), ErrorCodeConfig.TAG_DELETE_FANS_NUMBER_ERROR.getMsg());
     }
 }

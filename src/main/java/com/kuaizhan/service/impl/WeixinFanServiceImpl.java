@@ -166,7 +166,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
         try {
             document = DocumentHelper.parseText(msg);
         } catch (Exception e) {
-            throw new XMLParseException(e.getMessage());
+            throw new XMLParseException(e);
         }
         Element root = document.getRootElement();
         Element openId = root.element("FromUserName");
@@ -175,7 +175,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
         try {
             fan = fanDao.getDeleteFanByOpenId(openId.getText(), accountDO.getAppId(), tables);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         //存在则更改status
         if (fan != null) {
@@ -183,7 +183,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
             try {
                 fanDao.updateFan(fan, tables);
             } catch (Exception e) {
-                throw new DaoException(e.getMessage());
+                throw new DaoException(e);
             }
         }
         //不存在则创建新数据
@@ -193,7 +193,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
             try {
                 fanDao.insertFan(newFans, tableName);
             } catch (Exception e) {
-                throw new DaoException(e.getMessage());
+                throw new DaoException(e);
             }
         }
     }
@@ -204,7 +204,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
         try {
             document = DocumentHelper.parseText(msg);
         } catch (Exception e) {
-            throw new XMLParseException(e.getMessage());
+            throw new XMLParseException(e);
         }
         Element root = document.getRootElement();
         Element openId = root.element("FromUserName");
@@ -216,7 +216,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
                 fanDao.updateFan(fanDO, tables);
             }
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
 
     }

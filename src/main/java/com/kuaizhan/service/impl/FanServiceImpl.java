@@ -45,7 +45,7 @@ public class FanServiceImpl implements FanService {
             }
             return total;
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
     }
 
@@ -54,7 +54,7 @@ public class FanServiceImpl implements FanService {
         try {
             return fanDao.getFanByOpenId(openId, appId, ApplicationConfig.getFanTableNames());
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
 
     }
@@ -79,7 +79,7 @@ public class FanServiceImpl implements FanService {
                 return fanDOPage;
             }
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
 
 
@@ -96,7 +96,7 @@ public class FanServiceImpl implements FanService {
         try {
             fanses = fanDao.listFansByPagination(fanDOPage, tables);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         try {
             //存缓存
@@ -108,7 +108,7 @@ public class FanServiceImpl implements FanService {
                 fanDOPage.setResult(fanses.subList(0, fanses.size()));
             }
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
         return fanDOPage;
     }
@@ -124,7 +124,7 @@ public class FanServiceImpl implements FanService {
                 return tagDTOList;
             }
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
 
         List<TagDTO> tags;
@@ -140,7 +140,7 @@ public class FanServiceImpl implements FanService {
             try {
                 redisFanDao.setTag(siteId, tags);
             } catch (Exception e) {
-                throw new RedisException(e.getMessage());
+                throw new RedisException(e);
             }
         }
         return tags;
@@ -153,12 +153,12 @@ public class FanServiceImpl implements FanService {
         int result = weixinFanService.insertTag(accessToken, tagName);
         switch (result) {
             case -1:
-                throw new ServerException("微信服务器错误");
+                throw new ServerException();
             case 1:
                 try {
                     redisFanDao.deleteTag(siteId);
                 } catch (Exception e) {
-                    throw new RedisException(e.getMessage());
+                    throw new RedisException(e);
                 }
                 break;
             case 45157:
@@ -178,7 +178,7 @@ public class FanServiceImpl implements FanService {
             int result = weixinFanService.updateTag(accessToken, openIds, tagId);
             switch (result) {
                 case -1:
-                    throw new ServerException("微信服务器错误");
+                    throw new ServerException();
                 case 40032:
                     throw new OpenIdNumberException();
                 case 45159:
@@ -207,13 +207,13 @@ public class FanServiceImpl implements FanService {
             //设置mysql数据
             fanDao.updateFansBatch(fanses, tables);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         try {
             //清空redis缓存
             redisFanDao.deleteFanByPagination(siteId);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
     }
 
@@ -223,7 +223,7 @@ public class FanServiceImpl implements FanService {
         int result = weixinFanService.deleteTag(accessToken, tagId);
         switch (result) {
             case -1:
-                throw new ServerException("微信服务器错误");
+                throw new ServerException();
             case 45058:
                 throw new TagModifyException();
             case 45057:
@@ -252,14 +252,14 @@ public class FanServiceImpl implements FanService {
                         }
                     }
                 } catch (Exception e) {
-                    throw new DaoException(e.getMessage());
+                    throw new DaoException(e);
                 }
                 try {
                     //删除缓存
                     redisFanDao.deleteTag(siteId);
                     redisFanDao.deleteFanByPagination(siteId);
                 } catch (Exception e) {
-                    throw new RedisException(e.getMessage());
+                    throw new RedisException(e);
                 }
         }
     }
@@ -270,7 +270,7 @@ public class FanServiceImpl implements FanService {
         int result = weixinFanService.renameTag(accessToken, newTag.getId(), newTag.getName());
         switch (result) {
             case -1:
-                throw new ServerException("微信服务器错误");
+                throw new ServerException();
             case 45157:
                 throw new TagDuplicateNameException();
             case 45158:
@@ -281,7 +281,7 @@ public class FanServiceImpl implements FanService {
         try {
             redisFanDao.deleteTag(siteId);
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
     }
 
@@ -293,7 +293,7 @@ public class FanServiceImpl implements FanService {
         int result = weixinFanService.insertBlack(accessToken, fanDOList);
         switch (result) {
             case -1:
-                throw new ServerException("微信服务器错误");
+                throw new ServerException();
             case 40003:
                 throw new OpenIdException();
             case 49003:
@@ -310,12 +310,12 @@ public class FanServiceImpl implements FanService {
         try {
             fanDao.updateFansBatch(fanDOList, tables);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         try {
             redisFanDao.deleteFanByPagination(siteId);
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
     }
 
@@ -326,7 +326,7 @@ public class FanServiceImpl implements FanService {
         int result = weixinFanService.removeBlack(accessToken, fanDOList);
         switch (result) {
             case -1:
-                throw new ServerException("微信服务器错误");
+                throw new ServerException();
             case 40003:
                 throw new OpenIdException();
             case 40032:
@@ -345,12 +345,12 @@ public class FanServiceImpl implements FanService {
         try {
             fanDao.updateFansBatch(fanDOList, tables);
         } catch (Exception e) {
-            throw new DaoException(e.getMessage());
+            throw new DaoException(e);
         }
         try {
             redisFanDao.deleteFanByPagination(siteId);
         } catch (Exception e) {
-            throw new RedisException(e.getMessage());
+            throw new RedisException(e);
         }
     }
 }

@@ -8,6 +8,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class AccountNotExistException extends BaseException {
     public AccountNotExistException() {
-        super(ErrorCodeConfig.ACCOUNT_NULL_ERROR.getCode(), ErrorCodeConfig.ACCOUNT_NULL_ERROR.getMsg(), null);
+        super(ErrorCodeConfig.ACCOUNT_NULL_ERROR.getCode(), ErrorCodeConfig.ACCOUNT_NULL_ERROR.getMsg());
     }
 }

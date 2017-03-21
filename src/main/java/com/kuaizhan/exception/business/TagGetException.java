@@ -9,6 +9,6 @@ import com.kuaizhan.exception.BaseException;
  */
 public class TagGetException extends BaseException {
     public TagGetException() {
-        super(ErrorCodeConfig.GET_TAG_ERROR.getCode(), ErrorCodeConfig.GET_TAG_ERROR.getMsg(), null);
+        super(ErrorCodeConfig.GET_TAG_ERROR.getCode(), ErrorCodeConfig.GET_TAG_ERROR.getMsg());
     }
 }
