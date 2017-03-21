@@ -1,6 +1,7 @@
 package com.kuaizhan.controller;
 
 
+import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.ParamException;
@@ -64,14 +65,12 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public JsonResponse unbind(@RequestParam long siteId, @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException, JsonParseException {
+    public JsonResponse unbind(@Validate @RequestParam long siteId, @Validate(ApplicationConfig.UNBIND_POSTDATAT_SCHEMA) @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException, JsonParseException {
 
         AccountDO account = accountService.getAccountBySiteId(siteId);
-        ParamUtil.checkUnbindPostData(postData);
         JSONObject jsonObject = new JSONObject(postData);
         int type = jsonObject.getInt("type");
         String text = jsonObject.getString("text");
-
         UnbindDO unbind = new UnbindDO();
         unbind.setUnbindText(text);
         unbind.setUnbindType(type);
