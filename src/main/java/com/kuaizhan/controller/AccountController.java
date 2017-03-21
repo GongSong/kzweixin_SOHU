@@ -14,6 +14,7 @@ import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 
 import com.kuaizhan.utils.JsonUtil;
+import com.kuaizhan.utils.ParamUtil;
 import org.apache.ibatis.annotations.Param;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +43,7 @@ public class AccountController extends BaseController {
      */
     @RequestMapping(value = "/account", method = RequestMethod.GET)
     public JsonResponse getAccountInfo(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, IOException, JsonParseException {
-
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
-
         AccountVO accountVO = new AccountVO();
         accountVO.setAppId(accountDO.getWeixinAppId());
         accountVO.setAppSecret(accountDO.getAppSecret());
@@ -66,17 +65,12 @@ public class AccountController extends BaseController {
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
     public JsonResponse unbind(@RequestParam long siteId, @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException, JsonParseException {
-        int type;
-        String text;
-        AccountDO account = accountService.getAccountBySiteId(siteId);
 
-        try {
-            JSONObject jsonObject = new JSONObject(postData);
-            type = jsonObject.getInt("type");
-            text = jsonObject.getString("text");
-        } catch (Exception e) {
-            throw new ParamException();
-        }
+        AccountDO account = accountService.getAccountBySiteId(siteId);
+        ParamUtil.checkUnbindPostData(postData);
+        JSONObject jsonObject = new JSONObject(postData);
+        int type = jsonObject.getInt("type");
+        String text = jsonObject.getString("text");
 
         UnbindDO unbind = new UnbindDO();
         unbind.setUnbindText(text);
