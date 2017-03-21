@@ -14,12 +14,50 @@
 2.2 图文列表页面
 
 ## 后端接口
-3.1 图片上传接口
+3.1 微信导入图文
+
+3.2 快站文章导入图文
+
+3.3 获取已有图文
+
+3.4 通过图文标题或图文关键词搜索图文
+
+3.5 删除图文
+
+3.6 保存图文
+
+3.7 修改图文
+
+3.8 上传图片至个人图片库
+
+3.9 从个人图片库获取图片列表
+
+3.10 从素材库获取图片列表
 
 
 ## 消息队列
+
 4.1 从微信导入图片队列
+    - exchange name: sys-weixin-post-sync.direct
+    - queue name: sys-weixin-post-sync
+    - 消息内容
+        site_id
+        weixin_appid
+        post_list
+
 4.2 从快站文章导入队列
+    - exchange name: sys-weixin-import-kuaizhan-post.direct
+    - queue name: sys-weixin-import-kuaizhan-post
+    - 消息内容
+        site_id
+        weixin_appid
+        post_list
+
+4.3 图文保存并同步队列
+    - 线上无
+
+4.4 多图文合并队列
+    - 线上无
 
 ## 数据结构
 5.1 [weixin_post](http://c.sohuno.com/kuaizhan/kuaizhan-doc/blob/master/internal/modules/mysql/kuaizhan_weixin_*/weixin_post.md) 存储微信图文消息主题  
