@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kuaizhan.dao.mapper.PostDao">
+
+    <!--根据weixin_appid查询图文消息总数-->
+    <select id="count" parameterType="Long" resultType="Long">
+        select count(*)
+        from weixin_post
+        --         status=1表示未删除；type in (1,2)只查询单图文和多图文总记录
+        where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+    </select>
+
+    <!--根据weixin_appid分页查询图文消息列表-->
+    <select id="listPostsByPagination" parameterType="com.kuaizhan.pojo.DTO.Page" resultType="com.kuaizhan.pojo.DO.PostDO">
+        select *
+        from weixin_post
+        --       status=1表示未删除；type in (1,2)只查询单图文和多图文总记录
+        where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+        limit #{pageEntity.offset}, #{pageEntity.limit}
+    </select>
+    
+    <!--根据mediaId查询多图文-->
+    <select id="listMultiPosts" parameterType="String" resultType="com.kuaizhan.pojo.DO.PostDO">
+        select *
+        from `weixin_post`
+        --   type=3表示多图文消息中的一条
+        where `status` = 1 AND `type` = 3 AND `media_id` = #{mediaId}
+        order by `index`
+    </select>
+
+</mapper>
