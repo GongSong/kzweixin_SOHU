@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+
 /**
  * 拦截controller 实现参数校验
  * Created by liangjiateng on 2017/3/21.
@@ -36,16 +37,20 @@ public class ControllerAspect {
         Object[] args = pjp.getArgs();
         //获取参数注解
         Annotation[][] annotations = m.getParameterAnnotations();
+
+
         for (int i = 0; i < annotations.length; i++) {
             for (int j = 0; j < annotations[i].length; j++) {
                 if (annotations[i][j] instanceof Validate) {
                     Validate validate = (Validate) annotations[i][j];
-                    String pathToSchema = validate.value();
+                    //获取参数名
+                    String key = validate.key();
+                    String pathToSchema = validate.path();
                     Object arg = args[i];
                     if ("".equals(pathToSchema)) {
                         //普通参数校验
                         try {
-                            ParamUtil.validateRequestParam(arg.toString());
+                            ParamUtil.validateRequestParam(key, arg.toString());
                         } catch (ParamException e) {
                             return new JsonResponse(e.getCode(), e.getMsg(), null);
                         }
@@ -65,4 +70,6 @@ public class ControllerAspect {
         Object re = pjp.proceed();
         return re;
     }
+
+
 }

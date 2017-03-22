@@ -12,5 +12,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Validate {
-    String value() default "";
+
+    String key();
+
+    String path() default "";
 }

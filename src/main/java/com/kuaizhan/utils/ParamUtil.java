@@ -33,7 +33,14 @@ public class ParamUtil {
         }
     }
 
-    public static void validateRequestParam(String param) throws ParamException {
-
+    public static void validateRequestParam(String key, String value) throws ParamException {
+        switch (key) {
+            case "siteId":
+                long siteId = Long.parseLong(value);
+                if (siteId < 0) {
+                    throw new ParamException();
+                }
+                break;
+        }
     }
 }
