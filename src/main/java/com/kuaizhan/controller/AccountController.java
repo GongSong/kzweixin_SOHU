@@ -65,8 +65,7 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public JsonResponse unbind(@Validate @RequestParam long siteId, @Validate(ApplicationConfig.UNBIND_POSTDATAT_SCHEMA) @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException, JsonParseException {
-
+    public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId, @Validate(key = "postData", path = ApplicationConfig.UNBIND_POSTDATAT_SCHEMA) @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException, JsonParseException {
         AccountDO account = accountService.getAccountBySiteId(siteId);
         JSONObject jsonObject = new JSONObject(postData);
         int type = jsonObject.getInt("type");
