@@ -50,7 +50,7 @@ public class ControllerAspect {
                     if ("".equals(pathToSchema)) {
                         //普通参数校验
                         try {
-                            ParamUtil.validateRequestParam(key, arg.toString());
+                            ParamUtil.validateRequestParam(pjp.getTarget().getClass().toString(), m.getName(), key, arg.toString());
                         } catch (ParamException e) {
                             return new JsonResponse(e.getCode(), e.getMsg(), null);
                         }
