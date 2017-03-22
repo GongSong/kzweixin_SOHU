@@ -29,7 +29,7 @@ public class PostController extends BaseController{
 
 
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
-    public JsonResponse ListPostByPagination(@RequestParam long weixinAppid, @RequestParam int page) throws DaoException {
+    public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page) throws DaoException {
 
         Page<PostDO> postDOPage = postService.listPostsByPagination(weixinAppid, page);
 

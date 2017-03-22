@@ -16,6 +16,10 @@ public class ApplicationConfig {
     //版本号
     public static final String VERSION = "v1";
 
+    //参数校验 json-schema
+    //账户
+    public static final String UNBIND_POSTDATAT_SCHEMA = "json-schema/account/unbind-postdata-schema.json";
+
     //分表
     private static int getMsgTableNum() {
         return PropertiesUtil.getInt(PROP, "table.num.msg");

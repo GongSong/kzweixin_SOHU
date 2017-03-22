@@ -18,8 +18,9 @@ public class ParamUtil {
 
     private final static JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 
-    public static void checkUnbindPostData(String postData) throws ParamException {
-        URL uri = Thread.currentThread().getContextClassLoader().getResource("json-schema/account/unbind-postdata-schema.json");
+
+    public static void validatePostParam(String postData, String pathToJsonSchema) throws ParamException {
+        URL uri = Thread.currentThread().getContextClassLoader().getResource(pathToJsonSchema);
         try {
             JsonNode jsonSchema = JsonLoader.fromURL(uri);
             JsonNode json = JsonLoader.fromString(postData);
@@ -30,7 +31,16 @@ public class ParamUtil {
         } catch (Exception e) {
             throw new ParamException();
         }
-
     }
 
+    public static void validateRequestParam(String clsName, String methodName, String key, String value) throws ParamException {
+        switch (key) {
+            case "siteId":
+                long siteId = Long.parseLong(value);
+                if (siteId < 0) {
+                    throw new ParamException();
+                }
+                break;
+        }
+    }
 }

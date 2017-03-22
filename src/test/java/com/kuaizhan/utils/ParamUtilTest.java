@@ -26,7 +26,7 @@ public class ParamUtilTest {
                 "\t\"type\":1,\n" +
                 "\t\"text\":\"哈哈哈哈\"\n" +
                 "}";
-        ParamUtil.checkUnbindPostData(postData);
+
     }
 
 }

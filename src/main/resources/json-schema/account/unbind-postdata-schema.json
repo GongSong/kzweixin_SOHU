@@ -14,6 +14,7 @@
       "maxLength": 100
     }
   },
+  "additionalProperties":false,
   "required": [
     "type",
     "text"
