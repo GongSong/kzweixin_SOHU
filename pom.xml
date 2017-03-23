@@ -37,6 +37,17 @@
     </properties>
 
     <dependencies>
+        <!--mongoDB-->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>1.10.1.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.2.2</version>
+        </dependency>
         <!--rest接口测试-->
         <dependency>
             <groupId>io.rest-assured</groupId>
