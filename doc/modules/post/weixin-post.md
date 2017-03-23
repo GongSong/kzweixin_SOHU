@@ -1,17 +1,7 @@
 # 微信图文消息模块总览
-## 功能
-1.1 图文消息编辑
- - 多图文设置
- - 图片上传
+## 功能 & 页面
 
-1.2 图文消息列表
- - 列表
- - 从微信图文导入
- - 从快站图文导入
-
-## 页面
-2.1 图文编辑器页面
-2.2 图文列表页面
+[请参考文档](http://confluence.sohuno.com/pages/viewpage.action?pageId=24448540)
 
 ## 后端接口
 3.1 微信导入图文
@@ -24,7 +14,7 @@
 
 3.5 删除图文
 
-3.6 保存图文
+3.6 新建图文
 
 3.7 修改图文
 
@@ -65,4 +55,5 @@
 5.3 [icon_tag](http://c.sohuno.com/kuaizhan/kuaizhan-doc/blob/master/internal/modules/mysql/kuaizhan_site_*/icon_tag.md)  存储"我的图片"分组信息  
 
 ## 统计锚点
-6.1 发表图文数
+
+[请参考文档](http://confluence.sohuno.com/pages/viewpage.action?pageId=24448540)
