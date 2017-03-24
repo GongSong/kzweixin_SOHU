@@ -18,6 +18,8 @@ public enum ErrorCodeConfig {
     XML_PARSE_ERROR(100004, "XML解析错误"),
     ENCRYPT_ERROR(100005, "加密错误"),
     DECRYPT_ERROR(100006, "解密错误"),
+    MQ_ERROR(100007, "rabbitMQ错误"),
+    MONGO_ERROR(100008, "mongo数据库错误"),
     //账号(01)
     PARAM_ERROR(101001, "请求参数错误"),
     ACCOUNT_NULL_ERROR(101002, "公众号不存在或未绑定公众号"),
