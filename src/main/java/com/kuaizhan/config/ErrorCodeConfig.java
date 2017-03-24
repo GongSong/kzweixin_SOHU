@@ -19,8 +19,11 @@ public enum ErrorCodeConfig {
     ENCRYPT_ERROR(100005, "加密错误"),
     DECRYPT_ERROR(100006, "解密错误"),
     MQ_ERROR(100007, "rabbitMQ错误"),
+    MONGO_ERROR(100008, "mongo数据库错误"),
+
     //账号(01)
     PARAM_ERROR(101001, "请求参数错误"),
+
     ACCOUNT_NULL_ERROR(101002, "公众号不存在或未绑定公众号"),
 
     //消息(02)
@@ -28,15 +31,25 @@ public enum ErrorCodeConfig {
 
     //粉丝(03)
     GET_TAG_ERROR(103001, "获取标签失败，请重试"),
+
     TAG_DUPLICATE_NAME_ERROR(103002, "标签名非法或重复标签名"),
+
     TAG_NAME_LENGTH_ERROR(103003, "标签名不能超过30字节"),
+
     TAG_NUMBER_ERROR(103004, "创建的标签数过多，请注意不能超过100个"),
+
     OPEN_ID_NUMBER_ERROR(103005, "每次传入的openid列表个数不能超过50个"),
+
     FAN_TAG_NUMBER_ERROR(103006, "有粉丝身上的标签数已经超过限制"),
+
     OPEN_ID_ERROR(103007, "传入非法的openid"),
+
     TAG_ERROR(103008, "非法的标签"),
+
     TAG_MODIFY_ERROR(103009, "不能修改默认标签"),
+
     TAG_DELETE_FANS_NUMBER_ERROR(103010, "该标签下粉丝数超过10w，不允许直接删除"),
+
     BLACK_ADD_NUMBER_ERROR(103011, "一次只能拉黑20个用户");
 
     private int code;
