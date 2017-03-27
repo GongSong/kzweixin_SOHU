@@ -6,7 +6,7 @@ import com.kuaizhan.exception.BaseException;
 /**
  * Created by liangjiateng on 2017/3/17.
  */
-public class TagException extends BaseException{
+public class TagException extends BusinessException{
     public TagException() {
         super(ErrorCodeConfig.TAG_ERROR.getCode(), ErrorCodeConfig.TAG_ERROR.getMsg());
     }

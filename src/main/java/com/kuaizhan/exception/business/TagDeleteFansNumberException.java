@@ -6,7 +6,7 @@ import com.kuaizhan.exception.BaseException;
 /**
  * Created by liangjiateng on 2017/3/17.
  */
-public class TagDeleteFansNumberException extends BaseException{
+public class TagDeleteFansNumberException extends BusinessException{
     public TagDeleteFansNumberException() {
         super(ErrorCodeConfig.TAG_DELETE_FANS_NUMBER_ERROR.getCode(), ErrorCodeConfig.TAG_DELETE_FANS_NUMBER_ERROR.getMsg());
     }

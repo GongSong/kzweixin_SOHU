@@ -6,7 +6,7 @@ import com.kuaizhan.exception.BaseException;
 /**
  * Created by liangjiateng on 2017/3/17.
  */
-public class OpenIdNumberException extends BaseException {
+public class OpenIdNumberException extends BusinessException {
     public OpenIdNumberException() {
         super(ErrorCodeConfig.OPEN_ID_NUMBER_ERROR.getCode(), ErrorCodeConfig.OPEN_ID_NUMBER_ERROR.getMsg());
     }

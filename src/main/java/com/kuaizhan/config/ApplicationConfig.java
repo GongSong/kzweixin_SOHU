@@ -12,6 +12,7 @@ import java.util.Properties;
  */
 public class ApplicationConfig {
 
+    //资源读取工具
     private static final Properties PROP = PropertiesUtil.loadProps("application.properties");
     //版本号
     public static final String VERSION = "v1";
@@ -19,6 +20,7 @@ public class ApplicationConfig {
     //参数校验 json-schema
     //账户
     public static final String UNBIND_POSTDATAT_SCHEMA = "json-schema/account/unbind-postdata-schema.json";
+
 
     //分表
     private static int getMsgTableNum() {
