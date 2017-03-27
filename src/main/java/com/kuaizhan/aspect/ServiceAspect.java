@@ -1,14 +1,13 @@
 package com.kuaizhan.aspect;
 
 import com.kuaizhan.exception.BaseException;
-import org.apache.log4j.Logger;
+import com.kuaizhan.exception.business.BusinessException;
+import com.kuaizhan.exception.system.SystemException;
+import com.kuaizhan.utils.LogUtil;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 
 /**
@@ -19,13 +18,11 @@ import java.util.Date;
 @Aspect
 public class ServiceAspect {
 
-    private static Logger logger = Logger.getLogger(ServiceAspect.class);
 
     @Pointcut("execution(* com.kuaizhan.service.impl.*.*(..))")
     private void serviceMethod() {
 
     }
-
 
 
     /**
@@ -35,13 +32,8 @@ public class ServiceAspect {
      */
     @AfterThrowing(value = "serviceMethod()", throwing = "ex")
     public void afterThrowing(Throwable ex) {
-
-        if (ex instanceof BaseException) {
-            logger.error(output(((BaseException) ex).getDate(), ((BaseException) ex).getMsg(), ((BaseException) ex).getErrorStack()));
-        }
+        LogUtil.logMsg((Exception) ex);
     }
 
-    private String output(long time, String msg, String errorStack) {
-        return "Time:" + new Date(time).toString() + ";\nMessage:" + msg + "\nOriginal info:" + errorStack + ";";
-    }
+
 }

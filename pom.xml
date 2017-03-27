@@ -38,6 +38,17 @@
     </properties>
 
     <dependencies>
+        <!--sentry 异常监控-->
+        <dependency>
+            <groupId>com.getsentry.raven</groupId>
+            <artifactId>raven</artifactId>
+            <version>7.8.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.getsentry.raven</groupId>
+            <artifactId>raven-log4j</artifactId>
+            <version>7.8.6</version>
+        </dependency>
         <!--mongoDB-->
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -241,7 +252,6 @@
             <version>RELEASE</version>
         </dependency>
     </dependencies>
-
 
 
     <build>
