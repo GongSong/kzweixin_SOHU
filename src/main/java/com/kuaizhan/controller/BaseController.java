@@ -1,10 +1,12 @@
 package com.kuaizhan.controller;
 
 import com.kuaizhan.exception.BaseException;
-import com.kuaizhan.exception.business.AccountNotExistException;
+
 import com.kuaizhan.exception.business.ParamException;
-import com.kuaizhan.exception.system.*;
+import com.kuaizhan.exception.system.ServerException;
 import com.kuaizhan.pojo.VO.JsonResponse;
+
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -16,8 +18,18 @@ public abstract class BaseController {
 
     @ExceptionHandler
     @ResponseBody
-    public JsonResponse handleException(BaseException ex) {
-        return new JsonResponse(ex.getCode(), ex.getMsg(), null);
+    public JsonResponse handleException(Exception ex) {
+        if (ex instanceof BaseException) {
+            return new JsonResponse(((BaseException) ex).getCode(), ((BaseException) ex).getMsg(), null);
+        }
+        //自定义spring @RequestParam 异常
+        else if (ex instanceof ServletRequestBindingException) {
+            ParamException paramException = new ParamException();
+            return new JsonResponse(paramException.getCode(), paramException.getMsg(), null);
+        } else {
+            ServerException serverException = new ServerException();
+            return new JsonResponse(serverException.getCode(), serverException.getMsg(), null);
+        }
     }
 
 }
