@@ -108,7 +108,8 @@
          "thumbMediaId": "fdevae3vdar3fa", // 封面图片在微信的media_id
          "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
          "contentSourceUrl": "www.sohu.com",  // 原文链接
-         "updateTime": 1463542009
+         "updateTime": 1463542009,
+         "kuaizhanPostId":1240584810
         }
        ]
     ```
@@ -153,21 +154,4 @@
         ```
     * 异常情况: 待补充
     
-#### 6 根据siteId获取weixinAppid
-* **协议**：HTTPS
-* **方法**：GET
-* **URL**：/v1/weixin_appid
-* **参数**：
-    * siteId: 站点id
-* **说明**: 此接口是因为重构需要部分上线而需要临时接口，公众号全面上线后废除。
-* **返回**：
-    * 获取成功时返回:
 
-        ```
-        {
-          "weixinAppid": 123242322
-        }
-        ```
-        
-    * 异常情况:
-        * 缺少参数siteId，返回码 101001

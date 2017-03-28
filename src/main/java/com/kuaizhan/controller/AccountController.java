@@ -46,7 +46,7 @@ public class AccountController extends BaseController {
     public JsonResponse getAccountInfo(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, IOException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         AccountVO accountVO = new AccountVO();
-        accountVO.setAppId(accountDO.getWeixinAppId());
+        accountVO.setWeixinAppid(accountDO.getWeixinAppId());
         accountVO.setAppSecret(accountDO.getAppSecret());
         accountVO.setHeadImg(accountDO.getHeadImg());
         List<String> list = JsonUtil.string2List(accountDO.getInterestJson(), String.class);

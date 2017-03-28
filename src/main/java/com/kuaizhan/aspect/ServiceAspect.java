@@ -1,8 +1,5 @@
 package com.kuaizhan.aspect;
 
-import com.kuaizhan.exception.BaseException;
-import com.kuaizhan.exception.business.BusinessException;
-import com.kuaizhan.exception.system.SystemException;
 import com.kuaizhan.utils.LogUtil;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;

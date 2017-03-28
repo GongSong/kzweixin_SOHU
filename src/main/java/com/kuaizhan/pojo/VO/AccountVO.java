@@ -7,7 +7,7 @@ import java.util.List;
  * Created by liangjiateng on 2017/3/16.
  */
 public class AccountVO {
-    private Long appId;
+    private Long weixinAppid;
     private String appSecret;
     private String headImg;
     private List<String> interest;
@@ -15,12 +15,12 @@ public class AccountVO {
     private String name;
     private Integer type;
 
-    public Long getAppId() {
-        return appId;
+    public Long getWeixinAppid() {
+        return weixinAppid;
     }
 
-    public void setAppId(Long appId) {
-        this.appId = appId;
+    public void setWeixinAppid(Long weixinAppid) {
+        this.weixinAppid = weixinAppid;
     }
 
     public String getAppSecret() {
@@ -74,10 +74,10 @@ public class AccountVO {
     @Override
     public String toString() {
         return "AccountVO{" +
-                "appId=" + appId +
+                "weixinAppid=" + weixinAppid +
                 ", appSecret='" + appSecret + '\'' +
                 ", headImg='" + headImg + '\'' +
-                ", interest='" + interest + '\'' +
+                ", interest=" + interest +
                 ", qrcode='" + qrcode + '\'' +
                 ", name='" + name + '\'' +
                 ", type=" + type +
