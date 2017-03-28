@@ -36,7 +36,10 @@
 * **协议**： HTTPS
 * **方法**： GET
 * **URL**： /v1/posts/`<pageId>`
-* **参数**： 无
+* **参数**：
+    * weixinAppid 微信Appid
+
+        
 * **说明**：用于预览页面获取单个图文详情
 
 * **返回**：
@@ -63,7 +66,9 @@
 * **协议**：HTTPS
 * **方法**：GET
 * **URL**：/v1/multi_posts/`<pageId>`
-* **参数**：无
+* **参数**：
+    * weixinAppid 微信Appid
+    
 * **说明**: 用于图文编辑页面，一次性获取多图文所有图文详情的情况
 
 
@@ -158,8 +163,9 @@
 * **协议**： HTTPS
 * **方法**： DELETE
 * **URL**： /v1/posts/`<pageId>`
-* **参数**： 无
-
+* **参数**：
+    * weixinAppid 微信Appid
+    
 * **返回**：
     * 获取成功时返回:
 
@@ -173,7 +179,9 @@
 * **协议**： HTTPS
 * **方法**： POST
 * **URL**： /v1/post/wx_syncs
-* **参数**： 无
+* **参数**：
+    * weixinAppid 微信Appid
+    
 
 * **返回**：
     * 获取成功时返回:
@@ -188,7 +196,9 @@
 * **协议**： HTTPS
 * **方法**： POST
 * **URL**： /v1/posts/`<pageId>`/kz_syncs
-* **参数**： 无
+* **参数**：
+    * weixinAppid 微信Appid
+    
 
 * **返回**：
     * 获取成功时返回:

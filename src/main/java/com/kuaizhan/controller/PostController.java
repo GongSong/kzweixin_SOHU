@@ -8,10 +8,7 @@ import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.pojo.VO.PostListVO;
 import com.kuaizhan.pojo.VO.PostVO;
 import com.kuaizhan.service.PostService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -22,7 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = ApplicationConfig.VERSION, produces = "application/json")
-public class PostController extends BaseController{
+public class PostController extends BaseController {
 
     @Resource
     PostService postService;
@@ -73,5 +70,38 @@ public class PostController extends BaseController{
             }
         }
         return new JsonResponse(postListVO);
+    }
+
+    @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.GET)
+    public JsonResponse getPost(@RequestParam long weixinAppid,@PathVariable long pageId) {
+        return new JsonResponse(null);
+    }
+
+    @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
+    public JsonResponse getMultiPost(@RequestParam long weixinAppid,@PathVariable long pageId) {
+        return new JsonResponse(null);
+    }
+
+    @RequestMapping(value = "/posts", method = RequestMethod.POST)
+    public JsonResponse insertPost(@RequestParam long weixinAppid) {
+        return new JsonResponse(null);
+    }
+
+    @RequestMapping(value = "/posts", method = RequestMethod.PUT)
+    public JsonResponse updatePost(@RequestParam long weixinAppid) {
+        return new JsonResponse(null);
+    }
+    @RequestMapping(value = "/posts", method = RequestMethod.DELETE)
+    public JsonResponse deletePost(@RequestParam long weixinAppid) {
+        return new JsonResponse(null);
+    }
+    @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
+    public JsonResponse wxSyncsPost(@RequestParam long weixinAppid) {
+        return new JsonResponse(null);
+    }
+
+    @RequestMapping(value = "/posts/kz_syncs", method = RequestMethod.POST)
+    public JsonResponse kzSyncsPost(@RequestParam long weixinAppid) {
+        return new JsonResponse(null);
     }
 }
