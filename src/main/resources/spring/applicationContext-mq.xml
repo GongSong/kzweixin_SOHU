@@ -1,58 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+           http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
     <!-- MQ server 连接配置 -->
-    <bean id="connectionFactory" class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory">
-        <constructor-arg index="0" value="${rabbit.host}" />
-        <constructor-arg index="1" value="${rabbit.port}" />
-        <property name="username" value="${rabbit.username}" />
-        <property name="password" value="${rabbit.password}" />
-    </bean>
-
-    <!--rabbitAdmin-->
-    <bean id="rabbitAdmin" class="org.springframework.amqp.rabbit.core.RabbitAdmin">
-        <constructor-arg ref="connectionFactory" />
-    </bean>
-
-    <!-- Exchange的声明 -->
-    <bean id="directExchange" class="org.springframework.amqp.core.DirectExchange" >
-        <constructor-arg name="name" value="${rabbit.exchange}" />
-    </bean>
-
-    <!-- 发布消息需要的rabbitTemplate配置 -->
-    <bean id="rabbitTemplate" class="org.springframework.amqp.rabbit.core.RabbitTemplate">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="exchange" value="${rabbit.exchange}" />
-    </bean>
-
+    <rabbit:connection-factory id="connectionFactory"
+                               host="${rabbit.host}" port="${rabbit.port}" virtual-host="${rabbit.vhost}"
+                               username="${rabbit.username}" password="${rabbit.password}" />
+    <rabbit:admin connection-factory="connectionFactory" />
 
     <!-- #################### queue的声明 ###################### -->
     <!--从快站导入文章的queue-->
-    <bean id="queueImportKuaizhanPost" class="org.springframework.amqp.core.Queue" >
-        <constructor-arg name="name" value="sys-weixin-import-kuaizhan-post" />
-    </bean>
+    <rabbit:queue id="queueTest" name="sys-weixin-test" durable="true" auto-delete="false" />
+    <rabbit:queue id="queueImportKuaizhanPost" name="sys-weixin-import-kuaizhan-post" durable="true" auto-delete="false" />
 
-    <!--queue和exchange的绑定，默认以queue的名字作为routing_key -->
-    <bean id="importKuaizhanPostBindingProxy" class="com.kuaizhan.common.BindingProxy">
-        <property name="exchange" ref="directExchange" />
-        <property name="queue" ref="queueImportKuaizhanPost" />
-    </bean>
-    <bean id="BindingimportKuaizhanPost" factory-bean="importKuaizhanPostBindingProxy" factory-method="getBinding" ></bean>
+    <!-- Exchange的声明 -->
+    <rabbit:direct-exchange id="directExchange" name="${rabbit.exchange}" durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="queueImportKuaizhanPost" key="sys-weixin-import-kuaizhan-post"/>
+            <rabbit:binding queue="queueTest" key="sys-weixin-test"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
 
-
-    <!--######################### 消费者相关配置 ##########################-->
-    <bean id="messageReceiver" class="com.kuaizhan.mq.ConsumerExample"></bean>
-    <!-- message listener adapter -->
-    <bean id="messageListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
-        <constructor-arg name="delegate" ref="messageReceiver" />
-    </bean>
-    <!-- message listener adapter Container -->
-    <bean id="simpleMessageListenerContainer2" class="org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer" >
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="messageListener" ref="messageListenerAdapter" />
-        <property name="queueNames" value="sys-weixin-import-kuaizhan-post" />
-    </bean>
+    <rabbit:template id="rabbitTemplate" connection-factory="connectionFactory" exchange="${rabbit.exchange}"/>
 
 </beans>
