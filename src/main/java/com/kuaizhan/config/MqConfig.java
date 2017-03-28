@@ -7,4 +7,5 @@ package com.kuaizhan.config;
  */
 public class MqConfig {
     public static final String IMPORT_KUAIZHAN_POST = "sys-weixin-import-kuaizhan-post";
+    public static final String TEST = "sys-weixin-test";
 }
