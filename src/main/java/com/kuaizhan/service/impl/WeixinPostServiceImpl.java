@@ -20,7 +20,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     public void deletePost(String mediaId, String accessToken) throws MaterialDeleteException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("media_id", mediaId);
-        String result = HttpClientUtil.postJson(ApiConfig.deleteMaterialUrl(accessToken), mediaId);
+        String result = HttpClientUtil.postJson(ApiConfig.deleteMaterialUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.getInt("errcode") != 0) {
             throw new MaterialDeleteException();

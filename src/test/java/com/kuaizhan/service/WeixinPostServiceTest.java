@@ -19,8 +19,9 @@ import static org.junit.Assert.*;
 public class WeixinPostServiceTest {
 
     @Resource
-    PostService postService;
-
+    WeixinPostService weixinPostService;
+    @Resource
+    AccountService accountService;
     @Before
     public void setUp() throws Exception {
 
@@ -33,12 +34,8 @@ public class WeixinPostServiceTest {
 
     @Test
     public void deletePost() throws Exception {
-
+        weixinPostService.deletePost("33l4-QjvaEM2tuPBQiDIvm0i4TD3gMbJyg75kvsFaxg",accountService.getAccountByWeixinAppId(601145633L).getAccessToken());
     }
 
-    @Test
-    public void getPostByPageId() throws Exception {
-        System.out.println("----->"+postService.getPostByPageId(1013250615L));
-    }
 
 }
