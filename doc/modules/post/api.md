@@ -105,7 +105,7 @@
     ```
        [
         {
-         "meidiaId": "Mf3vdzdf3f", // 图文在微信的mediaId
+         "mediaId": "Mf3vdzdf3f", // 图文在微信的mediaId
          "title": "我的买房故事",
          "author": "马德华",
          "digest": "我的买房故事",
@@ -138,7 +138,7 @@
     ```
        [
         {
-         "meidiaId": "Mf3vdzdf3f", // 图文在微信的mediaId
+         "mediaId": "Mf3vdzdf3f", // 图文在微信的mediaId
          "title": "我的买房故事",
          "author": "马德华",
          "digest": "我的买房故事",

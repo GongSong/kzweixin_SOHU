@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "post list",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "integer",
+      "minimum": 200,
+      "maximum": 200
+    },
+    "msg": {
+      "type": "string",
+      "pattern": "ok"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "totalNum": {
+          "type": "integer"
+        },
+        "currentPage": {
+          "type": "integer"
+        },
+        "totalPage": {
+          "type": "integer"
+        },
+        "posts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pageId": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "thumbUrl": {
+                "type": "string",
+                "format": "url"
+              },
+              "updateTime": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
