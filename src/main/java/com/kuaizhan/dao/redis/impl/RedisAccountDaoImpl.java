@@ -17,9 +17,10 @@ import java.io.IOException;
 @Repository("redisAccountDao")
 public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccountDao {
 
+
     @Override
-    public AccountDO getAccountInfo(long siteId) throws IOException {
-        String key = ApplicationConfig.KEY_ACCOUNT_INFO + siteId;
+    public AccountDO getAccountInfoByWeixinAppId(long weixinAppId) throws IOException {
+        String key = ApplicationConfig.KEY_ACCOUNT_INFO + weixinAppId;
         String result = getData(key);
         if (result == null) {
             return null;
@@ -31,13 +32,13 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
 
     @Override
     public void setAccountInfo(AccountDO account) throws JsonProcessingException {
-        String key = ApplicationConfig.KEY_ACCOUNT_INFO + account.getSiteId();
+        String key = ApplicationConfig.KEY_ACCOUNT_INFO + account.getWeixinAppId();
         String str = JsonUtil.bean2String(account);
         setData(key, str, 7000);
     }
 
     @Override
-    public void deleteAccountInfo(long siteId) {
-        deleteData(ApplicationConfig.KEY_ACCOUNT_INFO + siteId);
+    public void deleteAccountInfo(long weixinAppId) {
+        deleteData(ApplicationConfig.KEY_ACCOUNT_INFO + weixinAppId);
     }
 }

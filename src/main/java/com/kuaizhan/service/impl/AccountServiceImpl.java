@@ -80,18 +80,37 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
+        try {
+            return accountDao.getAccountBySiteId(siteId);
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public AccountDO getAccountByAppId(String appId) throws DaoException {
+        try {
+            AccountDO account = accountDao.getAccountByAppId(appId);
+            return getAccountBySiteId(account.getSiteId());
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public AccountDO getAccountByWeixinAppId(long appId) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
         //TODO：高并发场景下access_token失效 锁
         AccountDO accountDO;
         //从缓存拿
         try {
-            accountDO = redisAccountDao.getAccountInfo(siteId);
+            accountDO = redisAccountDao.getAccountInfoByWeixinAppId(appId);
         } catch (Exception e) {
             throw new RedisException(e);
         }
         if (accountDO == null) {
             //从数据库拿
             try {
-                accountDO = accountDao.getAccountBySiteId(siteId);
+                accountDO = accountDao.getAccountByWeixinAppId(appId);
             } catch (Exception e) {
                 throw new DaoException(e);
             }
@@ -105,7 +124,7 @@ public class AccountServiceImpl implements AccountService {
                 accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
                 accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
                 try {
-                    accountDao.updateAccountBySiteId(accountDO);
+                    accountDao.updateAccountByWeixinAppId(accountDO);
                 } catch (Exception e) {
                     throw new DaoException(e);
                 }
@@ -119,16 +138,6 @@ public class AccountServiceImpl implements AccountService {
             }
         }
         return accountDO;
-    }
-
-    @Override
-    public AccountDO getAccountByAppId(String appId) throws DaoException {
-        try {
-            AccountDO account = accountDao.getAccountByAppId(appId);
-            return getAccountBySiteId(account.getSiteId());
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
     }
 
     @Override
