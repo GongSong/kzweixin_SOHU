@@ -251,4 +251,13 @@ public class ApiConfig {
     public static String sendByOpenIdUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_SEND_BY_OPENID + accessToken;
     }
+
+    //图文
+
+    //删除图文
+    private static final String WEIXIN_DELETE_MATERIAL="/cgi-bin/material/del_material?access_token=";
+
+    public static String deleteMaterialUrl(String accessToken){
+        return DOMAIN_WEIXIN_API + WEIXIN_DELETE_MATERIAL + accessToken;
+    }
 }

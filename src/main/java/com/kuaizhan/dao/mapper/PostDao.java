@@ -14,6 +14,7 @@ public interface PostDao {
 
     /**
      * 查询图文消息总数
+     *
      * @param weixinAppid 微信appid
      * @return
      */
@@ -21,6 +22,7 @@ public interface PostDao {
 
     /**
      * 查询图文消息列表
+     *
      * @param weixinAppid 微信appid
      * @param page
      * @return
@@ -29,9 +31,25 @@ public interface PostDao {
 
     /**
      * 获取图文消息的多图文
+     *
      * @param mediaId 图文消息的mediaId
      * @return
      */
     List<PostDO> listMultiPosts(String mediaId);
+
+    /**
+     * 根据mediaId删除图文
+     *
+     * @param mediaId
+     * @return
+     */
+    int deletePost(String mediaId);
+
+    /**
+     * 根据pageId获取图文
+     * @param pageId
+     * @return
+     */
+    PostDO getPost(long pageId);
 }
 

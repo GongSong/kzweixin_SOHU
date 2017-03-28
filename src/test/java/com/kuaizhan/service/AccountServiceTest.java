@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 public class AccountServiceTest {
 
 
+
     @Resource
     AccountService accountService;
     @Resource
@@ -56,4 +57,5 @@ public class AccountServiceTest {
     public void unbindAccount() throws Exception {
 
     }
+
 }

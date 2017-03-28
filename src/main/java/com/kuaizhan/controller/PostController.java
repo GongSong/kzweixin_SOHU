@@ -1,12 +1,18 @@
 package com.kuaizhan.controller;
 
 import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.exception.business.AccountNotExistException;
+import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.JsonParseException;
+import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.pojo.VO.PostListVO;
 import com.kuaizhan.pojo.VO.PostVO;
+import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +29,8 @@ public class PostController extends BaseController {
 
     @Resource
     PostService postService;
-
+    @Resource
+    AccountService accountService;
 
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
     public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page) throws DaoException {
@@ -73,12 +80,12 @@ public class PostController extends BaseController {
     }
 
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.GET)
-    public JsonResponse getPost(@RequestParam long weixinAppid,@PathVariable long pageId) {
+    public JsonResponse getPost(@RequestParam long weixinAppid, @PathVariable long pageId) {
         return new JsonResponse(null);
     }
 
     @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
-    public JsonResponse getMultiPost(@RequestParam long weixinAppid,@PathVariable long pageId) {
+    public JsonResponse getMultiPost(@RequestParam long weixinAppid, @PathVariable long pageId) {
         return new JsonResponse(null);
     }
 
@@ -91,10 +98,14 @@ public class PostController extends BaseController {
     public JsonResponse updatePost(@RequestParam long weixinAppid) {
         return new JsonResponse(null);
     }
-    @RequestMapping(value = "/posts", method = RequestMethod.DELETE)
-    public JsonResponse deletePost(@RequestParam long weixinAppid) {
+
+    @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
+    public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) throws RedisException, DaoException, AccountNotExistException, MaterialDeleteException, JsonParseException {
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
+        postService.deletePost(pageId, accountDO.getAccessToken());
         return new JsonResponse(null);
     }
+
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
     public JsonResponse wxSyncsPost(@RequestParam long weixinAppid) {
         return new JsonResponse(null);

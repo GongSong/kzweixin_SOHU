@@ -51,7 +51,10 @@ public enum ErrorCodeConfig {
 
     TAG_DELETE_FANS_NUMBER_ERROR(104010, "该标签下粉丝数超过10w，不允许直接删除"),
 
-    BLACK_ADD_NUMBER_ERROR(104011, "一次只能拉黑20个用户");
+    BLACK_ADD_NUMBER_ERROR(104011, "一次只能拉黑20个用户"),
+
+    //图文(07)
+    DELETE_MATERIAL_ERROR(107001, "删除图文失败");
 
     private int code;
     private String msg;

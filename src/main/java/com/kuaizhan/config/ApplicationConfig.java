@@ -99,4 +99,6 @@ public class ApplicationConfig {
     public static final String KEY_MSG_LIST = "msg_list:";
     //缓存单个用户消息
     public static final String KEY_MSG_USER = "msg_user:";
+
+
 }

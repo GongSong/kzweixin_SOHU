@@ -1,6 +1,7 @@
 package com.kuaizhan.service;
 
 
+import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.Page;
@@ -30,5 +31,20 @@ public interface PostService {
      * @throws DaoException
      */
     List<PostDO> listMultiPosts(String mediaId) throws DaoException;
+
+    /**
+     * 删除图文
+     *
+     * @param pageId
+     */
+    void deletePost(long pageId,String accessToken) throws DaoException, MaterialDeleteException;
+
+    /**
+     * 获取图文
+     *
+     * @param pageId
+     * @return
+     */
+    PostDO getPostByPageId(long pageId) throws DaoException;
 
 }
