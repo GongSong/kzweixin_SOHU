@@ -34,7 +34,7 @@
         update `weixin_post`
         --   type=3表示多图文消息中的一条
         set `status` = 2
-        where media_id=#{mediaId}
+        where `weixin_appid`=#{weixinAppId} and `media_id`=#{mediaId} and `status` = 1 and `type` in (1,2,3)
     </update>
 
     <select id="getPost" parameterType="long" resultType="com.kuaizhan.pojo.DO.PostDO">

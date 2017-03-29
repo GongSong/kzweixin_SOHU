@@ -43,10 +43,11 @@ public interface PostDao {
      * @param mediaId
      * @return
      */
-    int deletePost(String mediaId);
+    int deletePost(@Param("weixinAppId") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**
      * 根据pageId获取图文
+     *
      * @param pageId
      * @return
      */

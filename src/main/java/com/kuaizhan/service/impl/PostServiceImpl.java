@@ -58,16 +58,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(long pageId,String accessToken) throws DaoException, MaterialDeleteException {
+    public void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException {
 
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             String mediaId = postDO.getMediaId();
             //微信删除
-            weixinPostService.deletePost(mediaId,accessToken);
+            weixinPostService.deletePost(mediaId, accessToken);
             //数据库删除
             try {
-                postDao.deletePost(mediaId);
+                postDao.deletePost(weixinAppid, mediaId);
             } catch (Exception e) {
                 throw new DaoException(e);
             }

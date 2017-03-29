@@ -102,7 +102,7 @@ public class PostController extends BaseController {
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
     public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) throws RedisException, DaoException, AccountNotExistException, MaterialDeleteException, JsonParseException {
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        postService.deletePost(pageId, accountDO.getAccessToken());
+        postService.deletePost(weixinAppid, pageId, accountDO.getAccessToken());
         return new JsonResponse(null);
     }
 

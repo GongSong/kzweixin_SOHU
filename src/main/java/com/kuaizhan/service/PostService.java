@@ -37,7 +37,7 @@ public interface PostService {
      *
      * @param pageId
      */
-    void deletePost(long pageId,String accessToken) throws DaoException, MaterialDeleteException;
+    void deletePost(long weixinAppid,long pageId,String accessToken) throws DaoException, MaterialDeleteException;
 
     /**
      * 获取图文

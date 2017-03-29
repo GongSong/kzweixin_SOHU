@@ -251,10 +251,16 @@ public class ApiConfig {
         return DOMAIN_WEIXIN_API + WEIXIN_SEND_BY_OPENID + accessToken;
     }
 
-    //图文
+    //素材
 
     //新增永久素材
     private static final String WEIXIN_ADD_MATERIAL = "/cgi-bin/material/add_material?access_token=";
+    //删除永久素材
+    private static final String WEIXIN_DELETE_MATERIAL = "/cgi-bin/material/del_material?access_token=";
+    //获取素材总数
+    private static final String WEIXIN_GET_MATERIAL_COUNT = "/cgi-bin/material/get_materialcount?access_token=";
+    //获取素材列表
+    private static final String WEIXIN_GET_MATERIAL = "/cgi-bin/material/batchget_material?access_token=";
 
     /**
      * 新增永久素材
@@ -266,10 +272,30 @@ public class ApiConfig {
         return DOMAIN_WEIXIN_API + WEIXIN_ADD_MATERIAL + accessToken + "&type=" + type;
     }
 
-    //删除图文
-    private static final String WEIXIN_DELETE_MATERIAL = "/cgi-bin/material/del_material?access_token=";
-
+    /**
+     * 删除永久素材
+     * @param accessToken
+     * @return
+     */
     public static String deleteMaterialUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_DELETE_MATERIAL + accessToken;
+    }
+
+    /**
+     * 获取素材总数
+     * @param accessToken
+     * @return
+     */
+    public static String getMaterialCount(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_GET_MATERIAL_COUNT + accessToken;
+    }
+
+    /**
+     * 获取素材列表
+     * @param accessToken
+     * @return
+     */
+    public static String getMaterial(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_GET_MATERIAL + accessToken;
     }
 }
