@@ -281,4 +281,36 @@ public class PostDTO {
             }
         }
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PostItem {
+        @JsonProperty("weixin_appid")
+        long weixinAppid;
+        Item item;
+
+        public PostItem() {
+            super();
+        }
+
+        public PostItem(long weixinAppid, Item item) {
+            this.weixinAppid = weixinAppid;
+            this.item = item;
+        }
+
+        public long getWeixinAppid() {
+            return weixinAppid;
+        }
+
+        public void setWeixinAppid(long weixinAppid) {
+            this.weixinAppid = weixinAppid;
+        }
+
+        public Item getItem() {
+            return item;
+        }
+
+        public void setItem(Item item) {
+            this.item = item;
+        }
+    }
 }
