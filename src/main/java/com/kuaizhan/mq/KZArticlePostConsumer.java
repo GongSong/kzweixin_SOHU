@@ -7,6 +7,7 @@ import java.util.HashMap;
  * Created by liangjiateng on 2017/3/28.
  */
 public class KZArticlePostConsumer implements BaseMqConsumer{
+
     @Override
     public void handleMessage(HashMap msgMap) {
 

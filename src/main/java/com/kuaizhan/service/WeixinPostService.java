@@ -20,6 +20,7 @@ public interface WeixinPostService {
 
     /**
      * 给微信上传图片
+     * 0返回meida_id 1返回url
      * @param accessToken
      * @param imgUrl
      */
