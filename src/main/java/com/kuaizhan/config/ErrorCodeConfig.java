@@ -56,7 +56,9 @@ public enum ErrorCodeConfig {
     //图文(07)
     DELETE_MATERIAL_ERROR(107001, "删除图文失败"),
 
-    ADD_MATERIAL_ERROR(107002, "新增素材失败");
+    ADD_MATERIAL_ERROR(107002, "新增素材失败"),
+
+    GET_MATERIAL_ERROR(107003, "获取图文失败");
 
     private int code;
     private String msg;
