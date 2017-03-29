@@ -1,6 +1,7 @@
 package com.kuaizhan.service;
 
 
+import com.kuaizhan.exception.business.AddMaterialException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
 
 /**
@@ -11,8 +12,16 @@ public interface WeixinPostService {
 
     /**
      * 微信删除图文
+     *
      * @param mediaId
      * @param accessToken
      */
-    void deletePost(String mediaId,String accessToken) throws MaterialDeleteException;
+    void deletePost(String mediaId, String accessToken) throws MaterialDeleteException;
+
+    /**
+     * 给微信上传图片
+     * @param accessToken
+     * @param imgUrl
+     */
+    String[] uploadImage(String accessToken, String imgUrl) throws AddMaterialException;
 }

@@ -36,6 +36,10 @@ public class WeixinPostServiceTest {
     public void deletePost() throws Exception {
         weixinPostService.deletePost("33l4-QjvaEM2tuPBQiDIvm0i4TD3gMbJyg75kvsFaxg",accountService.getAccountByWeixinAppId(601145633L).getAccessToken());
     }
+    @Test
+    public void uploadImage() throws Exception {
+        weixinPostService.uploadImage(accountService.getAccountByWeixinAppId(601145633L).getAccessToken(),"http://192.168.110.218/g1/M00/01/27/CgoYr1YnRIWAUvk9AAAuGB6TobA1781741");
+    }
 
 
 }

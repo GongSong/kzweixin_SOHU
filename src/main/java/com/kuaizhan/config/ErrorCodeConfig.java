@@ -54,7 +54,9 @@ public enum ErrorCodeConfig {
     BLACK_ADD_NUMBER_ERROR(104011, "一次只能拉黑20个用户"),
 
     //图文(07)
-    DELETE_MATERIAL_ERROR(107001, "删除图文失败");
+    DELETE_MATERIAL_ERROR(107001, "删除图文失败"),
+
+    ADD_MATERIAL_ERROR(107002, "新增素材失败");
 
     private int code;
     private String msg;

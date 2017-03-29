@@ -155,7 +155,6 @@ public class ApiConfig {
     private static final String WEIXIN_GET_FAN_INFO = "/cgi-bin/user/info?access_token=";
 
 
-
     /**
      * 获取公众号已创建的标签
      *
@@ -254,10 +253,23 @@ public class ApiConfig {
 
     //图文
 
-    //删除图文
-    private static final String WEIXIN_DELETE_MATERIAL="/cgi-bin/material/del_material?access_token=";
+    //新增永久素材
+    private static final String WEIXIN_ADD_MATERIAL = "/cgi-bin/material/add_material?access_token=";
 
-    public static String deleteMaterialUrl(String accessToken){
+    /**
+     * 新增永久素材
+     * @param accessToken
+     * @param type
+     * @return
+     */
+    public static String addMaterialUrl(String accessToken, String type) {
+        return DOMAIN_WEIXIN_API + WEIXIN_ADD_MATERIAL + accessToken + "&type=" + type;
+    }
+
+    //删除图文
+    private static final String WEIXIN_DELETE_MATERIAL = "/cgi-bin/material/del_material?access_token=";
+
+    public static String deleteMaterialUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_DELETE_MATERIAL + accessToken;
     }
 }

@@ -2,6 +2,7 @@ package com.kuaizhan.service.impl;
 
 
 import com.kuaizhan.config.ApiConfig;
+import com.kuaizhan.exception.business.AddMaterialException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.HttpClientUtil;
@@ -25,5 +26,18 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         if (returnJson.getInt("errcode") != 0) {
             throw new MaterialDeleteException();
         }
+    }
+
+    @Override
+    public String[] uploadImage(String accessToken, String imgUrl) throws AddMaterialException {
+        String result = HttpClientUtil.postMedia(ApiConfig.addMaterialUrl(accessToken, "image"), imgUrl);
+        JSONObject returnJson = new JSONObject(result);
+        if (returnJson.has("errcode")) {
+            throw new AddMaterialException();
+        }
+        String[] str = new String[2];
+        str[0] = returnJson.getString("media_id");
+        str[1] = returnJson.getString("url");
+        return str;
     }
 }
