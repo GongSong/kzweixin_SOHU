@@ -18,6 +18,7 @@ import com.kuaizhan.pojo.VO.PostVO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
+import com.kuaizhan.utils.PojoSwitcher;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,11 +39,13 @@ public class PostController extends BaseController {
     PostService postService;
     @Resource
     AccountService accountService;
+    @Resource
+    PojoSwitcher pojoSwitcher;
+
 
 
     /**
      * 获取多图文列表
-     *
      * @throws DaoException
      */
 
@@ -52,6 +55,7 @@ public class PostController extends BaseController {
         Page<PostDO> postDOPage = postService.listPostsByPagination(weixinAppid, page);
 
         List<PostDO> postDOList = postDOPage.getResult();
+
         PostListVO postListVO = new PostListVO();
 
         if (postDOList != null) {
@@ -61,40 +65,24 @@ public class PostController extends BaseController {
 
             for (PostDO postDO : postDOList) {
 
-                PostVO postVO = new PostVO();
-                postVO.setPageId(postDO.getPageId());
-                postVO.setAuthor(postDO.getAuthor());
-                postVO.setDigest(postDO.getAuthor());
-                postVO.setThumbUrl(postDO.getThumbUrl());
-                postVO.setTitle(postDO.getTitle());
-                postVO.setType(postDO.getType());
-                postVO.setUpdateTime(postDO.getUpdateTime());
-                postListVO.getPosts().add(postVO);
-
-                // 获取图文下面的多图文
-
-
                 // 多图文实体是一个list
-                List<PostVO> multiPostVOList = new ArrayList<>();
+                List<PostVO>  multiPostVOList = new ArrayList<>();
 
                 // 获取图文总记录下面的多图文
-
                 if (postDO.getType() == 2) {
                     List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getMediaId());
-
                     if (multiPostDOList != null) {
                         for (PostDO multiPostDo : multiPostDOList) {
-                            PostVO multiPostVO = new PostVO();
-                            multiPostVO.setPageId(multiPostDo.getPageId());
-                            multiPostVO.setAuthor(multiPostDo.getAuthor());
-                            multiPostVO.setDigest(multiPostDo.getAuthor());
-                            multiPostVO.setThumbUrl(multiPostDo.getThumbUrl());
-                            multiPostVO.setTitle(multiPostDo.getTitle());
-                            multiPostVO.setType(multiPostDo.getType());
-                            multiPostVO.setUpdateTime(multiPostDo.getUpdateTime());
-                            postVO.getMultiPosts().add(multiPostVO);
+                            PostVO multiPostVO = pojoSwitcher.postDOToVO(multiPostDo);
+                            multiPostVOList.add(multiPostVO);
                         }
+                        postListVO.getPosts().add(multiPostVOList);
                     }
+                } else {
+                    PostVO postVO = pojoSwitcher.postDOToVO(postDO);
+
+                    multiPostVOList.add(postVO);
+                    postListVO.getPosts().add(multiPostVOList);
                 }
             }
         }
@@ -102,15 +90,13 @@ public class PostController extends BaseController {
     }
 
 
-
-
     /**
      * 获取单图文详情
-     *
      * @return
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.GET)
     public JsonResponse getPost(@PathVariable long pageId) throws DaoException, MongoException {
+
 
         PostDO postDO = postService.getPostByPageId(pageId);
         PostVO postVO = pojoSwitcher.postDOToVO(postDO);
@@ -120,7 +106,6 @@ public class PostController extends BaseController {
 
     /**
      * 获取多图文详情
-     *
      * @return
      */
     @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
@@ -132,7 +117,9 @@ public class PostController extends BaseController {
             // 如果图文type为3（多图文中的一条），根据mediaId找出多图文
             if (postDO.getType() == 3) {
                 List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getMediaId());
-                for (PostDO multipostDO : multiPostDOList) {
+
+                for (PostDO multipostDO: multiPostDOList) {
+
                     multiPostVOList.add(pojoSwitcher.postDOToVO(multipostDO));
                 }
             } else {
@@ -196,7 +183,7 @@ public class PostController extends BaseController {
      * @throws IOException
      */
     @RequestMapping(value = "/posts/kz_syncs", method = RequestMethod.POST)
-    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
+    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData",path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
         JSONObject jsonObject = new JSONObject(postData);
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         postService.importKzArticle(weixinAppid, pageIds);

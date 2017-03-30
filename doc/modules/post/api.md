@@ -36,8 +36,7 @@
 * **协议**： HTTPS
 * **方法**： GET
 * **URL**： /v1/posts/`<pageId>`
-* **参数**：
-    * weixinAppid 微信Appid
+* **参数**：无
 
         
 * **说明**：用于预览页面获取单个图文详情
@@ -146,7 +145,8 @@
          "thumbMediaId": "fdevae3vdar3fa", // 封面图片在微信的media_id
          "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
          "contentSourceUrl": "www.sohu.com",  // 原文链接
-         "updateTime": 1463542009
+         "updateTime": 1463542009,
+         "kuaizhanPostId":1240584810
         }
        ]
     ```

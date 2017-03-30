@@ -23,6 +23,7 @@ import com.kuaizhan.utils.MqUtil;
 import com.kuaizhan.utils.IdGeneratorUtil;
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
 import com.vdurmont.emoji.EmojiParser;
+import javafx.geometry.Pos;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -62,8 +63,7 @@ public class PostServiceImpl implements PostService {
 
         try {
             List<PostDO> posts = postDao.listPostsByPagination(weixinAppid, postDOPage);
-<<<<<<< Updated upstream
-=======
+
             // 从Mongo中取content
             for (PostDO postDO : posts) {
                 MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
@@ -71,7 +71,7 @@ public class PostServiceImpl implements PostService {
                 String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
                 postDO.setContent(content);
             }
->>>>>>> Stashed changes
+
             postDOPage.setResult(posts);
 
             long totalCount = postDao.count(weixinAppid);
@@ -90,8 +90,7 @@ public class PostServiceImpl implements PostService {
         List<PostDO> multiPosts;
         try {
             multiPosts = postDao.listMultiPosts(mediaId);
-<<<<<<< Updated upstream
-=======
+
             // 从Mongo中取content
             for (PostDO postDO : multiPosts) {
                 MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
@@ -99,7 +98,7 @@ public class PostServiceImpl implements PostService {
                 String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
                 postDO.setContent(content);
             }
->>>>>>> Stashed changes
+
         } catch (Exception e) {
             throw new DaoException(e);
         }
@@ -127,11 +126,8 @@ public class PostServiceImpl implements PostService {
     public PostDO getPostByPageId(long pageId) throws DaoException, MongoException {
         PostDO postDO;
         try {
-<<<<<<< Updated upstream
-            return postDao.getPost(pageId);
-=======
+
             postDO = postDao.getPost(pageId);
->>>>>>> Stashed changes
         } catch (Exception e) {
             throw new DaoException(e);
         }
@@ -171,8 +167,8 @@ public class PostServiceImpl implements PostService {
         mqUtil.publish(MqConfig.IMPORT_KUAIZHAN_POST, param);
     }
 
-<<<<<<< Updated upstream
-=======
+
+
     @Override
     public void export2KzArticle(long weixinAppid, long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {
         //TODO:快文那边是否有去重判断？
@@ -196,7 +192,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
->>>>>>> Stashed changes
     public void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception {
 
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
