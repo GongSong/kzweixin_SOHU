@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -282,6 +283,17 @@ public class PostDTO {
         }
     }
 
+    public List<PostItem> toPostItemList(long weixinAppid) {
+        List<PostItem> postItemList = new LinkedList<>();
+        for (Item item: items) {
+            PostItem postItem = new PostItem();
+            postItem.setWeixinAppid(weixinAppid);
+            postItem.setItem(item);
+            postItemList.add(postItem);
+        }
+        return postItemList;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PostItem {
         @JsonProperty("weixin_appid")
@@ -311,6 +323,13 @@ public class PostDTO {
 
         public void setItem(Item item) {
             this.item = item;
+        }
+
+        public String toString() {
+            return "PostItem{" +
+                    "weixinAppid=" + weixinAppid +
+                    ", item=" + item.toString() +
+                    "}";
         }
     }
 }
