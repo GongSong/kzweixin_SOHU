@@ -30,6 +30,14 @@ public interface PostDao {
     List<PostDO> listPostsByPagination(@Param("weixinAppid") long weixinAppid, @Param("title") String title, @Param("pageEntity") Page page);
 
     /**
+     * 查询所有图文消息接口
+     *
+     * @param weixinAppid
+     * @return
+     */
+    List<PostDO> listPostsByWeixinAppid(long weixinAppid);
+
+    /**
      * 获取图文消息的多图文
      *
      * @param mediaId 图文消息的mediaId

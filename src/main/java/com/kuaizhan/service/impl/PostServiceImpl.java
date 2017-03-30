@@ -23,7 +23,6 @@ import com.kuaizhan.utils.MqUtil;
 import com.kuaizhan.utils.IdGeneratorUtil;
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
 import com.vdurmont.emoji.EmojiParser;
-import javafx.geometry.Pos;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -137,7 +136,6 @@ public class PostServiceImpl implements PostService {
                 MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
                 String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
                 postDO.setContent(content);
-
             } catch (Exception e) {
                 throw new MongoException(e);
             }
@@ -435,5 +433,20 @@ public class PostServiceImpl implements PostService {
 
         // TODO: 对中转链接的替换； 校验上传成功的微信图片，肯定是小于1M的。
         return content;
+    }
+
+    /**
+     * 根据weixinAppid获取所有微信图文
+     * @param weixinAppid
+     * @return
+     * @throws DaoException
+     */
+    @Override
+    public List<PostDO> listPostsByWeixinAppid(long weixinAppid) throws DaoException {
+        try {
+            return postDao.listPostsByWeixinAppid(weixinAppid);
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
     }
 }
