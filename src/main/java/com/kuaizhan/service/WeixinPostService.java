@@ -60,4 +60,12 @@ public interface WeixinPostService {
      * @throws MaterialGetException
      */
     PostDTO listPostsByOffset(String accessToken, int offset, int count) throws MaterialGetException;
+
+    /**
+     * 获取所有微信图文消息
+     * @param accessToken
+     * @return
+     * @throws MaterialGetException
+     */
+    List<PostDTO> listAllPosts(String accessToken) throws MaterialGetException;
 }
