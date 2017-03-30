@@ -2,9 +2,10 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.exception.business.AddMaterialException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
-
+import com.kuaizhan.exception.business.MaterialGetException;
 import com.kuaizhan.exception.business.UploadPostsException;
 import com.kuaizhan.pojo.DO.PostDO;
+import com.kuaizhan.pojo.DTO.PostDTO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,4 +51,13 @@ public interface WeixinPostService {
      */
     void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException;
 
+    /**
+     * 根据偏移获取微信图文列表
+     * @param accessToken
+     * @param offset
+     * @param count
+     * @return
+     * @throws MaterialGetException
+     */
+    PostDTO listPostsByOffset(String accessToken, int offset, int count) throws MaterialGetException;
 }
