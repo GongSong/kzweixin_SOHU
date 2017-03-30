@@ -5,16 +5,9 @@ package com.kuaizhan.pojo.DO;
  * Created by zixiong on 2017/3/29.
  */
 public class MongoPostDo {
-    Long pageId;
-    String content;
 
-    public Long getPageId() {
-        return pageId;
-    }
-
-    public void setPageId(Long pageId) {
-        this.pageId = pageId;
-    }
+    private Long id;
+    private String content;
 
     public String getContent() {
         return content;
@@ -22,5 +15,13 @@ public class MongoPostDo {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
