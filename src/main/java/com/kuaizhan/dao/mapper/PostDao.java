@@ -71,7 +71,7 @@ public interface PostDao {
      */
     void updatePost(@Param("post") PostDO post, @Param("pageId") long pageId);
 
-    /*
+    /**
      * 根据weixinAppid获取mediaId列表
      * @param weixinAppid
      * @return
