@@ -36,6 +36,15 @@
         where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
     </select>
 
+    <!--根据weixin_appid查询所有图文消息mediaId列表-->
+    <select id="listMediaIdsByWeixinAppid" parameterType="Long"
+            resultType="String">
+        select media_id
+        from weixin_post
+        --       status=1表示未删除；type in (1,2)只查询单图文和多图文总记录
+        where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+    </select>
+
     <!--根据mediaId查询多图文-->
     <select id="listMultiPosts" parameterType="String" resultType="com.kuaizhan.pojo.DO.PostDO">
         select *

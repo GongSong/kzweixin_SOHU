@@ -70,5 +70,12 @@ public interface PostDao {
      * 修改单个图文
      */
     void updatePost(@Param("post") PostDO post, @Param("pageId") long pageId);
+
+    /*
+     * 根据weixinAppid获取mediaId列表
+     * @param weixinAppid
+     * @return
+     */
+    List<String> listMediaIdsByWeixinAppid(long weixinAppid);
 }
 
