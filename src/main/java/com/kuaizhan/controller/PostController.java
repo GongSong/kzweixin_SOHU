@@ -116,7 +116,7 @@ public class PostController extends BaseController {
     }
 
     @RequestMapping(value = "/posts/kz_syncs", method = RequestMethod.POST)
-    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
+    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData",path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
         JSONObject jsonObject = new JSONObject(postData);
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         postService.importKzArticle(weixinAppid, pageIds);

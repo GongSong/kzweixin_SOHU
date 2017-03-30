@@ -129,6 +129,7 @@ public class PostServiceImpl implements PostService {
         HashMap<String, Object> param = new HashMap<>();
         param.put("weixinAppid", weixinAppid);
         param.put("pageIds", pageIds);
+
         mqUtil.publish(MqConfig.IMPORT_KUAIZHAN_POST, param);
     }
 

@@ -8,8 +8,9 @@
       "items": {
         "type": "integer"
       }
-    },
-    "required":["pageIds"],
-    "additionalProperties":false
-  }
+    }
+  },
+  "required":["pageIds"],
+  "additionalProperties":false
 }
+

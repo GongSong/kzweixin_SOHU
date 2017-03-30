@@ -7,5 +7,5 @@ package com.kuaizhan.config;
  */
 public class MqConfig {
     //从快站文章导入
-    public static final String IMPORT_KUAIZHAN_POST = "sys-weixin-import-kuaizhan-post";
+    public static final String IMPORT_KUAIZHAN_POST = "sys-kzweixin-import-kuaizhan-post";
 }

@@ -15,7 +15,7 @@ public class ArticleDTO {
     private Long siteId;
     @JsonProperty("page_url")
     private String pageUrl;
-
+    @JsonProperty("pic_url")
     private String coverUrl;
 
     private String title;
