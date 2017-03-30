@@ -1,11 +1,12 @@
 package com.kuaizhan.service;
 
 
+import com.kuaizhan.exception.business.AddMaterialException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
+import com.kuaizhan.exception.business.UploadPostsException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.Page;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -47,4 +48,10 @@ public interface PostService {
      */
     PostDO getPostByPageId(long pageId) throws DaoException;
 
+
+    /**
+     * 新增一条多图文消息，并同步到微信服务器
+     * @param posts 新增的post数据列表
+     */
+    void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception;
 }
