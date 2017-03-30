@@ -262,11 +262,16 @@ public class ApiConfig {
     //获取素材列表
     private static final String WEIXIN_GET_MATERIAL = "/cgi-bin/material/batchget_material?access_token=";
 
+    // 图文
+    // 上传多图文
+    private static  final String WEIXIN_CREATE_POSTS = "/cgi-bin/material/add_news?access_token=";
+
+    // 上传图文中的图片素材
+    public static final String WEIXIN_ADD_POST_IMAGE = "/cgi-bin/media/uploadimg?access_token=";
+
+
     /**
      * 新增永久素材
-     * @param accessToken
-     * @param type
-     * @return
      */
     public static String addMaterialUrl(String accessToken, String type) {
         return DOMAIN_WEIXIN_API + WEIXIN_ADD_MATERIAL + accessToken + "&type=" + type;
@@ -297,5 +302,13 @@ public class ApiConfig {
      */
     public static String getMaterial(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_GET_MATERIAL + accessToken;
+    }
+
+    public static String getCreatePostsUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_CREATE_POSTS + accessToken;
+    }
+
+    public static String getAddPostImageUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_ADD_POST_IMAGE + accessToken;
     }
 }

@@ -1,9 +1,7 @@
 package com.kuaizhan.dao.mongo;
 
 
-import com.kuaizhan.pojo.DO.ArticleDO;
-
-import java.util.List;
+import com.kuaizhan.pojo.DO.MongoPostDo;
 
 /**
  * 文章mongo数据接口
@@ -11,17 +9,27 @@ import java.util.List;
  */
 public interface MongoPostDao {
 
-    //TODO:Mongo使用样例 随后删除
 
-    ArticleDO getArticleById(long id);
+    /**
+     * 根据articleId获取post content
+     * @param articleId
+     * @return
+     */
+    MongoPostDo getPostById(long articleId);
 
-    void updateArticle(ArticleDO articleDO);
+    /**
+     * 更新post
+     */
+    void updatePost(MongoPostDo postDo);
 
-    void deleteArticle(long id);
+    /**
+     * 删除post content
+     * @param articleId
+     */
+    void deletePost(long articleId);
 
-    void insertArticle(ArticleDO articleDO);
-
-    List<ArticleDO> listArticlesByTitleAndContent(String title,String content);
-
-    List<ArticleDO> listArticles();
+    /**
+     * 新增post content
+     */
+    long insertPost(String content);
 }
