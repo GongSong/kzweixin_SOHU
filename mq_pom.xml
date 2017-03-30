@@ -123,6 +123,12 @@
             <artifactId>json</artifactId>
             <version>${json.version}</version>
         </dependency>
+        <!--emoji处理-->
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>emoji-java</artifactId>
+            <version>3.2.0</version>
+        </dependency>
         <!-- httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

@@ -11,11 +11,12 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ArticleDTO {
+
     @JsonProperty("site_id")
     private Long siteId;
     @JsonProperty("page_url")
     private String pageUrl;
-
+    @JsonProperty("pic_url")
     private String coverUrl;
 
     private String title;

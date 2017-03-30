@@ -24,6 +24,7 @@ import java.util.List;
 @ContextConfiguration(locations = "classpath:spring/*.xml")
 public class PostServiceTest {
 
+
     @Resource
     PostService postService;
 
@@ -70,6 +71,11 @@ public class PostServiceTest {
 
     @After
     public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void export2KzArticle() throws Exception {
+        postService.export2KzArticle(601145633L,1136830965,123,123456L);
     }
 
     @Test

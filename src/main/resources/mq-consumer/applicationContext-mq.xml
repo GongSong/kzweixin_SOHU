@@ -18,7 +18,7 @@
     </bean>
 
     <rabbit:listener-container connection-factory="connectionFactory" >
-        <rabbit:listener ref="messageListenerAdapter" queue-names="sys-weixin-import-kuaizhan-post" />
+        <rabbit:listener ref="messageListenerAdapter" queue-names="sys-kzweixin-import-kuaizhan-post" />
     </rabbit:listener-container>
 
 </beans>

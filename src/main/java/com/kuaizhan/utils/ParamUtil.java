@@ -26,8 +26,10 @@ public class ParamUtil {
             JsonNode json = JsonLoader.fromString(postData);
             JsonSchema schema = factory.getJsonSchema(jsonSchema);
             ProcessingReport processingReport = schema.validate(json);
-            if (!processingReport.isSuccess())
+            if (!processingReport.isSuccess()){
                 throw new ParamException();
+            }
+
         } catch (Exception e) {
             throw new ParamException();
         }

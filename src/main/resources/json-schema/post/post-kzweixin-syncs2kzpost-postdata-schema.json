@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "account info",
+  "type": "object",
+  "properties": {
+    "siteId": {
+      "type": "integer"
+    },
+    "pageId": {
+      "type": "integer"
+    },
+    "categoryId": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "siteId",
+    "pageId",
+    "categoryId"
+  ],
+  "additionalProperties": false
+}

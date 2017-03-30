@@ -1,10 +1,10 @@
 package com.kuaizhan.service;
 
 
-import com.kuaizhan.exception.business.AddMaterialException;
+import com.kuaizhan.exception.business.KZPostAddException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
-import com.kuaizhan.exception.business.UploadPostsException;
 import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
@@ -42,7 +42,7 @@ public interface PostService {
      *
      * @param pageId
      */
-    void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException;
+    void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException;
 
     /**
      * 获取图文
@@ -50,7 +50,7 @@ public interface PostService {
      * @param pageId
      * @return
      */
-    PostDO getPostByPageId(long pageId) throws DaoException;
+    PostDO getPostByPageId(long pageId) throws DaoException, MongoException;
 
 
     /**
@@ -69,10 +69,16 @@ public interface PostService {
      */
     void importKzArticle(long weixinAppid, List<Long> pageIds);
 
-
+    /**
+     * 快站微信文章导入快站文章
+     *
+     * @param weixinAppid
+     */
+    void export2KzArticle(long weixinAppid,long pageId,long categoryId,long siteId) throws DaoException, KZPostAddException, MongoException;
 
     /**
      * 新增一条多图文消息，并同步到微信服务器
+     *
      * @param posts 新增的post数据列表
      */
     void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception;

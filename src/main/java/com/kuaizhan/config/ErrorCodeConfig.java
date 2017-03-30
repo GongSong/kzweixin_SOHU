@@ -60,7 +60,9 @@ public enum ErrorCodeConfig {
 
     GET_MATERIAL_ERROR(107003, "获取图文失败"),
 
-    UPLOAD_POSTS_ERROR(107004, "上传微信多图文失败");
+    UPLOAD_POSTS_ERROR(107004, "上传微信多图文失败"),
+
+    ADD_KZ_POST_ERROR(107005, "同步快站文章失败");
 
     private int code;
     private String msg;

@@ -4,9 +4,11 @@ import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.MqConfig;
 import com.kuaizhan.dao.mapper.PostDao;
+import com.kuaizhan.exception.business.KZPostAddException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.system.DaoException;
+import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.MongoPostDo;
 import com.kuaizhan.pojo.DO.PostDO;
@@ -60,6 +62,16 @@ public class PostServiceImpl implements PostService {
 
         try {
             List<PostDO> posts = postDao.listPostsByPagination(weixinAppid, postDOPage);
+<<<<<<< Updated upstream
+=======
+            // 从Mongo中取content
+            for (PostDO postDO : posts) {
+                MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
+                // 多图文总记录没有content
+                String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
+                postDO.setContent(content);
+            }
+>>>>>>> Stashed changes
             postDOPage.setResult(posts);
 
             long totalCount = postDao.count(weixinAppid);
@@ -76,9 +88,18 @@ public class PostServiceImpl implements PostService {
     public List<PostDO> listMultiPosts(String mediaId) throws DaoException {
 
         List<PostDO> multiPosts;
-
         try {
             multiPosts = postDao.listMultiPosts(mediaId);
+<<<<<<< Updated upstream
+=======
+            // 从Mongo中取content
+            for (PostDO postDO : multiPosts) {
+                MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
+                // 多图文总记录没有content
+                String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
+                postDO.setContent(content);
+            }
+>>>>>>> Stashed changes
         } catch (Exception e) {
             throw new DaoException(e);
         }
@@ -86,7 +107,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException {
+    public void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException {
 
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
@@ -103,15 +124,32 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDO getPostByPageId(long pageId) throws DaoException {
+    public PostDO getPostByPageId(long pageId) throws DaoException, MongoException {
+        PostDO postDO;
         try {
+<<<<<<< Updated upstream
             return postDao.getPost(pageId);
+=======
+            postDO = postDao.getPost(pageId);
+>>>>>>> Stashed changes
         } catch (Exception e) {
             throw new DaoException(e);
         }
 
-    }
+        if (postDO != null) {
+            // 获取content
+            try {
+                MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
+                String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
+                postDO.setContent(content);
 
+            } catch (Exception e) {
+                throw new MongoException(e);
+            }
+        }
+
+        return postDO;
+    }
 
     @Override
     public ArticleDTO getKzArticle(long pageId) throws IOException {
@@ -129,9 +167,36 @@ public class PostServiceImpl implements PostService {
         HashMap<String, Object> param = new HashMap<>();
         param.put("weixinAppid", weixinAppid);
         param.put("pageIds", pageIds);
+
         mqUtil.publish(MqConfig.IMPORT_KUAIZHAN_POST, param);
     }
 
+<<<<<<< Updated upstream
+=======
+    @Override
+    public void export2KzArticle(long weixinAppid, long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {
+        //TODO:快文那边是否有去重判断？
+        PostDO postDO = getPostByPageId(pageId);
+        if (postDO != null) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("site_id", siteId);
+            jsonObject.put("post_category_id", categoryId);
+            jsonObject.put("post_title", postDO.getTitle());
+            jsonObject.put("post_desc", postDO.getDigest());
+            jsonObject.put("pic_url", postDO.getThumbUrl());
+            jsonObject.put("post_content", postDO.getContent());
+            String ret = HttpClientUtil.postJson(ApiConfig.kzPostArticleUrl(), jsonObject.toString());
+            JSONObject returnJson = new JSONObject(ret);
+            if (returnJson.getInt("ret") != 0) {
+                throw new KZPostAddException();
+            }
+        } else {
+            throw new KZPostAddException();
+        }
+    }
+
+    @Override
+>>>>>>> Stashed changes
     public void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception {
 
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
@@ -162,7 +227,7 @@ public class PostServiceImpl implements PostService {
         // 对内容中的图片进一步处理
         // 封装上传微信的PostDO list
         List<PostDO> wxPosts = new ArrayList<>();
-        for (PostDO postDO: posts) {
+        for (PostDO postDO : posts) {
             PostDO wxPost = new PostDO();
             wxPost.setTitle(postDO.getTitle());
             wxPost.setThumbMediaId(postDO.getThumbMediaId());
@@ -180,9 +245,9 @@ public class PostServiceImpl implements PostService {
 
         // 上传到数据库
         // 1. 单图文 2. 多图文总记录 3. 多图文中的一条
-        short type = (short) (posts.size() > 1? 3 : 1);
+        short type = (short) (posts.size() > 1 ? 3 : 1);
         int index = 0;
-        for (PostDO postDO: posts){
+        for (PostDO postDO : posts) {
             // 先把content保存到mongo
             long pageId = IdGeneratorUtil.getID();
             MongoPostDo mongoPostDo = new MongoPostDo();
@@ -222,6 +287,7 @@ public class PostServiceImpl implements PostService {
 
     /**
      * 删除html中的js标签，on_click事件
+     *
      * @param html
      * @return
      * @throws Exception
@@ -280,6 +346,7 @@ public class PostServiceImpl implements PostService {
 
     /**
      * 按照微信的要求，对图文content做进一步处理
+     *
      * @param content
      * @return
      */

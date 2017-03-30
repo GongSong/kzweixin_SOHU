@@ -22,6 +22,7 @@ public class ApplicationConfig {
     public static final String UNBIND_POSTDATAT_SCHEMA = "json-schema/account/unbind-postdata-schema.json";
     //图文
     public static final String POST_KZSYNCS_POSTDATAT_SCHEMA = "json-schema/post/post-kzsyncs-postdata-schema.json";
+    public static final String POST_KZWEIXINSYNCS2KZPOST_POSTDATAT_SCHEMA = "json-schema/post/post-kzweixin-syncs2kzpost-postdata-schema.json";
 
     //分表
     private static int getMsgTableNum() {

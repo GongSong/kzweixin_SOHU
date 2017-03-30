@@ -29,7 +29,8 @@ public class ApiConfig {
      * 快站接口
      */
     //获取单个文章的信息
-    public static final String KZ_ARTICLE = "http://service.kuaizhan.sohuno.com/post/service-get-post?page_id=";
+    public static final String KZ_ARTICLE = "/post/service-get-post?page_id=";
+    public static final String KZ_POST_ARTICLE = "/post/service-sync-to-kz-post";
 
     /**
      * 获取单个文章的信息
@@ -38,7 +39,16 @@ public class ApiConfig {
      * @return
      */
     public static String kzArticleUrl(long pageId) {
-        return KZ_ARTICLE + pageId;
+        return DOMAIN_KZ_API + KZ_ARTICLE + pageId;
+    }
+
+    /**
+     * 新增快站文章
+     *
+     * @return
+     */
+    public static String kzPostArticleUrl() {
+        return DOMAIN_KZ_API + KZ_POST_ARTICLE;
     }
 
 
@@ -49,7 +59,7 @@ public class ApiConfig {
     //主域名
     private static final String DOMAIN_WEIXIN_API = "https://api.weixin.qq.com";
     private static final String DOMAIN_WEIXIN_MP = "https://mp.weixin.qq.com";
-
+    private static final String DOMAIN_KZ_API = "http://service.kuaizhan.sohuno.com";
     //账户
 
     //获取access_token
@@ -280,7 +290,7 @@ public class ApiConfig {
 
     // 图文
     // 上传多图文
-    private static  final String WEIXIN_CREATE_POSTS = "/cgi-bin/material/add_news?access_token=";
+    private static final String WEIXIN_CREATE_POSTS = "/cgi-bin/material/add_news?access_token=";
 
     // 上传图文中的图片素材
     public static final String WEIXIN_ADD_POST_IMAGE = "/cgi-bin/media/uploadimg?access_token=";
@@ -288,13 +298,12 @@ public class ApiConfig {
 
     /**
      * 新增永久素材
-<<<<<<< HEAD
+     * <<<<<<< HEAD
      *
      * @param accessToken
      * @param type
-     * @return
-=======
->>>>>>> d77f9d46f42d48eb6e914065c18879bfafb75f85
+     * @return =======
+     * >>>>>>> d77f9d46f42d48eb6e914065c18879bfafb75f85
      */
     public static String addMaterialUrl(String accessToken, String type) {
         return DOMAIN_WEIXIN_API + WEIXIN_ADD_MATERIAL + accessToken + "&type=" + type;
