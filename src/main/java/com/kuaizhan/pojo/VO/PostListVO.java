@@ -11,7 +11,7 @@ public class PostListVO {
     private Long totalNum;
     private Integer currentPage;
     private Integer totalPage;
-    private List<PostVO> posts = new ArrayList<>();
+    private List<List<PostVO>> posts = new ArrayList<>();
 
     public Long getTotalNum() {
         return totalNum;
@@ -37,13 +37,14 @@ public class PostListVO {
         this.totalPage = totalPage;
     }
 
-    public List<PostVO> getPosts() {
+    public List<List<PostVO>> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<PostVO> posts) {
+    public void setPosts(List<List<PostVO>> posts) {
         this.posts = posts;
     }
+
 
     @Override
     public String toString() {

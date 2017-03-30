@@ -146,7 +146,8 @@
          "thumbMediaId": "fdevae3vdar3fa", // 封面图片在微信的media_id
          "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
          "contentSourceUrl": "www.sohu.com",  // 原文链接
-         "updateTime": 1463542009
+         "updateTime": 1463542009,
+         "kuaizhanPostId":1240584810
         }
        ]
     ```

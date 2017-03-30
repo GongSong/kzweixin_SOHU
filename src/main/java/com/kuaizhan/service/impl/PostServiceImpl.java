@@ -60,6 +60,13 @@ public class PostServiceImpl implements PostService {
 
         try {
             List<PostDO> posts = postDao.listPostsByPagination(weixinAppid, postDOPage);
+            // 从Mongo中取content
+            for (PostDO postDO: posts) {
+                MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
+                // 多图文总记录没有content
+                String content = (mongoPostDo != null)? mongoPostDo.getContent(): "";
+                postDO.setContent(content);
+            }
             postDOPage.setResult(posts);
 
             long totalCount = postDao.count(weixinAppid);

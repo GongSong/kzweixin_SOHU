@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,6 +43,7 @@ public class PostController extends BaseController {
         Page<PostDO> postDOPage = postService.listPostsByPagination(weixinAppid, page);
 
         List<PostDO> postDOList = postDOPage.getResult();
+
         PostListVO postListVO = new PostListVO();
 
         if (postDOList != null) {
@@ -50,17 +52,23 @@ public class PostController extends BaseController {
             postListVO.setTotalPage(postDOPage.getTotalPages());
 
             for (PostDO postDO : postDOList) {
+
+                // 多图文实体是一个list
+                List<PostVO>  multiPosts = new ArrayList<>();
+
                 PostVO postVO = new PostVO();
                 postVO.setPageId(postDO.getPageId());
+                postVO.setMediaId(postDO.getMediaId());
+                postVO.setTitle(postDO.getTitle());
                 postVO.setAuthor(postDO.getAuthor());
                 postVO.setDigest(postDO.getAuthor());
+                postVO.setContent(postDO.getContent());
                 postVO.setThumbUrl(postDO.getThumbUrl());
-                postVO.setTitle(postDO.getTitle());
-                postVO.setType(postDO.getType());
+                postVO.setThumbMediaId(postDO.getThumbMediaId());
+                postVO.setContentSourceUrl(postDO.getContentSourceUrl());
                 postVO.setUpdateTime(postDO.getUpdateTime());
-                postListVO.getPosts().add(postVO);
 
-                // 获取图文下面的多图文
+                // 获取图文总记录下面的多图文
                 if (postDO.getType() == 2) {
                     List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getMediaId());
 
@@ -72,11 +80,14 @@ public class PostController extends BaseController {
                             multiPostVO.setDigest(multiPostDo.getAuthor());
                             multiPostVO.setThumbUrl(multiPostDo.getThumbUrl());
                             multiPostVO.setTitle(multiPostDo.getTitle());
-                            multiPostVO.setType(multiPostDo.getType());
                             multiPostVO.setUpdateTime(multiPostDo.getUpdateTime());
-                            postVO.getMultiPosts().add(multiPostVO);
+                            multiPosts.add(multiPostVO);
                         }
+                        postListVO.getPosts().add(multiPosts);
                     }
+                } else {
+                    multiPosts.add(postVO);
+                    postListVO.getPosts().add(multiPosts);
                 }
             }
         }

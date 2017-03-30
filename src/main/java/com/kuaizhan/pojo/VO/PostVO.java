@@ -1,21 +1,19 @@
 package com.kuaizhan.pojo.VO;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by zixiong on 2017/3/21.
  */
 public class PostVO {
     private Long pageId;
+    private String mediaId;
     private String title ;
-    private String thumbUrl;
     private String author;
     private String digest;
-    private Short type;
+    private String content;
+    private String thumbUrl;
+    private String thumbMediaId;
+    private String contentSourceUrl;
     private Integer updateTime;
-
-    private List<PostVO> multiPosts = new ArrayList<PostVO>();  // 图文消息下面的多图文
 
     public Long getPageId() {
         return pageId;
@@ -57,14 +55,6 @@ public class PostVO {
         this.digest = digest;
     }
 
-    public Short getType() {
-        return type;
-    }
-
-    public void setType(Short type) {
-        this.type = type;
-    }
-
     public Integer getUpdateTime() {
         return updateTime;
     }
@@ -73,23 +63,50 @@ public class PostVO {
         this.updateTime = updateTime;
     }
 
-    public List<PostVO> getMultiPosts() {
-        return multiPosts;
+    public String getContent() {
+        return content;
     }
 
-    public void setMultiPosts(List<PostVO> multiPosts) {
-        this.multiPosts = multiPosts;
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getMediaId() {
+        return mediaId;
+    }
+
+    public void setMediaId(String mediaId) {
+        this.mediaId = mediaId;
+    }
+
+    public String getThumbMediaId() {
+        return thumbMediaId;
+    }
+
+    public void setThumbMediaId(String thumbMediaId) {
+        this.thumbMediaId = thumbMediaId;
+    }
+
+    public String getContentSourceUrl() {
+        return contentSourceUrl;
+    }
+
+    public void setContentSourceUrl(String contentSourceUrl) {
+        this.contentSourceUrl = contentSourceUrl;
     }
 
     @Override
     public String toString() {
         return "PostVO{" +
                 "pageId=" + pageId +
+                ", mediaId='" + mediaId + '\'' +
                 ", title='" + title + '\'' +
-                ", thumbUrl='" + thumbUrl + '\'' +
                 ", author='" + author + '\'' +
                 ", digest='" + digest + '\'' +
-                ", type=" + type +
+                ", content='" + content + '\'' +
+                ", thumbUrl='" + thumbUrl + '\'' +
+                ", thumbMediaId='" + thumbMediaId + '\'' +
+                ", contentSourceUrl='" + contentSourceUrl + '\'' +
                 ", updateTime=" + updateTime +
                 '}';
     }
