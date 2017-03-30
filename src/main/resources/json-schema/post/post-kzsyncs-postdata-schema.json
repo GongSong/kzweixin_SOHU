@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "post kz syncs",
+  "type": "object",
+  "properties": {
+    "pageIds": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "required":["pageIds"],
+    "additionalProperties":false
+  }
+}

@@ -2,6 +2,7 @@ package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.config.MqConfig;
 import com.kuaizhan.dao.mapper.PostDao;
 import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.exception.system.DaoException;
@@ -12,11 +13,13 @@ import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
+import com.kuaizhan.utils.MqUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,7 +32,8 @@ public class PostServiceImpl implements PostService {
     PostDao postDao;
     @Resource
     WeixinPostService weixinPostService;
-
+    @Resource
+    MqUtil mqUtil;
 
     @Override
     public Page<PostDO> listPostsByPagination(long weixinAppid, Integer page) throws DaoException {
@@ -99,6 +103,14 @@ public class PostServiceImpl implements PostService {
             articleDTO = JsonUtil.string2Bean(jsonObject.get("data").toString(), ArticleDTO.class);
         }
         return articleDTO;
+    }
+
+    @Override
+    public void importKzArticle(long weixinAppid, List<Long> pageIds) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("weixinAppid", weixinAppid);
+        param.put("pageIds", pageIds);
+        mqUtil.publish(MqConfig.IMPORT_KUAIZHAN_POST, param);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.kuaizhan.controller;
 
+import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
@@ -14,9 +15,12 @@ import com.kuaizhan.pojo.VO.PostListVO;
 import com.kuaizhan.pojo.VO.PostVO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
+import com.kuaizhan.utils.JsonUtil;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -112,7 +116,10 @@ public class PostController extends BaseController {
     }
 
     @RequestMapping(value = "/posts/kz_syncs", method = RequestMethod.POST)
-    public JsonResponse kzSyncsPost(@RequestParam long weixinAppid) {
+    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
+        JSONObject jsonObject = new JSONObject(postData);
+        List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
+        postService.importKzArticle(weixinAppid, pageIds);
         return new JsonResponse(null);
     }
 }

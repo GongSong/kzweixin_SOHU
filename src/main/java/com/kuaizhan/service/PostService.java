@@ -59,4 +59,12 @@ public interface PostService {
      */
     ArticleDTO getKzArticle(long pageId) throws IOException;
 
+    /**
+     * 从快站文章导入
+     *
+     * @param weixinAppid
+     * @param pageIds
+     */
+    void importKzArticle(long weixinAppid, List<Long> pageIds);
+
 }

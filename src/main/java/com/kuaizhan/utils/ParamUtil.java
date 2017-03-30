@@ -41,6 +41,12 @@ public class ParamUtil {
                     throw new ParamException();
                 }
                 break;
+            case "weixinAppid":
+                long weixinAppid = Long.parseLong(value);
+                if (weixinAppid < 0) {
+                    throw new ParamException();
+                }
+                break;
         }
     }
 }

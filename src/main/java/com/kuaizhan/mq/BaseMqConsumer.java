@@ -2,6 +2,8 @@ package com.kuaizhan.mq;
 
 import com.kuaizhan.exception.BaseException;
 import com.kuaizhan.utils.LogUtil;
+
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -16,11 +18,11 @@ public abstract class BaseMqConsumer {
      * @param msgMap MQ消息的HashMap参数
      */
     public final void handleMessage(HashMap msgMap) {
-       try {
-           onMessage(msgMap);
-       } catch (BaseException e) {
-           LogUtil.logMsg(e);
-       }
+        try {
+            onMessage(msgMap);
+        } catch (Exception e) {
+            LogUtil.logMsg(e);
+        }
     }
 
     /**
@@ -28,5 +30,5 @@ public abstract class BaseMqConsumer {
      *
      * @param msgMap MQ消息的HashMap参数
      */
-    protected abstract void onMessage(HashMap msgMap) throws BaseException;
+    protected abstract void onMessage(HashMap msgMap) throws Exception;
 }

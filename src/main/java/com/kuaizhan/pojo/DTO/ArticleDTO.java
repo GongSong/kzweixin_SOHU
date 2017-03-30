@@ -16,6 +16,8 @@ public class ArticleDTO {
     @JsonProperty("page_url")
     private String pageUrl;
 
+    private String coverUrl;
+
     private String title;
     @JsonProperty("tag_id")
     private Integer tagId;
@@ -46,6 +48,14 @@ public class ArticleDTO {
 
     public void setPageUrl(String pageUrl) {
         this.pageUrl = pageUrl;
+    }
+
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
     }
 
     public String getTitle() {
