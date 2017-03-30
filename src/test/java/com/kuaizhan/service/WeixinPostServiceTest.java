@@ -1,6 +1,8 @@
 package com.kuaizhan.service;
 
 import com.kuaizhan.pojo.DTO.PostDTO;
+
+import java.util.LinkedList;
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
@@ -24,6 +26,9 @@ public class WeixinPostServiceTest {
     WeixinPostService weixinPostService;
     @Resource
     AccountService accountService;
+
+    long weixinAppid = 601145633L;
+
     @Before
     public void setUp() throws Exception {
 
@@ -41,7 +46,7 @@ public class WeixinPostServiceTest {
 
     @Test
     public void uploadImage() throws Exception {
-        weixinPostService.uploadImage(accountService.getAccountByWeixinAppId(601145633L).getAccessToken(),"http://192.168.110.218/g1/M00/01/27/CgoYr1YnRIWAUvk9AAAuGB6TobA1781741");
+        weixinPostService.uploadImage(accountService.getAccountByWeixinAppId(weixinAppid).getAccessToken(),"http://192.168.110.218/g1/M00/01/27/CgoYr1YnRIWAUvk9AAAuGB6TobA1781741");
     }
 
     @Test
@@ -53,6 +58,13 @@ public class WeixinPostServiceTest {
     @Test
     public void listAllPosts() throws Exception {
         List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccountByWeixinAppId(601145633L).getAccessToken());
-        System.out.println("----->" + postDTOList.size());
+        List<PostDTO.PostItem> postItemList = new LinkedList<>();
+        for (PostDTO postDTO: postDTOList) {
+            postItemList.addAll(postDTO.toPostItemList(weixinAppid));
+        }
+        for (PostDTO.PostItem postItem :
+                postItemList) {
+            System.out.println("----->" + postItem.toString());
+        }
     }
 }
