@@ -8,6 +8,9 @@
         from weixin_post
         --         status=1表示未删除；type in (1,2)只查询单图文和多图文总记录
         where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+        <if test="title!=null">
+            and `title` like CONCAT('%', #{title} ,'%')
+        </if>
     </select>
 
     <!--根据weixin_appid分页查询图文消息列表-->
@@ -16,7 +19,11 @@
         select *
         from weixin_post
         --       status=1表示未删除；type in (1,2)只查询单图文和多图文总记录
-        where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+        where `weixin_appid` = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+        <if test="title!=null">
+            and `title` like CONCAT('%', #{title} ,'%')
+        </if>
+        order by `update_time` DESC
         limit #{pageEntity.offset}, #{pageEntity.limit}
     </select>
 

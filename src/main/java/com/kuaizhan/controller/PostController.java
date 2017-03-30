@@ -50,9 +50,9 @@ public class PostController extends BaseController {
      */
 
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
-    public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page) throws DaoException {
+    public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam(required = false) String title) throws DaoException {
 
-        Page<PostDO> postDOPage = postService.listPostsByPagination(weixinAppid, page);
+        Page<PostDO> postDOPage = postService.listPostsByPagination(weixinAppid, title, page);
 
         List<PostDO> postDOList = postDOPage.getResult();
 

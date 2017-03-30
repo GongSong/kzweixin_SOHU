@@ -23,10 +23,11 @@ public interface PostService {
      * 获取图文消息列表
      *
      * @param weixinAppid 微信appid
-     * @param page        页码
+     * @param page  页码
+     * @param title 按title模糊搜索
      * @return
      */
-    Page<PostDO> listPostsByPagination(long weixinAppid, Integer page) throws DaoException;
+    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException;
 
     /**
      * 根据mediaId获取所有的多图文

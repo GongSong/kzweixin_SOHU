@@ -57,13 +57,12 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public Page<PostDO> listPostsByPagination(long weixinAppid, Integer page) throws DaoException {
+    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException {
 
         Page<PostDO> postDOPage = new Page<>(page, ApplicationConfig.PAGE_SIZE_LARGE);
 
         try {
-            List<PostDO> posts = postDao.listPostsByPagination(weixinAppid, postDOPage);
-
+            List<PostDO> posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage);
             // 从Mongo中取content
             for (PostDO postDO : posts) {
                 MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
@@ -74,7 +73,7 @@ public class PostServiceImpl implements PostService {
 
             postDOPage.setResult(posts);
 
-            long totalCount = postDao.count(weixinAppid);
+            long totalCount = postDao.count(weixinAppid, title);
             postDOPage.setTotalCount(totalCount);
 
         } catch (Exception e) {
