@@ -16,6 +16,7 @@ import com.kuaizhan.pojo.VO.PostVO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
+import com.kuaizhan.utils.PojoSwitcher;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,14 @@ public class PostController extends BaseController {
     PostService postService;
     @Resource
     AccountService accountService;
+    @Resource
+    PojoSwitcher pojoSwitcher;
 
+
+    /**
+     * 获取多图文列表
+     * @throws DaoException
+     */
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
     public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page) throws DaoException {
 
@@ -54,54 +62,63 @@ public class PostController extends BaseController {
             for (PostDO postDO : postDOList) {
 
                 // 多图文实体是一个list
-                List<PostVO>  multiPosts = new ArrayList<>();
-
-                PostVO postVO = new PostVO();
-                postVO.setPageId(postDO.getPageId());
-                postVO.setMediaId(postDO.getMediaId());
-                postVO.setTitle(postDO.getTitle());
-                postVO.setAuthor(postDO.getAuthor());
-                postVO.setDigest(postDO.getAuthor());
-                postVO.setContent(postDO.getContent());
-                postVO.setThumbUrl(postDO.getThumbUrl());
-                postVO.setThumbMediaId(postDO.getThumbMediaId());
-                postVO.setContentSourceUrl(postDO.getContentSourceUrl());
-                postVO.setUpdateTime(postDO.getUpdateTime());
+                List<PostVO>  multiPostVOList = new ArrayList<>();
 
                 // 获取图文总记录下面的多图文
                 if (postDO.getType() == 2) {
                     List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getMediaId());
-
                     if (multiPostDOList != null) {
                         for (PostDO multiPostDo : multiPostDOList) {
-                            PostVO multiPostVO = new PostVO();
-                            multiPostVO.setPageId(multiPostDo.getPageId());
-                            multiPostVO.setAuthor(multiPostDo.getAuthor());
-                            multiPostVO.setDigest(multiPostDo.getAuthor());
-                            multiPostVO.setThumbUrl(multiPostDo.getThumbUrl());
-                            multiPostVO.setTitle(multiPostDo.getTitle());
-                            multiPostVO.setUpdateTime(multiPostDo.getUpdateTime());
-                            multiPosts.add(multiPostVO);
+                            PostVO multiPostVO = pojoSwitcher.postDOToVO(multiPostDo);
+                            multiPostVOList.add(multiPostVO);
                         }
-                        postListVO.getPosts().add(multiPosts);
+                        postListVO.getPosts().add(multiPostVOList);
                     }
                 } else {
-                    multiPosts.add(postVO);
-                    postListVO.getPosts().add(multiPosts);
+                    PostVO postVO = pojoSwitcher.postDOToVO(postDO);
+
+                    multiPostVOList.add(postVO);
+                    postListVO.getPosts().add(multiPostVOList);
                 }
             }
         }
         return new JsonResponse(postListVO);
     }
 
+    /**
+     * 获取单图文详情
+     * @return
+     */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.GET)
-    public JsonResponse getPost(@RequestParam long weixinAppid, @PathVariable long pageId) {
-        return new JsonResponse(null);
+    public JsonResponse getPost(@PathVariable long pageId) throws DaoException {
+
+        PostDO postDO = postService.getPostByPageId(pageId);
+        PostVO postVO = pojoSwitcher.postDOToVO(postDO);
+
+        return new JsonResponse(postVO);
     }
 
+    /**
+     * 获取多图文详情
+     * @return
+     */
     @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
-    public JsonResponse getMultiPost(@RequestParam long weixinAppid, @PathVariable long pageId) {
-        return new JsonResponse(null);
+    public JsonResponse getMultiPost(@RequestParam long weixinAppid, @PathVariable long pageId) throws DaoException {
+        PostDO postDO = postService.getPostByPageId(pageId);
+
+        List<PostVO> multiPostVOList = new ArrayList<>();
+        if (postDO != null) {
+            // 如果图文type为3（多图文中的一条），根据mediaId找出多图文
+            if (postDO.getType() == 3) {
+                List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getMediaId());
+                for (PostDO multipostDO: multiPostDOList) {
+                    multiPostVOList.add(pojoSwitcher.postDOToVO(multipostDO));
+                }
+            } else {
+                multiPostVOList.add(pojoSwitcher.postDOToVO(postDO));
+            }
+        }
+        return new JsonResponse(multiPostVOList);
     }
 
     @RequestMapping(value = "/posts", method = RequestMethod.POST)

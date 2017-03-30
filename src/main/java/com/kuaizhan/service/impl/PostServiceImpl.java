@@ -21,6 +21,7 @@ import com.kuaizhan.utils.MqUtil;
 import com.kuaizhan.utils.IdGeneratorUtil;
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
 import com.vdurmont.emoji.EmojiParser;
+import javafx.geometry.Pos;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +87,13 @@ public class PostServiceImpl implements PostService {
 
         try {
             multiPosts = postDao.listMultiPosts(mediaId);
+            // 从Mongo中取content
+            for (PostDO postDO: multiPosts) {
+                MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
+                // 多图文总记录没有content
+                String content = (mongoPostDo != null)? mongoPostDo.getContent(): "";
+                postDO.setContent(content);
+            }
         } catch (Exception e) {
             throw new DaoException(e);
         }
@@ -112,7 +120,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDO getPostByPageId(long pageId) throws DaoException {
         try {
-            return postDao.getPost(pageId);
+            PostDO postDO = postDao.getPost(pageId);
+            // 获取content
+            MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
+            String content = (mongoPostDo != null)? mongoPostDo.getContent(): "";
+            postDO.setContent(content);
+            return postDO;
         } catch (Exception e) {
             throw new DaoException(e);
         }
@@ -140,6 +153,7 @@ public class PostServiceImpl implements PostService {
         mqUtil.publish(MqConfig.IMPORT_KUAIZHAN_POST, param);
     }
 
+    @Override
     public void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception {
 
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);

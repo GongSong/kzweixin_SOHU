@@ -36,8 +36,7 @@
 * **协议**： HTTPS
 * **方法**： GET
 * **URL**： /v1/posts/`<pageId>`
-* **参数**：
-    * weixinAppid 微信Appid
+* **参数**：无
 
         
 * **说明**：用于预览页面获取单个图文详情
