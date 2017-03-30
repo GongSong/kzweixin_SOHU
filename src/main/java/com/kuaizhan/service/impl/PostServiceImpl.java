@@ -1,16 +1,22 @@
 package com.kuaizhan.service.impl;
 
+import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mapper.PostDao;
 import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.pojo.DO.PostDO;
+import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
+import com.kuaizhan.utils.HttpClientUtil;
+import com.kuaizhan.utils.JsonUtil;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -82,6 +88,17 @@ public class PostServiceImpl implements PostService {
             throw new DaoException(e);
         }
 
+    }
+
+    @Override
+    public ArticleDTO getKzArticle(long pageId) throws IOException {
+        String ret = HttpClientUtil.get(ApiConfig.kzArticleUrl(pageId));
+        JSONObject jsonObject = new JSONObject(ret);
+        ArticleDTO articleDTO = null;
+        if (jsonObject.getInt("ret") == 0) {
+            articleDTO = JsonUtil.string2Bean(jsonObject.get("data").toString(), ArticleDTO.class);
+        }
+        return articleDTO;
     }
 
 }

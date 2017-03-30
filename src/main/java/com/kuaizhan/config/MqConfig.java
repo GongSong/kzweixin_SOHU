@@ -6,6 +6,6 @@ package com.kuaizhan.config;
  * Created by zixiong on 2017/3/23.
  */
 public class MqConfig {
+    //从快站文章导入
     public static final String IMPORT_KUAIZHAN_POST = "sys-weixin-import-kuaizhan-post";
-    public static final String TEST = "sys-weixin-test";
 }

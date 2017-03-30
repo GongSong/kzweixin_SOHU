@@ -12,13 +12,13 @@
     <!--######################### 消费者相关配置 ##########################-->
 
 
-    <bean id="consumerExample" class="com.kuaizhan.mq.ConsumerExample" />
+    <bean id="kzArticlePostConsumer" class="com.kuaizhan.mq.KZArticlePostConsumer" />
     <bean id="messageListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
-        <constructor-arg name="delegate" ref="consumerExample" />
+        <constructor-arg name="delegate" ref="kzArticlePostConsumer" />
     </bean>
 
     <rabbit:listener-container connection-factory="connectionFactory" >
-        <rabbit:listener ref="messageListenerAdapter" queue-names="sys-weixin-test" />
+        <rabbit:listener ref="messageListenerAdapter" queue-names="sys-weixin-import-kuaizhan-post" />
     </rabbit:listener-container>
 
 </beans>

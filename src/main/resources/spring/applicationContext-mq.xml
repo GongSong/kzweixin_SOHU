@@ -15,14 +15,12 @@
 
     <!-- #################### queue的声明 ###################### -->
     <!--从快站导入文章的queue-->
-    <rabbit:queue id="queueTest" name="sys-weixin-test" durable="true" auto-delete="false" />
     <rabbit:queue id="queueImportKuaizhanPost" name="sys-weixin-import-kuaizhan-post" durable="true" auto-delete="false" />
 
     <!-- Exchange的声明 -->
     <rabbit:direct-exchange id="directExchange" name="${rabbit.exchange}" durable="true" auto-delete="false">
         <rabbit:bindings>
             <rabbit:binding queue="queueImportKuaizhanPost" key="sys-weixin-import-kuaizhan-post"/>
-            <rabbit:binding queue="queueTest" key="sys-weixin-test"/>
         </rabbit:bindings>
     </rabbit:direct-exchange>
 

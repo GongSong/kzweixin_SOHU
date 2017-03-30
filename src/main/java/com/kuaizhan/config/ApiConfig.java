@@ -25,6 +25,22 @@ public class ApiConfig {
     //百度翻译
     public static final String TRANSLATE = "http://api.fanyi.baidu.com/api/trans/vip/translate";
 
+    /**
+     * 快站接口
+     */
+    //获取单个文章的信息
+    public static final String KZ_ARTICLE = "http://service.kuaizhan.sohuno.com/post/service-get-post?page_id=";
+
+    /**
+     * 获取单个文章的信息
+     *
+     * @param pageId
+     * @return
+     */
+    public static String kzArticleUrl(long pageId) {
+        return KZ_ARTICLE + pageId;
+    }
+
 
     /**
      * 微信接口
@@ -264,6 +280,7 @@ public class ApiConfig {
 
     /**
      * 新增永久素材
+     *
      * @param accessToken
      * @param type
      * @return
@@ -274,6 +291,7 @@ public class ApiConfig {
 
     /**
      * 删除永久素材
+     *
      * @param accessToken
      * @return
      */
@@ -283,6 +301,7 @@ public class ApiConfig {
 
     /**
      * 获取素材总数
+     *
      * @param accessToken
      * @return
      */
@@ -292,6 +311,7 @@ public class ApiConfig {
 
     /**
      * 获取素材列表
+     *
      * @param accessToken
      * @return
      */
