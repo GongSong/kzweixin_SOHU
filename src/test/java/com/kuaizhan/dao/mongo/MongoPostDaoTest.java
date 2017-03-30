@@ -37,37 +37,22 @@ public class MongoPostDaoTest {
 
     @Test
     public void getArticleById() throws Exception {
-        ArticleDO articleDO = mongoPostDao.getArticleById(1L);
-        System.out.println("----->" + articleDO);
     }
 
     @Test
     public void updateArticle() throws Exception {
-        ArticleDO articleDO = mongoPostDao.getArticleById(2L);
-        System.out.println("----->" + articleDO);
-        articleDO.setContent("fuck");
-        mongoPostDao.updateArticle(articleDO);
-        ArticleDO articleDO1 = mongoPostDao.getArticleById(2L);
-        System.out.println("----->" + articleDO1);
     }
 
     @Test
     public void deleteArticle() throws Exception {
-        mongoPostDao.deleteArticle(1L);
     }
 
     @Test
     public void insertArticle() throws Exception {
-        ArticleDO articleDO = new ArticleDO();
-        articleDO.setId(6L);
-        articleDO.setTitle("test");
-        articleDO.setContent("ddd");
-        mongoPostDao.insertArticle(articleDO);
     }
 
     @Test
     public void listArticles() throws Exception {
-        System.out.println("------>"+mongoPostDao.listArticles());
     }
 
 }

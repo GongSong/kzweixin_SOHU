@@ -15,7 +15,7 @@ public class PostDO implements Comparable<PostDO>{
     private Short showCoverPic = 0;
     private String author; //1
     private String digest; //1
-    private String postUrl;
+    private String postUrl = "";
     private String contentSourceUrl; //1
     private String mediaId;
     private Integer syncTime;

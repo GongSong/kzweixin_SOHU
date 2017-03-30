@@ -90,8 +90,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDO getAccountByAppId(String appId) throws DaoException {
         try {
-            AccountDO account = accountDao.getAccountByAppId(appId);
-            return getAccountBySiteId(account.getSiteId());
+            return accountDao.getAccountByAppId(appId);
         } catch (Exception e) {
             throw new DaoException(e);
         }

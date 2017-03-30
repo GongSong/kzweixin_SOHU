@@ -43,4 +43,28 @@
         where `status` = 1
         and `page_id`=#{pageId}
     </select>
+
+    <!--新增图文-->
+    <insert id="insertPost" parameterType="com.kuaizhan.pojo.DO.PostDO">
+        INSERT INTO weixin_post set
+        `page_id`=#{post.pageId},
+        weixin_appid=#{post.weixinAppid},
+        title=#{post.title},
+        thumb_media_id=#{post.thumbMediaId},
+        thumb_url=#{post.thumbUrl},
+        show_cover_pic=#{post.showCoverPic},
+        author=#{post.author},
+        digest=#{post.digest},
+        content_source_url=#{post.contentSourceUrl},
+        media_id=#{post.mediaId},
+        `post_url`=#{post.postUrl},
+        `type`=#{post.type},
+        `index`=#{post.index},
+        `kuaizhan_post_id`=0,
+        `status`=#{post.status},
+        `sync_time`=unix_timestamp(now()),
+        `create_time`=unix_timestamp(now()),
+        `update_time`=unix_timestamp(now());
+    </insert>
+
 </mapper>

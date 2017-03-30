@@ -39,11 +39,11 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
             ArticleDTO articleDTO = postService.getKzArticle(pageId);
             if (articleDTO != null) {
                 //微信上传封面图
-                String[] ret = weixinPostService.uploadImage(accountService.getAccountByWeixinAppId(weixinAppid).getAccessToken(), articleDTO.getCoverUrl());
-                //封面图的media_id
-                String thumbMediaId = ret[0];
-                //封面图的微信url
-                String thumbUrl = ret[1];
+//                String[] ret = weixinPostService.uploadImage(accountService.getAccountByWeixinAppId(weixinAppid).getAccessToken(), articleDTO.getCoverUrl());
+//                //封面图的media_id
+//                String thumbMediaId = ret[0];
+//                //封面图的微信url
+//                String thumbUrl = ret[1];
 
             }
         }

@@ -1,8 +1,13 @@
 package com.kuaizhan.service;
 
-
 import com.kuaizhan.exception.business.AddMaterialException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
+
+import com.kuaizhan.exception.business.UploadPostsException;
+import com.kuaizhan.pojo.DO.PostDO;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 微信素材服务
@@ -19,10 +24,24 @@ public interface WeixinPostService {
     void deletePost(String mediaId, String accessToken) throws MaterialDeleteException;
 
     /**
-     * 给微信上传图片
-     * 0返回meida_id 1返回url
+     * 上传图片到微信永久素材
      * @param accessToken
      * @param imgUrl
      */
-    String[] uploadImage(String accessToken, String imgUrl) throws AddMaterialException;
+    HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException;
+
+    /**
+     * 上传图文中的图片到微信服务器
+     * @param imgUrl 原始的url
+     * @return 在微信服务器的url
+     */
+    String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException;
+
+    /**
+     * 上传多图文到微信
+     * @param posts 多图文对象
+     * @return
+     */
+    String uploadPosts(String accessToken, List<PostDO> posts) throws UploadPostsException;
+
 }

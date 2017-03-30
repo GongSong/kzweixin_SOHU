@@ -15,9 +15,9 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostDTO {
     @JsonProperty("total_count")
-    private int totalCount;
+    private Integer totalCount;
     @JsonProperty("item_count")
-    private int itemCount;
+    private Integer itemCount;
     @JsonProperty("item")
     private List<Item> items;
 
@@ -25,7 +25,7 @@ public class PostDTO {
         super();
     }
 
-    public PostDTO(int totalCount, int itemCount, List<Item> items) {
+    public PostDTO(Integer totalCount, Integer itemCount, List<Item> items) {
         this.totalCount = totalCount;
         this.itemCount = itemCount;
         this.items = items;
@@ -35,7 +35,7 @@ public class PostDTO {
         return totalCount;
     }
 
-    public void setTotalCount(int totalCount) {
+    public void setTotalCount(Integer totalCount) {
         this.totalCount = totalCount;
     }
 
@@ -43,7 +43,7 @@ public class PostDTO {
         return itemCount;
     }
 
-    public void setItemCount(int itemCount) {
+    public void setItemCount(Integer itemCount) {
         this.itemCount = itemCount;
     }
 
@@ -285,19 +285,19 @@ public class PostDTO {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PostItem {
         @JsonProperty("weixin_appid")
-        long weixinAppid;
+        Long weixinAppid;
         Item item;
 
         public PostItem() {
             super();
         }
 
-        public PostItem(long weixinAppid, Item item) {
+        public PostItem(Long weixinAppid, Item item) {
             this.weixinAppid = weixinAppid;
             this.item = item;
         }
 
-        public long getWeixinAppid() {
+        public Long getWeixinAppid() {
             return weixinAppid;
         }
 

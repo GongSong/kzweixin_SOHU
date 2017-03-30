@@ -58,7 +58,9 @@ public enum ErrorCodeConfig {
 
     ADD_MATERIAL_ERROR(107002, "新增素材失败"),
 
-    GET_MATERIAL_ERROR(107003, "获取图文失败");
+    GET_MATERIAL_ERROR(107003, "获取图文失败"),
+
+    UPLOAD_POSTS_ERROR(107004, "上传微信多图文失败");
 
     private int code;
     private String msg;
