@@ -20,7 +20,7 @@ public class PostDO implements Comparable<PostDO>{
     private String mediaId;
     // TODO: 研究PHP代码，决定sync的逻辑
     private Integer syncTime;
-    private Short type;
+    private Short type; // 1.单图文 2. 多图文总记录 3.多图文中的一条
     private Integer index;
     // TODO: 向成哥说明情况，申请工单允许为空
     private Long kuaizhanPostId ; //每次添加图文时都会先调用 新增快文的接口
