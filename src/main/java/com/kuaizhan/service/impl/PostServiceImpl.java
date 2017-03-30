@@ -435,16 +435,19 @@ public class PostServiceImpl implements PostService {
         return content;
     }
 
-    /**
-     * 根据weixinAppid获取所有微信图文
-     * @param weixinAppid
-     * @return
-     * @throws DaoException
-     */
     @Override
     public List<PostDO> listPostsByWeixinAppid(long weixinAppid) throws DaoException {
         try {
             return postDao.listPostsByWeixinAppid(weixinAppid);
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public List<String> listMediaIdsByWeixinAppid(long weixinAppid) throws DaoException {
+        try {
+            return postDao.listMediaIdsByWeixinAppid(weixinAppid);
         } catch (Exception e) {
             throw new DaoException(e);
         }

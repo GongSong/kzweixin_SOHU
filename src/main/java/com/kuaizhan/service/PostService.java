@@ -97,4 +97,11 @@ public interface PostService {
      */
     List<PostDO> listPostsByWeixinAppid(long weixinAppid) throws DaoException;
 
+    /**
+     * 根据weixinAppid获取mediaId列表
+     * @param weixinAppid
+     * @return
+     * @throws DaoException
+     */
+    List<String> listMediaIdsByWeixinAppid(long weixinAppid) throws DaoException;
 }
