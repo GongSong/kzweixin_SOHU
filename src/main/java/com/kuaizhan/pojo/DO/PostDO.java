@@ -12,17 +12,19 @@ public class PostDO implements Comparable<PostDO>{
     private String title ;
     private String  thumbMediaId;
     private String thumbUrl;
-    private Short showCoverPic = 0;
+    private Short showCoverPic;
     private String author; //1
     private String digest; //1
     private String postUrl = "";
     private String contentSourceUrl; //1
     private String mediaId;
+    // TODO: 研究PHP代码，决定sync的逻辑
     private Integer syncTime;
     private Short type;
-    private Integer index = 0;
+    private Integer index;
+    // TODO: 向成哥说明情况，申请工单允许为空
     private Long kuaizhanPostId ; //每次添加图文时都会先调用 新增快文的接口
-    private Short status = 1; //1 为正常发布，2 为删除
+    private Short status; //1 为正常发布，2 为删除
     private Integer createTime;
     private Integer updateTime;
 

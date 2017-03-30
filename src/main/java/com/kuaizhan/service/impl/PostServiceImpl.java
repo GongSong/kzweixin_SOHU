@@ -8,6 +8,7 @@ import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.DO.MongoPostDo;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
@@ -17,16 +18,15 @@ import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.MqUtil;
+import com.kuaizhan.utils.IdGeneratorUtil;
+import com.kuaizhan.utils.ReplaceCallbackMatcher;
+import com.vdurmont.emoji.EmojiParser;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-
-import com.kuaizhan.utils.ReplaceCallbackMatcher;
-import com.vdurmont.emoji.EmojiParser;
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -184,14 +184,18 @@ public class PostServiceImpl implements PostService {
         int index = 0;
         for (PostDO postDO: posts){
             // 先把content保存到mongo
-            long pageId = mongoPostDao.insertPost(postDO.getContent());
+            long pageId = IdGeneratorUtil.getID();
+            MongoPostDo mongoPostDo = new MongoPostDo();
+            mongoPostDo.setId(pageId);
+            mongoPostDo.setContent(postDO.getContent());
+            mongoPostDao.insertPost(mongoPostDo);
+
             postDO.setPageId(pageId);
             postDO.setMediaId(mediaId);
             postDO.setWeixinAppid(weixinAppid);
             postDO.setType(type);
             postDO.setIndex(index++);
 
-            System.out.println(postDO);
             postDao.insertPost(postDO);
         }
 
@@ -209,6 +213,9 @@ public class PostServiceImpl implements PostService {
             sumPost.setMediaId(posts.get(0).getMediaId());
             sumPost.setPageId(posts.get(0).getPageId());
             sumPost.setType((short) 2);
+
+            // 生成主键ID
+            sumPost.setPageId(IdGeneratorUtil.getID());
             postDao.insertPost(sumPost);
         }
     }
@@ -219,7 +226,7 @@ public class PostServiceImpl implements PostService {
      * @return
      * @throws Exception
      */
-    public String filterHtml(String html) throws Exception {
+    private String filterHtml(String html) throws Exception {
         // 删除js标签
         html = html.replaceAll("<script[^>]*?>.*?</script>", "");
 
@@ -242,7 +249,7 @@ public class PostServiceImpl implements PostService {
     /**
      * 上传图文content中的图片到微信，并写入wx_src到img标签
      */
-    public String uploadContentImg(final String accessToken, String content) throws Exception {
+    private String uploadContentImg(final String accessToken, String content) throws Exception {
 
         // 定义替换callback
         ReplaceCallbackMatcher.Callback callback = new ReplaceCallbackMatcher.Callback() {
@@ -276,7 +283,7 @@ public class PostServiceImpl implements PostService {
      * @param content
      * @return
      */
-    public String replaceContentForUpload(String content) throws Exception {
+    private String replaceContentForUpload(String content) throws Exception {
         // 用微信wx_src替换src
 
         // 定义callback

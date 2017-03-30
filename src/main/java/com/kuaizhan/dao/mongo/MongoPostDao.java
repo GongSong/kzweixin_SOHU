@@ -31,5 +31,5 @@ public interface MongoPostDao {
     /**
      * 新增post content
      */
-    long insertPost(String content);
+    void insertPost(MongoPostDo mongoPostDo);
 }
