@@ -117,6 +117,12 @@ public class PostServiceImpl implements PostService {
             String mediaId = postDO.getMediaId();
             //微信删除
             weixinPostService.deletePost(mediaId, accessToken);
+            //mongo删除
+            try{
+                mongoPostDao.deletePost(postDO.getPageId());
+            }catch (Exception e){
+                throw new MongoException(e);
+            }
             //数据库删除
             try {
                 postDao.deletePost(weixinAppid, mediaId);
