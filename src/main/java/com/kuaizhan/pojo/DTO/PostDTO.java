@@ -3,8 +3,6 @@ package com.kuaizhan.pojo.DTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -182,7 +180,7 @@ public class PostDTO {
                 @JsonProperty("thumb_url")
                 private String thumbUrl;
                 @JsonProperty("show_cover_pic")
-                private String showCoverPic;
+                private Short showCoverPic;
                 private String author;
                 private String digest;
                 private String content;
@@ -194,7 +192,7 @@ public class PostDTO {
                     super();
                 }
 
-                public NewsItem(String title, String thumbMediaId, String showCoverPic, String author, String digest, String content, String url, String contentSourceUrl) {
+                public NewsItem(String title, String thumbMediaId, Short showCoverPic, String author, String digest, String content, String url, String contentSourceUrl) {
                     this.title = title;
                     this.thumbMediaId = thumbMediaId;
                     this.showCoverPic = showCoverPic;
@@ -229,11 +227,11 @@ public class PostDTO {
                     this.thumbUrl = thumbUrl;
                 }
 
-                public String getShowCoverPic() {
+                public Short getShowCoverPic() {
                     return showCoverPic;
                 }
 
-                public void setShowCoverPic(String showCoverPic) {
+                public void setShowCoverPic(Short showCoverPic) {
                     this.showCoverPic = showCoverPic;
                 }
 
