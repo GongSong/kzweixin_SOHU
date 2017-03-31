@@ -4,21 +4,19 @@ package com.kuaizhan.service;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 
 import com.kuaizhan.pojo.DO.PostDO;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * Created by zixiong on 2017/3/28.
+ * Created by lorin on 17-3-30.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/*.xml")
@@ -28,14 +26,22 @@ public class PostServiceTest {
     @Resource
     PostService postService;
 
+    long weixinAppid = 601145633L;
 
+    @Before
+    public void setUp() throws Exception {
 
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
+    }
 
     @Test
     public void listPostsByPagination() throws Exception {
+
     }
-
-
 
     @Test
     public void listMultiPosts() throws Exception {
@@ -50,27 +56,12 @@ public class PostServiceTest {
     @Test
     public void getPostByPageId() throws Exception {
 
-
     }
 
     @Test
     public void getKzArticle() throws Exception {
         ArticleDTO articleDTO = postService.getKzArticle(2745017759L);
         System.out.println("------>" + articleDTO.toString());
-    }
-
-
-
-    @Test
-    public void insertMultiPosts1() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test
@@ -94,5 +85,18 @@ public class PostServiceTest {
 
         posts.add(postDO);
         postService.insertMultiPosts(weixinAppid, posts);
+    }
+
+    @Test
+    public void listPostsByWeixinAppid() throws Exception {
+
+    }
+
+    @Test
+    public void listMediaIdsByWeixinAppid() throws Exception {
+        List<String> mediaIds = postService.listMediaIdsByWeixinAppid(weixinAppid);
+        for (String mediaId: mediaIds) {
+            System.out.println("----->" + mediaId);
+        }
     }
 }

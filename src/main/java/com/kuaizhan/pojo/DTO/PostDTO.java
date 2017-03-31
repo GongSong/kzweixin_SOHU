@@ -3,8 +3,7 @@ package com.kuaizhan.pojo.DTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -178,8 +177,10 @@ public class PostDTO {
                 private String title;
                 @JsonProperty("thumb_media_id")
                 private String thumbMediaId;
+                @JsonProperty("thumb_url")
+                private String thumbUrl;
                 @JsonProperty("show_cover_pic")
-                private String showCoverPic;
+                private Short showCoverPic;
                 private String author;
                 private String digest;
                 private String content;
@@ -191,7 +192,7 @@ public class PostDTO {
                     super();
                 }
 
-                public NewsItem(String title, String thumbMediaId, String showCoverPic, String author, String digest, String content, String url, String contentSourceUrl) {
+                public NewsItem(String title, String thumbMediaId, Short showCoverPic, String author, String digest, String content, String url, String contentSourceUrl) {
                     this.title = title;
                     this.thumbMediaId = thumbMediaId;
                     this.showCoverPic = showCoverPic;
@@ -218,11 +219,19 @@ public class PostDTO {
                     this.thumbMediaId = thumbMediaId;
                 }
 
-                public String getShowCoverPic() {
+                public String getThumbUrl() {
+                    return thumbUrl;
+                }
+
+                public void setThumbUrl(String thumbUrl) {
+                    this.thumbUrl = thumbUrl;
+                }
+
+                public Short getShowCoverPic() {
                     return showCoverPic;
                 }
 
-                public void setShowCoverPic(String showCoverPic) {
+                public void setShowCoverPic(Short showCoverPic) {
                     this.showCoverPic = showCoverPic;
                 }
 
@@ -270,6 +279,7 @@ public class PostDTO {
                     return "NewsItem{" +
                             "title=" + title +
                             ", thumbMediaId=" + thumbMediaId +
+                            ", thumbUrl=" + thumbUrl +
                             ", showCoverPic=" + showCoverPic +
                             ", author=" + author +
                             ", digest=" + digest +
@@ -280,6 +290,17 @@ public class PostDTO {
                 }
             }
         }
+    }
+
+    public List<PostItem> toPostItemList(long weixinAppid) {
+        List<PostItem> postItemList = new LinkedList<>();
+        for (Item item: items) {
+            PostItem postItem = new PostItem();
+            postItem.setWeixinAppid(weixinAppid);
+            postItem.setItem(item);
+            postItemList.add(postItem);
+        }
+        return postItemList;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -311,6 +332,13 @@ public class PostDTO {
 
         public void setItem(Item item) {
             this.item = item;
+        }
+
+        public String toString() {
+            return "PostItem{" +
+                    "weixinAppid=" + weixinAppid +
+                    ", item=" + item.toString() +
+                    "}";
         }
     }
 }

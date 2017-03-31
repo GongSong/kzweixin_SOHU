@@ -180,4 +180,13 @@ public class DateUtil {
         }
         return day;
     }
+
+    /**
+     * 返回包含当前时间的 Unix 时间戳的整数
+     *
+     * @return
+     */
+    public static int timestampSec() {
+        return (int) (System.currentTimeMillis()/1000);
+    }
 }

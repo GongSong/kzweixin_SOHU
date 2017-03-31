@@ -16,6 +16,8 @@ public class ApplicationConfig {
     private static final Properties PROP = PropertiesUtil.loadProps("application.properties");
     //版本号
     public static final String VERSION = "v1";
+    //PHP项目版本号
+    public static final String PHP_APP_VERSION = "5.0";
 
     //参数校验 json-schema
     //账户
@@ -63,6 +65,16 @@ public class ApplicationConfig {
     //接口前缀
     public static String getApiPrefix() {
         return PropertiesUtil.getString(PROP, "api.prefix");
+    }
+
+    //资源路径
+    public static String getResUrl(String url) {
+        return PropertiesUtil.getString(PROP, "domain.res") + url + "?v=" + PHP_APP_VERSION;
+    }
+
+    //图片上传路径
+    public static String getPicUplaodUrl() {
+        return PropertiesUtil.getString(PROP, "service.pic.upload");
     }
 
     //大分页

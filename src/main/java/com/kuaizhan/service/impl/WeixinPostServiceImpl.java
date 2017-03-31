@@ -4,16 +4,22 @@ package com.kuaizhan.service.impl;
 import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.exception.business.AddMaterialException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
+import com.kuaizhan.exception.business.MaterialGetException;
 import com.kuaizhan.exception.business.UploadPostsException;
 import com.kuaizhan.pojo.DO.PostDO;
+import com.kuaizhan.pojo.DTO.PostDTO;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.HttpClientUtil;
+import com.kuaizhan.utils.JsonUtil;
+import com.kuaizhan.utils.LogUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -124,4 +130,42 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
     }
 
+    @Override
+    public PostDTO getPostDTOByOffset(String accessToken, int offset, int count) throws MaterialGetException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", "news");
+        jsonObject.put("offset", offset);
+        jsonObject.put("count", count);
+        String result = HttpClientUtil.postJson(ApiConfig.getMaterial(accessToken), jsonObject.toString());
+        JSONObject returnJson = new JSONObject(result);
+        if (returnJson.has("errcode")) {
+            throw new MaterialGetException();
+        }
+        try {
+            PostDTO postDTO = JsonUtil.<PostDTO>string2Bean(result, PostDTO.class);
+            return postDTO;
+        } catch (IOException e) {
+            throw new MaterialGetException();
+        }
+    }
+
+    @Override
+    public List<PostDTO> listAllPosts(String accessToken) throws MaterialGetException {
+        List<PostDTO> postDTOList = new LinkedList<>();
+        int MAX_MATERIAL_COUNT_EACH_FETCH = 20;
+        PostDTO postDTO = getPostDTOByOffset(accessToken, 0, MAX_MATERIAL_COUNT_EACH_FETCH);
+        postDTOList.add(postDTO);
+        int index = postDTO.getItemCount(), totalCount = postDTO.getTotalCount();
+        while (index < totalCount) {
+            try {
+                postDTO = getPostDTOByOffset(accessToken, index, MAX_MATERIAL_COUNT_EACH_FETCH);
+                postDTOList.add(postDTO);
+            } catch (MaterialGetException e) {
+                LogUtil.logMsg(e);
+            } finally {
+                index += MAX_MATERIAL_COUNT_EACH_FETCH;
+            }
+        }
+        return postDTOList;
+    }
 }
