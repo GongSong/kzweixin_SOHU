@@ -48,6 +48,6 @@
       "content",
       "thumbUrl",
     ],
-    "additionalProperties": false
+    "additionalProperties": true
   }
 }
