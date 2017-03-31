@@ -669,7 +669,7 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * 多图文非第一篇图文的封面图
+     * 多图文非第一篇图文的默认封面图
      *
      * @return
      */
