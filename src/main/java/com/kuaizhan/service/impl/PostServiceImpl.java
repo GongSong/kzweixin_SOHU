@@ -4,12 +4,8 @@ import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.MqConfig;
 import com.kuaizhan.dao.mapper.PostDao;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.KZPostAddException;
-import com.kuaizhan.exception.business.KZPicUploadException;
-import com.kuaizhan.exception.business.MaterialDeleteException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.dao.mongo.MongoPostDao;
-import com.kuaizhan.exception.business.UploadPostsException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
@@ -115,6 +111,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException {
 
+        // TODO: mongo删除
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             String mediaId = postDO.getMediaId();
@@ -208,23 +205,7 @@ public class PostServiceImpl implements PostService {
         posts = cleanPosts(posts, accessToken);
 
         // 上传到微信
-        List<PostDO> wxPosts = new ArrayList<>();
-        for (PostDO postDO : posts) {
-            // 封装上传微信的PostDO list
-            PostDO wxPost = new PostDO();
-            wxPost.setTitle(postDO.getTitle());
-            wxPost.setThumbMediaId(postDO.getThumbMediaId());
-            wxPost.setAuthor(postDO.getAuthor());
-            wxPost.setDigest(postDO.getDigest());
-            wxPost.setShowCoverPic(postDO.getShowCoverPic());
-            wxPost.setContentSourceUrl(postDO.getContentSourceUrl());
-
-            // 替换内容
-            String replacedContent = replaceContentForUpload(postDO.getContent());
-            wxPost.setContent(replacedContent);
-            wxPosts.add(wxPost);
-        }
-        String mediaId = weixinPostService.uploadPosts(accessToken, wxPosts);
+        String mediaId = weixinPostService.uploadPosts(accessToken, wrapWeiXinPosts(posts));
 
         // 保存到数据库
         for (PostDO postDO: posts) {
@@ -237,6 +218,9 @@ public class PostServiceImpl implements PostService {
     public void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception {
 
         PostDO oldPost = getPostByPageId(pageId);
+        if (oldPost == null){
+            throw new PostNotExistException();
+        }
 
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountDO.getAccessToken();
@@ -244,7 +228,7 @@ public class PostServiceImpl implements PostService {
         // 对图文数据做预处理
         posts = cleanPosts(posts, accessToken);
 
-        // 单图文到单图文
+        // 单图文到单图文 ==>  更新到微信、更新到数据库
         if (oldPost.getType() == 1 && posts.size() == 1){
             PostDO post = posts.get(0);
 
@@ -266,11 +250,44 @@ public class PostServiceImpl implements PostService {
         // 理由：单图文到多图文、多图文到单图文，都一定需要删除微信mediaId重新传，本地数据的存储变动也大(多图文总记录的更改)
         // 多图文到多图文，如果两个图文数相等，需要一次调用微信接口修改图文，如果不等，需要删除mediaId，成本高、逻辑也复杂
         else {
-            // 删除微信
-            // 删除本地
-            // 新增
+            // 上传新的图文到微信, 先新增到微信，下面操作失败时，避免丢失数据
+            String mediaId = weixinPostService.uploadPosts(accessToken, wrapWeiXinPosts(posts));
+            for (PostDO postDO: posts){
+                postDO.setMediaId(mediaId);
+            }
+
+            // 删除老图文
+            deletePost(weixinAppid, pageId, accessToken);
+
+            // 重新新增
+            // TODO: 完成保留pageId的逻辑
+            saveMultiPosts(weixinAppid, posts);
         }
 
+    }
+
+    /**
+     * 把存数据库的多图文DO对象，封装成同步给微信的。
+     * 替换了内容中的图片url为wx_src
+     */
+    private List<PostDO> wrapWeiXinPosts(List<PostDO> posts) throws Exception {
+        List<PostDO> wxPosts = new ArrayList<>();
+        for (PostDO postDO : posts) {
+            // 封装上传微信的PostDO list
+            PostDO wxPost = new PostDO();
+            wxPost.setTitle(postDO.getTitle());
+            wxPost.setThumbMediaId(postDO.getThumbMediaId());
+            wxPost.setAuthor(postDO.getAuthor());
+            wxPost.setDigest(postDO.getDigest());
+            wxPost.setShowCoverPic(postDO.getShowCoverPic());
+            wxPost.setContentSourceUrl(postDO.getContentSourceUrl());
+
+            // 替换内容
+            String replacedContent = replaceContentForUpload(postDO.getContent());
+            wxPost.setContent(replacedContent);
+            wxPosts.add(wxPost);
+        }
+        return wxPosts;
     }
 
     /**
@@ -292,7 +309,7 @@ public class PostServiceImpl implements PostService {
             postDO.setTitle(EmojiParser.removeAllEmojis(postDO.getTitle()));
             postDO.setDigest(EmojiParser.removeAllEmojis(postDO.getDigest()));
             // 上传封面图片
-            String thumbMediaId = postDO.getMediaId();
+            String thumbMediaId = postDO.getThumbMediaId();
             if (thumbMediaId == null || thumbMediaId.equals("")) {
                 HashMap<String, String> retMap = weixinPostService.uploadImage(accessToken, postDO.getThumbUrl());
                 thumbMediaId = retMap.get("mediaId");
@@ -317,14 +334,16 @@ public class PostServiceImpl implements PostService {
 
             sumTitle += postDO.getTitle();
 
+            // 没有指定pageId, 则生成
+            if (postDO.getPageId() == null || postDO.getPageId() == 0) {
+                postDO.setPageId(IdGeneratorUtil.getID());
+            }
             // 先把content保存到mongo
-            long pageId = IdGeneratorUtil.getID();
             MongoPostDo mongoPostDo = new MongoPostDo();
-            mongoPostDo.setId(pageId);
+            mongoPostDo.setId(postDO.getPageId());
             mongoPostDo.setContent(postDO.getContent());
-            mongoPostDao.insertPost(mongoPostDo);
+            mongoPostDao.upsertPost(mongoPostDo);
 
-            postDO.setPageId(pageId);
             postDO.setWeixinAppid(weixinAppid);
             postDO.setType(type);
             postDO.setIndex(index++);
@@ -332,24 +351,24 @@ public class PostServiceImpl implements PostService {
             postDao.insertPost(postDO);
         }
 
-        // 如果是多图文，生成一条type为3的总数据
+        // 如果是多图文，生成一条type为2的图文总记录
         if (posts.size() > 1) {
 
             PostDO sumPost = new PostDO();
-            sumPost.setTitle(sumTitle);
+            // 生成pageId
+            sumPost.setPageId(IdGeneratorUtil.getID());
+            // 多图文根据mediaId表示是一组图文
+            sumPost.setMediaId(posts.get(0).getMediaId());
             sumPost.setWeixinAppid(weixinAppid);
+            sumPost.setTitle(sumTitle);
             sumPost.setThumbMediaId(posts.get(0).getThumbMediaId());
             sumPost.setThumbUrl(posts.get(0).getThumbUrl());
             sumPost.setShowCoverPic(posts.get(0).getShowCoverPic());
             sumPost.setAuthor(posts.get(0).getAuthor());
             sumPost.setDigest(posts.get(0).getDigest());
             sumPost.setContentSourceUrl(posts.get(0).getContentSourceUrl());
-            sumPost.setMediaId(posts.get(0).getMediaId());
-            sumPost.setPageId(posts.get(0).getPageId());
             sumPost.setType((short) 2);
 
-            // 生成主键ID
-            sumPost.setPageId(IdGeneratorUtil.getID());
             postDao.insertPost(sumPost);
         }
     }

@@ -37,7 +37,9 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         jsonObject.put("media_id", mediaId);
         String result = HttpClientUtil.postJson(ApiConfig.deleteMaterialUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
-        if (returnJson.getInt("errcode") != 0) {
+        // 40007错误码是已经被删除，不报错
+        if (returnJson.optInt("errcode") != 0 && returnJson.optInt("errcode") != 40007) {
+            logger.error("[微信] 删除多图文失败: result: " + returnJson);
             throw new MaterialDeleteException();
         }
     }
@@ -108,7 +110,6 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         jsonObject.put("index", 0); // 只更新单图文, 都是0
 
         // 组装articles
-        JSONArray jsonArray = new JSONArray();
         JSONObject postJson = new JSONObject();
         postJson.put("title", postDO.getTitle());
         postJson.put("thumb_media_id", postDO.getThumbMediaId());
@@ -117,13 +118,14 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         postJson.put("show_cover_pic", postDO.getShowCoverPic());
         postJson.put("content", postDO.getContent());
         postJson.put("content_source_url", postDO.getContentSourceUrl());
-        jsonArray.put(postJson);
-        jsonObject.put("articles", jsonArray);
+
+        jsonObject.put("articles", postJson);
 
         String result = HttpClientUtil.postJson(ApiConfig.getUpdatePostUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
 
         if (returnJson.optInt("errcode") != 0) {
+            // TODO: 考虑media、thumbMediaId已经被删除的异常情况, 40007
             logger.error("[微信] 修改图文失败, data:"+ jsonObject + " result:" + returnJson);
             throw new UploadPostsException();
         }

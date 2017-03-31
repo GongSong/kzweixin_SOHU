@@ -67,6 +67,22 @@ public abstract class BaseMongoDaoImpl<T> {
         mongoTemplate.updateMulti(query, update, cls,collectionName);
     }
 
+    //修改，不存在则新增
+    protected void upsert(Map<String, Object> params, Class<T> cls) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(params.get("id")));
+        Update update = new Update();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            String key = entry.getKey();
+            if ("id".equals(key)) {
+                continue;
+            }
+            Object value = entry.getValue();
+            update.set(key, value);
+        }
+        mongoTemplate.upsert(query, update, cls,collectionName);
+    }
+
 
     //根据条件删除
     protected void delete(Map<String, Object> params, Class<T> cls) {

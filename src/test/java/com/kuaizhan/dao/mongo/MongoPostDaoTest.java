@@ -1,6 +1,7 @@
 package com.kuaizhan.dao.mongo;
 
 import com.kuaizhan.pojo.DO.ArticleDO;
+import com.kuaizhan.pojo.DO.MongoPostDo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +21,6 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/*.xml")
 public class MongoPostDaoTest {
-
-
     @Resource
     MongoPostDao mongoPostDao;
 
@@ -36,23 +35,26 @@ public class MongoPostDaoTest {
     }
 
     @Test
-    public void getArticleById() throws Exception {
-    }
+    public void upsertPost() throws Exception {
+        MongoPostDo mongoPostDo = new MongoPostDo();
+        long id = 1111111111442L;
+        mongoPostDo.setId(id);
+        String content1 = "I am content";
+        mongoPostDo.setContent(content1);
+        mongoPostDao.upsertPost(mongoPostDo);
 
-    @Test
-    public void updateArticle() throws Exception {
-    }
+        assertEquals(mongoPostDao.getPostById(id).getContent(), content1);
 
-    @Test
-    public void deleteArticle() throws Exception {
-    }
+        String content2 = "2222222222";
+        mongoPostDo.setContent(content2);
+        mongoPostDao.upsertPost(mongoPostDo);
 
-    @Test
-    public void insertArticle() throws Exception {
-    }
+        assertEquals(mongoPostDao.getPostById(id).getContent(), content2);
+        System.out.println("##########" + content2);
 
-    @Test
-    public void listArticles() throws Exception {
+        mongoPostDao.deletePost(id);
+
+        assertEquals(mongoPostDao.getPostById(id), null);
     }
 
 }

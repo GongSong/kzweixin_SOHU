@@ -23,6 +23,11 @@ public interface MongoPostDao {
     void updatePost(MongoPostDo postDo);
 
     /**
+     * 更新post, 不存在则新建
+     */
+    void upsertPost(MongoPostDo postDo);
+
+    /**
      * 删除post content
      * @param articleId
      */

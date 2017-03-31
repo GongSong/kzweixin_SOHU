@@ -64,6 +64,8 @@ public enum ErrorCodeConfig {
 
     ADD_KZ_POST_ERROR(107005, "同步快站文章失败"),
 
+    POST_NOT_EXIST_ERROR(107006, "图文id不存在"),
+
     //KZPic(08)
     KZPIC_UPLOAD_ERROR(108001, "上传至KZPic失败");
 
