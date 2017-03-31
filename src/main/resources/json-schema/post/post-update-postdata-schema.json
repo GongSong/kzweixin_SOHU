@@ -42,15 +42,11 @@
       }
     },
     "required": [
-      "pageId",
-      "mediaId",
       "title",
       "author",
       "digest",
       "content",
-      "thumbMediaId",
       "thumbUrl",
-      "contentSourceUrl"
     ],
     "additionalProperties": false
   }

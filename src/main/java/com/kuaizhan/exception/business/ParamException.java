@@ -13,4 +13,8 @@ public class ParamException extends BusinessException {
         super(ErrorCodeConfig.PARAM_ERROR.getCode(), ErrorCodeConfig.PARAM_ERROR.getMsg());
     }
 
+    public ParamException (String msg) {
+        super(ErrorCodeConfig.PARAM_ERROR.getCode(), msg);
+    }
+
 }

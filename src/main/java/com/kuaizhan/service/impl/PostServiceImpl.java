@@ -4,12 +4,8 @@ import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.MqConfig;
 import com.kuaizhan.dao.mapper.PostDao;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.KZPostAddException;
-import com.kuaizhan.exception.business.KZPicUploadException;
-import com.kuaizhan.exception.business.MaterialDeleteException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.dao.mongo.MongoPostDao;
-import com.kuaizhan.exception.business.UploadPostsException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
@@ -222,6 +218,9 @@ public class PostServiceImpl implements PostService {
     public void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception {
 
         PostDO oldPost = getPostByPageId(pageId);
+        if (oldPost == null){
+            throw new PostNotExistException();
+        }
 
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountDO.getAccessToken();
