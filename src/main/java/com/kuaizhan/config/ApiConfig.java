@@ -292,6 +292,9 @@ public class ApiConfig {
     // 上传多图文
     private static final String WEIXIN_CREATE_POSTS = "/cgi-bin/material/add_news?access_token=";
 
+    // 修改图文
+    public static final String WEIXIN_UPDATE_POST = "/cgi-bin/material/update_news?access_token=";
+
     // 上传图文中的图片素材
     public static final String WEIXIN_ADD_POST_IMAGE = "/cgi-bin/media/uploadimg?access_token=";
 
@@ -341,6 +344,10 @@ public class ApiConfig {
 
     public static String getCreatePostsUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_CREATE_POSTS + accessToken;
+    }
+
+    public static String getUpdatePostUrl(String accessToken){
+        return DOMAIN_WEIXIN_API + WEIXIN_UPDATE_POST + accessToken;
     }
 
     public static String getAddPostImageUrl(String accessToken) {

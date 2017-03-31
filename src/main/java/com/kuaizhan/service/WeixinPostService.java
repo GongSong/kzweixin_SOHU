@@ -44,4 +44,10 @@ public interface WeixinPostService {
      */
     String uploadPosts(String accessToken, List<PostDO> posts) throws UploadPostsException;
 
+    /**
+     * 更新微信的单图文
+     * @throws UploadPostsException
+     */
+    void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException;
+
 }

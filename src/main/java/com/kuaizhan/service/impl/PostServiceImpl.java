@@ -197,31 +197,13 @@ public class PostServiceImpl implements PostService {
         // 在方法执行过程中，有失效的风险
         String accessToken = accountDO.getAccessToken();
 
-        // 保存数据库前对图文数据做预处理
-        for (PostDO postDO : posts) {
-            // 上传图片
-            String replacedContent = uploadContentImg(accessToken, postDO.getContent());
-            // 过滤content中的js事件
-            replacedContent = filterHtml(replacedContent);
-            postDO.setContent(replacedContent);
-            // 替换emoji
-            postDO.setTitle(EmojiParser.removeAllEmojis(postDO.getTitle()));
-            postDO.setDigest(EmojiParser.removeAllEmojis(postDO.getDigest()));
-            // 上传封面图片
-            String thumbMediaId = postDO.getMediaId();
-            if (thumbMediaId == null || thumbMediaId.equals("")) {
-                HashMap<String, String> retMap = weixinPostService.uploadImage(accessToken, postDO.getThumbUrl());
-                thumbMediaId = retMap.get("mediaId");
-            }
-            postDO.setThumbMediaId(thumbMediaId);
-        }
+        // 对图文数据做预处理
+        posts = cleanPosts(posts, accessToken);
 
         // 上传到微信
-
-        // 对内容中的图片进一步处理
-        // 封装上传微信的PostDO list
         List<PostDO> wxPosts = new ArrayList<>();
         for (PostDO postDO : posts) {
+            // 封装上传微信的PostDO list
             PostDO wxPost = new PostDO();
             wxPost.setTitle(postDO.getTitle());
             wxPost.setThumbMediaId(postDO.getThumbMediaId());
@@ -244,8 +226,79 @@ public class PostServiceImpl implements PostService {
         saveMultiPosts(weixinAppid, posts);
     }
 
+    @Override
+    public void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception {
+
+        PostDO oldPost = getPostByPageId(pageId);
+
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
+        String accessToken = accountDO.getAccessToken();
+
+        // 对图文数据做预处理
+        posts = cleanPosts(posts, accessToken);
+
+        // 单图文到单图文
+        if (oldPost.getType() == 1 && posts.size() == 1){
+            PostDO post = posts.get(0);
+
+            // TODO: 考虑脏数据下，oldPost没有mediaId的异常处理
+            // 更新到微信
+            weixinPostService.updatePost(accessToken, oldPost.getMediaId(), post);
+
+            // 更新到数据库
+
+            // 数据修正
+            post.setWeixinAppid(weixinAppid);
+            post.setMediaId(oldPost.getMediaId());
+            post.setIndex(0);
+            post.setType((short) 1);
+
+            postDao.updatePost(post, pageId);
+        }
+        // 单图文到多图文、多图文到单图文、多图文到多图文，执行删除微信media、删除本地、重新新增
+        // 理由：单图文到多图文、多图文到单图文，都一定需要删除微信mediaId重新传，本地数据的存储变动也大(多图文总记录的更改)
+        // 多图文到多图文，如果两个图文数相等，需要一次调用微信接口修改图文，如果不等，需要删除mediaId，成本高、逻辑也复杂
+        else {
+            // 删除微信
+            // 删除本地
+            // 新增
+        }
+
+    }
+
     /**
-     * 把校验后的多图文存入数据库
+     * 对图文数据做预处理
+     * 上传内容中的图片到微信、上传封面图片；替换emoji, 替换js
+     * @param posts 多图文
+     * @parm accessToken 上传用的token
+     * @return
+     */
+    private List<PostDO> cleanPosts(List<PostDO> posts, String accessToken) throws Exception {
+
+        for (PostDO postDO : posts) {
+            // 上传图片
+            String replacedContent = uploadContentImg(accessToken, postDO.getContent());
+            // 过滤content中的js事件
+            replacedContent = filterHtml(replacedContent);
+            postDO.setContent(replacedContent);
+            // 替换emoji
+            postDO.setTitle(EmojiParser.removeAllEmojis(postDO.getTitle()));
+            postDO.setDigest(EmojiParser.removeAllEmojis(postDO.getDigest()));
+            // 上传封面图片
+            String thumbMediaId = postDO.getMediaId();
+            if (thumbMediaId == null || thumbMediaId.equals("")) {
+                HashMap<String, String> retMap = weixinPostService.uploadImage(accessToken, postDO.getThumbUrl());
+                thumbMediaId = retMap.get("mediaId");
+            }
+            postDO.setThumbMediaId(thumbMediaId);
+        }
+
+        return posts;
+    }
+
+
+    /**
+     * 把校验后的多图文新增到数据库
      */
     private void saveMultiPosts(long weixinAppid, List<PostDO> posts) {
 
