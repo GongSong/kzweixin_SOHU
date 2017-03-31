@@ -219,16 +219,16 @@
 * **URL**： /v1/posts/kz_syncs
 * **参数**：
     * weixinAppid 微信Appid
-    * posts:示例如下
+    * posts:示例如下  
     
-    ```
-       {
-           "pageIds": [
-               312321312,
-               32131232131
-           ]
-       }
-    ```
+        ```
+           {
+               "pageIds": [
+                   312321312,
+                   32131232131
+               ]
+           }
+        ```
     
 * **返回**：
     * 获取成功时返回:
@@ -246,22 +246,22 @@
 * **URL**： /v1/posts/kzweixin_syncs
 * **参数**：
     * weixinAppid 微信Appid
-    * posts:示例如下
+    * posts:示例如下  
     
-    ```
-   [
-       {
-           "siteId": 12312312,
-           "pageId": 312312321,
-           "categoryId": 312312321
-       },
-       {
-           "siteId": 12312312,
-           "pageId": 312312321,
-           "categoryId": 312312321
-       }
-   ]
-    ```
+        ```
+       [
+           {
+               "siteId": 12312312,
+               "pageId": 312312321,
+               "categoryId": 312312321
+           },
+           {
+               "siteId": 12312312,
+               "pageId": 312312321,
+               "categoryId": 312312321
+           }
+       ]
+        ```
     
 * **返回**：
     * 获取成功时返回:
