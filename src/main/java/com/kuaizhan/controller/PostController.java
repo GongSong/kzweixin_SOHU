@@ -45,9 +45,9 @@ public class PostController extends BaseController {
     PojoSwitcher pojoSwitcher;
 
 
-
     /**
      * 获取多图文列表
+     *
      * @throws DaoException
      */
 
@@ -68,7 +68,7 @@ public class PostController extends BaseController {
             for (PostDO postDO : postDOList) {
 
                 // 多图文实体是一个list
-                List<PostVO>  multiPostVOList = new ArrayList<>();
+                List<PostVO> multiPostVOList = new ArrayList<>();
 
                 // 获取图文总记录下面的多图文
                 if (postDO.getType() == 2) {
@@ -94,20 +94,19 @@ public class PostController extends BaseController {
 
     /**
      * 获取单图文详情
+     *
      * @return
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.GET)
     public JsonResponse getPost(@PathVariable long pageId) throws DaoException, MongoException {
-
-
         PostDO postDO = postService.getPostByPageId(pageId);
         PostVO postVO = pojoSwitcher.postDOToVO(postDO);
-
         return new JsonResponse(postVO);
     }
 
     /**
      * 获取多图文详情
+     *
      * @return
      */
     @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
@@ -120,7 +119,7 @@ public class PostController extends BaseController {
             if (postDO.getType() == 3) {
                 List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getMediaId());
 
-                for (PostDO multipostDO: multiPostDOList) {
+                for (PostDO multipostDO : multiPostDOList) {
 
                     multiPostVOList.add(pojoSwitcher.postDOToVO(multipostDO));
                 }
@@ -133,14 +132,15 @@ public class PostController extends BaseController {
 
     /**
      * 新增多图文
+     *
      * @param weixinAppid
      */
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public JsonResponse insertPost(@RequestParam long weixinAppid, @RequestBody String postData) throws Exception {
+    public JsonResponse insertPost(@RequestParam long weixinAppid,@Validate(key = "postData", path = ApplicationConfig.POST_INSERT_POSTDATA_SCHEMA) @RequestBody String postData) throws Exception {
         JSONArray jsonArray = new JSONArray(postData);
         List<PostDO> posts = new ArrayList<>();
 
-        for (int i = 0; i < jsonArray.length(); i++){
+        for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             PostDO postDO = new PostDO();
             postDO.setTitle(jsonObject.getString("title"));
@@ -160,15 +160,16 @@ public class PostController extends BaseController {
 
     /**
      * 修改多图文
+     *
      * @param weixinAppid
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.PUT)
-    public JsonResponse updatePost(@RequestParam long weixinAppid, @PathVariable("pageId") long pageId, @RequestBody String postData) throws Exception {
+    public JsonResponse updatePost(@RequestParam long weixinAppid, @PathVariable("pageId") long pageId,@Validate(key = "postData", path = ApplicationConfig.POST_UPDATE_POSTDATA_SCHEMA) @RequestBody String postData) throws Exception {
 
         JSONArray jsonArray = new JSONArray(postData);
         List<PostDO> posts = new ArrayList<>();
 
-        for (int i = 0; i < jsonArray.length(); i++){
+        for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             PostDO postDO = new PostDO();
 
@@ -192,6 +193,7 @@ public class PostController extends BaseController {
 
     /**
      * 删除图文
+     *
      * @param weixinAppid
      * @param pageId
      */
@@ -221,11 +223,14 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/posts/kzweixin_syncs", method = RequestMethod.POST)
     public JsonResponse kzweixinSyncs2KzPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData", path = ApplicationConfig.POST_KZWEIXINSYNCS2KZPOST_POSTDATAT_SCHEMA) @RequestBody String postData) throws KZPostAddException, DaoException, MongoException {
-        JSONObject jsonObject = new JSONObject(postData);
-        long siteId = jsonObject.getLong("siteId");
-        long pageId = jsonObject.getLong("pageId");
-        long categoryId = jsonObject.getLong("categoryId");
-        postService.export2KzArticle(weixinAppid, pageId, categoryId, siteId);
+        JSONArray jsonArray = new JSONArray(postData);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            long siteId = jsonArray.getJSONObject(i).getLong("siteId");
+            long pageId = jsonArray.getJSONObject(i).getLong("pageId");
+            long categoryId = jsonArray.getJSONObject(i).getLong("categoryId");
+            postService.export2KzArticle(weixinAppid, pageId, categoryId, siteId);
+        }
+
         return new JsonResponse(null);
     }
 
@@ -239,7 +244,7 @@ public class PostController extends BaseController {
      * @throws IOException
      */
     @RequestMapping(value = "/posts/kz_syncs", method = RequestMethod.POST)
-    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData",path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
+    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
         JSONObject jsonObject = new JSONObject(postData);
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         postService.importKzArticle(weixinAppid, pageIds);

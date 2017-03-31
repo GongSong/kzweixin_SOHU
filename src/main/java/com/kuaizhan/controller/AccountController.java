@@ -39,11 +39,25 @@ public class AccountController extends BaseController {
     /**
      * 获取账户信息
      *
-     * @param siteId 站点id
      * @return
      */
     @RequestMapping(value = "/account", method = RequestMethod.GET)
-    public JsonResponse getAccountInfo(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, IOException, JsonParseException {
+    public JsonResponse getAccountInfo(@RequestParam long weixinAppid) throws RedisException, DaoException, AccountNotExistException, IOException, JsonParseException {
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
+        AccountVO accountVO = new AccountVO();
+        accountVO.setWeixinAppid(accountDO.getWeixinAppId());
+        accountVO.setAppSecret(accountDO.getAppSecret());
+        accountVO.setHeadImg(accountDO.getHeadImg());
+        List<String> list = JsonUtil.string2List(accountDO.getInterestJson(), String.class);
+        accountVO.setInterest(list);
+        accountVO.setName(accountDO.getNickName());
+        accountVO.setQrcode(accountDO.getQrcodeUrl());
+        accountVO.setType(accountDO.getServiceType());
+
+        return new JsonResponse(accountVO);
+    }
+    @RequestMapping(value = "/account/site_id", method = RequestMethod.GET)
+    public JsonResponse getAccountInfoBySiteId(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, IOException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         AccountVO accountVO = new AccountVO();
         accountVO.setWeixinAppid(accountDO.getWeixinAppId());

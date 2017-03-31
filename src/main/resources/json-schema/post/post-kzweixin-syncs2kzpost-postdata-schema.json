@@ -1,22 +1,25 @@
 {
   "$schema": "http://json-schema.org/schema#",
   "title": "account info",
-  "type": "object",
-  "properties": {
-    "siteId": {
-      "type": "integer"
+  "type": "array",
+  "items":{
+    "type":"object",
+    "properties": {
+      "siteId": {
+        "type": "integer"
+      },
+      "pageId": {
+        "type": "integer"
+      },
+      "categoryId": {
+        "type": "integer"
+      }
     },
-    "pageId": {
-      "type": "integer"
-    },
-    "categoryId": {
-      "type": "integer"
-    }
-  },
-  "required": [
-    "siteId",
-    "pageId",
-    "categoryId"
-  ],
-  "additionalProperties": false
+    "required": [
+      "siteId",
+      "pageId",
+      "categoryId"
+    ],
+    "additionalProperties": false
+  }
 }
