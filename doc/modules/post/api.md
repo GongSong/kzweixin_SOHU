@@ -57,6 +57,7 @@
          "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
          "thumbMediaId": "fdevae3vdar3fa", // 封面图片在微信的media_id
          "contentSourceUrl": "www.sohu.com",  // 原文链接
+         "showCoverPic": 1, // 是否显示封面图
          "updateTime": 1463542009
         }
         ```
@@ -91,6 +92,7 @@
          "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
          "thumbMediaId": "fdevae3vdar3fa", // 封面图片在微信的media_id
          "contentSourceUrl": "www.sohu.com",  // 原文链接
+         "showCoverPic": 1, // 是否显示封面图
          "updateTime": 1463542009
         }
        ]
@@ -118,6 +120,7 @@
          "thumbMediaId": "fdevae3vdar3fa", // 封面图片在微信的media_id
          "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
          "contentSourceUrl": "www.sohu.com",  // 原文链接
+         "showCoverPic": 1, // 是否显示封面图
         }
        ]
     ```
@@ -156,6 +159,7 @@
          "thumbMediaId": "fdevae3vdar3fa", // 封面图片在微信的media_id
          "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
          "contentSourceUrl": "www.sohu.com",  // 原文链接
+         "showCoverPic": 1, // 是否显示封面图
         }
        ]
     ```

@@ -48,9 +48,11 @@ public interface PostDao {
     /**
      * 根据mediaId删除图文
      *
+     * @param weixinAppid  为了利用索引, 传此参数
      * @param mediaId
      * @return
      */
+    // TODO: 考虑更改索引结构，按weixinAppId mediaId分别单独建索引
     int deletePost(@Param("weixinAppId") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**

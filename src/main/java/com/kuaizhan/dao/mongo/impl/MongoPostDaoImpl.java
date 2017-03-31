@@ -23,7 +23,11 @@ public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostDo> implements M
     public MongoPostDo getPostById(long id) {
         Map<String, Object> param = new HashMap<>();
         param.put("id", id);
-        return (MongoPostDo) get(param, MongoPostDo.class);
+        Object obj = get(param, MongoPostDo.class);
+        if (obj == null) {
+            return null;
+        }
+        return (MongoPostDo) obj;
     }
 
     @Override
@@ -32,6 +36,14 @@ public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostDo> implements M
         param.put("id", postDo.getId());
         param.put("content", postDo.getContent());
         update(param, MongoPostDo.class);
+    }
+
+    @Override
+    public void upsertPost(MongoPostDo postDo) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("id", postDo.getId());
+        param.put("content", postDo.getContent());
+        upsert(param, MongoPostDo.class);
     }
 
     @Override

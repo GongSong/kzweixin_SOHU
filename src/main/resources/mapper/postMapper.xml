@@ -95,48 +95,48 @@
     <!--修改图文-->
     <insert id="updatePost" parameterType="com.kuaizhan.pojo.DO.PostDO">
         UPDATE weixin_post set
-        <if test="post.weixin_appid != null">
+        <if test="post.weixinAppid != null">
             `weixin_appid`=#{post.weixinAppid},
         </if>
         <if test="post.title != null">
             `title`=#{post.title},
         </if>
-        <if test="post.thumb_media_id != null">
+        <if test="post.thumbMediaId != null">
             `thumb_media_id`=#{post.thumbMediaId},
         </if>
-        <if test="post.thumb_url`= null">
+        <if test="post.thumbUrl = null">
             `thumb_url`=#{post.thumbUrl},
         </if>
-        <if test="post.show_cover_pic`= null">
+        <if test="post.showCoverPic = null">
             `show_cover_pic`=0,
         </if>
-        <if test="post.author`= null">
+        <if test="post.author = null">
             `author`=#{post.author},
         </if>
-        <if test="post.digest`= null">
+        <if test="post.digest = null">
             `digest`=#{post.digest},
         </if>
-        <if test="post.content_source_url`= null">
+        <if test="post.contentSourceUrl = null">
             `content_source_url`=#{post.contentSourceUrl},
         </if>
-        <if test="post.media_id`= null">
+        <if test="post.mediaId = null">
             `media_id`=#{post.mediaId},
         </if>
-        <if test="post.type`= null">
+        <if test="post.type = null">
             `type`=#{post.type},
         </if>
-        <if test="post.index`= null">
+        <if test="post.index = null">
             `index`=0,
         </if>
-        <if test="post.kuaizhan_post_id`= null">
+        <if test="post.kuaizhanPostId = null">
             `kuaizhan_post_id`=0,
         </if>
-        <if test="post.status`= null">
+        <if test="post.status = null">
             `status`=1,
         </if>
         `sync_time`=unix_timestamp(now()),
-        `update_time`=unix_timestamp(now());
-        WHERE `pageId` = #{pageId}
+        `update_time`=unix_timestamp(now())
+        WHERE `page_id` = #{pageId}
     </insert>
 
 </mapper>

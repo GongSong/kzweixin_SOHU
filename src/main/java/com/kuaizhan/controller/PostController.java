@@ -19,7 +19,6 @@ import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
-import com.mongodb.util.JSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
@@ -150,6 +149,7 @@ public class PostController extends BaseController {
             postDO.setThumbMediaId(jsonObject.optString("thumbMediaId"));
             postDO.setThumbUrl(jsonObject.getString("thumbUrl"));
             postDO.setContentSourceUrl(jsonObject.optString("contentSourceUrl"));
+            postDO.setShowCoverPic((short) jsonObject.optInt("showCoverPic", 0));
 
             posts.add(postDO);
         }
@@ -182,10 +182,9 @@ public class PostController extends BaseController {
             postDO.setThumbMediaId(jsonObject.optString("thumbMediaId"));
             postDO.setThumbUrl(jsonObject.getString("thumbUrl"));
             postDO.setContentSourceUrl(jsonObject.optString("contentSourceUrl"));
+            postDO.setShowCoverPic((short) jsonObject.optInt("showCoverPic", 0));
 
             posts.add(postDO);
-
-            System.out.println("###################" + posts);
         }
         postService.updateMultiPosts(weixinAppid, pageId, posts);
         return new JsonResponse(null);
