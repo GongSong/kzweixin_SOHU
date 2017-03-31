@@ -38,8 +38,8 @@
       "title",
       "digest",
       "content",
-      "thumbUrl",
+      "thumbUrl"
     ],
-    "additionalProperties": false
+    "additionalProperties": true
   }
 }

@@ -60,6 +60,14 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
     @Override
     public String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException {
+        // 处理没有http头的问题
+        if (imgUrl.indexOf("//") == 0) {
+            imgUrl = "http:" + imgUrl;
+        }
+        // 本来就是微信url的不再上传
+        if (imgUrl.indexOf("https://mmbiz") == 0 || imgUrl.indexOf("http://mmbiz") == 0) {
+            return imgUrl;
+        }
         String result = HttpClientUtil.postMedia(ApiConfig.getAddPostImageUrl(accessToken), imgUrl);
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
