@@ -1,5 +1,6 @@
 package com.kuaizhan.service.impl;
 
+import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.KZPicUploadException;
 import com.kuaizhan.service.KZPicService;
 import com.kuaizhan.utils.HttpClientUtil;
@@ -35,7 +36,7 @@ public class KZPicServiceImpl implements KZPicService {
 
     @Override
     public String uploadByUrlAndUserId(String url, long userId) throws KZPicUploadException {
-        String tempPicApi = "http://service.kuaizhan.sohuno.com/pic/servcie-upload-pic-by-url";
+        String tempPicApi = ApplicationConfig.getPicUplaodUrl();
         Map<String, Object> params = new HashMap<>();
         params.put("img_url", url);
         params.put("uid", userId);
