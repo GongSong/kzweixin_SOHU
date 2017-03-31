@@ -5,6 +5,7 @@ import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.MqConfig;
 import com.kuaizhan.dao.mapper.PostDao;
 import com.kuaizhan.exception.business.KZPostAddException;
+import com.kuaizhan.exception.business.KZPicUploadException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.system.DaoException;
@@ -14,23 +15,23 @@ import com.kuaizhan.pojo.DO.MongoPostDo;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.DTO.PostDTO;
 import com.kuaizhan.service.AccountService;
+import com.kuaizhan.service.KZPicService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
-import com.kuaizhan.utils.HttpClientUtil;
-import com.kuaizhan.utils.JsonUtil;
-import com.kuaizhan.utils.MqUtil;
-import com.kuaizhan.utils.IdGeneratorUtil;
-import com.kuaizhan.utils.ReplaceCallbackMatcher;
+import com.kuaizhan.utils.*;
 import com.vdurmont.emoji.EmojiParser;
-import javafx.geometry.Pos;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -54,6 +55,9 @@ public class PostServiceImpl implements PostService {
 
     @Resource
     AccountService accountService;
+
+    @Resource
+    KZPicService kZPicService;
 
 
     @Override
@@ -137,7 +141,6 @@ public class PostServiceImpl implements PostService {
                 MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
                 String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
                 postDO.setContent(content);
-
             } catch (Exception e) {
                 throw new MongoException(e);
             }
@@ -436,4 +439,242 @@ public class PostServiceImpl implements PostService {
         // TODO: 对中转链接的替换； 校验上传成功的微信图片，肯定是小于1M的。
         return content;
     }
+
+    @Override
+    public List<PostDO> listPostsByWeixinAppid(long weixinAppid) throws DaoException {
+        try {
+            return postDao.listPostsByWeixinAppid(weixinAppid);
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public List<String> listMediaIdsByWeixinAppid(long weixinAppid) throws DaoException {
+        try {
+            return postDao.listMediaIdsByWeixinAppid(weixinAppid);
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public void importWeixinPost(long weixinAppid, PostDTO.PostItem postItem, long userId) throws Exception {
+        // 将微信返回的文章处理为数据库存储的图文
+        List<PostDO> postDOList = transformPostFromWeixinPost(postItem, userId);
+
+        // 入库
+        saveMultiPosts(weixinAppid, postDOList);
+    }
+
+    public List<PostDO> transformPostFromWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception {
+        List<PostDO> postDOList = new LinkedList<>();
+        List<PostDTO.Item.Content.NewsItem> newsItems = postItem.getItem().getContent().getNewsItems();
+        if (newsItems == null) return null;
+        int key = 0;
+        for (PostDTO.Item.Content.NewsItem newsItem: newsItems) {
+            PostDO postDO = new PostDO();
+            // 标题去除emoji
+            postDO.setTitle(EmojiParser.removeAllEmojis(newsItem.getTitle()));
+            // 摘要去除emoji
+            postDO.setDigest(EmojiParser.removeAllEmojis(newsItem.getDigest()));
+            // 内容替换图片及视频
+            String content = replacePicUrlFromWeixinPost(newsItem.getContent(), userId);
+            postDO.setContent(replaceVideoFromWeixinPost(content));
+            // 缩略图mediaId
+            postDO.setThumbMediaId(newsItem.getThumbMediaId());
+            // 缩略图链接替换
+            String picUrl;
+            if (newsItem.getThumbUrl() == null || "".equals(newsItem.getThumbUrl())) {
+                picUrl = (key == 0) ? getFirstPostDefaultThumbUrl() : getCommonPostDefaultThumbUrl();
+            } else {
+                picUrl = getKzImgUrlByWeixinImgUrl(newsItem.getThumbUrl(), userId);
+            }
+            postDO.setThumbUrl(picUrl);
+            // 是否显示封面
+            postDO.setShowCoverPic(newsItem.getShowCoverPic());
+            // 作者
+            postDO.setAuthor(newsItem.getAuthor());
+            // 图文消息原文链接
+            postDO.setContentSourceUrl(newsItem.getContentSourceUrl() == null ? "" : newsItem.getContentSourceUrl());
+            // 图文mediaId
+            postDO.setMediaId(postItem.getItem().getMediaId());
+            // 更新时间
+            postDO.setUpdateTime(DateUtil.timestampSec());
+            // 同步时间
+            postDO.setSyncTime(DateUtil.timestampSec());
+            // 状态
+            postDO.setStatus((short) 1);
+
+            postDOList.add(postDO);
+
+            ++key;
+        }
+        return postDOList;
+    }
+
+
+    /**
+     * 去除某字符串前缀
+     *
+     * @param str
+     * @param prefix
+     * @return
+     */
+    public String removeUrlPrefixIfExists(String str, String prefix) {
+        if (str == null || prefix == null) return str;
+
+        if (str.contains(prefix)) {
+            str = str.substring(str.lastIndexOf(prefix)+prefix.length());
+            try {
+                str = URLEncoder.encode(str, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                return str;
+            }
+        }
+
+        return str;
+    }
+
+    /**
+     * 去除某字符串后缀
+     *
+     * @param str
+     * @param suffix
+     * @return
+     */
+    public String removeUrlSuffixIfExists(String str, String suffix) {
+        if (str == null || suffix == null) return str;
+
+        if (str.contains(suffix)) {
+            str = str.substring(0, str.lastIndexOf(suffix));
+            try {
+                str = URLEncoder.encode(str, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                return str;
+            }
+        }
+
+        return str;
+    }
+
+    /**
+     * 微信图片地址生成快站图片url，若失败则返回原url
+     *
+     * @param imgUrl
+     * @return
+     */
+    public String getKzImgUrlByWeixinImgUrl(String imgUrl, long userId) {
+        // 若不是微信图片则返回原url
+        if (! imgUrl.contains("mmbiz")) return imgUrl;
+
+        // 去除脚本造成的老数据
+        imgUrl = removeUrlPrefixIfExists(imgUrl, "url=");
+
+        // 去除pic-redirect前缀
+        imgUrl = removeUrlPrefixIfExists(imgUrl, "pic-redirect?url=");
+        imgUrl = removeUrlPrefixIfExists(imgUrl, "pic-redirect.php?url=");
+
+        // 去除微信某些图片的后缀，否则getimagesize失败
+        imgUrl = removeUrlSuffixIfExists(imgUrl, "&tp=webp");
+        imgUrl = removeUrlSuffixIfExists(imgUrl, "?tp=webp");
+        imgUrl = removeUrlPrefixIfExists(imgUrl, "&amp;");
+
+        String kzPicUrl = imgUrl;
+
+        try {
+            kzPicUrl = kZPicService.uploadByUrlAndUserId(imgUrl, userId);
+        } catch (KZPicUploadException e) {
+            LogUtil.logMsg(e);
+        }
+
+        return kzPicUrl;
+    }
+
+    /**
+     * 替换微信内容中的微信图片链接为快站链接
+     *
+     * @param content
+     * @return
+     */
+    public String replacePicUrlFromWeixinPost(String content, final long userId) throws Exception {
+        // 将文章中的图片的data-src替换为src
+        content = content.replaceAll("(<img [^>]*)(data-src)", "$1src");
+
+        // img中的微信图片转成快站链接,记录wx_src
+        ReplaceCallbackMatcher.Callback callback = new ReplaceCallbackMatcher.Callback() {
+            @Override
+            public String getReplacement(Matcher matcher) throws Exception {
+                return matcher.group(1)
+                        + getKzImgUrlByWeixinImgUrl(matcher.group(2), userId)
+                        + "\" wx_src=\""
+                        + matcher.group(2)
+                        + matcher.group(3)
+                        ;
+            }
+        };
+        String regex = "(<img[^>]* src=\")([^\"]+)(\"[^>]*>)";
+        ReplaceCallbackMatcher replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
+        content = replaceCallbackMatcher.replaceMatches(content, callback);
+
+        callback = new ReplaceCallbackMatcher.Callback() {
+            @Override
+            public String getReplacement(Matcher matcher) throws Exception {
+                return matcher.group(1)
+                        + getKzImgUrlByWeixinImgUrl(matcher.group(2), userId)
+                        + "' wx_src='"
+                        + matcher.group(2)
+                        + matcher.group(3)
+                        ;
+            }
+        };
+        regex = "(<img[^>]* src=')([^']+)('[^>]*>)";
+        replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
+        content = replaceCallbackMatcher.replaceMatches(content, callback);
+
+        // 背景图中的微信图片转成快站链接
+        callback = new ReplaceCallbackMatcher.Callback() {
+            @Override
+            public String getReplacement(Matcher matcher) throws Exception {
+                return "(" + getKzImgUrlByWeixinImgUrl(matcher.group(1), userId) + ")";
+            }
+        };
+        regex = "\\((https?:\\/\\/mmbiz[^)]+)\\)";
+        replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
+        replaceCallbackMatcher.replaceMatches(content, callback);
+
+        return content;
+    }
+
+    /**
+     * 替换微信图文中视频链接
+     *
+     * @param content
+     * @return
+     */
+    public String replaceVideoFromWeixinPost(String content) {
+        return content.replaceAll(
+                "<iframe[^>]*class=\"video_iframe\"[^>]*data-src=\"([^\"]+)vid=([^&]+)([^\"]+)\"[^>]*>",
+                "<iframe style=\"z-index:1;\" class=\"video_iframe\" data-src=\"$1vid=$2$3\" frameborder=\"0\" allowfullscreen=\"\" src=\"https://v.qq.com/iframe/player.html?vid=$2&tiny=0&auto=0\" width=\"280px\" height=\"100%\">"
+        );
+    }
+
+    /**
+     * 多图文第一篇图文的默认封面图
+     *
+     * @return
+     */
+    public String getFirstPostDefaultThumbUrl() {
+        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
+    }
+
+    /**
+     * 多图文非第一篇图文的默认封面图
+     *
+     * @return
+     */
+    public String getCommonPostDefaultThumbUrl() {
+        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-200-200.png");
+    }
+
 }

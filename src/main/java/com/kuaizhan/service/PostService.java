@@ -8,6 +8,7 @@ import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.DTO.PostDTO;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,7 +54,6 @@ public interface PostService {
      */
     PostDO getPostByPageId(long pageId) throws DaoException, MongoException;
 
-
     /**
      * 获取快站文章
      *
@@ -84,10 +84,34 @@ public interface PostService {
      */
     void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception;
 
-
     /**
      * 更新一条多图文消息，并同步到微信服务器
      */
     void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception;
 
+    /**
+     * 根据weixinAppid获取图文消息
+     *
+     * @param weixinAppid
+     * @return
+     * @throws DaoException
+     */
+    List<PostDO> listPostsByWeixinAppid(long weixinAppid) throws DaoException;
+
+    /**
+     * 根据weixinAppid获取mediaId列表
+     *
+     * @param weixinAppid
+     * @return
+     * @throws DaoException
+     */
+    List<String> listMediaIdsByWeixinAppid(long weixinAppid) throws DaoException;
+
+    /**
+     * 由微信导入图文
+     *
+     * @param weixinAppid
+     * @param postItem
+     */
+    void importWeixinPost(long weixinAppid, PostDTO.PostItem postItem, long userId) throws Exception;
 }
