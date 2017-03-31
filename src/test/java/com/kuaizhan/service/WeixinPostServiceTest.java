@@ -13,8 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by liangjiateng on 2017/3/28.
  */
@@ -50,8 +48,8 @@ public class WeixinPostServiceTest {
     }
 
     @Test
-    public void listPostsByOffset() throws Exception {
-        PostDTO postDTO = weixinPostService.listPostsByOffset(accountService.getAccountByWeixinAppId(601145633L).getAccessToken(), 0, 20);
+    public void getPostDTOByOffset() throws Exception {
+        PostDTO postDTO = weixinPostService.getPostDTOByOffset(accountService.getAccountByWeixinAppId(601145633L).getAccessToken(), 0, 20);
         System.out.println("----->" + postDTO.toString());
     }
 

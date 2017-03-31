@@ -131,7 +131,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public PostDTO listPostsByOffset(String accessToken, int offset, int count) throws MaterialGetException {
+    public PostDTO getPostDTOByOffset(String accessToken, int offset, int count) throws MaterialGetException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "news");
         jsonObject.put("offset", offset);
@@ -153,12 +153,12 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     public List<PostDTO> listAllPosts(String accessToken) throws MaterialGetException {
         List<PostDTO> postDTOList = new LinkedList<>();
         int MAX_MATERIAL_COUNT_EACH_FETCH = 20;
-        PostDTO postDTO = listPostsByOffset(accessToken, 0, MAX_MATERIAL_COUNT_EACH_FETCH);
+        PostDTO postDTO = getPostDTOByOffset(accessToken, 0, MAX_MATERIAL_COUNT_EACH_FETCH);
         postDTOList.add(postDTO);
         int index = postDTO.getItemCount(), totalCount = postDTO.getTotalCount();
         while (index < totalCount) {
             try {
-                postDTO = listPostsByOffset(accessToken, index, MAX_MATERIAL_COUNT_EACH_FETCH);
+                postDTO = getPostDTOByOffset(accessToken, index, MAX_MATERIAL_COUNT_EACH_FETCH);
                 postDTOList.add(postDTO);
             } catch (MaterialGetException e) {
                 LogUtil.logMsg(e);
