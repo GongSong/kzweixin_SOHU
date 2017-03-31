@@ -105,7 +105,6 @@
     ```
        [
         {
-         "mediaId": "Mf3vdzdf3f", // 图文在微信的mediaId
          "title": "我的买房故事",
          "author": "马德华",
          "digest": "我的买房故事",
@@ -113,7 +112,6 @@
          "thumbMediaId": "fdevae3vdar3fa", // 封面图片在微信的media_id
          "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
          "contentSourceUrl": "www.sohu.com",  // 原文链接
-         "updateTime": 1463542009,
          "kuaizhanPostId":1240584810
         }
        ]
@@ -130,7 +128,7 @@
 #### 5 修改图文
 * **协议**：HTTPS
 * **方法**：PUT
-* **URL**：/v1/posts/`<pageId>`
+* **URL**：/v1/posts/`<pageId>`  // pageId传修改前第一篇图文的
 * **参数**：
     * weixinAppid: 微信Appid
     * posts: 多图文列表，示例如下
@@ -138,6 +136,7 @@
     ```
        [
         {
+         "pageId": 13353432e23, // 图文在后端的主键，没有则为空
          "mediaId": "Mf3vdzdf3f", // 图文在微信的mediaId
          "title": "我的买房故事",
          "author": "马德华",
@@ -146,7 +145,6 @@
          "thumbMediaId": "fdevae3vdar3fa", // 封面图片在微信的media_id
          "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
          "contentSourceUrl": "www.sohu.com",  // 原文链接
-         "updateTime": 1463542009,
          "kuaizhanPostId":1240584810
         }
        ]

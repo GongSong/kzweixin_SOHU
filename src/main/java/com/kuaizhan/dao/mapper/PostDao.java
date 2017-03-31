@@ -54,9 +54,13 @@ public interface PostDao {
     PostDO getPost(long pageId);
 
     /**
-     * 新增一条图文
-     * @return
+     * 新增单个图文
      */
     void insertPost(@Param("post") PostDO post);
+
+    /**
+     * 修改单个图文
+     */
+    void updatePost(@Param("post") PostDO post, @Param("pageId") long pageId);
 }
 

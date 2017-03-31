@@ -84,4 +84,10 @@ public interface PostService {
      */
     void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception;
 
+
+    /**
+     * 更新一条多图文消息，并同步到微信服务器
+     */
+    void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception;
+
 }

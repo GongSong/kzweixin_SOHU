@@ -85,16 +85,43 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         // 上传
         logger.info("[微信] 上传多图文开始, data: " + jsonObject);
         String result = HttpClientUtil.postJson(ApiConfig.getCreatePostsUrl(accessToken), jsonObject.toString());
-
         JSONObject returnJson = new JSONObject(result);
         logger.info("[微信] 上传多图文结束, result:" + returnJson);
 
         if (returnJson.optInt("errcode") != 0) {
-            logger.error("[微信] 上传多图文失败, result:" + returnJson);
+            logger.error("[微信] 上传多图文失败, data:"+ jsonObject + " result:" + returnJson);
             throw new UploadPostsException();
         }
         return returnJson.getString("media_id");
     }
 
+    @Override
+    public void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("media_id", mediaId);
+        jsonObject.put("index", 0); // 只更新单图文, 都是0
+
+        // 组装articles
+        JSONArray jsonArray = new JSONArray();
+        JSONObject postJson = new JSONObject();
+        postJson.put("title", postDO.getTitle());
+        postJson.put("thumb_media_id", postDO.getThumbMediaId());
+        postJson.put("author", postDO.getAuthor());
+        postJson.put("digest", postDO.getDigest());
+        postJson.put("show_cover_pic", postDO.getShowCoverPic());
+        postJson.put("content", postDO.getContent());
+        postJson.put("content_source_url", postDO.getContentSourceUrl());
+        jsonArray.put(postJson);
+        jsonObject.put("articles", jsonArray);
+
+        String result = HttpClientUtil.postJson(ApiConfig.getUpdatePostUrl(accessToken), jsonObject.toString());
+        JSONObject returnJson = new JSONObject(result);
+
+        if (returnJson.optInt("errcode") != 0) {
+            logger.error("[微信] 修改图文失败, data:"+ jsonObject + " result:" + returnJson);
+            throw new UploadPostsException();
+        }
+
+    }
 
 }

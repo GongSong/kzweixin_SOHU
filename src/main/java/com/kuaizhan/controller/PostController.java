@@ -19,6 +19,8 @@ import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
+import com.mongodb.util.JSON;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -129,16 +131,70 @@ public class PostController extends BaseController {
         return new JsonResponse(multiPostVOList);
     }
 
+    /**
+     * 新增多图文
+     * @param weixinAppid
+     */
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public JsonResponse insertPost(@RequestParam long weixinAppid) {
+    public JsonResponse insertPost(@RequestParam long weixinAppid, @RequestBody String postData) throws Exception {
+        JSONArray jsonArray = new JSONArray(postData);
+        List<PostDO> posts = new ArrayList<>();
+
+        for (int i = 0; i < jsonArray.length(); i++){
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            PostDO postDO = new PostDO();
+            postDO.setTitle(jsonObject.getString("title"));
+            postDO.setAuthor(jsonObject.optString("author"));
+            postDO.setDigest(jsonObject.getString("digest"));
+            postDO.setContent(jsonObject.getString("content"));
+            postDO.setThumbMediaId(jsonObject.optString("thumbMediaId"));
+            postDO.setThumbUrl(jsonObject.getString("thumbUrl"));
+            postDO.setContentSourceUrl(jsonObject.optString("contentSourceUrl"));
+
+            posts.add(postDO);
+        }
+        postService.insertMultiPosts(weixinAppid, posts);
+
         return new JsonResponse(null);
     }
 
-    @RequestMapping(value = "/posts", method = RequestMethod.PUT)
-    public JsonResponse updatePost(@RequestParam long weixinAppid) {
+    /**
+     * 修改多图文
+     * @param weixinAppid
+     */
+    @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.PUT)
+    public JsonResponse updatePost(@RequestParam long weixinAppid, @PathVariable("pageId") long pageId, @RequestBody String postData) throws Exception {
+
+        JSONArray jsonArray = new JSONArray(postData);
+        List<PostDO> posts = new ArrayList<>();
+
+        for (int i = 0; i < jsonArray.length(); i++){
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            PostDO postDO = new PostDO();
+
+            postDO.setPageId(jsonObject.optLong("pageId"));
+            postDO.setMediaId(jsonObject.optString("mediaId"));
+            postDO.setTitle(jsonObject.getString("title"));
+            postDO.setAuthor(jsonObject.optString("author"));
+            postDO.setDigest(jsonObject.getString("digest"));
+            postDO.setContent(jsonObject.getString("content"));
+            postDO.setThumbMediaId(jsonObject.optString("thumbMediaId"));
+            postDO.setThumbUrl(jsonObject.getString("thumbUrl"));
+            postDO.setContentSourceUrl(jsonObject.optString("contentSourceUrl"));
+
+            posts.add(postDO);
+
+            System.out.println("###################" + posts);
+        }
+        postService.updateMultiPosts(weixinAppid, pageId, posts);
         return new JsonResponse(null);
     }
 
+    /**
+     * 删除图文
+     * @param weixinAppid
+     * @param pageId
+     */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
     public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) throws RedisException, DaoException, AccountNotExistException, MaterialDeleteException, JsonParseException, MongoException {
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
