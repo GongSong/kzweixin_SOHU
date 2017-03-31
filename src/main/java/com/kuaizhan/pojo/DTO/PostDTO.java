@@ -179,6 +179,8 @@ public class PostDTO {
                 private String title;
                 @JsonProperty("thumb_media_id")
                 private String thumbMediaId;
+                @JsonProperty("thumb_url")
+                private String thumbUrl;
                 @JsonProperty("show_cover_pic")
                 private String showCoverPic;
                 private String author;
@@ -217,6 +219,14 @@ public class PostDTO {
 
                 public void setThumbMediaId(String thumbMediaId) {
                     this.thumbMediaId = thumbMediaId;
+                }
+
+                public String getThumbUrl() {
+                    return thumbUrl;
+                }
+
+                public void setThumbUrl(String thumbUrl) {
+                    this.thumbUrl = thumbUrl;
                 }
 
                 public String getShowCoverPic() {
@@ -271,6 +281,7 @@ public class PostDTO {
                     return "NewsItem{" +
                             "title=" + title +
                             ", thumbMediaId=" + thumbMediaId +
+                            ", thumbUrl=" + thumbUrl +
                             ", showCoverPic=" + showCoverPic +
                             ", author=" + author +
                             ", digest=" + digest +
