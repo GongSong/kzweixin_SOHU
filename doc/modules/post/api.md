@@ -5,7 +5,8 @@
 * **方法**：GET
 * **URL**：/v1/posts
 * **参数**：
-    * weixinAppid 微信Appid
+    * weixinAppid 微信Appid 
+    * title 按title模糊搜索
     * page 当前请求页码
 
 * **返回**：

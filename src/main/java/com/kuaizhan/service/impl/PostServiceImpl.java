@@ -57,13 +57,12 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public Page<PostDO> listPostsByPagination(long weixinAppid, Integer page) throws DaoException {
+    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException {
 
         Page<PostDO> postDOPage = new Page<>(page, ApplicationConfig.PAGE_SIZE_LARGE);
 
         try {
-            List<PostDO> posts = postDao.listPostsByPagination(weixinAppid, postDOPage);
-
+            List<PostDO> posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage);
             // 从Mongo中取content
             for (PostDO postDO : posts) {
                 MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
@@ -74,7 +73,7 @@ public class PostServiceImpl implements PostService {
 
             postDOPage.setResult(posts);
 
-            long totalCount = postDao.count(weixinAppid);
+            long totalCount = postDao.count(weixinAppid, title);
             postDOPage.setTotalCount(totalCount);
 
         } catch (Exception e) {
@@ -238,11 +237,26 @@ public class PostServiceImpl implements PostService {
         }
         String mediaId = weixinPostService.uploadPosts(accessToken, wxPosts);
 
-        // 上传到数据库
+        // 保存到数据库
+        for (PostDO postDO: posts) {
+            postDO.setMediaId(mediaId);
+        }
+        saveMultiPosts(weixinAppid, posts);
+    }
+
+    /**
+     * 把校验后的多图文存入数据库
+     */
+    private void saveMultiPosts(long weixinAppid, List<PostDO> posts) {
+
         // 1. 单图文 2. 多图文总记录 3. 多图文中的一条
         short type = (short) (posts.size() > 1 ? 3 : 1);
         int index = 0;
-        for (PostDO postDO : posts) {
+        String sumTitle = ""; // 把title拼接起来，保存多图文总记录里面
+        for (PostDO postDO: posts){
+
+            sumTitle += postDO.getTitle();
+
             // 先把content保存到mongo
             long pageId = IdGeneratorUtil.getID();
             MongoPostDo mongoPostDo = new MongoPostDo();
@@ -251,7 +265,6 @@ public class PostServiceImpl implements PostService {
             mongoPostDao.insertPost(mongoPostDo);
 
             postDO.setPageId(pageId);
-            postDO.setMediaId(mediaId);
             postDO.setWeixinAppid(weixinAppid);
             postDO.setType(type);
             postDO.setIndex(index++);
@@ -263,6 +276,7 @@ public class PostServiceImpl implements PostService {
         if (posts.size() > 1) {
 
             PostDO sumPost = new PostDO();
+            sumPost.setTitle(sumTitle);
             sumPost.setWeixinAppid(weixinAppid);
             sumPost.setThumbMediaId(posts.get(0).getThumbMediaId());
             sumPost.setThumbUrl(posts.get(0).getThumbUrl());
