@@ -62,7 +62,10 @@ public enum ErrorCodeConfig {
 
     UPLOAD_POSTS_ERROR(107004, "上传微信多图文失败"),
 
-    ADD_KZ_POST_ERROR(107005, "同步快站文章失败");
+    ADD_KZ_POST_ERROR(107005, "同步快站文章失败"),
+
+    //KZPic(08)
+    KZPIC_UPLOAD_ERROR(108001, "上传至KZPic失败");
 
     private int code;
     private String msg;
@@ -79,4 +82,6 @@ public enum ErrorCodeConfig {
     public String getMsg() {
         return msg;
     }
+
+
 }
