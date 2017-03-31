@@ -113,5 +113,5 @@ public interface PostService {
      * @param weixinAppid
      * @param postItem
      */
-    void importWeixinPost(long weixinAppid, PostDTO.PostItem postItem);
+    void importWeixinPost(long weixinAppid, PostDTO.PostItem postItem, long userId) throws Exception;
 }

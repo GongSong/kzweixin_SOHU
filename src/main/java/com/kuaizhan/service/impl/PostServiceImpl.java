@@ -459,17 +459,56 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void importWeixinPost(long weixinAppid, PostDTO.PostItem postItem) {
+    public void importWeixinPost(long weixinAppid, PostDTO.PostItem postItem, long userId) throws Exception {
+        // 将微信返回的文章处理为数据库存储的图文
+        List<PostDO> postDOList = transformPostFromWeixinPost(postItem, userId);
 
+        // 入库
+        saveMultiPosts(weixinAppid, postDOList);
     }
 
-    public List<PostDO> getPostFromWeixinPost(PostDTO.PostItem postItem, long userId) {
+    public List<PostDO> transformPostFromWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception {
         List<PostDO> postDOList = new LinkedList<>();
         List<PostDTO.Item.Content.NewsItem> newsItems = postItem.getItem().getContent().getNewsItems();
         if (newsItems == null) return null;
+        int key = 0;
         for (PostDTO.Item.Content.NewsItem newsItem: newsItems) {
             PostDO postDO = new PostDO();
+            // 标题去除emoji
+            postDO.setTitle(EmojiParser.removeAllEmojis(newsItem.getTitle()));
+            // 摘要去除emoji
+            postDO.setDigest(EmojiParser.removeAllEmojis(newsItem.getDigest()));
+            // 内容替换图片及视频
+            String content = replacePicUrlFromWeixinPost(newsItem.getContent(), userId);
+            postDO.setContent(replaceVideoFromWeixinPost(content));
+            // 缩略图mediaId
+            postDO.setThumbMediaId(newsItem.getThumbMediaId());
+            // 缩略图链接替换
+            String picUrl;
+            if (newsItem.getThumbUrl() == null || "".equals(newsItem.getThumbUrl())) {
+                picUrl = (key == 0) ? getFirstPostDefaultThumbUrl() : getCommonPostDefaultThumbUrl();
+            } else {
+                picUrl = getKzImgUrlByWeixinImgUrl(newsItem.getThumbUrl(), userId);
+            }
+            postDO.setThumbUrl(picUrl);
+            // 是否显示封面
+            postDO.setShowCoverPic(newsItem.getShowCoverPic());
+            // 作者
+            postDO.setAuthor(newsItem.getAuthor());
+            // 图文消息原文链接
+            postDO.setContentSourceUrl(newsItem.getContentSourceUrl() == null ? "" : newsItem.getContentSourceUrl());
+            // 图文mediaId
+            postDO.setMediaId(postItem.getItem().getMediaId());
+            // 更新时间
+            postDO.setUpdateTime(DateUtil.timestampSec());
+            // 同步时间
+            postDO.setSyncTime(DateUtil.timestampSec());
+            // 状态
+            postDO.setStatus((short) 1);
 
+            postDOList.add(postDO);
+
+            ++key;
         }
         return postDOList;
     }
@@ -574,7 +613,8 @@ public class PostServiceImpl implements PostService {
                         ;
             }
         };
-        ReplaceCallbackMatcher replaceCallbackMatcher = new ReplaceCallbackMatcher("(<img[^>]* src=\")([^\"]+)(\"[^>]*>)");
+        String regex = "(<img[^>]* src=\")([^\"]+)(\"[^>]*>)";
+        ReplaceCallbackMatcher replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         content = replaceCallbackMatcher.replaceMatches(content, callback);
 
         callback = new ReplaceCallbackMatcher.Callback() {
@@ -588,7 +628,8 @@ public class PostServiceImpl implements PostService {
                         ;
             }
         };
-        replaceCallbackMatcher = new ReplaceCallbackMatcher("(<img[^>]* src=')([^']+)('[^>]*>)");
+        regex = "(<img[^>]* src=')([^']+)('[^>]*>)";
+        replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         content = replaceCallbackMatcher.replaceMatches(content, callback);
 
         // 背景图中的微信图片转成快站链接
@@ -598,7 +639,8 @@ public class PostServiceImpl implements PostService {
                 return "(" + getKzImgUrlByWeixinImgUrl(matcher.group(1), userId) + ")";
             }
         };
-        replaceCallbackMatcher = new ReplaceCallbackMatcher("\\((https?:\\/\\/mmbiz[^)]+)\\)");
+        regex = "\\((https?:\\/\\/mmbiz[^)]+)\\)";
+        replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         replaceCallbackMatcher.replaceMatches(content, callback);
 
         return content;
@@ -616,4 +658,23 @@ public class PostServiceImpl implements PostService {
                 "<iframe style=\"z-index:1;\" class=\"video_iframe\" data-src=\"$1vid=$2$3\" frameborder=\"0\" allowfullscreen=\"\" src=\"https://v.qq.com/iframe/player.html?vid=$2&tiny=0&auto=0\" width=\"280px\" height=\"100%\">"
         );
     }
+
+    /**
+     * 多图文第一篇图文的默认封面图
+     *
+     * @return
+     */
+    public String getFirstPostDefaultThumbUrl() {
+        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
+    }
+
+    /**
+     * 多图文非第一篇图文的封面图
+     *
+     * @return
+     */
+    public String getCommonPostDefaultThumbUrl() {
+        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-200-200.png");
+    }
+
 }
