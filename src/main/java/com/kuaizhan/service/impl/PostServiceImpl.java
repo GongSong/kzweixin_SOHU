@@ -180,7 +180,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void export2KzArticle(long weixinAppid, long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {
-        //TODO:快文那边是否有去重判断？
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             JSONObject jsonObject = new JSONObject();

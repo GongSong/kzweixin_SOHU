@@ -31,14 +31,14 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
         //TODO:畅言
         long weixinAppid = (long) msgMap.get("weixinAppid");
         List<Long> pageIds = (List<Long>) msgMap.get("pageIds");
-        List<PostDO> postDOList = new ArrayList<>();
-        //调用接口
         for (Long pageId : pageIds) {
+            List<PostDO> postDOList = new ArrayList<>();
+
+            // 调用接口
             ArticleDTO articleDTO = postService.getKzArticle(pageId);
             if (articleDTO != null) {
-                //微信上传封面图
+
                 PostDO postDO = new PostDO();
-                postDO.setKuaizhanPostId(pageId);
                 postDO.setWeixinAppid(weixinAppid);
                 postDO.setTitle(articleDTO.getTitle());
                 postDO.setDigest("");
@@ -48,9 +48,10 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
                 }
                 postDO.setContent(stringBuilder.toString());
                 postDO.setThumbUrl(articleDTO.getCoverUrl());
-                postDOList.add(postDO);
 
+                postDOList.add(postDO);
             }
+            // 新增文章
             postService.insertMultiPosts(weixinAppid, postDOList);
         }
 
