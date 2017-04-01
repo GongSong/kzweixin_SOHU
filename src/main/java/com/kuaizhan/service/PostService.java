@@ -114,8 +114,7 @@ public interface PostService {
     /**
      * 由微信导入图文
      *
-     * @param weixinAppid
      * @param postItem
      */
-    void importWeixinPost(long weixinAppid, PostDTO.PostItem postItem, long userId) throws Exception;
+    void importWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception;
 }

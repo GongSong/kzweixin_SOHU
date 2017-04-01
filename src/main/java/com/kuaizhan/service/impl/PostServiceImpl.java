@@ -488,12 +488,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void importWeixinPost(long weixinAppid, PostDTO.PostItem postItem, long userId) throws Exception {
+    public void importWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception {
         // 将微信返回的文章处理为数据库存储的图文
         List<PostDO> postDOList = transformPostFromWeixinPost(postItem, userId);
 
         // 入库
-        saveMultiPosts(weixinAppid, postDOList);
+        saveMultiPosts(postItem.getWeixinAppid(), postDOList);
     }
 
     public List<PostDO> transformPostFromWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception {
