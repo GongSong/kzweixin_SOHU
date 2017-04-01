@@ -29,10 +29,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 
 /**
@@ -494,6 +491,40 @@ public class PostServiceImpl implements PostService {
 
         // 入库
         saveMultiPosts(postItem.getWeixinAppid(), postDOList);
+    }
+
+    @Override
+    public List<PostDTO.PostItem> listNonExistsPostItemsFromWeixin(long weixinAppid) throws DaoException, AccountNotExistException, RedisException, JsonParseException, MaterialGetException {
+        List<PostDTO.PostItem> differPostItems = new LinkedList<>();
+
+        // 获取所有微信图文
+        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccountByWeixinAppId(weixinAppid).getAccessToken());
+
+        if (postDTOList == null || postDTOList.size() <= 0) {
+            return differPostItems;
+        }
+
+        List<PostDTO.PostItem> postItemList = new LinkedList<>();
+        for (PostDTO postDTO: postDTOList) {
+            postItemList.addAll(postDTO.toPostItemList(weixinAppid));
+        }
+
+        // 获取本地所有微信图文
+        List<String> mediaIds = listMediaIdsByWeixinAppid(weixinAppid);
+        Set<String> mediaIdsSet = new HashSet<>();
+
+        for (String mediaId: mediaIds) {
+            mediaIdsSet.add(mediaId);
+        }
+
+        // 对比差异
+        for (PostDTO.PostItem postItem: postItemList) {
+            if (! mediaIdsSet.contains(postItem.getItem().getMediaId())) {
+                differPostItems.add(postItem);
+            }
+        }
+
+        return differPostItems;
     }
 
     public List<PostDO> transformPostFromWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception {
