@@ -8,8 +8,8 @@ import com.kuaizhan.service.WeixinPostService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 从快站文章导入，消费者
@@ -26,7 +26,7 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
     AccountService accountService;
 
     @Override
-    public void onMessage(HashMap msgMap) throws Exception {
+    public void onMessage(Map msgMap) throws Exception {
 
         //TODO:畅言
         long weixinAppid = (long) msgMap.get("weixinAppid");
