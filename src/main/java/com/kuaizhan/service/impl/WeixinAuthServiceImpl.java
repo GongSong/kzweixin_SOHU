@@ -173,6 +173,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     public AuthorizationInfoDTO refreshAuthorizationInfo(String componentAccessToken, String componentAppId, String authorizerAppId, String authorizerRefreshToken) throws JsonParseException {
         AuthorizationInfoDTO authorizationInfoDTO;
         try {
+            // TODO: 获取token失败时，应该抛异常。
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("component_appid", componentAppId);
             jsonObject.put("authorizer_appid", authorizerAppId);

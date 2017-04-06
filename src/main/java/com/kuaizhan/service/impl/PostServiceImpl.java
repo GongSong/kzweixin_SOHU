@@ -210,7 +210,7 @@ public class PostServiceImpl implements PostService {
         posts = cleanPosts(posts, accessToken);
 
         // 上传到微信
-        String mediaId = weixinPostService.uploadPosts(accessToken, wrapWeiXinPosts(posts));
+        String mediaId = weixinPostService.uploadPosts(accessToken, wrapWeiXinPosts(accessToken, posts));
 
         // 保存到数据库
         for (PostDO postDO: posts) {
@@ -256,7 +256,7 @@ public class PostServiceImpl implements PostService {
         // 多图文到多图文，如果两个图文数相等，需要一次调用微信接口修改图文，如果不等，需要删除mediaId，成本高、逻辑也复杂
         else {
             // 上传新的图文到微信, 先新增到微信，下面操作失败时，避免丢失数据
-            String mediaId = weixinPostService.uploadPosts(accessToken, wrapWeiXinPosts(posts));
+            String mediaId = weixinPostService.uploadPosts(accessToken, wrapWeiXinPosts(accessToken, posts));
             for (PostDO postDO: posts){
                 postDO.setMediaId(mediaId);
             }
@@ -275,7 +275,7 @@ public class PostServiceImpl implements PostService {
      * 把存数据库的多图文DO对象，封装成同步给微信的。
      * 替换了内容中的图片url为wx_src
      */
-    private List<PostDO> wrapWeiXinPosts(List<PostDO> posts) throws Exception {
+    private List<PostDO> wrapWeiXinPosts(String accessToken, List<PostDO> posts) throws Exception {
         List<PostDO> wxPosts = new ArrayList<>();
         for (PostDO postDO : posts) {
             // 封装上传微信的PostDO list
@@ -288,7 +288,7 @@ public class PostServiceImpl implements PostService {
             wxPost.setContentSourceUrl(postDO.getContentSourceUrl());
 
             // 替换内容
-            String replacedContent = replaceContentForUpload(postDO.getContent());
+            String replacedContent = replaceContentForUpload(accessToken, postDO.getContent());
             wxPost.setContent(replacedContent);
             wxPosts.add(wxPost);
         }
@@ -444,7 +444,7 @@ public class PostServiceImpl implements PostService {
      * @param content
      * @return
      */
-    private String replaceContentForUpload(String content) throws Exception {
+    private String replaceContentForUpload(final String accessToken, String content) throws Exception {
         // 用微信wx_src替换src
 
         // 定义callback
@@ -462,6 +462,17 @@ public class PostServiceImpl implements PostService {
 
         // wx_src在src后
         regex = "(<img[^>]* wx_src=\")(?<wxSrc>[^\"]+)(\"[^>]* src=\")(?<src>[^\"]+)(\"[^>]*>)";
+        callbackMatcher = new ReplaceCallbackMatcher(regex);
+        content = callbackMatcher.replaceMatches(content, callback);
+
+        // 替换background-image的callback
+        callback = new ReplaceCallbackMatcher.Callback() {
+            @Override
+            public String getReplacement(Matcher matcher) throws Exception {
+                return matcher.group(1) + weixinPostService.uploadImgForPost(accessToken, matcher.group(2)) + matcher.group(3);
+            }
+        };
+        regex = "(background-image: url\\()([^\\)]+)(\\))";
         callbackMatcher = new ReplaceCallbackMatcher(regex);
         content = callbackMatcher.replaceMatches(content, callback);
 
