@@ -217,10 +217,10 @@
         
     * 异常情况: 无
     
-#### 8  快站文章同步到微信
+#### 8  快站文章导入到快站微信
 * **协议**： HTTPS
 * **方法**： POST
-* **URL**： /v1/posts/kz_syncs
+* **URL**： /v1/posts/kz_imports
 * **参数**：
     * weixinAppid 微信Appid
     * posts:示例如下  
@@ -242,7 +242,7 @@
     * 异常情况: 
         * 参数异常，返回码 101001 
 
-#### 8  快站微信本地文章同步到快站文章
+#### 8  快站微信同步到快站文章
 * **协议**： HTTPS
 * **方法**： POST
 * **URL**： /v1/posts/kzweixin_syncs

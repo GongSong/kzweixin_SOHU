@@ -319,6 +319,7 @@ public class PostServiceImpl implements PostService {
                 HashMap<String, String> retMap = weixinPostService.uploadImage(accessToken, postDO.getThumbUrl());
                 thumbMediaId = retMap.get("mediaId");
             }
+            // TODO: 如果没有content_source_url，设置为快站分享的页面url
             postDO.setThumbMediaId(thumbMediaId);
         }
 
