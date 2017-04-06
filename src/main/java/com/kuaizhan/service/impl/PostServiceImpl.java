@@ -180,7 +180,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void export2KzArticle(long weixinAppid, long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {
-        //TODO:快文那边是否有去重判断？
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             JSONObject jsonObject = new JSONObject();
@@ -320,6 +319,7 @@ public class PostServiceImpl implements PostService {
                 HashMap<String, String> retMap = weixinPostService.uploadImage(accessToken, postDO.getThumbUrl());
                 thumbMediaId = retMap.get("mediaId");
             }
+            // TODO: 如果没有content_source_url，设置为快站分享的页面url
             postDO.setThumbMediaId(thumbMediaId);
         }
 

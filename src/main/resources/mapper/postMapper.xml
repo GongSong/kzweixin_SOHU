@@ -85,6 +85,7 @@
         `post_url`="",
         `type`=#{post.type},
         `index`=0,
+--         解耦后全部设为零，后期工单删掉
         `kuaizhan_post_id`=0,
         `status`=1,
         `sync_time`=unix_timestamp(now()),
@@ -127,9 +128,6 @@
         </if>
         <if test="post.index = null">
             `index`=0,
-        </if>
-        <if test="post.kuaizhanPostId = null">
-            `kuaizhan_post_id`=0,
         </if>
         <if test="post.status = null">
             `status`=1,

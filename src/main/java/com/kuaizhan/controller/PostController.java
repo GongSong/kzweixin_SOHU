@@ -204,7 +204,7 @@ public class PostController extends BaseController {
     }
 
     /**
-     * 微信文章同步到快站
+     * 一键同步微信文章到快站微信
      *
      * @param weixinAppid
      * @return
@@ -235,14 +235,14 @@ public class PostController extends BaseController {
 
 
     /**
-     * 快站文章同步到微信
+     * 从快站文章导入到快站微信
      *
      * @param weixinAppid
      * @param postData
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = "/posts/kz_syncs", method = RequestMethod.POST)
+    @RequestMapping(value = "/posts/kz_imports", method = RequestMethod.POST)
     public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
         JSONObject jsonObject = new JSONObject(postData);
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);

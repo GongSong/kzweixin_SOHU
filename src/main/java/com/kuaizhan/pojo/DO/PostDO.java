@@ -22,8 +22,6 @@ public class PostDO implements Comparable<PostDO>{
     private Integer syncTime;
     private Short type; // 1.单图文 2. 多图文总记录 3.多图文中的一条
     private Integer index;
-    // TODO: 向成哥说明情况，申请工单允许为空
-    private Long kuaizhanPostId ; //每次添加图文时都会先调用 新增快文的接口
     private Short status; //1 为正常发布，2 为删除
     private Integer createTime;
     private Integer updateTime;
@@ -142,14 +140,6 @@ public class PostDO implements Comparable<PostDO>{
         this.index = index;
     }
 
-    public Long getKuaizhanPostId() {
-        return kuaizhanPostId;
-    }
-
-    public void setKuaizhanPostId(Long kuaizhanPostId) {
-        this.kuaizhanPostId = kuaizhanPostId;
-    }
-
     public Short getStatus() {
         return status;
     }
@@ -186,7 +176,7 @@ public class PostDO implements Comparable<PostDO>{
     public int compareTo(PostDO obj) {
         return this.index - obj.getIndex();
     }
-    
+
     @Override
     public String toString() {
         return "PostDO{" +
@@ -204,12 +194,10 @@ public class PostDO implements Comparable<PostDO>{
                 ", syncTime=" + syncTime +
                 ", type=" + type +
                 ", index=" + index +
-                ", kuaizhanPostId=" + kuaizhanPostId +
                 ", status=" + status +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", content='" + content + '\'' +
                 '}';
     }
-
 }

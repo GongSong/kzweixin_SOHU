@@ -11,10 +11,10 @@
 
     <!--######################### 消费者相关配置 ##########################-->
 
-
-    <bean id="kzArticlePostConsumer" class="com.kuaizhan.mq.KZArticlePostConsumer" />
     <bean id="messageListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
-        <constructor-arg name="delegate" ref="kzArticlePostConsumer" />
+        <constructor-arg name="delegate">
+            <bean class="com.kuaizhan.mq.KZArticlePostConsumer"/>
+        </constructor-arg>
     </bean>
 
     <rabbit:listener-container connection-factory="connectionFactory" >
