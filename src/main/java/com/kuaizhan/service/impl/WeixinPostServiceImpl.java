@@ -2,10 +2,12 @@ package com.kuaizhan.service.impl;
 
 
 import com.kuaizhan.config.ApiConfig;
+import com.kuaizhan.dao.redis.RedisImageDao;
 import com.kuaizhan.exception.business.AddMaterialException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.exception.business.MaterialGetException;
 import com.kuaizhan.exception.business.UploadPostsException;
+import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.PostDTO;
 import com.kuaizhan.service.WeixinPostService;
@@ -17,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -28,6 +31,9 @@ import java.util.List;
  */
 @Service("weixinPostService")
 public class WeixinPostServiceImpl implements WeixinPostService {
+
+    @Resource
+    RedisImageDao redisImageDao;
 
     private static Logger logger = Logger.getLogger(WeixinPostServiceImpl.class);
 
@@ -59,7 +65,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException {
+    public String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException {
         // 处理没有http头的问题
         if (imgUrl.indexOf("//") == 0) {
             imgUrl = "http:" + imgUrl;
@@ -68,13 +74,24 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         if (imgUrl.indexOf("https://mmbiz") == 0 || imgUrl.indexOf("http://mmbiz") == 0) {
             return imgUrl;
         }
+
+        // 先从redis中取
+        String wxUrl = redisImageDao.getImageUrl(imgUrl);
+        if (wxUrl != null) {
+            return wxUrl;
+        }
+
         String result = HttpClientUtil.postMedia(ApiConfig.getAddPostImageUrl(accessToken), imgUrl);
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
             logger.error("[微信] 上传图文中图片失败: result: " + returnJson);
             throw new AddMaterialException();
         }
-        return returnJson.getString("url");
+        wxUrl = returnJson.getString("url");
+
+        // 缓存到redis
+        redisImageDao.setImageUrl(imgUrl, wxUrl);
+        return wxUrl;
     }
 
     @Override
