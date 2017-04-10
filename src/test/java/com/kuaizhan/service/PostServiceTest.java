@@ -4,6 +4,7 @@ package com.kuaizhan.service;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 
 import com.kuaizhan.pojo.DO.PostDO;
+import com.kuaizhan.pojo.DTO.PostDTO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,6 +98,15 @@ public class PostServiceTest {
         List<String> mediaIds = postService.listMediaIdsByWeixinAppid(weixinAppid);
         for (String mediaId: mediaIds) {
             System.out.println("----->" + mediaId);
+        }
+    }
+
+    @Test
+    public void listNonExistsPostItemsFromWeixin() throws Exception {
+        long weixinAppid = 1789089804L;
+        List<PostDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);
+        for (PostDTO.PostItem postItem: postItemList){
+            System.out.println("------>" + postItem);
         }
     }
 }
