@@ -52,6 +52,10 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
     @Override
     public HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException {
+        // 处理没有http头的问题
+        if (imgUrl.indexOf("//") == 0) {
+            imgUrl = "http:" + imgUrl;
+        }
         String result = HttpClientUtil.postMedia(ApiConfig.addMaterialUrl(accessToken, "image"), imgUrl);
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
