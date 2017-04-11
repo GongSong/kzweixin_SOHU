@@ -2,9 +2,7 @@ package com.kuaizhan.controller;
 
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.config.ApplicationConfig;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.KZPostAddException;
-import com.kuaizhan.exception.business.MaterialDeleteException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
@@ -28,6 +26,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 图文消息controller
@@ -43,7 +42,8 @@ public class PostController extends BaseController {
     AccountService accountService;
     @Resource
     PojoSwitcher pojoSwitcher;
-
+    @Resource
+    WeixinPostService weixinPostService;
 
     /**
      * 获取多图文列表
@@ -251,5 +251,21 @@ public class PostController extends BaseController {
         return new JsonResponse(null);
     }
 
+
+
+    @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
+    public JsonResponse uploadWeixinThumb(@RequestBody String postData) throws ParamException, RedisException,
+            JsonParseException, DaoException, AccountNotExistException, AddMaterialException {
+        JSONObject jsonObject = new JSONObject(postData);
+        Long weixinAppid = jsonObject.optLong("weixinAppid");
+        String imgUrl = jsonObject.optString("imgUrl");
+        if (weixinAppid == 0 || imgUrl == null){
+            throw new ParamException();
+        }
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
+        Map result = weixinPostService.uploadImage(accountDO.getAccessToken(), imgUrl);
+
+        return new JsonResponse(result);
+    }
 
 }
