@@ -4,6 +4,7 @@ import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.KZPicUploadException;
 import com.kuaizhan.service.KZPicService;
 import com.kuaizhan.utils.HttpClientUtil;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,9 @@ import java.util.Map;
 
 @Service("kZPicService")
 public class KZPicServiceImpl implements KZPicService {
+
+    private static Logger logger = Logger.getLogger(KZPicServiceImpl.class);
+
     @Override
     public File download(String url, int timeout) {
         return null;
@@ -36,15 +40,20 @@ public class KZPicServiceImpl implements KZPicService {
 
     @Override
     public String uploadByUrlAndUserId(String url, long userId) throws KZPicUploadException {
-        String tempPicApi = ApplicationConfig.getPicUplaodUrl();
         Map<String, Object> params = new HashMap<>();
         params.put("img_url", url);
         params.put("uid", userId);
-        String result = HttpClientUtil.post(tempPicApi, params);
+        // 指定host
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Host", ApplicationConfig.getTestServiceHost());
+
+        String result = HttpClientUtil.post(ApplicationConfig.getPicUploadUrl(), params, headers);
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.getInt("ret") == 0) {
-            return returnJson.getString("url");
+            JSONObject data = returnJson.getJSONObject("data");
+            return data.getString("url");
         } else {
+            logger.info("[上传图片到快站] 上传失败，result: " + returnJson);
             throw new KZPicUploadException();
         }
     }

@@ -73,8 +73,13 @@ public class ApplicationConfig {
     }
 
     //图片上传路径
-    public static String getPicUplaodUrl() {
-        return PropertiesUtil.getString(PROP, "service.pic.upload");
+    public static String getPicUploadUrl() {
+        return "http://" + PropertiesUtil.getString(PROP, "kz.service.ip") + "/pic/service-upload-pic-by-url";
+    }
+
+    // 获取PHP端service host
+    public static String getTestServiceHost() {
+        return PropertiesUtil.getString(PROP, "kz.service.host");
     }
 
     //大分页

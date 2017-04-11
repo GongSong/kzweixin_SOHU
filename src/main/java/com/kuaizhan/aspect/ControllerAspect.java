@@ -67,8 +67,7 @@ public class ControllerAspect {
             }
         }
 
-        Object re = pjp.proceed();
-        return re;
+        return pjp.proceed();
     }
 
 
