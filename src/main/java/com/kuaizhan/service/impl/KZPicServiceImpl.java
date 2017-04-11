@@ -5,6 +5,7 @@ import com.kuaizhan.exception.business.KZPicUploadException;
 import com.kuaizhan.service.KZPicService;
 import com.kuaizhan.utils.HttpClientUtil;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -48,12 +49,20 @@ public class KZPicServiceImpl implements KZPicService {
         headers.put("Host", ApplicationConfig.getTestServiceHost());
 
         String result = HttpClientUtil.post(ApplicationConfig.getPicUploadUrl(), params, headers);
-        JSONObject returnJson = new JSONObject(result);
+
+        JSONObject returnJson;
+        try {
+            returnJson = new JSONObject(result);
+        }catch (JSONException e){
+            logger.info("[上传图片到快站] 上传失败，url: " + url + " result: " + result);
+            throw new KZPicUploadException();
+        }
+
         if (returnJson.getInt("ret") == 0) {
             JSONObject data = returnJson.getJSONObject("data");
             return data.getString("url");
         } else {
-            logger.info("[上传图片到快站] 上传失败，result: " + returnJson);
+            logger.info("[上传图片到快站] 上传失败，url: " + url + " result: " + returnJson);
             throw new KZPicUploadException();
         }
     }

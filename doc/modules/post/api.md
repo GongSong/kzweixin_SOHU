@@ -205,6 +205,7 @@
 * **URL**： /v1/post/wx_syncs
 * **参数**：
     * weixinAppid 微信Appid
+    * uid 用户id
     
 
 * **返回**：

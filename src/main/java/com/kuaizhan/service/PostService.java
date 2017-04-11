@@ -103,6 +103,13 @@ public interface PostService {
     List<String> listMediaIdsByWeixinAppid(long weixinAppid) throws DaoException;
 
     /**
+     * 同步微信消息(异步)
+     * @param weixinAppid
+     * @param uid 用户id，用于上传图片
+     */
+    void syncWeixinPosts(long weixinAppid, long uid);
+
+    /**
      * 由微信导入图文
      *
      * @param postItem

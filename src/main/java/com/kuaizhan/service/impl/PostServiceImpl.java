@@ -487,6 +487,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void syncWeixinPosts(long weixinAppid, long uid) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("weixinAppid", weixinAppid);
+        map.put("uid", uid);
+        mqUtil.publish(MqConfig.IMPORT_WEIXIN_POST_LIST, map);
+    }
+
+    @Override
     public void importWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception {
         // 将微信返回的文章处理为数据库存储的图文
         List<PostDO> postDOList = new LinkedList<>();

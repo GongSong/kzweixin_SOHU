@@ -212,7 +212,13 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
-    public JsonResponse wxSyncsPost(@RequestParam long weixinAppid) {
+    public JsonResponse wxSyncsPost(@RequestParam long weixinAppid, @RequestBody String postData) throws ParamException {
+        JSONObject jsonObject = new JSONObject(postData);
+        long uid = jsonObject.optLong("uid");
+        if (uid == 0){
+            throw new ParamException("uid是必传参数");
+        }
+        postService.syncWeixinPosts(weixinAppid, uid);
         return new JsonResponse(null);
     }
 

@@ -71,6 +71,13 @@ public class PostServiceTest {
     }
 
     @Test
+    public void syncWeixinPosts() throws Exception {
+        long weixinAppid = 1789089804L;
+        long uid = 123L;
+        postService.syncWeixinPosts(weixinAppid, uid);
+    }
+
+    @Test
     public void insertMultiPosts() throws Exception {
         long weixinAppid = 1789089804L;
         List<PostDO> posts = new ArrayList<>();

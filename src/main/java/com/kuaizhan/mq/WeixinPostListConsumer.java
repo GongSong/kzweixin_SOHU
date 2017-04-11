@@ -11,6 +11,7 @@ import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.LogUtil;
 import com.kuaizhan.utils.MqUtil;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -32,10 +33,14 @@ public class WeixinPostListConsumer extends BaseMqConsumer {
     @Resource
     MqUtil mqUtil;
 
+    private static final Logger logger = Logger.getLogger(WeixinPostListConsumer.class);
+
     @Override
     public void onMessage(Map msgMap) throws BaseException {
+        logger.info("[mq:同步微信图文], map: "+ msgMap);
+
         long weixinAppid = (long) msgMap.get("weixinAppid");
-        long userId = (long) msgMap.get("userId");
+        long userId = (long) msgMap.get("uid");
 
         // 获取不存在的微信图文
         List<PostDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);
@@ -47,7 +52,7 @@ public class WeixinPostListConsumer extends BaseMqConsumer {
             try {
                 String postItemJson = JsonUtil.bean2String(postItem);
                 message.put("postItem", postItemJson);
-                mqUtil.publish(MqConfig.IMPORT_KUAIZHAN_POST, message);
+                mqUtil.publish(MqConfig.IMPORT_WEIXIN_POST, message);
             } catch (JsonProcessingException e) {
                 LogUtil.logMsg(e);
             }
