@@ -6,6 +6,9 @@
 
 * 所有接口必须使用HTTPS协议访问
 * 请求body格式为application/json
+* GET请求，参数拼接到url
+* 其他方法请求, 参数写到body。
+* weixinAppid参数，约定都拼接到url
 
 ## 2. 响应
 
