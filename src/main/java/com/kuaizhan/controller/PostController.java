@@ -17,6 +17,7 @@ import com.kuaizhan.pojo.VO.PostListVO;
 import com.kuaizhan.pojo.VO.PostVO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
+import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
 import org.json.JSONArray;
@@ -249,4 +250,6 @@ public class PostController extends BaseController {
         postService.importKzArticle(weixinAppid, pageIds);
         return new JsonResponse(null);
     }
+
+
 }

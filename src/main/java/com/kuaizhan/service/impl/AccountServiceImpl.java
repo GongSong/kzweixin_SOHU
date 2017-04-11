@@ -127,14 +127,13 @@ public class AccountServiceImpl implements AccountService {
                 } catch (Exception e) {
                     throw new DaoException(e);
                 }
+                try {
+                    redisAccountDao.deleteAccountInfo(accountDO.getWeixinAppId());
+                } catch (Exception e) {
+                    throw new RedisException(e);
+                }
             }
 
-            //存缓存
-            try {
-                redisAccountDao.setAccountInfo(accountDO);
-            } catch (Exception e) {
-                throw new RedisException(e);
-            }
         }
         return accountDO;
     }
