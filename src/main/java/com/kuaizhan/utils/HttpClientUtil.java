@@ -59,10 +59,26 @@ public final class HttpClientUtil {
      * @return
      */
     public static String post(String url, Map<String, Object> params) {
-        String res = null;
+        return post(url, params, null);
+    }
+
+    /**
+     * 发送post请求
+     * @param url post url
+     * @param params post参数
+     * @param headers post headers
+     * @return
+     */
+    public static String post(String url, Map<String, Object> params, Map<String, String> headers){
+        String res;
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
             HttpPost httpPost = httpPostHandler(url, params);
+            if (headers != null){
+                for (Map.Entry<String, String> entry: headers.entrySet()){
+                    httpPost.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
             res = execute(httpClient, httpPost);
         } finally {
             doHttpClientClose(httpClient);

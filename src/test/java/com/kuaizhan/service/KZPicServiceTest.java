@@ -33,7 +33,8 @@ public class KZPicServiceTest {
 
     @Test
     public void uploadByUrlAndUserId() throws Exception {
-        kzPicService.uploadByUrlAndUserId("http//pic.kuaizhan.com/g1/M00/ED/8A/wKjmqVjnUhuAVcgSAADhAhPTuYs1285317", 123);
+        String url = kzPicService.uploadByUrlAndUserId("http://pic.kuaizhan.com/g1/M00/ED/8A/wKjmqVjnUhuAVcgSAADhAhPTuYs1285317", 123);
+        System.out.println("---->" + url);
     }
 
 }
