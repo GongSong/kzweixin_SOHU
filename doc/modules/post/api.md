@@ -107,7 +107,7 @@
 * **URL**：/v1/posts
 * **参数**：
     * weixinAppid: 微信Appid
-    * posts: 多图文列表，示例如下
+    * posts: 
     
     ```
        [
@@ -144,7 +144,7 @@
 * **URL**：/v1/posts/`<pageId>`  // pageId传修改前第一篇图文的
 * **参数**：
     * weixinAppid: 微信Appid
-    * posts: 多图文列表，示例如下
+    * posts: // 多图文列表，示例如下
     
     ```
        [
@@ -223,16 +223,7 @@
 * **URL**： /v1/posts/kz_imports
 * **参数**：
     * weixinAppid 微信Appid
-    * posts:示例如下  
-    
-        ```
-         {
-             "pageIds": [
-                 312321312,
-                 32131232131
-             ]
-         }
-        ```
+    * pageIds 图文pageId的列表, 例如: `[1344344, 2323423543]`
 
     
 * **返回**：
@@ -251,22 +242,9 @@
 * **URL**： /v1/posts/kzweixin_syncs
 * **参数**：
     * weixinAppid 微信Appid
-    * posts:示例如下  
-    
-       ```
-        [
-            {
-                "siteId": 12312312,
-                "pageId": 312312321,
-                "categoryId": 312312321
-            },
-            {
-                "siteId": 12312312,
-                "pageId": 312312321,
-                "categoryId": 312312321
-            }
-        ]
-        ```  
+    * siteId  站点id
+    * categoryId  要同步到的栏目id
+    * pageIds 图文pageId的列表, 例如: `[1344344, 2323423543]`
          
 * **返回**：
     * 获取成功时返回:

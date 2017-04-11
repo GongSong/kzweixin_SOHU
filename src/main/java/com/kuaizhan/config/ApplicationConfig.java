@@ -22,11 +22,6 @@ public class ApplicationConfig {
     //参数校验 json-schema
     //账户
     public static final String UNBIND_POSTDATAT_SCHEMA = "json-schema/account/unbind-postdata-schema.json";
-    //图文
-    public static final String POST_KZSYNCS_POSTDATAT_SCHEMA = "json-schema/post/post-kzsyncs-postdata-schema.json";
-    public static final String POST_KZWEIXINSYNCS2KZPOST_POSTDATAT_SCHEMA = "json-schema/post/post-kzweixin-syncs2kzpost-postdata-schema.json";
-    public static final String POST_INSERT_POSTDATA_SCHEMA = "json-schema/post/post-insert-postdata-schema.json";
-    public static final String POST_UPDATE_POSTDATA_SCHEMA = "json-schema/post/post-update-postdata-schema.json";
 
     //分表
     private static int getMsgTableNum() {
