@@ -102,19 +102,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDO getAccountByWeixinAppId(long appId) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
+    public AccountDO getAccountByWeixinAppId(long weinxinAppid) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
         //TODO：高并发场景下access_token失效 锁
         AccountDO accountDO;
         //从缓存拿
         try {
-            accountDO = redisAccountDao.getAccountInfoByWeixinAppId(appId);
+            accountDO = redisAccountDao.getAccountInfoByWeixinAppId(weinxinAppid);
         } catch (Exception e) {
             throw new RedisException(e);
         }
         if (accountDO == null) {
             //从数据库拿
             try {
-                accountDO = accountDao.getAccountByWeixinAppId(appId);
+                accountDO = accountDao.getAccountByWeixinAppId(weinxinAppid);
             } catch (Exception e) {
                 throw new DaoException(e);
             }
@@ -128,24 +128,23 @@ public class AccountServiceImpl implements AccountService {
             } catch (Exception e) {
                 throw new RedisException(e);
             }
+        }
 
-            //查看access_token是否失效
-            if (System.currentTimeMillis() / 1000 > accountDO.getExpiresTime()) {
-                AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
-                accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
-                accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
-                try {
-                    accountDao.updateAccountByWeixinAppId(accountDO);
-                } catch (Exception e) {
-                    throw new DaoException(e);
-                }
-                try {
-                    redisAccountDao.deleteAccountInfo(accountDO.getWeixinAppId());
-                } catch (Exception e) {
-                    throw new RedisException(e);
-                }
+        //查看access_token是否失效
+        if (System.currentTimeMillis() / 1000 > accountDO.getExpiresTime()) {
+            AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
+            accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
+            accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+            try {
+                accountDao.updateAccountByWeixinAppId(accountDO);
+            } catch (Exception e) {
+                throw new DaoException(e);
             }
-
+            try {
+                redisAccountDao.deleteAccountInfo(accountDO.getWeixinAppId());
+            } catch (Exception e) {
+                throw new RedisException(e);
+            }
         }
 
         return accountDO;
