@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +111,7 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
-    public JsonResponse getMultiPost(@RequestParam long weixinAppid, @PathVariable long pageId) throws DaoException, MongoException {
+    public JsonResponse getMultiPost(@PathVariable long pageId) throws DaoException, MongoException {
         PostDO postDO = postService.getPostByPageId(pageId);
 
         List<PostVO> multiPostVOList = new ArrayList<>();
