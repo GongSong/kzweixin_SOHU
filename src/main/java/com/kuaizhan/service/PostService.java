@@ -94,15 +94,6 @@ public interface PostService {
     void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception;
 
     /**
-     * 根据weixinAppid获取图文消息
-     *
-     * @param weixinAppid
-     * @return
-     * @throws DaoException
-     */
-    List<PostDO> listPostsByWeixinAppid(long weixinAppid) throws DaoException;
-
-    /**
      * 根据weixinAppid获取mediaId列表
      *
      * @param weixinAppid

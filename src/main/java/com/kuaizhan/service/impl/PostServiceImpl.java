@@ -332,10 +332,10 @@ public class PostServiceImpl implements PostService {
         // 1. 单图文 2. 多图文总记录 3. 多图文中的一条
         short type = (short) (posts.size() > 1 ? 3 : 1);
         int index = 0;
-        String sumTitle = ""; // 把title拼接起来，保存多图文总记录里面
+        StringBuilder sumTitle = new StringBuilder(); // 把title拼接起来，保存多图文总记录里面
         for (PostDO postDO: posts){
 
-            sumTitle += postDO.getTitle();
+            sumTitle.append(postDO.getTitle());
 
             // 没有指定pageId, 则生成
             if (postDO.getPageId() == null || postDO.getPageId() == 0) {
@@ -363,7 +363,7 @@ public class PostServiceImpl implements PostService {
             // 多图文根据mediaId表示是一组图文
             sumPost.setMediaId(posts.get(0).getMediaId());
             sumPost.setWeixinAppid(weixinAppid);
-            sumPost.setTitle(sumTitle);
+            sumPost.setTitle(sumTitle.toString());
             sumPost.setThumbMediaId(posts.get(0).getThumbMediaId());
             sumPost.setThumbUrl(posts.get(0).getThumbUrl());
             sumPost.setShowCoverPic(posts.get(0).getShowCoverPic());
@@ -478,15 +478,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDO> listPostsByWeixinAppid(long weixinAppid) throws DaoException {
-        try {
-            return postDao.listPostsByWeixinAppid(weixinAppid);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-    }
-
-    @Override
     public List<String> listMediaIdsByWeixinAppid(long weixinAppid) throws DaoException {
         try {
             return postDao.listMediaIdsByWeixinAppid(weixinAppid);
@@ -498,50 +489,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public void importWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception {
         // 将微信返回的文章处理为数据库存储的图文
-        List<PostDO> postDOList = transformPostFromWeixinPost(postItem, userId);
-
-        // 入库
-        saveMultiPosts(postItem.getWeixinAppid(), postDOList);
-    }
-
-    @Override
-    public List<PostDTO.PostItem> listNonExistsPostItemsFromWeixin(long weixinAppid) throws DaoException, AccountNotExistException, RedisException, JsonParseException, MaterialGetException {
-        List<PostDTO.PostItem> differPostItems = new LinkedList<>();
-
-        // 获取所有微信图文
-        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccountByWeixinAppId(weixinAppid).getAccessToken());
-
-        if (postDTOList == null || postDTOList.size() <= 0) {
-            return differPostItems;
-        }
-
-        List<PostDTO.PostItem> postItemList = new LinkedList<>();
-        for (PostDTO postDTO: postDTOList) {
-            postItemList.addAll(postDTO.toPostItemList(weixinAppid));
-        }
-
-        // 获取本地所有微信图文
-        List<String> mediaIds = listMediaIdsByWeixinAppid(weixinAppid);
-        Set<String> mediaIdsSet = new HashSet<>();
-
-        for (String mediaId: mediaIds) {
-            mediaIdsSet.add(mediaId);
-        }
-
-        // 对比差异
-        for (PostDTO.PostItem postItem: postItemList) {
-            if (! mediaIdsSet.contains(postItem.getItem().getMediaId())) {
-                differPostItems.add(postItem);
-            }
-        }
-
-        return differPostItems;
-    }
-
-    public List<PostDO> transformPostFromWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception {
         List<PostDO> postDOList = new LinkedList<>();
         List<PostDTO.Item.Content.NewsItem> newsItems = postItem.getItem().getContent().getNewsItems();
-        if (newsItems == null) return null;
         int key = 0;
         for (PostDTO.Item.Content.NewsItem newsItem: newsItems) {
             PostDO postDO = new PostDO();
@@ -581,9 +530,42 @@ public class PostServiceImpl implements PostService {
 
             ++key;
         }
-        return postDOList;
+
+        // 入库
+        saveMultiPosts(postItem.getWeixinAppid(), postDOList);
     }
 
+    @Override
+    public List<PostDTO.PostItem> listNonExistsPostItemsFromWeixin(long weixinAppid) throws DaoException, AccountNotExistException, RedisException, JsonParseException, MaterialGetException {
+        List<PostDTO.PostItem> differPostItems = new LinkedList<>();
+
+        // 获取所有微信图文
+        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccountByWeixinAppId(weixinAppid).getAccessToken());
+
+        if (postDTOList == null || postDTOList.size() <= 0) {
+            return differPostItems;
+        }
+
+        List<PostDTO.PostItem> postItemList = new LinkedList<>();
+        for (PostDTO postDTO: postDTOList) {
+            postItemList.addAll(postDTO.toPostItemList(weixinAppid));
+        }
+
+        // 获取本地所有微信图文
+        List<String> mediaIds = listMediaIdsByWeixinAppid(weixinAppid);
+        Set<String> mediaIdsSet = new HashSet<>();
+
+        mediaIdsSet.addAll(mediaIds);
+
+        // 对比差异
+        for (PostDTO.PostItem postItem: postItemList) {
+            if (! mediaIdsSet.contains(postItem.getItem().getMediaId())) {
+                differPostItems.add(postItem);
+            }
+        }
+
+        return differPostItems;
+    }
 
     /**
      * 去除某字符串前缀
@@ -592,7 +574,7 @@ public class PostServiceImpl implements PostService {
      * @param prefix
      * @return
      */
-    public String removeUrlPrefixIfExists(String str, String prefix) {
+    private String removeUrlPrefixIfExists(String str, String prefix) {
         if (str == null || prefix == null) return str;
 
         if (str.contains(prefix)) {
@@ -614,7 +596,7 @@ public class PostServiceImpl implements PostService {
      * @param suffix
      * @return
      */
-    public String removeUrlSuffixIfExists(String str, String suffix) {
+    private String removeUrlSuffixIfExists(String str, String suffix) {
         if (str == null || suffix == null) return str;
 
         if (str.contains(suffix)) {
@@ -635,7 +617,7 @@ public class PostServiceImpl implements PostService {
      * @param imgUrl
      * @return
      */
-    public String getKzImgUrlByWeixinImgUrl(String imgUrl, long userId) {
+    private String getKzImgUrlByWeixinImgUrl(String imgUrl, long userId) {
         // 若不是微信图片则返回原url
         if (! imgUrl.contains("mmbiz")) return imgUrl;
 
@@ -668,7 +650,7 @@ public class PostServiceImpl implements PostService {
      * @param content
      * @return
      */
-    public String replacePicUrlFromWeixinPost(String content, final long userId) throws Exception {
+    private String replacePicUrlFromWeixinPost(String content, final long userId) throws Exception {
         // 将文章中的图片的data-src替换为src
         content = content.replaceAll("(<img [^>]*)(data-src)", "$1src");
 
@@ -723,7 +705,7 @@ public class PostServiceImpl implements PostService {
      * @param content
      * @return
      */
-    public String replaceVideoFromWeixinPost(String content) {
+    private String replaceVideoFromWeixinPost(String content) {
         return content.replaceAll(
                 "<iframe[^>]*class=\"video_iframe\"[^>]*data-src=\"([^\"]+)vid=([^&]+)([^\"]+)\"[^>]*>",
                 "<iframe style=\"z-index:1;\" class=\"video_iframe\" data-src=\"$1vid=$2$3\" frameborder=\"0\" allowfullscreen=\"\" src=\"https://v.qq.com/iframe/player.html?vid=$2&tiny=0&auto=0\" width=\"280px\" height=\"100%\">"
@@ -735,7 +717,7 @@ public class PostServiceImpl implements PostService {
      *
      * @return
      */
-    public String getFirstPostDefaultThumbUrl() {
+    private String getFirstPostDefaultThumbUrl() {
         return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
     }
 
@@ -744,7 +726,7 @@ public class PostServiceImpl implements PostService {
      *
      * @return
      */
-    public String getCommonPostDefaultThumbUrl() {
+    private String getCommonPostDefaultThumbUrl() {
         return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-200-200.png");
     }
 

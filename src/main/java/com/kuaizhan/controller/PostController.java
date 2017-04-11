@@ -2,9 +2,7 @@ package com.kuaizhan.controller;
 
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.config.ApplicationConfig;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.KZPostAddException;
-import com.kuaizhan.exception.business.MaterialDeleteException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
@@ -28,6 +26,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 图文消息controller
@@ -43,6 +42,8 @@ public class PostController extends BaseController {
     AccountService accountService;
     @Resource
     PojoSwitcher pojoSwitcher;
+    @Resource
+    WeixinPostService weixinPostService;
 
 
     /**
@@ -110,7 +111,7 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
-    public JsonResponse getMultiPost(@RequestParam long weixinAppid, @PathVariable long pageId) throws DaoException, MongoException {
+    public JsonResponse getMultiPost(@PathVariable long pageId) throws DaoException, MongoException {
         PostDO postDO = postService.getPostByPageId(pageId);
 
         List<PostVO> multiPostVOList = new ArrayList<>();
@@ -245,12 +246,31 @@ public class PostController extends BaseController {
      * @throws IOException
      */
     @RequestMapping(value = "/posts/kz_imports", method = RequestMethod.POST)
-    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
+    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid,
+                                    @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA)
+                                    @RequestBody String postData) throws IOException {
         JSONObject jsonObject = new JSONObject(postData);
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         postService.importKzArticle(weixinAppid, pageIds);
         return new JsonResponse(null);
     }
 
+<<<<<<< HEAD
 
+=======
+    @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
+    public JsonResponse uploadWeixinThumb(@RequestBody String postData) throws ParamException, RedisException,
+            JsonParseException, DaoException, AccountNotExistException, AddMaterialException {
+        JSONObject jsonObject = new JSONObject(postData);
+        Long weixinAppid = jsonObject.optLong("weixinAppid");
+        String imgUrl = jsonObject.optString("imgUrl");
+        if (weixinAppid == 0 || imgUrl == null){
+            throw new ParamException();
+        }
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
+        Map result = weixinPostService.uploadImage(accountDO.getAccessToken(), imgUrl);
+
+        return new JsonResponse(result);
+    }
+>>>>>>> d0a33c025956374eac98c1144ad464d45ee264e8
 }
