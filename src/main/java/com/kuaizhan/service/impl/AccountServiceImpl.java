@@ -80,11 +80,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
+        AccountDO accountDO;
         try {
-            return accountDao.getAccountBySiteId(siteId);
+            accountDO = accountDao.getAccountBySiteId(siteId);
         } catch (Exception e) {
             throw new DaoException(e);
         }
+        if (accountDO == null) {
+            throw new AccountNotExistException();
+        }
+        return accountDO;
     }
 
     @Override
