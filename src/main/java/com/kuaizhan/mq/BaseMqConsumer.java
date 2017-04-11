@@ -1,10 +1,8 @@
 package com.kuaizhan.mq;
 
-import com.kuaizhan.exception.BaseException;
 import com.kuaizhan.utils.LogUtil;
 
-import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Mq消费者接口
@@ -17,7 +15,7 @@ public abstract class BaseMqConsumer {
      *
      * @param msgMap MQ消息的HashMap参数
      */
-    public final void handleMessage(HashMap msgMap) {
+    public final void handleMessage(Map msgMap) {
         try {
             onMessage(msgMap);
         } catch (Exception e) {
@@ -31,5 +29,5 @@ public abstract class BaseMqConsumer {
      *
      * @param msgMap MQ消息的HashMap参数
      */
-    protected abstract void onMessage(HashMap msgMap) throws Exception;
+    protected abstract void onMessage(Map msgMap) throws Exception;
 }

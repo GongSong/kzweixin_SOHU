@@ -4,6 +4,7 @@ import com.kuaizhan.exception.business.AddMaterialException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
 import com.kuaizhan.exception.business.MaterialGetException;
 import com.kuaizhan.exception.business.UploadPostsException;
+import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.PostDTO;
 
@@ -36,7 +37,7 @@ public interface WeixinPostService {
      * @param imgUrl 原始的url
      * @return 在微信服务器的url
      */
-    String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException;
+    String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException;
 
     /**
      * 上传多图文到微信

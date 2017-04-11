@@ -8,4 +8,8 @@ package com.kuaizhan.config;
 public class MqConfig {
     //从快站文章导入
     public static final String IMPORT_KUAIZHAN_POST = "sys-kzweixin-import-kuaizhan-post";
+    //从微信文章导入列表
+    public static final String IMPORT_WEIXIN_POST_LIST = "sys-kzweixin-import-weixin-post-list";
+    //从微信文章导入
+    public static final String IMPORT_WEIXIN_POST = "sys-kzweixin-import-weixin-post";
 }

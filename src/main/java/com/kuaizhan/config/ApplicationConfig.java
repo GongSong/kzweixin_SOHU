@@ -112,9 +112,10 @@ public class ApplicationConfig {
     //消息
 
     //缓存消息列表
-    public static final String KEY_MSG_LIST = "msg_list:";
+    public static final String KEY_MSG_LIST = REDIS_PREFIX + "msg_list:";
     //缓存单个用户消息
-    public static final String KEY_MSG_USER = "msg_user:";
+    public static final String KEY_MSG_USER = REDIS_PREFIX + "msg_user:";
 
-
+    // 上传过的图片资源
+    public static final String KEY_IMAGE_WEIXIN_RUL = REDIS_PREFIX + "origin_url:";
 }
