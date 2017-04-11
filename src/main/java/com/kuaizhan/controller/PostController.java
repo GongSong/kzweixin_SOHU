@@ -133,25 +133,27 @@ public class PostController extends BaseController {
 
     /**
      * 新增多图文
-     *
-     * @param weixinAppid
      */
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public JsonResponse insertPost(@RequestParam long weixinAppid,@Validate(key = "postData", path = ApplicationConfig.POST_INSERT_POSTDATA_SCHEMA) @RequestBody String postData) throws Exception {
-        JSONArray jsonArray = new JSONArray(postData);
+    public JsonResponse insertPost(@RequestBody String postData) throws Exception {
+        JSONObject jsonObject = new JSONObject(postData);
+
+        Long weixinAppid = jsonObject.optLong("weixinAppid");
+
+        JSONArray jsonArray = jsonObject.getJSONArray("posts");
         List<PostDO> posts = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            JSONObject postJson = jsonArray.getJSONObject(i);
             PostDO postDO = new PostDO();
-            postDO.setTitle(jsonObject.getString("title"));
-            postDO.setAuthor(jsonObject.optString("author"));
-            postDO.setDigest(jsonObject.getString("digest"));
-            postDO.setContent(jsonObject.getString("content"));
-            postDO.setThumbMediaId(jsonObject.optString("thumbMediaId"));
-            postDO.setThumbUrl(jsonObject.getString("thumbUrl"));
-            postDO.setContentSourceUrl(jsonObject.optString("contentSourceUrl"));
-            postDO.setShowCoverPic((short) jsonObject.optInt("showCoverPic", 0));
+            postDO.setTitle(postJson.getString("title"));
+            postDO.setAuthor(postJson.optString("author"));
+            postDO.setDigest(postJson.getString("digest"));
+            postDO.setContent(postJson.getString("content"));
+            postDO.setThumbMediaId(postJson.optString("thumbMediaId"));
+            postDO.setThumbUrl(postJson.getString("thumbUrl"));
+            postDO.setContentSourceUrl(postJson.optString("contentSourceUrl"));
+            postDO.setShowCoverPic((short) postJson.optInt("showCoverPic", 0));
 
             posts.add(postDO);
         }
@@ -162,29 +164,30 @@ public class PostController extends BaseController {
 
     /**
      * 修改多图文
-     *
-     * @param weixinAppid
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.PUT)
-    public JsonResponse updatePost(@RequestParam long weixinAppid, @PathVariable("pageId") long pageId,@Validate(key = "postData", path = ApplicationConfig.POST_UPDATE_POSTDATA_SCHEMA) @RequestBody String postData) throws Exception {
+    public JsonResponse updatePost(@PathVariable("pageId") long pageId, @RequestBody String postData) throws Exception {
+        JSONObject jsonObject = new JSONObject(postData);
 
-        JSONArray jsonArray = new JSONArray(postData);
+        Long weixinAppid = jsonObject.optLong("weixinAppid");
+
+        JSONArray jsonArray = jsonObject.getJSONArray("posts");
         List<PostDO> posts = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            JSONObject postJson = jsonArray.getJSONObject(i);
             PostDO postDO = new PostDO();
 
-            postDO.setPageId(jsonObject.optLong("pageId"));
-            postDO.setMediaId(jsonObject.optString("mediaId"));
-            postDO.setTitle(jsonObject.getString("title"));
-            postDO.setAuthor(jsonObject.optString("author"));
-            postDO.setDigest(jsonObject.getString("digest"));
-            postDO.setContent(jsonObject.getString("content"));
-            postDO.setThumbMediaId(jsonObject.optString("thumbMediaId"));
-            postDO.setThumbUrl(jsonObject.getString("thumbUrl"));
-            postDO.setContentSourceUrl(jsonObject.optString("contentSourceUrl"));
-            postDO.setShowCoverPic((short) jsonObject.optInt("showCoverPic", 0));
+            postDO.setPageId(postJson.optLong("pageId"));
+            postDO.setMediaId(postJson.optString("mediaId"));
+            postDO.setTitle(postJson.getString("title"));
+            postDO.setAuthor(postJson.optString("author"));
+            postDO.setDigest(postJson.getString("digest"));
+            postDO.setContent(postJson.getString("content"));
+            postDO.setThumbMediaId(postJson.optString("thumbMediaId"));
+            postDO.setThumbUrl(postJson.getString("thumbUrl"));
+            postDO.setContentSourceUrl(postJson.optString("contentSourceUrl"));
+            postDO.setShowCoverPic((short) postJson.optInt("showCoverPic", 0));
 
             posts.add(postDO);
         }
@@ -208,15 +211,16 @@ public class PostController extends BaseController {
     /**
      * 一键同步微信文章到快站微信
      *
-     * @param weixinAppid
      * @return
      */
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
-    public JsonResponse wxSyncsPost(@RequestParam long weixinAppid, @RequestBody String postData) throws ParamException {
+    public JsonResponse wxSyncsPost(@RequestBody String postData) throws ParamException {
         JSONObject jsonObject = new JSONObject(postData);
+
+        Long weixinAppid = jsonObject.optLong("weixinAppid");
         long uid = jsonObject.optLong("uid");
-        if (uid == 0){
-            throw new ParamException("uid是必传参数");
+        if (uid == 0 || weixinAppid == 0){
+            throw new ParamException("uid和weixinAppid是必传参数");
         }
         postService.syncWeixinPosts(weixinAppid, uid);
         return new JsonResponse(null);
@@ -226,16 +230,19 @@ public class PostController extends BaseController {
     /**
      * 快站微信同步到快站文章
      *
-     * @param weixinAppid
      * @return
      */
     @RequestMapping(value = "/posts/kzweixin_syncs", method = RequestMethod.POST)
-    public JsonResponse kzweixinSyncs2KzPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData", path = ApplicationConfig.POST_KZWEIXINSYNCS2KZPOST_POSTDATAT_SCHEMA) @RequestBody String postData) throws KZPostAddException, DaoException, MongoException {
-        JSONArray jsonArray = new JSONArray(postData);
-        for (int i = 0; i < jsonArray.length(); i++) {
-            long siteId = jsonArray.getJSONObject(i).getLong("siteId");
-            long pageId = jsonArray.getJSONObject(i).getLong("pageId");
-            long categoryId = jsonArray.getJSONObject(i).getLong("categoryId");
+    public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws KZPostAddException, DaoException, MongoException, IOException {
+
+        JSONObject jsonObject = new JSONObject(postData);
+
+        Long weixinAppid = jsonObject.optLong("weixinAppid");
+        Long siteId = jsonObject.optLong("siteId");
+        Long categoryId = jsonObject.optLong("categoryId");
+        List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
+
+        for (Long pageId: pageIds){
             postService.export2KzArticle(weixinAppid, pageId, categoryId, siteId);
         }
 
@@ -246,24 +253,24 @@ public class PostController extends BaseController {
     /**
      * 从快站文章导入到快站微信
      *
-     * @param weixinAppid
-     * @param postData
-     * @return
      * @throws IOException
      */
     @RequestMapping(value = "/posts/kz_imports", method = RequestMethod.POST)
-    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid,
-                                    @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA)
-                                    @RequestBody String postData) throws IOException {
+    public JsonResponse kzSyncsPost(@RequestBody String postData) throws IOException {
         JSONObject jsonObject = new JSONObject(postData);
+
+        Long weixinAppid = jsonObject.optLong("weixinAppid");
+
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         postService.importKzArticle(weixinAppid, pageIds);
         return new JsonResponse(null);
     }
 
-<<<<<<< HEAD
-
-=======
+    /**
+     * 上传素材到微信服务器
+     * @param postData
+     * @return
+     */
     @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
     public JsonResponse uploadWeixinThumb(@RequestBody String postData) throws ParamException, RedisException,
             JsonParseException, DaoException, AccountNotExistException, AddMaterialException {
@@ -278,5 +285,4 @@ public class PostController extends BaseController {
 
         return new JsonResponse(result);
     }
->>>>>>> d0a33c025956374eac98c1144ad464d45ee264e8
 }
