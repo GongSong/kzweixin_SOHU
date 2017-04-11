@@ -11,24 +11,27 @@
 
     <!--######################### 消费者相关配置 ##########################-->
 
-    <bean id="messageListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
+    <!--从快站文章导入消费者-->
+    <bean id="kzArticlePostListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
         <constructor-arg name="delegate">
             <bean class="com.kuaizhan.mq.KZArticlePostConsumer"/>
         </constructor-arg>
     </bean>
     <!-- 从微信导入文章消费者 -->
-    <bean id="weixinPostListConsumer" class="com.kuaizhan.mq.WeixinPostListConsumer" />
     <bean id="weixinPostListListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
-        <constructor-arg name="delegate" ref="weixinPostListConsumer" />
+        <constructor-arg name="delegate">
+            <bean class="com.kuaizhan.mq.WeixinPostListConsumer"/>
+        </constructor-arg>
     </bean>
     <!-- 从微信导入单条文章的消费者 -->
-    <bean id="weixinPostConsumer" class="com.kuaizhan.mq.WeixinPostConsumer" />
     <bean id="weixinPostListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
-        <constructor-arg name="delegate" ref="weixinPostConsumer" />
+        <constructor-arg name="delegate">
+            <bean class="com.kuaizhan.mq.WeixinPostConsumer"/>
+        </constructor-arg>
     </bean>
 
     <rabbit:listener-container connection-factory="connectionFactory" >
-        <rabbit:listener ref="messageListenerAdapter" queue-names="sys-kzweixin-import-kuaizhan-post" />
+        <rabbit:listener ref="kzArticlePostListenerAdapter" queue-names="sys-kzweixin-import-kuaizhan-post" />
         <rabbit:listener ref="weixinPostListListenerAdapter" queue-names="sys-kzweixin-import-weixin-post-list" />
         <rabbit:listener ref="weixinPostListenerAdapter" queue-names="sys-kzweixin-import-weixin-post" />
     </rabbit:listener-container>

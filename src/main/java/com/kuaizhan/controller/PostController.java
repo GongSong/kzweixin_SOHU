@@ -2,9 +2,7 @@ package com.kuaizhan.controller;
 
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.config.ApplicationConfig;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.KZPostAddException;
-import com.kuaizhan.exception.business.MaterialDeleteException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
@@ -17,6 +15,7 @@ import com.kuaizhan.pojo.VO.PostListVO;
 import com.kuaizhan.pojo.VO.PostVO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
+import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
 import org.json.JSONArray;
@@ -26,7 +25,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 图文消息controller
@@ -42,6 +43,8 @@ public class PostController extends BaseController {
     AccountService accountService;
     @Resource
     PojoSwitcher pojoSwitcher;
+    @Resource
+    WeixinPostService weixinPostService;
 
 
     /**
@@ -243,10 +246,27 @@ public class PostController extends BaseController {
      * @throws IOException
      */
     @RequestMapping(value = "/posts/kz_imports", method = RequestMethod.POST)
-    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid, @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA) @RequestBody String postData) throws IOException {
+    public JsonResponse kzSyncsPost(@Validate(key = "weixinAppid") @RequestParam long weixinAppid,
+                                    @Validate(key = "postData", path = ApplicationConfig.POST_KZSYNCS_POSTDATAT_SCHEMA)
+                                    @RequestBody String postData) throws IOException {
         JSONObject jsonObject = new JSONObject(postData);
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         postService.importKzArticle(weixinAppid, pageIds);
         return new JsonResponse(null);
+    }
+
+    @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
+    public JsonResponse uploadWeixinThumb(@RequestBody String postData) throws ParamException, RedisException,
+            JsonParseException, DaoException, AccountNotExistException, AddMaterialException {
+        JSONObject jsonObject = new JSONObject(postData);
+        Long weixinAppid = jsonObject.optLong("weixinAppid");
+        String imgUrl = jsonObject.optString("imgUrl");
+        if (weixinAppid == 0 || imgUrl == null){
+            throw new ParamException();
+        }
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
+        Map result = weixinPostService.uploadImage(accountDO.getAccessToken(), imgUrl);
+
+        return new JsonResponse(result);
     }
 }
