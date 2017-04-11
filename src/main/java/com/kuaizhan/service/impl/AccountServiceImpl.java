@@ -121,25 +121,33 @@ public class AccountServiceImpl implements AccountService {
             if (accountDO == null) {
                 throw new AccountNotExistException();
             }
+
             //存缓存
             try {
                 redisAccountDao.setAccountInfo(accountDO);
             } catch (Exception e) {
                 throw new RedisException(e);
             }
+
+            //查看access_token是否失效
+            if (System.currentTimeMillis() / 1000 > accountDO.getExpiresTime()) {
+                AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
+                accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
+                accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+                try {
+                    accountDao.updateAccountByWeixinAppId(accountDO);
+                } catch (Exception e) {
+                    throw new DaoException(e);
+                }
+                try {
+                    redisAccountDao.deleteAccountInfo(accountDO.getWeixinAppId());
+                } catch (Exception e) {
+                    throw new RedisException(e);
+                }
+            }
+
         }
 
-        //查看access_token是否失效
-        if (System.currentTimeMillis() / 1000 > accountDO.getExpiresTime()) {
-            AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
-            accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
-            accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
-            try {
-                accountDao.updateAccountByWeixinAppId(accountDO);
-            } catch (Exception e) {
-                throw new DaoException(e);
-            }
-        }
         return accountDO;
     }
 
