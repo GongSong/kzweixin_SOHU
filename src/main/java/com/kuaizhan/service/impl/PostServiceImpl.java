@@ -246,6 +246,11 @@ public class PostServiceImpl implements PostService {
             post.setIndex(0);
             post.setType((short) 1);
 
+            // 先把content保存到mongo
+            MongoPostDo mongoPostDo = new MongoPostDo();
+            mongoPostDo.setId(post.getPageId());
+            mongoPostDo.setContent(post.getContent());
+            mongoPostDao.upsertPost(mongoPostDo);
             postDao.updatePost(post, pageId);
         }
         // 单图文到多图文、多图文到单图文、多图文到多图文，执行删除微信media、删除本地、重新新增

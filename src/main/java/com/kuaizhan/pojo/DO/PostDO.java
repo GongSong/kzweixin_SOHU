@@ -5,7 +5,7 @@ package com.kuaizhan.pojo.DO;
  * 有1标注的表示可为空
  */
 
-public class PostDO implements Comparable<PostDO>{
+public class PostDO {
 
     private Long pageId;
     private Long weixinAppid;
