@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 /**
  * Created by zixiong on 2017/4/12.
  */
-public class PostParamItem {
+public class PostsParamItem {
 
     @Size(min = 1, max = 64, message = "图文的标题不能为空或者只含有空格（标题会过滤emoji表情等特殊字符")
     private String title;
@@ -30,7 +30,10 @@ public class PostParamItem {
 
     private String thumbMediaId;
     private String contentSourceUrl;
-    private short showCoverPic;
+    private Short showCoverPic;
+
+    private Long pageId;
+    private String mediaId;
 
     public String getTitle() {
         return title;
@@ -88,13 +91,30 @@ public class PostParamItem {
         this.contentSourceUrl = contentSourceUrl;
     }
 
-    public short getShowCoverPic() {
+    public Short getShowCoverPic() {
         return showCoverPic;
     }
 
-    public void setShowCoverPic(short showCoverPic) {
+    public void setShowCoverPic(Short showCoverPic) {
         this.showCoverPic = showCoverPic;
     }
+
+    public Long getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(Long pageId) {
+        this.pageId = pageId;
+    }
+
+    public String getMediaId() {
+        return mediaId;
+    }
+
+    public void setMediaId(String mediaId) {
+        this.mediaId = mediaId;
+    }
+
 
     public PostDO toPostDO() {
         PostDO postDO = new PostDO();
@@ -107,6 +127,8 @@ public class PostParamItem {
         postDO.setThumbUrl(thumbUrl);
         postDO.setContentSourceUrl(contentSourceUrl);
         postDO.setShowCoverPic(showCoverPic);
+        postDO.setPageId(pageId);
+        postDO.setMediaId(mediaId);
 
         return postDO;
     }

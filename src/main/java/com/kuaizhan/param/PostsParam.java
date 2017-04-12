@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by zixiong on 2017/4/12.
  */
-public class AddPostParam {
+public class PostsParam {
 
     @NotNull
     private Long weixinAppid;
@@ -19,7 +19,7 @@ public class AddPostParam {
     @Valid
     @NotNull(message = "多图文列表不能为空")
     @Size(min = 1, max = 8, message = "最少1条多图文，最多8条多图文")
-    private List<PostParamItem> posts;
+    private List<PostsParamItem> posts;
 
 
     public Long getWeixinAppid() {
@@ -30,18 +30,18 @@ public class AddPostParam {
         this.weixinAppid = weixinAppid;
     }
 
-    public List<PostParamItem> getPosts() {
+    public List<PostsParamItem> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<PostParamItem> posts) {
+    public void setPosts(List<PostsParamItem> posts) {
         this.posts = posts;
     }
 
     public List<PostDO> getPostDOs() {
         List<PostDO> postDOs = new ArrayList<>();
-        for (PostParamItem postParamItem : posts) {
-            postDOs.add(postParamItem.toPostDO());
+        for (PostsParamItem postsParamItem : posts) {
+            postDOs.add(postsParamItem.toPostDO());
         }
         return postDOs;
     }
