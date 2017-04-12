@@ -2,13 +2,11 @@ FROM registry.kuaizhan.com/kuaizhan-plf/java-env:latest
 MAINTAINER "chengliu" <chengliu@sohu-inc.com>
 
 ENV PREFIX /opt/kuaizhan
-ENV WAR_FILE ../target/kzweixin.war
+ENV JAR_FILE ../../target/kzweixin.jar
 
-COPY $WAR_FILE $PREFIX/jetty/webapps/
+COPY $JAR_FILE $PREFIX/worker/
 
 RUN echo "source ~/.bashrc" > /init.sh && \
-    echo 'cd $JETTY_BASE' >> /init.sh && \
-    echo 'java -jar $JETTY_HOME/start.jar' >> /init.sh
+    echo "java -jar $PREFIX/worker/kzweixin.jar" >> /init.sh
 
-EXPOSE 8080
 CMD /bin/bash /init.sh
