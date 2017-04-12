@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+           http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- MQ server 连接配置 -->
+    <rabbit:connection-factory id="connectionFactory"
+                               host="${rabbit.host}" port="${rabbit.port}" virtual-host="${rabbit.vhost}"
+                               username="${rabbit.username}" password="${rabbit.password}" />
+    <rabbit:admin connection-factory="connectionFactory" />
+
+    <!-- #################### queue的声明 ###################### -->
+    <!--从快站导入文章的queue-->
+    <rabbit:queue id="queueImportKuaizhanPost" name="sys-kzweixin-import-kuaizhan-post" durable="true" auto-delete="false" />
+    <!-- 从微信导入文章的queue -->
+    <rabbit:queue id="queueImportWeixinPostList" name="sys-kzweixin-import-weixin-post-list" durable="true" auto-delete="false" />
+    <!-- 从微信导入单条文章的queue -->
+    <rabbit:queue id="queueImportWeixinPost" name="sys-kzweixin-import-weixin-post" durable="true" auto-delete="false" />
+
+    <!-- Exchange的声明 -->
+    <rabbit:direct-exchange id="directExchange" name="${rabbit.exchange}" durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="queueImportKuaizhanPost" key="sys-kzweixin-import-kuaizhan-post"/>
+            <rabbit:binding queue="queueImportWeixinPostList" key="sys-kzweixin-import-weixin-post-list" />
+            <rabbit:binding queue="queueImportWeixinPost" key="sys-kzweixin-import-weixin-post" />
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <rabbit:template id="rabbitTemplate" connection-factory="connectionFactory" exchange="${rabbit.exchange}"/>
+
+</beans>

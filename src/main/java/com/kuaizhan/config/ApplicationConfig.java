@@ -12,9 +12,12 @@ import java.util.Properties;
  */
 public class ApplicationConfig {
 
+    //资源读取工具
     private static final Properties PROP = PropertiesUtil.loadProps("application.properties");
     //版本号
     public static final String VERSION = "v1";
+    //PHP项目版本号
+    public static final String PHP_APP_VERSION = "5.0";
 
     //参数校验 json-schema
     //账户
@@ -59,6 +62,21 @@ public class ApplicationConfig {
         return PropertiesUtil.getString(PROP, "api.prefix");
     }
 
+    //资源路径
+    public static String getResUrl(String url) {
+        return PropertiesUtil.getString(PROP, "domain.res") + url + "?v=" + PHP_APP_VERSION;
+    }
+
+    //图片上传路径
+    public static String getPicUploadUrl() {
+        return "http://" + PropertiesUtil.getString(PROP, "kz.service.ip") + "/pic/service-upload-pic-by-url";
+    }
+
+    // 获取PHP端service host
+    public static String getTestServiceHost() {
+        return PropertiesUtil.getString(PROP, "kz.service.host");
+    }
+
     //大分页
     public static final int PAGE_SIZE_LARGE = 20;
     //中分页
@@ -94,7 +112,10 @@ public class ApplicationConfig {
     //消息
 
     //缓存消息列表
-    public static final String KEY_MSG_LIST = "msg_list:";
+    public static final String KEY_MSG_LIST = REDIS_PREFIX + "msg_list:";
     //缓存单个用户消息
-    public static final String KEY_MSG_USER = "msg_user:";
+    public static final String KEY_MSG_USER = REDIS_PREFIX + "msg_user:";
+
+    // 上传过的图片资源
+    public static final String KEY_IMAGE_WEIXIN_RUL = REDIS_PREFIX + "origin_url:";
 }

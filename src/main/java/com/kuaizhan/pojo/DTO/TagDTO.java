@@ -5,11 +5,11 @@ package com.kuaizhan.pojo.DTO;
  * Created by Mr.Jadyn on 2017/1/20.
  */
 public class TagDTO {
-    private int id;
+    private Integer id;
     private String name;
-    private int count;
+    private Integer count;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -25,7 +25,7 @@ public class TagDTO {
         this.name = name;
     }
 
-    public int getCount() {
+    public Integer getCount() {
         return count;
     }
 

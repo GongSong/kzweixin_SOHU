@@ -13,8 +13,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ public final class HttpClientUtil {
 
     private static final String CHARSET_UTF_8 = "UTF-8";
     private static final String CONTENT_TYPE_JSON = "application/json";
+    private static final String CONTENT_TYPE_FILE = "multipart/form-data";
+    private static final String BOUNDARY = "---------------------------123821742118716";
 
     /**
      * 发送get请求
@@ -48,8 +51,6 @@ public final class HttpClientUtil {
     }
 
 
-
-
     /**
      * 发送post请求
      *
@@ -58,10 +59,26 @@ public final class HttpClientUtil {
      * @return
      */
     public static String post(String url, Map<String, Object> params) {
-        String res = null;
+        return post(url, params, null);
+    }
+
+    /**
+     * 发送post请求
+     * @param url post url
+     * @param params post参数
+     * @param headers post headers
+     * @return
+     */
+    public static String post(String url, Map<String, Object> params, Map<String, String> headers){
+        String res;
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
             HttpPost httpPost = httpPostHandler(url, params);
+            if (headers != null){
+                for (Map.Entry<String, String> entry: headers.entrySet()){
+                    httpPost.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
             res = execute(httpClient, httpPost);
         } finally {
             doHttpClientClose(httpClient);
@@ -83,7 +100,7 @@ public final class HttpClientUtil {
             HttpPost httpPost = new HttpPost(url);
             StringEntity stringEntity;
             try {
-                stringEntity = new StringEntity(jsonStr,"UTF-8");
+                stringEntity = new StringEntity(jsonStr, "UTF-8");
             } catch (Exception e) {
 
                 return null;
@@ -97,6 +114,85 @@ public final class HttpClientUtil {
         return res;
     }
 
+    /**
+     * 上传文件
+     *
+     * @param url
+     * @param fileUrl
+     * @return
+     */
+    public static String postMedia(String url, String fileUrl) {
+        File file = FileUtil.download(fileUrl);
+        return postMedia(url, file);
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param file
+     * @return
+     */
+    public static String postMedia(String postUrl, File file) {
+        String res = null;
+        HttpURLConnection conn = null;
+
+        try {
+            URL url = new URL(postUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(30000);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+
+            OutputStream out = new DataOutputStream(conn.getOutputStream());
+
+            StringBuffer strBuf = new StringBuffer();
+            strBuf.append("\r\n").append("--").append(BOUNDARY).append("\r\n");
+            strBuf.append("Content-Disposition: form-data;name=\"media\";filelength=\"" + file.length() + "\";filename=\""
+
+                    + file.getName() + "\"\r\n");
+            strBuf.append("Content-Type:application/octet-stream\r\n\r\n");
+
+            out.write(strBuf.toString().getBytes());
+
+            DataInputStream in = new DataInputStream(new FileInputStream(file));
+            int bytes = 0;
+            byte[] bufferOut = new byte[1024];
+            while ((bytes = in.read(bufferOut)) != -1) {
+                out.write(bufferOut, 0, bytes);
+            }
+            in.close();
+
+            file.delete();
+
+            byte[] endData = ("\r\n--" + BOUNDARY + "--\r\n").getBytes();
+            out.write(endData);
+            out.flush();
+            out.close();
+
+            // 读取返回数据
+            StringBuffer resBuf = new StringBuffer();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                resBuf.append(line).append("\n");
+            }
+            res = resBuf.toString();
+            reader.close();
+            reader = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+        return res;
+    }
 
     private static HttpPost httpPostHandler(String url, Map<String, Object> params) {
         HttpPost httpPost = new HttpPost(url);

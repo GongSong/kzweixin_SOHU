@@ -10,9 +10,10 @@ import java.io.IOException;
  */
 public interface RedisAccountDao {
 
-    AccountDO getAccountInfo(long siteId) throws IOException;
+
+    AccountDO getAccountInfoByWeixinAppId(long weixinAppId) throws IOException;
 
     void setAccountInfo(AccountDO account) throws JsonProcessingException;
 
-    void deleteAccountInfo(long siteId);
+    void deleteAccountInfo(long weixinAppId);
 }

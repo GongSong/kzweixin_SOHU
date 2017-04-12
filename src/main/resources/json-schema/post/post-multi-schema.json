@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "post-multi",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "integer",
+      "minimum": 200,
+      "maximum": 200
+    },
+    "msg": {
+      "type": "string",
+      "pattern": "ok"
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pageId": {
+            "type": "integer"
+          },
+          "mediaId": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "thumbUrl": {
+            "type": "string",
+            "format": "url"
+          },
+          "thumbMediaId": {
+            "type": "string"
+          },
+          "contentSourceUrl": {
+            "type": "string",
+            "format": "url"
+          },
+          "updateTime": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

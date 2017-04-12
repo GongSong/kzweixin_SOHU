@@ -25,6 +25,14 @@ public interface AccountDao {
     AccountDO getAccountByAppId(String appId);
 
     /**
+     * 根据weixinAppId获取账号信息
+     *
+     * @param weixinAppId
+     * @return
+     */
+    AccountDO getAccountByWeixinAppId(long weixinAppId);
+
+    /**
      * 查询已经删除的账户信息
      *
      * @param siteId 站点id
@@ -49,13 +57,19 @@ public interface AccountDao {
     int updateAccountBySiteId(AccountDO account);
 
     /**
+     * 根据weixinAppId更新账户信息
+     * @param account
+     * @return
+     */
+    int updateAccountByWeixinAppId(AccountDO account);
+
+    /**
      * 删除账户
      *
      * @param appId 公众号appId
      * @return
      */
     int deleteAccountByAppId(String appId);
-
 
 
 }

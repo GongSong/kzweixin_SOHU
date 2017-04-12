@@ -25,6 +25,32 @@ public class ApiConfig {
     //百度翻译
     public static final String TRANSLATE = "http://api.fanyi.baidu.com/api/trans/vip/translate";
 
+    /**
+     * 快站接口
+     */
+    //获取单个文章的信息
+    public static final String KZ_ARTICLE = "/post/service-get-post?page_id=";
+    public static final String KZ_POST_ARTICLE = "/post/service-sync-to-kz-post";
+
+    /**
+     * 获取单个文章的信息
+     *
+     * @param pageId
+     * @return
+     */
+    public static String kzArticleUrl(long pageId) {
+        return DOMAIN_KZ_API + KZ_ARTICLE + pageId;
+    }
+
+    /**
+     * 新增快站文章
+     *
+     * @return
+     */
+    public static String kzPostArticleUrl() {
+        return DOMAIN_KZ_API + KZ_POST_ARTICLE;
+    }
+
 
     /**
      * 微信接口
@@ -33,7 +59,7 @@ public class ApiConfig {
     //主域名
     private static final String DOMAIN_WEIXIN_API = "https://api.weixin.qq.com";
     private static final String DOMAIN_WEIXIN_MP = "https://mp.weixin.qq.com";
-
+    private static final String DOMAIN_KZ_API = "http://service.kuaizhan.sohuno.com";
     //账户
 
     //获取access_token
@@ -155,7 +181,6 @@ public class ApiConfig {
     private static final String WEIXIN_GET_FAN_INFO = "/cgi-bin/user/info?access_token=";
 
 
-
     /**
      * 获取公众号已创建的标签
      *
@@ -250,5 +275,82 @@ public class ApiConfig {
      */
     public static String sendByOpenIdUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_SEND_BY_OPENID + accessToken;
+    }
+
+    //素材
+
+    //新增永久素材
+    private static final String WEIXIN_ADD_MATERIAL = "/cgi-bin/material/add_material?access_token=";
+    //删除永久素材
+    private static final String WEIXIN_DELETE_MATERIAL = "/cgi-bin/material/del_material?access_token=";
+    //获取素材总数
+    private static final String WEIXIN_GET_MATERIAL_COUNT = "/cgi-bin/material/get_materialcount?access_token=";
+    //获取素材列表
+    private static final String WEIXIN_GET_MATERIAL = "/cgi-bin/material/batchget_material?access_token=";
+
+    // 图文
+    // 上传多图文
+    private static final String WEIXIN_CREATE_POSTS = "/cgi-bin/material/add_news?access_token=";
+
+    // 修改图文
+    public static final String WEIXIN_UPDATE_POST = "/cgi-bin/material/update_news?access_token=";
+
+    // 上传图文中的图片素材
+    public static final String WEIXIN_ADD_POST_IMAGE = "/cgi-bin/media/uploadimg?access_token=";
+
+
+    /**
+     * 新增永久素材
+     * <<<<<<< HEAD
+     *
+     * @param accessToken
+     * @param type
+     * @return =======
+     * >>>>>>> d77f9d46f42d48eb6e914065c18879bfafb75f85
+     */
+    public static String addMaterialUrl(String accessToken, String type) {
+        return DOMAIN_WEIXIN_API + WEIXIN_ADD_MATERIAL + accessToken + "&type=" + type;
+    }
+
+    /**
+     * 删除永久素材
+     *
+     * @param accessToken
+     * @return
+     */
+    public static String deleteMaterialUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_DELETE_MATERIAL + accessToken;
+    }
+
+    /**
+     * 获取素材总数
+     *
+     * @param accessToken
+     * @return
+     */
+    public static String getMaterialCount(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_GET_MATERIAL_COUNT + accessToken;
+    }
+
+    /**
+     * 获取素材列表
+     *
+     * @param accessToken
+     * @return
+     */
+    public static String getMaterial(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_GET_MATERIAL + accessToken;
+    }
+
+    public static String getCreatePostsUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_CREATE_POSTS + accessToken;
+    }
+
+    public static String getUpdatePostUrl(String accessToken){
+        return DOMAIN_WEIXIN_API + WEIXIN_UPDATE_POST + accessToken;
+    }
+
+    public static String getAddPostImageUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_ADD_POST_IMAGE + accessToken;
     }
 }

@@ -17,6 +17,7 @@
         <junit.version>4.12</junit.version>
         <spring.version>4.3.5.RELEASE</spring.version>
         <spring.redis.version>1.7.1.RELEASE</spring.redis.version>
+        <spring.rabbit.version>1.7.1.RELEASE</spring.rabbit.version>
         <redis.version>2.7.2</redis.version>
         <mybatis.version>3.2.8</mybatis.version>
         <mybatis.spring.version>1.2.2</mybatis.spring.version>
@@ -37,6 +38,28 @@
     </properties>
 
     <dependencies>
+        <!--sentry 异常监控-->
+        <dependency>
+            <groupId>com.getsentry.raven</groupId>
+            <artifactId>raven</artifactId>
+            <version>7.8.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.getsentry.raven</groupId>
+            <artifactId>raven-log4j</artifactId>
+            <version>7.8.6</version>
+        </dependency>
+        <!--mongoDB-->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>1.10.1.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.2.2</version>
+        </dependency>
         <!--rest接口测试-->
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -110,6 +133,12 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>${json.version}</version>
+        </dependency>
+        <!--emoji处理-->
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>emoji-java</artifactId>
+            <version>3.2.0</version>
         </dependency>
         <!-- httpclient -->
         <dependency>
@@ -195,6 +224,11 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+            <version>${spring.rabbit.version}</version>
+        </dependency>
         <!-- JSP相关 -->
         <dependency>
             <groupId>jstl</groupId>
@@ -219,16 +253,39 @@
             <version>RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>json-schema-validator</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
             <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.4.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.1-b08</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator-cdi</artifactId>
+            <version>5.4.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
         </dependency>
     </dependencies>
 
 
-
     <build>
         <finalName>${project.artifactId}</finalName>
+        <filters>
+            <filter>src/main/resources/envs/${active.profile}/datasource.properties</filter>
+            <filter>src/main/resources/envs/${active.profile}/rabbitmq.properties</filter>
+        </filters>
         <resources>
             <resource>
                 <targetPath>${project.build.directory}/classes</targetPath>
@@ -263,6 +320,7 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+            <!--jetty-->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -270,4 +328,25 @@
             </plugin>
         </plugins>
     </build>
+
+    <!--profiles多环境配置-->
+    <profiles>
+        <!--测试开发环境-->
+        <profile>
+            <id>test</id>
+            <properties>
+                <active.profile>test</active.profile>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <!--生产环节-->
+        <profile>
+            <id>production</id>
+            <properties>
+                <active.profile>production</active.profile>
+            </properties>
+        </profile>
+    </profiles>
 </project>

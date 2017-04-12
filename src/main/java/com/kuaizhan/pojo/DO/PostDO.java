@@ -5,24 +5,24 @@ package com.kuaizhan.pojo.DO;
  * 有1标注的表示可为空
  */
 
-public class PostDO implements Comparable<PostDO>{
+public class PostDO {
 
     private Long pageId;
     private Long weixinAppid;
     private String title ;
     private String  thumbMediaId;
     private String thumbUrl;
-    private Short showCoverPic = 0;
+    private Short showCoverPic;
     private String author; //1
     private String digest; //1
-    private String postUrl;
+    private String postUrl = "";
     private String contentSourceUrl; //1
     private String mediaId;
+    // TODO: 研究PHP代码，决定sync的逻辑
     private Integer syncTime;
-    private Short type;
-    private Integer index = 0;
-    private Long kuaizhanPostId ; //每次添加图文时都会先调用 新增快文的接口
-    private Short status = 1; //1 为正常发布，2 为删除
+    private Short type; // 1.单图文 2. 多图文总记录 3.多图文中的一条
+    private Integer index;
+    private Short status; //1 为正常发布，2 为删除
     private Integer createTime;
     private Integer updateTime;
 
@@ -140,14 +140,6 @@ public class PostDO implements Comparable<PostDO>{
         this.index = index;
     }
 
-    public Long getKuaizhanPostId() {
-        return kuaizhanPostId;
-    }
-
-    public void setKuaizhanPostId(Long kuaizhanPostId) {
-        this.kuaizhanPostId = kuaizhanPostId;
-    }
-
     public Short getStatus() {
         return status;
     }
@@ -180,11 +172,7 @@ public class PostDO implements Comparable<PostDO>{
         this.content = content;
     }
 
-    @Override
-    public int compareTo(PostDO obj) {
-        return this.index - obj.getIndex();
-    }
-    
+
     @Override
     public String toString() {
         return "PostDO{" +
@@ -202,12 +190,10 @@ public class PostDO implements Comparable<PostDO>{
                 ", syncTime=" + syncTime +
                 ", type=" + type +
                 ", index=" + index +
-                ", kuaizhanPostId=" + kuaizhanPostId +
                 ", status=" + status +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", content='" + content + '\'' +
                 '}';
     }
-
 }

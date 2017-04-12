@@ -37,6 +37,13 @@ public interface AccountService {
     AccountDO getAccountByAppId(String appId) throws DaoException;
 
     /**
+     * 根据long型Id获取账号信息
+     *
+     * @return
+     */
+    AccountDO getAccountByWeixinAppId(long weixinAppid) throws RedisException, DaoException, AccountNotExistException, JsonParseException;
+
+    /**
      * 解绑账号
      *
      * @param account 账号

@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 public class AccountServiceTest {
 
 
+
     @Resource
     AccountService accountService;
     @Resource
@@ -37,6 +38,12 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void getAccountByWeixinAppId() throws Exception {
+        System.out.println("---->"+accountService.getAccountByWeixinAppId(601145633L));
+    }
+
+
+    @Test
     public void bindAccount() throws Exception {
         AccountDO accountDO = accountDao.getAccountBySiteId(123456L);
         accountService.bindAccount(accountDO);
@@ -50,4 +57,5 @@ public class AccountServiceTest {
     public void unbindAccount() throws Exception {
 
     }
+
 }

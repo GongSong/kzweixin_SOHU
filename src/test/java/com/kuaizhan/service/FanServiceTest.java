@@ -20,6 +20,8 @@ public class FanServiceTest {
 
     @Resource
     FanService fanService;
+    @Resource
+    AccountService accountService;
 
     @Before
     public void setUp() throws Exception {

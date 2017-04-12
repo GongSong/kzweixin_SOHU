@@ -8,17 +8,34 @@
         from weixin_post
         --         status=1表示未删除；type in (1,2)只查询单图文和多图文总记录
         where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+        <if test="title!=null">
+            and `title` like CONCAT('%', #{title} ,'%')
+        </if>
     </select>
 
     <!--根据weixin_appid分页查询图文消息列表-->
-    <select id="listPostsByPagination" parameterType="com.kuaizhan.pojo.DTO.Page" resultType="com.kuaizhan.pojo.DO.PostDO">
+    <select id="listPostsByPagination" parameterType="com.kuaizhan.pojo.DTO.Page"
+            resultType="com.kuaizhan.pojo.DO.PostDO">
         select *
         from weixin_post
         --       status=1表示未删除；type in (1,2)只查询单图文和多图文总记录
-        where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+        where `weixin_appid` = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+        <if test="title!=null">
+            and `title` like CONCAT('%', #{title} ,'%')
+        </if>
+        order by `update_time` DESC
         limit #{pageEntity.offset}, #{pageEntity.limit}
     </select>
-    
+
+    <!--根据weixin_appid查询所有图文消息mediaId列表-->
+    <select id="listMediaIdsByWeixinAppid" parameterType="Long"
+            resultType="String">
+        select media_id
+        from weixin_post
+        --       status=1表示未删除；type in (1,2)只查询单图文和多图文总记录
+        where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
+    </select>
+
     <!--根据mediaId查询多图文-->
     <select id="listMultiPosts" parameterType="String" resultType="com.kuaizhan.pojo.DO.PostDO">
         select *
@@ -27,5 +44,88 @@
         where `status` = 1 AND `type` = 3 AND `media_id` = #{mediaId}
         order by `index`
     </select>
+
+    <!--根据mediaId删除图文-->
+    <update id="deletePost">
+        update `weixin_post`
+        --   type=3表示多图文消息中的一条
+        set `status` = 2
+        where `weixin_appid`=#{weixinAppId} and `media_id`=#{mediaId} and `status` = 1 and `type` in (1,2,3)
+    </update>
+
+    <select id="getPost" parameterType="long" resultType="com.kuaizhan.pojo.DO.PostDO">
+        select *
+        from `weixin_post`
+        where `status` = 1
+        and `page_id`=#{pageId}
+    </select>
+
+    <!--新增图文-->
+    <insert id="insertPost" parameterType="com.kuaizhan.pojo.DO.PostDO">
+        INSERT INTO weixin_post set
+        `page_id`=#{post.pageId},
+        `weixin_appid`=#{post.weixinAppid},
+        `title`=#{post.title},
+        `thumb_media_id`=#{post.thumbMediaId},
+        `thumb_url`=#{post.thumbUrl},
+        `show_cover_pic`=0,
+        `author`=#{post.author},
+        `digest`=#{post.digest},
+        `content_source_url`=#{post.contentSourceUrl},
+        `media_id`=#{post.mediaId},
+        `post_url`="",
+        `type`=#{post.type},
+        `index`=0,
+--         解耦后全部设为零，后期工单删掉
+        `kuaizhan_post_id`=0,
+        `status`=1,
+        `sync_time`=unix_timestamp(now()),
+        `create_time`=unix_timestamp(now()),
+        `update_time`=unix_timestamp(now());
+    </insert>
+
+    <!--修改图文-->
+    <insert id="updatePost" parameterType="com.kuaizhan.pojo.DO.PostDO">
+        UPDATE weixin_post set
+        <if test="post.weixinAppid != null">
+            `weixin_appid`=#{post.weixinAppid},
+        </if>
+        <if test="post.title != null">
+            `title`=#{post.title},
+        </if>
+        <if test="post.thumbMediaId != null">
+            `thumb_media_id`=#{post.thumbMediaId},
+        </if>
+        <if test="post.thumbUrl = null">
+            `thumb_url`=#{post.thumbUrl},
+        </if>
+        <if test="post.showCoverPic = null">
+            `show_cover_pic`=0,
+        </if>
+        <if test="post.author = null">
+            `author`=#{post.author},
+        </if>
+        <if test="post.digest = null">
+            `digest`=#{post.digest},
+        </if>
+        <if test="post.contentSourceUrl = null">
+            `content_source_url`=#{post.contentSourceUrl},
+        </if>
+        <if test="post.mediaId = null">
+            `media_id`=#{post.mediaId},
+        </if>
+        <if test="post.type = null">
+            `type`=#{post.type},
+        </if>
+        <if test="post.index = null">
+            `index`=0,
+        </if>
+        <if test="post.status = null">
+            `status`=1,
+        </if>
+        `sync_time`=unix_timestamp(now()),
+        `update_time`=unix_timestamp(now())
+        WHERE `page_id` = #{pageId}
+    </insert>
 
 </mapper>
