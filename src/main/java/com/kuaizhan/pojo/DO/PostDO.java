@@ -172,10 +172,6 @@ public class PostDO {
         this.content = content;
     }
 
-    @Override
-    public int compareTo(PostDO obj) {
-        return this.index - obj.getIndex();
-    }
 
     @Override
     public String toString() {

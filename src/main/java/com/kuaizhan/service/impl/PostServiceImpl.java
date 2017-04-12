@@ -327,6 +327,9 @@ public class PostServiceImpl implements PostService {
             }
             // TODO: 如果没有content_source_url，设置为快站分享的页面url
             postDO.setThumbMediaId(thumbMediaId);
+
+            // 清除封面尺寸---"/imageView/v1/thumbnail"
+            postDO.setThumbUrl(postDO.getThumbUrl().replaceAll("/imageView/v1/thumbnail.*$", ""));
         }
 
         return posts;
