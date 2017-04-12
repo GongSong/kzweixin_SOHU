@@ -331,15 +331,22 @@
 
     <!--profiles多环境配置-->
     <profiles>
-        <!--测试开发环境-->
+        <!--开发环境-->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <active.profile>dev</active.profile>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <!--测试环境-->
         <profile>
             <id>test</id>
             <properties>
                 <active.profile>test</active.profile>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
         </profile>
         <!--生产环节-->
         <profile>
