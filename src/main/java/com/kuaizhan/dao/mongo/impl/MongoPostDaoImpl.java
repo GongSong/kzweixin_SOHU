@@ -1,5 +1,6 @@
 package com.kuaizhan.dao.mongo.impl;
 
+import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.pojo.DO.MongoPostDo;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,7 @@ public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostDo> implements M
 
     public MongoPostDaoImpl() {
         //表名 wx-dev-是前缀
-        super("wx-dev-" + "test");
+        super(ApplicationConfig.getMongoCollectionPrefix() + "post");
     }
 
     @Override
