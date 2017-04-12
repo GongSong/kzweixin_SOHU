@@ -5,6 +5,8 @@
 ### 1.1 请求格式
 
 * 所有接口必须使用HTTPS协议访问
+* GET方法和DELETE方法，参数拼接到url
+* 其他方法请求, 参数写到body。
 * 请求body格式为application/json
 
 ## 2. 响应

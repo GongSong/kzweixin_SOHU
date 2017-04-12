@@ -8,8 +8,8 @@ import com.kuaizhan.service.WeixinPostService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 从快站文章导入，消费者
@@ -26,19 +26,19 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
     AccountService accountService;
 
     @Override
-    public void onMessage(HashMap msgMap) throws Exception {
+    public void onMessage(Map msgMap) throws Exception {
 
         //TODO:畅言
         long weixinAppid = (long) msgMap.get("weixinAppid");
         List<Long> pageIds = (List<Long>) msgMap.get("pageIds");
-        List<PostDO> postDOList = new ArrayList<>();
-        //调用接口
         for (Long pageId : pageIds) {
+            List<PostDO> postDOList = new ArrayList<>();
+
+            // 调用接口
             ArticleDTO articleDTO = postService.getKzArticle(pageId);
             if (articleDTO != null) {
-                //微信上传封面图
+
                 PostDO postDO = new PostDO();
-                postDO.setKuaizhanPostId(pageId);
                 postDO.setWeixinAppid(weixinAppid);
                 postDO.setTitle(articleDTO.getTitle());
                 postDO.setDigest("");
@@ -48,9 +48,10 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
                 }
                 postDO.setContent(stringBuilder.toString());
                 postDO.setThumbUrl(articleDTO.getCoverUrl());
-                postDOList.add(postDO);
 
+                postDOList.add(postDO);
             }
+            // 新增文章
             postService.insertMultiPosts(weixinAppid, postDOList);
         }
 

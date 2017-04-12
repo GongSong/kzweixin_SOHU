@@ -22,11 +22,6 @@ public class ApplicationConfig {
     //参数校验 json-schema
     //账户
     public static final String UNBIND_POSTDATAT_SCHEMA = "json-schema/account/unbind-postdata-schema.json";
-    //图文
-    public static final String POST_KZSYNCS_POSTDATAT_SCHEMA = "json-schema/post/post-kzsyncs-postdata-schema.json";
-    public static final String POST_KZWEIXINSYNCS2KZPOST_POSTDATAT_SCHEMA = "json-schema/post/post-kzweixin-syncs2kzpost-postdata-schema.json";
-    public static final String POST_INSERT_POSTDATA_SCHEMA = "json-schema/post/post-insert-postdata-schema.json";
-    public static final String POST_UPDATE_POSTDATA_SCHEMA = "json-schema/post/post-update-postdata-schema.json";
 
     //分表
     private static int getMsgTableNum() {
@@ -73,8 +68,13 @@ public class ApplicationConfig {
     }
 
     //图片上传路径
-    public static String getPicUplaodUrl() {
-        return PropertiesUtil.getString(PROP, "service.pic.upload");
+    public static String getPicUploadUrl() {
+        return "http://" + PropertiesUtil.getString(PROP, "kz.service.ip") + "/pic/service-upload-pic-by-url";
+    }
+
+    // 获取PHP端service host
+    public static String getTestServiceHost() {
+        return PropertiesUtil.getString(PROP, "kz.service.host");
     }
 
     //大分页
@@ -112,9 +112,10 @@ public class ApplicationConfig {
     //消息
 
     //缓存消息列表
-    public static final String KEY_MSG_LIST = "msg_list:";
+    public static final String KEY_MSG_LIST = REDIS_PREFIX + "msg_list:";
     //缓存单个用户消息
-    public static final String KEY_MSG_USER = "msg_user:";
+    public static final String KEY_MSG_USER = REDIS_PREFIX + "msg_user:";
 
-
+    // 上传过的图片资源
+    public static final String KEY_IMAGE_WEIXIN_RUL = REDIS_PREFIX + "origin_url:";
 }

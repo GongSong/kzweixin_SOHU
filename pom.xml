@@ -272,6 +272,10 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
+        <filters>
+            <filter>src/main/resources/envs/${active.profile}/datasource.properties</filter>
+            <filter>src/main/resources/envs/${active.profile}/rabbitmq.properties</filter>
+        </filters>
         <resources>
             <resource>
                 <targetPath>${project.build.directory}/classes</targetPath>
@@ -314,4 +318,25 @@
             </plugin>
         </plugins>
     </build>
+
+    <!--profiles多环境配置-->
+    <profiles>
+        <!--测试开发环境-->
+        <profile>
+            <id>test</id>
+            <properties>
+                <active.profile>test</active.profile>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <!--生产环节-->
+        <profile>
+            <id>production</id>
+            <properties>
+                <active.profile>production</active.profile>
+            </properties>
+        </profile>
+    </profiles>
 </project>

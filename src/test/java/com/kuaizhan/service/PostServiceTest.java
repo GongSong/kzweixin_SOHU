@@ -4,6 +4,7 @@ package com.kuaizhan.service;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 
 import com.kuaizhan.pojo.DO.PostDO;
+import com.kuaizhan.pojo.DTO.PostDTO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,8 +71,15 @@ public class PostServiceTest {
     }
 
     @Test
+    public void syncWeixinPosts() throws Exception {
+        long weixinAppid = 1789089804L;
+        long uid = 123L;
+        postService.syncWeixinPosts(weixinAppid, uid);
+    }
+
+    @Test
     public void insertMultiPosts() throws Exception {
-        long weixinAppid = 601145633;
+        long weixinAppid = 1789089804L;
         List<PostDO> posts = new ArrayList<>();
 
         String content = "<img onclick=\"clickcallback\" something />前面<script href=\"haha\"> fdaefdada </script>中间<script href=\"haha\"> fdaefdada </script>后面<img onclick=\"clickcallback\" something />";
@@ -97,6 +105,15 @@ public class PostServiceTest {
         List<String> mediaIds = postService.listMediaIdsByWeixinAppid(weixinAppid);
         for (String mediaId: mediaIds) {
             System.out.println("----->" + mediaId);
+        }
+    }
+
+    @Test
+    public void listNonExistsPostItemsFromWeixin() throws Exception {
+        long weixinAppid = 1789089804L;
+        List<PostDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);
+        for (PostDTO.PostItem postItem: postItemList){
+            System.out.println("------>" + postItem);
         }
     }
 }

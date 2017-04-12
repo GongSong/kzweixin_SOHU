@@ -67,7 +67,7 @@ public class WeixinAuthServiceTest {
 
     @Test
     public void refreshAuthorizationInfo() throws Exception {
-        AccountDO accountDO=accountService.getAccountBySiteId(123456L);
+        AccountDO accountDO = accountService.getAccountBySiteId(123456L);
         System.out.println("----->" + weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken()));
     }
 

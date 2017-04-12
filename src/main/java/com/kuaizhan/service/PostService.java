@@ -4,7 +4,7 @@ package com.kuaizhan.service;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.KZPostAddException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
-import com.kuaizhan.exception.business.UploadPostsException;
+import com.kuaizhan.exception.business.MaterialGetException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
@@ -94,15 +94,6 @@ public interface PostService {
     void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception;
 
     /**
-     * 根据weixinAppid获取图文消息
-     *
-     * @param weixinAppid
-     * @return
-     * @throws DaoException
-     */
-    List<PostDO> listPostsByWeixinAppid(long weixinAppid) throws DaoException;
-
-    /**
      * 根据weixinAppid获取mediaId列表
      *
      * @param weixinAppid
@@ -112,10 +103,24 @@ public interface PostService {
     List<String> listMediaIdsByWeixinAppid(long weixinAppid) throws DaoException;
 
     /**
+     * 同步微信消息(异步)
+     * @param weixinAppid
+     * @param uid 用户id，用于上传图片
+     */
+    void syncWeixinPosts(long weixinAppid, long uid);
+
+    /**
      * 由微信导入图文
      *
-     * @param weixinAppid
      * @param postItem
      */
-    void importWeixinPost(long weixinAppid, PostDTO.PostItem postItem, long userId) throws Exception;
+    void importWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception;
+
+    /**
+     * 本地不存在的微信图文mediaId列表
+     *
+     * @param weixinAppid
+     * @return
+     */
+    List<PostDTO.PostItem> listNonExistsPostItemsFromWeixin(long weixinAppid) throws DaoException, AccountNotExistException, RedisException, JsonParseException, MaterialGetException;
 }

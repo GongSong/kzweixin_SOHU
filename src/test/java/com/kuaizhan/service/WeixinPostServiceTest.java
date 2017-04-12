@@ -55,7 +55,8 @@ public class WeixinPostServiceTest {
 
     @Test
     public void listAllPosts() throws Exception {
-        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccountByWeixinAppId(601145633L).getAccessToken());
+        long weixinAppid = 1789089804L;
+        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccountByWeixinAppId(weixinAppid).getAccessToken());
         List<PostDTO.PostItem> postItemList = new LinkedList<>();
         for (PostDTO postDTO: postDTOList) {
             postItemList.addAll(postDTO.toPostItemList(weixinAppid));
