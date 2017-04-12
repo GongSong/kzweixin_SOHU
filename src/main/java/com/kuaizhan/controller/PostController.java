@@ -1,12 +1,12 @@
 package com.kuaizhan.controller;
 
-import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.param.PostsParam;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.Page;
@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,30 +136,8 @@ public class PostController extends BaseController {
      * 新增多图文
      */
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public JsonResponse insertPost(@RequestBody String postData) throws Exception {
-        JSONObject jsonObject = new JSONObject(postData);
-
-        Long weixinAppid = jsonObject.optLong("weixinAppid");
-
-        JSONArray jsonArray = jsonObject.getJSONArray("posts");
-        List<PostDO> posts = new ArrayList<>();
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject postJson = jsonArray.getJSONObject(i);
-            PostDO postDO = new PostDO();
-            postDO.setTitle(postJson.getString("title"));
-            postDO.setAuthor(postJson.optString("author"));
-            postDO.setDigest(postJson.getString("digest"));
-            postDO.setContent(postJson.getString("content"));
-            postDO.setThumbMediaId(postJson.optString("thumbMediaId"));
-            postDO.setThumbUrl(postJson.getString("thumbUrl"));
-            postDO.setContentSourceUrl(postJson.optString("contentSourceUrl"));
-            postDO.setShowCoverPic((short) postJson.optInt("showCoverPic", 0));
-
-            posts.add(postDO);
-        }
-        postService.insertMultiPosts(weixinAppid, posts);
-
+    public JsonResponse insertPost(@Valid @RequestBody PostsParam postsParam) throws Exception {
+        postService.insertMultiPosts(postsParam.getWeixinAppid(), postsParam.getPostDOs());
         return new JsonResponse(null);
     }
 
@@ -166,32 +145,8 @@ public class PostController extends BaseController {
      * 修改多图文
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.PUT)
-    public JsonResponse updatePost(@PathVariable("pageId") long pageId, @RequestBody String postData) throws Exception {
-        JSONObject jsonObject = new JSONObject(postData);
-
-        Long weixinAppid = jsonObject.optLong("weixinAppid");
-
-        JSONArray jsonArray = jsonObject.getJSONArray("posts");
-        List<PostDO> posts = new ArrayList<>();
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject postJson = jsonArray.getJSONObject(i);
-            PostDO postDO = new PostDO();
-
-            postDO.setPageId(postJson.optLong("pageId"));
-            postDO.setMediaId(postJson.optString("mediaId"));
-            postDO.setTitle(postJson.getString("title"));
-            postDO.setAuthor(postJson.optString("author"));
-            postDO.setDigest(postJson.getString("digest"));
-            postDO.setContent(postJson.getString("content"));
-            postDO.setThumbMediaId(postJson.optString("thumbMediaId"));
-            postDO.setThumbUrl(postJson.getString("thumbUrl"));
-            postDO.setContentSourceUrl(postJson.optString("contentSourceUrl"));
-            postDO.setShowCoverPic((short) postJson.optInt("showCoverPic", 0));
-
-            posts.add(postDO);
-        }
-        postService.updateMultiPosts(weixinAppid, pageId, posts);
+    public JsonResponse updatePost(@PathVariable("pageId") long pageId, @Valid @RequestBody PostsParam postsParam) throws Exception {
+        postService.updateMultiPosts(postsParam.getWeixinAppid(), pageId, postsParam.getPostDOs());
         return new JsonResponse(null);
     }
 

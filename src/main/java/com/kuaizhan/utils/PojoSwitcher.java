@@ -22,7 +22,7 @@ public class PojoSwitcher {
         postVO.setMediaId(postDO.getMediaId());
         postVO.setTitle(postDO.getTitle());
         postVO.setAuthor(postDO.getAuthor());
-        postVO.setDigest(postDO.getAuthor());
+        postVO.setDigest(postDO.getDigest());
         postVO.setContent(postDO.getContent());
         postVO.setThumbUrl(postDO.getThumbUrl());
         postVO.setThumbMediaId(postDO.getThumbMediaId());

@@ -6,6 +6,8 @@ import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.system.ServerException;
 import com.kuaizhan.pojo.VO.JsonResponse;
 
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,9 +29,25 @@ public abstract class BaseController {
             ParamException paramException = new ParamException();
             return new JsonResponse(paramException.getCode(), paramException.getMsg(), null);
         } else {
+            // TODO: 此处可能忽略掉异常
+            System.out.println("---->" + ex);
             ServerException serverException = new ServerException();
             return new JsonResponse(serverException.getCode(), serverException.getMsg(), null);
         }
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public JsonResponse handleValidationException(MethodArgumentNotValidException e) {
+        System.out.println("---->" + e);
+
+        String msg = "";
+        for (ObjectError er : e.getBindingResult().getAllErrors()) {
+            msg = er.getDefaultMessage();
+        }
+        ParamException paramException = new ParamException();
+        return new JsonResponse(paramException.getCode(), msg, null);
+
     }
 
 }

@@ -31,6 +31,7 @@ public abstract class BaseException extends Exception {
         this.code = code;
         this.msg = msg;
         StringWriter sw = new StringWriter();
+        // TODO: 此处产生过空指针异常
         e.printStackTrace(new PrintWriter(sw));
         this.errorStack = sw.toString();
     }
