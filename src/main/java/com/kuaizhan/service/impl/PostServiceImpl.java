@@ -309,7 +309,11 @@ public class PostServiceImpl implements PostService {
             postDO.setContent(replacedContent);
             // 替换emoji
             postDO.setTitle(EmojiParser.removeAllEmojis(postDO.getTitle()));
-            postDO.setDigest(EmojiParser.removeAllEmojis(postDO.getDigest()));
+            String digest = postDO.getDigest();
+            if (digest != null){
+                digest = EmojiParser.removeAllEmojis(digest);
+            }
+            postDO.setDigest(digest);
             // 上传封面图片
             String thumbMediaId = postDO.getThumbMediaId();
             if (thumbMediaId == null || thumbMediaId.equals("")) {
