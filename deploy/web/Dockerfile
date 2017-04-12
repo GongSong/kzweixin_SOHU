@@ -2,7 +2,7 @@ FROM registry.kuaizhan.com/kuaizhan-plf/java-env:latest
 MAINTAINER "chengliu" <chengliu@sohu-inc.com>
 
 ENV PREFIX /opt/kuaizhan
-ENV WAR_FILE ../target/kzweixin2.war
+ENV WAR_FILE ../target/kzweixin.war
 
 COPY $WAR_FILE $PREFIX/jetty/webapps/
 
