@@ -104,7 +104,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
                 jsonObject.put("component_verify_ticket", ticket);
                 String returnJson = HttpClientUtil.postJson(ApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
                 result = new JSONObject(returnJson);
-                result.put("expires_time", 7100);
+                result.put("expires_time", System.currentTimeMillis() / 1000 + 7100);
                 componentAccessToken = result.getString("component_access_token");
             } catch (Exception e) {
                 throw new JsonParseException(e);
