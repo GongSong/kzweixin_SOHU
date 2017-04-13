@@ -1,9 +1,6 @@
 package com.kuaizhan.service;
 
-import com.kuaizhan.exception.business.AddMaterialException;
-import com.kuaizhan.exception.business.MaterialDeleteException;
-import com.kuaizhan.exception.business.MaterialGetException;
-import com.kuaizhan.exception.business.UploadPostsException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.PostDTO;
@@ -50,7 +47,7 @@ public interface WeixinPostService {
      * 更新微信的单图文
      * @throws UploadPostsException
      */
-    void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException;
+    void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException, MediaIdNotExistException;
 
     /**
      * 根据偏移获取微信图文列表

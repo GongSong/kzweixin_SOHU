@@ -232,7 +232,6 @@ public class PostServiceImpl implements PostService {
         if (oldPost.getType() == 1 && posts.size() == 1){
             PostDO post = posts.get(0);
 
-            // TODO: 考虑脏数据下，oldPost没有mediaId的异常处理
             // 更新到微信
             weixinPostService.updatePost(accessToken, oldPost.getMediaId(), post);
 
@@ -261,7 +260,6 @@ public class PostServiceImpl implements PostService {
             deletePost(weixinAppid, pageId, accessToken);
 
             // 重新新增
-            // TODO: 完成保留pageId的逻辑
             saveMultiPosts(weixinAppid, posts);
         }
 
