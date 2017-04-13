@@ -111,8 +111,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             }
             try {
                 //检查token是否一样
-                if (!redisAuthDao.equalComponentAccessToken(result.toString()))
-                    redisAuthDao.setComponentAccessToken(result.toString());
+                redisAuthDao.setComponentAccessToken(result.toString());
             } catch (Exception e) {
                 throw new RedisException(e);
             }

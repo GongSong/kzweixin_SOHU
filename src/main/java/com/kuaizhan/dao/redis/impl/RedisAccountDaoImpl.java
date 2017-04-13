@@ -46,11 +46,16 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
 
     @Override
     public String getAccessToken(long weixinAppId) {
-        String result = getData(ApplicationConfig.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId);
+        String key = ApplicationConfig.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId;
+        String result = getData(key);
         if (result == null) {
             return null;
         } else {
             JSONObject jsonObject = new JSONObject(result);
+            long expires = jsonObject.getInt("expires_time");
+            if (expires - getTtl(key) < 10 * 60) {
+                return null;
+            }
             return jsonObject.getString("access_token");
 
         }
