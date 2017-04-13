@@ -57,10 +57,10 @@ public class WeixinController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/authpage/{siteId}", method = RequestMethod.GET, produces = "application/json")
-    public JsonResponse getAuthPage(@PathVariable long siteId) throws RedisException, JsonParseException {
+    public JsonResponse getAuthPage(@PathVariable long siteId, @RequestParam String redirectUrl) throws RedisException, JsonParseException {
         String componentAccessToken = weixinAuthService.getComponentAccessToken();
         String preAuthCode = weixinAuthService.getPreAuthCode(componentAccessToken);
-        String redirectUrl = ApplicationConfig.getApiPrefix() + "/" + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
+//        String redirectUrl = ApplicationConfig.getApiPrefix() + "/" + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
         String authPageUrl = ApiConfig.getAuthEntranceUrl(preAuthCode, redirectUrl);
         return new JsonResponse(authPageUrl);
     }
@@ -83,7 +83,7 @@ public class WeixinController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/authcode/callback", method = RequestMethod.GET)
-    public String getAuthCode(@RequestParam("auth_code") String authCode, @RequestParam("expires_in") String expire, @RequestParam long siteId) throws RedisException, JsonParseException, DaoException {
+    public JsonResponse getAuthCode(@RequestParam("auth_code") String authCode, @RequestParam("expires_in") String expire, @RequestParam long siteId) throws RedisException, JsonParseException, DaoException {
         //TODO:绑定后数据同步 粉丝数据 引导关注 模板消息 rambitmq
         String componentAccessToken = weixinAuthService.getComponentAccessToken();
         AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.getAuthorizationInfo(componentAccessToken, ApplicationConfig.WEIXIN_APPID_THIRD, authCode);
@@ -118,7 +118,7 @@ public class WeixinController extends BaseController {
             }
             accountService.bindAccount(account);
         }
-        return "success";
+        return new JsonResponse(null);
     }
 
 
