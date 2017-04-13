@@ -21,6 +21,14 @@ public interface AccountService {
     void bindAccount(AccountDO account) throws RedisException, DaoException;
 
     /**
+     * 获取accessToken
+     *
+     * @param weixinAppId
+     * @return
+     */
+    String getAccessToken(long weixinAppId) throws RedisException, DaoException, AccountNotExistException;
+
+    /**
      * 根据siteId获取账号信息
      *
      * @param siteId 站点id

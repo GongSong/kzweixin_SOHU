@@ -83,39 +83,41 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
 
     @Override
     public String getComponentAccessToken() throws RedisException, JsonParseException {
+        //TODO: component_access_token 直接存储json
         String ticket;
+        String componentAccessToken;
+        JSONObject result;
         try {
             //从redis拿componentAccessToken
-            if (redisAuthDao.existComponentAccessToken()) {
-                return redisAuthDao.getComponentAccessToken();
-            }
+            componentAccessToken = redisAuthDao.getComponentAccessToken();
             //从缓存中拿ticket
             ticket = redisAuthDao.getComponentVerifyTicket();
         } catch (Exception e) {
             throw new RedisException(e);
         }
-        String componentAccessToken;
-        try {
-            //请求微信接口
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("component_appid", ApplicationConfig.WEIXIN_APPID_THIRD);
-            jsonObject.put("component_appsecret", ApplicationConfig.WEIXIN_APPSECRECT_THIRD);
-            jsonObject.put("component_verify_ticket", ticket);
-            String returnJson = HttpClientUtil.postJson(ApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
-            JSONObject result = new JSONObject(returnJson);
-            componentAccessToken = result.getString("component_access_token");
-        } catch (Exception e) {
-            throw new JsonParseException(e);
+        if (componentAccessToken == null) {
+            try {
+                //请求微信接口
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("component_appid", ApplicationConfig.WEIXIN_APPID_THIRD);
+                jsonObject.put("component_appsecret", ApplicationConfig.WEIXIN_APPSECRECT_THIRD);
+                jsonObject.put("component_verify_ticket", ticket);
+                String returnJson = HttpClientUtil.postJson(ApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
+                result = new JSONObject(returnJson);
+                result.put("expires_time", 7100);
+                componentAccessToken = result.getString("component_access_token");
+            } catch (Exception e) {
+                throw new JsonParseException(e);
+            }
+            try {
+                //检查token是否一样
+                if (!redisAuthDao.equalComponentAccessToken(result.toString()))
+                    redisAuthDao.setComponentAccessToken(result.toString());
+            } catch (Exception e) {
+                throw new RedisException(e);
+            }
         }
-        try {
-            //检查token是否一样
-            if (!redisAuthDao.equalComponentAccessToken(componentAccessToken))
-                redisAuthDao.setComponentAccessToken(componentAccessToken);
-            return componentAccessToken;
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
-
+        return componentAccessToken;
     }
 
     @Override

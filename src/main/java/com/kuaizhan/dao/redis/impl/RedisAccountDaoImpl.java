@@ -5,7 +5,9 @@ import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisAccountDao;
 
 import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
 import com.kuaizhan.utils.JsonUtil;
+import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -41,4 +43,38 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
     public void deleteAccountInfo(long weixinAppId) {
         deleteData(ApplicationConfig.KEY_ACCOUNT_INFO + weixinAppId);
     }
+
+    @Override
+    public String getAccessToken(long weixinAppId) {
+        String result = getData(ApplicationConfig.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId);
+        if (result == null) {
+            return null;
+        } else {
+            JSONObject jsonObject = new JSONObject(result);
+            return jsonObject.getString("access_token");
+
+        }
+    }
+
+    @Override
+    public void setAccessToken(long weixinAppId, AuthorizationInfoDTO authorizationInfoDTO) {
+        if (authorizationInfoDTO != null) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("access_token", authorizationInfoDTO.getAccessToken());
+            jsonObject.put("refresh_token", authorizationInfoDTO.getRefreshToken());
+            jsonObject.put("expires_time", authorizationInfoDTO.getExpiresIn());
+            setData(ApplicationConfig.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId, jsonObject.toString(), 2 * 60 * 60);
+        }
+    }
+
+    @Override
+    public void deleteAccessToken(long weixinAppId) {
+        deleteData(ApplicationConfig.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId);
+    }
+
+    @Override
+    public boolean equalAccessToken(long weixinAppId, String accessToken) {
+        return equal(ApplicationConfig.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId, accessToken);
+    }
+
 }

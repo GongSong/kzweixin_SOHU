@@ -2,6 +2,7 @@ package com.kuaizhan.dao.redis.impl;
 
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisAuthDao;
+import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
 
@@ -23,7 +24,13 @@ public class RedisAuthDaoImpl extends RedisBaseDaoImpl implements RedisAuthDao {
 
     @Override
     public String getComponentAccessToken() {
-        return getData(ApplicationConfig.KEY_WEIXIN_COMPONENT_ACCESS_TOKEN);
+        String result = getData(ApplicationConfig.KEY_WEIXIN_COMPONENT_ACCESS_TOKEN);
+        if (result == null) {
+            return null;
+        } else {
+            JSONObject jsonObject = new JSONObject(result);
+            return jsonObject.getString("component_access_token");
+        }
     }
 
     @Override
@@ -61,85 +68,6 @@ public class RedisAuthDaoImpl extends RedisBaseDaoImpl implements RedisAuthDao {
     public boolean equalPreAuthCode(String preAuthCode) {
         return equal(ApplicationConfig.KEY_WEIXIN_PRE_AUTH_CODE, preAuthCode);
     }
-//
-//    @Override
-//    public String getPreAuthCode() {
-//        return redisUtil.get(Config.REDIS_PREFIX + Config.KEY_WEIXIN_PRE_AUTH_CODE);
-//    }
-//
-//    @Override
-//    public void setPreAuthCode(String preAuthCode) {
-//        redisUtil.setEx(Config.REDIS_PREFIX + Config.KEY_WEIXIN_PRE_AUTH_CODE, 19 * 60, preAuthCode);
-//    }
-//
-//
-//    @Override
-//    public boolean existPreAuthCode() {
-//        return redisUtil.exists(Config.REDIS_PREFIX + Config.KEY_WEIXIN_PRE_AUTH_CODE);
-//    }
-//
-//    @Override
-//    public boolean equalPreAuthCode(String preAuthCode) {
-//        return equal(Config.REDIS_PREFIX + Config.KEY_WEIXIN_PRE_AUTH_CODE, preAuthCode);
-//    }
-//
-//    @Override
-//    public String getAccessToken(Long siteId) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_ACCESS_TOKEN + siteId;
-//        return redisUtil.get(key);
-//    }
-//
-//    @Override
-//    public void setAccessToken(Long siteId, String accessToken) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_ACCESS_TOKEN + siteId;
-//        setData(key, accessToken, 7000);
-//    }
-//
-//    @Override
-//    public boolean existAccessToken(Long siteId) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_ACCESS_TOKEN + siteId;
-//        return exist(key);
-//    }
-//
-//    @Override
-//    public boolean equalAccessToken(Long siteId, String accessToken) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_ACCESS_TOKEN + siteId;
-//        return equal(key, accessToken);
-//    }
-//
-//    @Override
-//    public void deleteAccessToken(Long siteId) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_ACCESS_TOKEN + siteId;
-//        deleteData(key);
-//    }
-//
-//    @Override
-//    public String getAppId(Long siteId) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_APPID + siteId;
-//        return redisUtil.get(key);
-//    }
-//
-//    @Override
-//    public void setAppId(Long siteId, String appId) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_APPID + siteId;
-//        setData(key, appId, 24 * 60 * 60);
-//    }
-//
-//    @Override
-//    public boolean existAppId(Long siteId) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_APPID + siteId;
-//        return exist(key);
-//    }
-//
-//    @Override
-//    public void deleteAppId(Long siteId) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_APPID + siteId;
-//        deleteData(key);
-//    }
-//
-//    @Override
-//    public boolean equalAppId(Long siteId, String appId) {
-//        String key = Config.REDIS_PREFIX + Config.KEY_WEIXIN_APPID + siteId;
-//        return equal(key, appId);
-//    }
+
+
 }

@@ -99,9 +99,12 @@ public class ApplicationConfig {
     //账户
 
     //缓存component_verify_ticket
-    public static final String KEY_WEIXIN_COMPONENT_VERIFY_TICKET = REDIS_PREFIX + "component_verify_ticket:";
+    public static final String KEY_WEIXIN_COMPONENT_VERIFY_TICKET = REDIS_PREFIX + "kz_weixin:ticket";
     //缓存component_access_token
-    public static final String KEY_WEIXIN_COMPONENT_ACCESS_TOKEN = REDIS_PREFIX + "component_access_token:";
+    public static final String KEY_WEIXIN_COMPONENT_ACCESS_TOKEN = REDIS_PREFIX + "kz_weixin:component_access_token";
+    //缓存公众号的access_token
+    public static final String KEY_WEIXIN_USER_ACCESS_TOKEN = REDIS_PREFIX + "kz_weixin:user_access_token:";
+
     //缓存预授权码
     public static final String KEY_WEIXIN_PRE_AUTH_CODE = REDIS_PREFIX + "pre_auth_code:";
     //缓存账户信息

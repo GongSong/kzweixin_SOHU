@@ -1,6 +1,7 @@
 package com.kuaizhan.dao.redis;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
 
 import java.io.IOException;
 
@@ -16,4 +17,17 @@ public interface RedisAccountDao {
     void setAccountInfo(AccountDO account) throws JsonProcessingException;
 
     void deleteAccountInfo(long weixinAppId);
+
+    /**
+     * 获取accessToken
+     * @param weixinAppId
+     * @return
+     */
+    String getAccessToken(long weixinAppId);
+
+    void setAccessToken(long weixinAppId,AuthorizationInfoDTO authorizationInfoDTO);
+
+    void deleteAccessToken(long weixinAppId);
+
+    boolean equalAccessToken(long weixinAppId,String accessToken);
 }

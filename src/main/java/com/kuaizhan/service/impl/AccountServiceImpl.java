@@ -79,6 +79,45 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public String getAccessToken(long weixinAppId) throws RedisException, DaoException, AccountNotExistException {
+        String accessToken;
+        try {
+            accessToken = redisAccountDao.getAccessToken(weixinAppId);
+        } catch (Exception e) {
+            throw new RedisException(e);
+        }
+        if (accessToken == null) {
+            //从数据库拿
+            try {
+                AccountDO accountDO = accountDao.getAccountByWeixinAppId(weixinAppId);
+                if (accountDO == null) {
+                    throw new AccountNotExistException();
+                }
+                //刷新
+                AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
+                accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
+                accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+                try {
+                    accountDao.updateAccountByWeixinAppId(accountDO);
+                } catch (Exception e) {
+                    throw new DaoException(e);
+                }
+                //设置缓存
+                try {
+                    redisAccountDao.setAccessToken(weixinAppId, authorizationInfoDTO);
+                } catch (Exception e) {
+                    throw new RedisException(e);
+                }
+
+            } catch (Exception e) {
+                throw new DaoException(e);
+            }
+
+        }
+        return null;
+    }
+
+    @Override
     public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
         AccountDO accountDO;
         try {
