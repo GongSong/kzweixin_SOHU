@@ -96,31 +96,31 @@
         <if test="post.thumbMediaId != null">
             `thumb_media_id`=#{post.thumbMediaId},
         </if>
-        <if test="post.thumbUrl = null">
+        <if test="post.thumbUrl != null">
             `thumb_url`=#{post.thumbUrl},
         </if>
-        <if test="post.showCoverPic = null">
+        <if test="post.showCoverPic != null">
             `show_cover_pic`=0,
         </if>
-        <if test="post.author = null">
+        <if test="post.author != null">
             `author`=#{post.author},
         </if>
-        <if test="post.digest = null">
+        <if test="post.digest != null">
             `digest`=#{post.digest},
         </if>
-        <if test="post.contentSourceUrl = null">
+        <if test="post.contentSourceUrl != null">
             `content_source_url`=#{post.contentSourceUrl},
         </if>
-        <if test="post.mediaId = null">
+        <if test="post.mediaId != null">
             `media_id`=#{post.mediaId},
         </if>
-        <if test="post.type = null">
+        <if test="post.type != null">
             `type`=#{post.type},
         </if>
-        <if test="post.index = null">
+        <if test="post.index != null">
             `index`=0,
         </if>
-        <if test="post.status = null">
+        <if test="post.status != null">
             `status`=1,
         </if>
         `sync_time`=unix_timestamp(now()),
