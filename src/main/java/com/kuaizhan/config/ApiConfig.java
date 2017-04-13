@@ -1,10 +1,17 @@
 package com.kuaizhan.config;
 
+import com.kuaizhan.utils.PropertiesUtil;
+
+import java.util.Properties;
+
 /**
  * 第三方api
  * Created by liangjiateng on 2017/3/1.
  */
 public class ApiConfig {
+
+    //资源读取工具
+    private static final Properties PROP = PropertiesUtil.loadProps("application.properties");
 
     /**
      * 智能回复接口
@@ -39,7 +46,7 @@ public class ApiConfig {
      * @return
      */
     public static String kzArticleUrl(long pageId) {
-        return DOMAIN_KZ_API + KZ_ARTICLE + pageId;
+        return "http://"+PropertiesUtil.getString(PROP,"kz.service.host") + KZ_ARTICLE + pageId;
     }
 
     /**
@@ -48,7 +55,7 @@ public class ApiConfig {
      * @return
      */
     public static String kzPostArticleUrl() {
-        return DOMAIN_KZ_API + KZ_POST_ARTICLE;
+        return "http://"+PropertiesUtil.getString(PROP,"kz.service.host") + KZ_POST_ARTICLE;
     }
 
 
@@ -59,7 +66,6 @@ public class ApiConfig {
     //主域名
     private static final String DOMAIN_WEIXIN_API = "https://api.weixin.qq.com";
     private static final String DOMAIN_WEIXIN_MP = "https://mp.weixin.qq.com";
-    private static final String DOMAIN_KZ_API = "http://service.kuaizhan.sohuno.com";
     //账户
 
     //获取access_token

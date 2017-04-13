@@ -1,13 +1,11 @@
 package com.kuaizhan.mq;
 
-import com.kuaizhan.exception.BaseException;
 import com.kuaizhan.pojo.DTO.PostDTO;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.Map;
 
 /**

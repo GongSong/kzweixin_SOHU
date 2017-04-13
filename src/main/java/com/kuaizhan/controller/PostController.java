@@ -20,6 +20,7 @@ import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -138,6 +139,7 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
     public JsonResponse insertPost(@Valid @RequestBody PostsParam postsParam) throws Exception {
+
         postService.insertMultiPosts(postsParam.getWeixinAppid(), postsParam.getPostDOs());
         return new JsonResponse(null);
     }
