@@ -41,6 +41,18 @@ public class MongoPostDaoTest {
 
     @Test
     public void upsertPost() throws Exception {
+        long pageId = 111;
+
+        String content1 = "content1";
+        mongoPostDao.upsertPost(pageId, content1);
+        assertEquals(content1, mongoPostDao.getContentById(pageId));
+
+        String content2 = "content2";
+        mongoPostDao.upsertPost(pageId, content2);
+        assertEquals(content2, mongoPostDao.getContentById(pageId));
+
+        mongoPostDao.deletePost(pageId);
+        assertEquals("", mongoPostDao.getContentById(pageId));
 
     }
 

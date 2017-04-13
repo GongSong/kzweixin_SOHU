@@ -11,7 +11,6 @@ import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.MongoPostDo;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
@@ -58,57 +57,58 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException {
+    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException, MongoException {
 
         Page<PostDO> postDOPage = new Page<>(page, ApplicationConfig.PAGE_SIZE_LARGE);
 
+        List<PostDO> posts;
         try {
-            List<PostDO> posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage);
-            // 从Mongo中取content
-            for (PostDO postDO : posts) {
-                MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
-                // 多图文总记录没有content
-                String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
-                postDO.setContent(content);
-            }
-
-            postDOPage.setResult(posts);
-
-            long totalCount = postDao.count(weixinAppid, title);
-            postDOPage.setTotalCount(totalCount);
-
+            posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage);
         } catch (Exception e) {
             throw new DaoException(e);
         }
+
+        try {
+            // 从Mongo中取content
+            for (PostDO postDO : posts) {
+                postDO.setContent(mongoPostDao.getContentById(postDO.getPageId()));
+            }
+        } catch (Exception e) {
+            throw new MongoException(e);
+        }
+
+        long totalCount = postDao.count(weixinAppid, title);
+        postDOPage.setTotalCount(totalCount);
+        postDOPage.setResult(posts);
 
         return postDOPage;
     }
 
     @Override
-    public List<PostDO> listMultiPosts(String mediaId) throws DaoException {
+    public List<PostDO> listMultiPosts(String mediaId) throws DaoException, MongoException {
 
         List<PostDO> multiPosts;
         try {
             multiPosts = postDao.listMultiPosts(mediaId);
-
-            // 从Mongo中取content
-            for (PostDO postDO : multiPosts) {
-                MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
-                // 多图文总记录没有content
-                String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
-                postDO.setContent(content);
-            }
-
         } catch (Exception e) {
             throw new DaoException(e);
         }
+
+        try {
+            // 从Mongo中取content
+            for (PostDO postDO : multiPosts) {
+                postDO.setContent(mongoPostDao.getContentById(postDO.getPageId()));
+            }
+        } catch (Exception e) {
+            throw new MongoException(e);
+        }
+
         return multiPosts;
     }
 
     @Override
     public void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException {
 
-        // TODO: mongo删除
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             String mediaId = postDO.getMediaId();
@@ -142,9 +142,7 @@ public class PostServiceImpl implements PostService {
         if (postDO != null) {
             // 获取content
             try {
-                MongoPostDo mongoPostDo = mongoPostDao.getPostById(postDO.getPageId());
-                String content = (mongoPostDo != null) ? mongoPostDo.getContent() : "";
-                postDO.setContent(content);
+                postDO.setContent(mongoPostDao.getContentById(postDO.getPageId()));
             } catch (Exception e) {
                 throw new MongoException(e);
             }
@@ -246,6 +244,7 @@ public class PostServiceImpl implements PostService {
             post.setIndex(0);
             post.setType((short) 1);
 
+            mongoPostDao.upsertPost(pageId, post.getContent());
             postDao.updatePost(post, pageId);
         }
         // 单图文到多图文、多图文到单图文、多图文到多图文，执行删除微信media、删除本地、重新新增
@@ -309,7 +308,11 @@ public class PostServiceImpl implements PostService {
             postDO.setContent(replacedContent);
             // 替换emoji
             postDO.setTitle(EmojiParser.removeAllEmojis(postDO.getTitle()));
-            postDO.setDigest(EmojiParser.removeAllEmojis(postDO.getDigest()));
+            String digest = postDO.getDigest();
+            if (digest != null){
+                digest = EmojiParser.removeAllEmojis(digest);
+            }
+            postDO.setDigest(digest);
             // 上传封面图片
             String thumbMediaId = postDO.getThumbMediaId();
             if (thumbMediaId == null || thumbMediaId.equals("")) {
@@ -318,6 +321,9 @@ public class PostServiceImpl implements PostService {
             }
             // TODO: 如果没有content_source_url，设置为快站分享的页面url
             postDO.setThumbMediaId(thumbMediaId);
+
+            // 清除封面尺寸---"/imageView/v1/thumbnail"
+            postDO.setThumbUrl(postDO.getThumbUrl().replaceAll("/imageView/v1/thumbnail.*$", ""));
         }
 
         return posts;
@@ -342,10 +348,7 @@ public class PostServiceImpl implements PostService {
                 postDO.setPageId(IdGeneratorUtil.getID());
             }
             // 先把content保存到mongo
-            MongoPostDo mongoPostDo = new MongoPostDo();
-            mongoPostDo.setId(postDO.getPageId());
-            mongoPostDo.setContent(postDO.getContent());
-            mongoPostDao.upsertPost(mongoPostDo);
+            mongoPostDao.upsertPost(postDO.getPageId(), postDO.getContent());
 
             postDO.setWeixinAppid(weixinAppid);
             postDO.setType(type);
