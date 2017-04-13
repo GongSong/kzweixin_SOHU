@@ -62,6 +62,11 @@ public class ApplicationConfig {
         return PropertiesUtil.getString(PROP, "api.prefix");
     }
 
+
+    public static String getMongoCollectionPrefix() {
+        return PropertiesUtil.getString(PROP, "mongo.collection.prefix");
+    }
+
     //资源路径
     public static String getResUrl(String url) {
         return PropertiesUtil.getString(PROP, "domain.res") + url + "?v=" + PHP_APP_VERSION;
@@ -89,7 +94,7 @@ public class ApplicationConfig {
 
 
     //redis缓存前缀
-    public static final String REDIS_PREFIX = "plf-dev-";
+    private static final String REDIS_PREFIX = PropertiesUtil.getString(PROP, "redis.key.prefix");
 
     //账户
 

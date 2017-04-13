@@ -32,7 +32,7 @@ public interface PostService {
      * @param title 按title模糊搜索
      * @return
      */
-    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException;
+    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException, MongoException;
 
     /**
      * 根据mediaId获取所有的多图文
@@ -41,7 +41,7 @@ public interface PostService {
      * @return
      * @throws DaoException
      */
-    List<PostDO> listMultiPosts(String mediaId) throws DaoException;
+    List<PostDO> listMultiPosts(String mediaId) throws DaoException, MongoException;
 
     /**
      * 删除图文
