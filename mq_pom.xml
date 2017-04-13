@@ -284,7 +284,6 @@
         <finalName>${project.artifactId}</finalName>
         <filters>
             <filter>src/main/resources/envs/${active.profile}/datasource.properties</filter>
-            <filter>src/main/resources/envs/${active.profile}/rabbitmq.properties</filter>
         </filters>
         <resources>
             <resource>
@@ -371,6 +370,8 @@
                                     <tasks>
                                         <move file="${project.build.outputDirectory}/envs/${active.profile}/application.properties"
                                               tofile="${project.build.outputDirectory}/application.properties"/>
+                                        <move file="${project.build.outputDirectory}/envs/${active.profile}/log4j.properties"
+                                              tofile="${project.build.outputDirectory}/log4j.properties"/>
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -399,6 +400,8 @@
                                     <tasks>
                                         <move file="${project.build.outputDirectory}/envs/${active.profile}/application.properties"
                                               tofile="${project.build.outputDirectory}/application.properties"/>
+                                        <move file="${project.build.outputDirectory}/envs/${active.profile}/log4j.properties"
+                                              tofile="${project.build.outputDirectory}/log4j.properties"/>
                                     </tasks>
                                 </configuration>
                             </execution>
