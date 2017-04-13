@@ -66,6 +66,8 @@ public enum ErrorCodeConfig {
 
     POST_NOT_EXIST_ERROR(107006, "图文id不存在"),
 
+    MEDIA_ID_NOT_EXIST_ERROR(107007, "图文素材或者缩略图素材可能在微信后台被删除"),
+
     //KZPic(08)
     KZPIC_UPLOAD_ERROR(108001, "上传至KZPic失败");
 

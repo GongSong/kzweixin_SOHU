@@ -30,7 +30,6 @@ public abstract class BaseController {
             return new JsonResponse(paramException.getCode(), paramException.getMsg(), null);
         } else {
             // TODO: 此处可能忽略掉异常
-            System.out.println("---->" + ex);
             ServerException serverException = new ServerException();
             return new JsonResponse(serverException.getCode(), serverException.getMsg(), null);
         }
@@ -39,7 +38,6 @@ public abstract class BaseController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public JsonResponse handleValidationException(MethodArgumentNotValidException e) {
-        System.out.println("---->" + e);
 
         String msg = "";
         for (ObjectError er : e.getBindingResult().getAllErrors()) {

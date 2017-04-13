@@ -3,10 +3,7 @@ package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.dao.redis.RedisImageDao;
-import com.kuaizhan.exception.business.AddMaterialException;
-import com.kuaizhan.exception.business.MaterialDeleteException;
-import com.kuaizhan.exception.business.MaterialGetException;
-import com.kuaizhan.exception.business.UploadPostsException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.PostDTO;
@@ -133,7 +130,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException {
+    public void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException, MediaIdNotExistException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("media_id", mediaId);
         jsonObject.put("index", 0); // 只更新单图文, 都是0
@@ -154,6 +151,9 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         JSONObject returnJson = new JSONObject(result);
 
         if (returnJson.optInt("errcode") != 0) {
+            if (returnJson.optInt("errcode") == 40007) {
+                throw new MediaIdNotExistException();
+            }
             // TODO: 考虑media、thumbMediaId已经被删除的异常情况, 40007
             logger.error("[微信] 修改图文失败, data:"+ jsonObject + " result:" + returnJson);
             throw new UploadPostsException();
