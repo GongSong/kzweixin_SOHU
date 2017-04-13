@@ -52,8 +52,8 @@ public class AccountController extends BaseController {
         accountVO.setInterest(list);
         accountVO.setName(accountDO.getNickName());
         accountVO.setQrcode(accountDO.getQrcodeUrl());
-        accountVO.setType(accountDO.getServiceType());
-
+        accountVO.setServiceType(accountDO.getServiceType());
+        accountVO.setVerifyType(accountDO.getVerifyType());
         return new JsonResponse(accountVO);
     }
     @RequestMapping(value = "/account/site_id", method = RequestMethod.GET)
@@ -67,8 +67,8 @@ public class AccountController extends BaseController {
         accountVO.setInterest(list);
         accountVO.setName(accountDO.getNickName());
         accountVO.setQrcode(accountDO.getQrcodeUrl());
-        accountVO.setType(accountDO.getServiceType());
-
+        accountVO.setServiceType(accountDO.getServiceType());
+        accountVO.setVerifyType(accountDO.getVerifyType());
         return new JsonResponse(accountVO);
     }
 

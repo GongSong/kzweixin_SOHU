@@ -7,13 +7,15 @@ import java.util.List;
  * Created by liangjiateng on 2017/3/16.
  */
 public class AccountVO {
+
     private Long weixinAppid;
     private String appSecret;
     private String headImg;
     private List<String> interest;
     private String qrcode;
     private String name;
-    private Integer type;
+    private Integer serviceType;
+    private Integer verifyType;
 
     public Long getWeixinAppid() {
         return weixinAppid;
@@ -63,12 +65,20 @@ public class AccountVO {
         this.name = name;
     }
 
-    public Integer getType() {
-        return type;
+    public Integer getServiceType() {
+        return serviceType;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setServiceType(Integer serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public Integer getVerifyType() {
+        return verifyType;
+    }
+
+    public void setVerifyType(Integer verifyType) {
+        this.verifyType = verifyType;
     }
 
     @Override
@@ -80,7 +90,8 @@ public class AccountVO {
                 ", interest=" + interest +
                 ", qrcode='" + qrcode + '\'' +
                 ", name='" + name + '\'' +
-                ", type=" + type +
+                ", serviceType=" + serviceType +
+                ", verifyType=" + verifyType +
                 '}';
     }
 }
