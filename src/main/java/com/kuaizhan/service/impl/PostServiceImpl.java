@@ -21,6 +21,7 @@ import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.*;
 import com.vdurmont.emoji.EmojiParser;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,8 @@ import java.util.regex.Matcher;
  */
 @Service("postService")
 public class PostServiceImpl implements PostService {
+
+    private static final Logger logger = Logger.getLogger(PostServiceImpl.class);
 
     @Resource
     PostDao postDao;
@@ -187,10 +190,9 @@ public class PostServiceImpl implements PostService {
             String ret = HttpClientUtil.postJson(ApiConfig.kzPostArticleUrl(), jsonObject.toString());
             JSONObject returnJson = new JSONObject(ret);
             if (returnJson.getInt("ret") != 0) {
+                logger.error("[同步到快站文章失败]return: " + returnJson);
                 throw new KZPostAddException();
             }
-        } else {
-            throw new KZPostAddException();
         }
     }
 
