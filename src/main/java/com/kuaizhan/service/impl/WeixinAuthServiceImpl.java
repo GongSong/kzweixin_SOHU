@@ -100,7 +100,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
                 //请求微信接口
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("component_appid", ApplicationConfig.WEIXIN_APPID_THIRD);
-                jsonObject.put("component_appsecret", ApplicationConfig.WEIXIN_APPSECRECT_THIRD);
+                jsonObject.put("component_appsecret", ApplicationConfig.WEIXIN_APP_SECRET_THIRD);
                 jsonObject.put("component_verify_ticket", ticket);
                 String returnJson = HttpClientUtil.postJson(ApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
                 result = new JSONObject(returnJson);
