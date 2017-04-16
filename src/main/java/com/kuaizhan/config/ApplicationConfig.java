@@ -87,10 +87,10 @@ public class ApplicationConfig {
     //中分页
     public static final int PAGE_SIZE_MIDDLE = 10;
     //微信配置
-    public static final String WEIXIN_TOKEN = "kuaizhan";
-    public static final String WEIXIN_APPID_THIRD = "wxe07a6ac6045c62a7";
-    public static final String WEIXIN_APPSECRECT_THIRD = "1eb08eded8d065ed55b2fb4be2841316";
-    public static final String WEIXIN_AES_KEY = "1234567890123456789012345678901234567890123";
+    public static final String WEIXIN_TOKEN = PropertiesUtil.getString(PROP, "weixin.third.token");
+    public static final String WEIXIN_APPID_THIRD = PropertiesUtil.getString(PROP, "weixin.third.appid");
+    public static final String WEIXIN_APP_SECRET_THIRD = PropertiesUtil.getString(PROP, "weixin.third.appSecret");
+    public static final String WEIXIN_AES_KEY = PropertiesUtil.getString(PROP, "weixin.third.aesKey");
 
 
     //redis缓存前缀
