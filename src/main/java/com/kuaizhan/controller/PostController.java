@@ -227,7 +227,7 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
     public JsonResponse uploadWeixinThumb(@RequestBody String postData) throws ParamException, RedisException,
-            JsonParseException, DaoException, AccountNotExistException, AddMaterialException {
+            JsonParseException, DaoException, AccountNotExistException, AddMaterialException, DownloadFileFailedException {
         JSONObject jsonObject = new JSONObject(postData);
         Long weixinAppid = jsonObject.optLong("weixinAppid");
         String imgUrl = jsonObject.optString("imgUrl");

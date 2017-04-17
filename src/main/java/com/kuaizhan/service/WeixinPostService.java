@@ -27,14 +27,14 @@ public interface WeixinPostService {
      * @param accessToken
      * @param imgUrl
      */
-    HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException;
+    HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException, DownloadFileFailedException;
 
     /**
      * 上传图文中的图片到微信服务器
      * @param imgUrl 原始的url
      * @return 在微信服务器的url
      */
-    String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException;
+    String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException, DownloadFileFailedException;
 
     /**
      * 上传多图文到微信

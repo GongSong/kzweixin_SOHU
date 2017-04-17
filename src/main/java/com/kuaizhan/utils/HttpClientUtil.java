@@ -1,5 +1,6 @@
 package com.kuaizhan.utils;
 
+import com.kuaizhan.exception.business.DownloadFileFailedException;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -122,7 +123,7 @@ public final class HttpClientUtil {
      * @param fileUrl
      * @return
      */
-    public static String postMedia(String url, String fileUrl) {
+    public static String postMedia(String url, String fileUrl) throws DownloadFileFailedException {
         File file = FileUtil.download(fileUrl);
         return postMedia(url, file);
     }

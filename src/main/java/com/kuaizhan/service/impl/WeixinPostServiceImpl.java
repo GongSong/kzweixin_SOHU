@@ -48,7 +48,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException {
+    public HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException, DownloadFileFailedException {
         // 处理没有http头的问题
         if (imgUrl.indexOf("//") == 0) {
             imgUrl = "http:" + imgUrl;
@@ -66,7 +66,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException {
+    public String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException, DownloadFileFailedException {
         // 处理没有http头的问题
         if (imgUrl.indexOf("//") == 0) {
             imgUrl = "http:" + imgUrl;
