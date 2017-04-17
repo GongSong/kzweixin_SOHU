@@ -156,6 +156,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ArticleDTO getKzArticle(long pageId) throws IOException {
+
         String ret = HttpClientUtil.get(ApiConfig.kzArticleUrl(pageId));
         JSONObject jsonObject = new JSONObject(ret);
         ArticleDTO articleDTO = null;
@@ -179,21 +180,21 @@ public class PostServiceImpl implements PostService {
     public void export2KzArticle(long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("site_id", siteId);
-            jsonObject.put("post_category_id", categoryId);
-            jsonObject.put("post_title", postDO.getTitle());
-            jsonObject.put("post_desc", postDO.getDigest());
-            jsonObject.put("pic_url", postDO.getThumbUrl());
+            Map<String,Object> param=new HashMap<>();
+            param.put("site_id", siteId);
+            param.put("post_category_id", categoryId);
+            param.put("post_title", postDO.getTitle());
+            param.put("post_desc", postDO.getDigest());
+            param.put("pic_url", "http:"+postDO.getThumbUrl());
             try {
-                jsonObject.put("post_content", mongoPostDao.getContentById(pageId));
+                param.put("post_content", mongoPostDao.getContentById(pageId));
             } catch (Exception e) {
                 throw new MongoException(e);
             }
-            String ret = HttpClientUtil.postJson(ApiConfig.kzPostArticleUrl(), jsonObject.toString());
+            String ret = HttpClientUtil.post(ApiConfig.kzPostArticleUrl(), param);
             JSONObject returnJson = new JSONObject(ret);
             if (returnJson.getInt("ret") != 0) {
-                logger.error("[同步到快站文章失败]param:" + jsonObject + "return: " + returnJson);
+                logger.error("[同步到快站文章失败]param:" + param + "return: " + returnJson);
                 throw new KZPostAddException();
             }
         }
