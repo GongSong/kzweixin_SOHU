@@ -260,7 +260,7 @@ public class PostServiceImpl implements PostService {
             PostDO post = posts.get(0);
 
             // 更新到微信
-            weixinPostService.updatePost(accessToken, oldPost.getMediaId(), post);
+            weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wrapWeiXinPost(accessToken, post));
 
             // 更新到数据库
 
@@ -296,22 +296,32 @@ public class PostServiceImpl implements PostService {
      * 把存数据库的多图文DO对象，封装成同步给微信的。
      * 替换了内容中的图片url为wx_src
      */
+    private PostDO wrapWeiXinPost(String accessToken, PostDO postDO) throws Exception {
+
+        PostDO wxPost = new PostDO();
+        wxPost.setTitle(postDO.getTitle());
+        wxPost.setThumbMediaId(postDO.getThumbMediaId());
+        wxPost.setAuthor(postDO.getAuthor());
+        wxPost.setDigest(postDO.getDigest());
+        wxPost.setShowCoverPic(postDO.getShowCoverPic());
+        wxPost.setContentSourceUrl(postDO.getContentSourceUrl());
+
+        // 替换内容
+        String replacedContent = replaceContentForUpload(accessToken, postDO.getContent());
+        wxPost.setContent(replacedContent);
+
+        return wxPost;
+    }
+
+
+    /**
+     * 批量操作wrapWeixinPost
+     */
     private List<PostDO> wrapWeiXinPosts(String accessToken, List<PostDO> posts) throws Exception {
         List<PostDO> wxPosts = new ArrayList<>();
         for (PostDO postDO : posts) {
             // 封装上传微信的PostDO list
-            PostDO wxPost = new PostDO();
-            wxPost.setTitle(postDO.getTitle());
-            wxPost.setThumbMediaId(postDO.getThumbMediaId());
-            wxPost.setAuthor(postDO.getAuthor());
-            wxPost.setDigest(postDO.getDigest());
-            wxPost.setShowCoverPic(postDO.getShowCoverPic());
-            wxPost.setContentSourceUrl(postDO.getContentSourceUrl());
-
-            // 替换内容
-            String replacedContent = replaceContentForUpload(accessToken, postDO.getContent());
-            wxPost.setContent(replacedContent);
-            wxPosts.add(wxPost);
+            wxPosts.add(wrapWeiXinPost(accessToken, postDO));
         }
         return wxPosts;
     }
