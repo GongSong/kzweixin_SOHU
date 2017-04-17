@@ -168,6 +168,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         String result = HttpClientUtil.postJson(ApiConfig.getMaterial(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
+            logger.error("[微信获取素材错误], param: " + jsonObject + " result: " +returnJson);
             throw new MaterialGetException();
         }
         try {
