@@ -133,6 +133,29 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void deletePostReal(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException {
+        // TODO: 怎么优雅的清楚与deletePost的重复代码
+        PostDO postDO = getPostByPageId(pageId);
+        if (postDO != null) {
+            String mediaId = postDO.getMediaId();
+            //微信删除
+            weixinPostService.deletePost(mediaId, accessToken);
+            //mongo删除
+            try{
+                mongoPostDao.deletePost(postDO.getPageId());
+            }catch (Exception e){
+                throw new MongoException(e);
+            }
+            //物理删除
+            try {
+                postDao.deletePostReal(weixinAppid, mediaId);
+            } catch (Exception e) {
+                throw new DaoException(e);
+            }
+        }
+    }
+
+    @Override
     public PostDO getPostByPageId(long pageId) throws DaoException, MongoException {
         PostDO postDO;
         try {
@@ -261,8 +284,8 @@ public class PostServiceImpl implements PostService {
                 postDO.setMediaId(mediaId);
             }
 
-            // 删除老图文
-            deletePost(weixinAppid, pageId, accessToken);
+            // 物理删除老图文
+            deletePostReal(weixinAppid, pageId, accessToken);
 
             // 重新新增
             saveMultiPosts(weixinAppid, posts);

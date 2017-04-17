@@ -45,10 +45,16 @@ public interface PostService {
 
     /**
      * 删除图文
-     *
+     * 根据pageId，会删除多图文下面的所有图文
      * @param pageId
      */
     void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException;
+
+
+    /**
+     * 物理删除图文
+     */
+    void deletePostReal(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException;
 
     /**
      * 获取图文
