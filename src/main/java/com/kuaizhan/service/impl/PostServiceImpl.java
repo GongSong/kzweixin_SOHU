@@ -118,9 +118,9 @@ public class PostServiceImpl implements PostService {
             //微信删除
             weixinPostService.deletePost(mediaId, accessToken);
             //mongo删除
-            try{
+            try {
                 mongoPostDao.deletePost(postDO.getPageId());
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new MongoException(e);
             }
             //数据库删除
@@ -175,7 +175,6 @@ public class PostServiceImpl implements PostService {
     }
 
 
-
     @Override
     public void export2KzArticle(long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {
         PostDO postDO = getPostByPageId(pageId);
@@ -186,7 +185,11 @@ public class PostServiceImpl implements PostService {
             jsonObject.put("post_title", postDO.getTitle());
             jsonObject.put("post_desc", postDO.getDigest());
             jsonObject.put("pic_url", postDO.getThumbUrl());
-            jsonObject.put("post_content", postDO.getContent());
+            try {
+                jsonObject.put("post_content", mongoPostDao.getContentById(pageId));
+            } catch (Exception e) {
+                throw new MongoException(e);
+            }
             String ret = HttpClientUtil.postJson(ApiConfig.kzPostArticleUrl(), jsonObject.toString());
             JSONObject returnJson = new JSONObject(ret);
             if (returnJson.getInt("ret") != 0) {
@@ -210,7 +213,7 @@ public class PostServiceImpl implements PostService {
         String mediaId = weixinPostService.uploadPosts(accessToken, wrapWeiXinPosts(accessToken, posts));
 
         // 保存到数据库
-        for (PostDO postDO: posts) {
+        for (PostDO postDO : posts) {
             postDO.setMediaId(mediaId);
         }
         saveMultiPosts(weixinAppid, posts);
@@ -220,7 +223,7 @@ public class PostServiceImpl implements PostService {
     public void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception {
 
         PostDO oldPost = getPostByPageId(pageId);
-        if (oldPost == null){
+        if (oldPost == null) {
             throw new PostNotExistException();
         }
 
@@ -231,7 +234,7 @@ public class PostServiceImpl implements PostService {
         posts = cleanPosts(posts, accessToken);
 
         // 单图文到单图文 ==>  更新到微信、更新到数据库
-        if (oldPost.getType() == 1 && posts.size() == 1){
+        if (oldPost.getType() == 1 && posts.size() == 1) {
             PostDO post = posts.get(0);
 
             // 更新到微信
@@ -254,7 +257,7 @@ public class PostServiceImpl implements PostService {
         else {
             // 上传新的图文到微信, 先新增到微信，下面操作失败时，避免丢失数据
             String mediaId = weixinPostService.uploadPosts(accessToken, wrapWeiXinPosts(accessToken, posts));
-            for (PostDO postDO: posts){
+            for (PostDO postDO : posts) {
                 postDO.setMediaId(mediaId);
             }
 
@@ -294,9 +297,10 @@ public class PostServiceImpl implements PostService {
     /**
      * 对图文数据做预处理
      * 上传内容中的图片到微信、上传封面图片；替换emoji, 替换js
+     *
      * @param posts 多图文
-     * @parm accessToken 上传用的token
      * @return
+     * @parm accessToken 上传用的token
      */
     private List<PostDO> cleanPosts(List<PostDO> posts, String accessToken) throws Exception {
 
@@ -309,7 +313,7 @@ public class PostServiceImpl implements PostService {
             // 替换emoji
             postDO.setTitle(EmojiParser.removeAllEmojis(postDO.getTitle()));
             String digest = postDO.getDigest();
-            if (digest != null){
+            if (digest != null) {
                 digest = EmojiParser.removeAllEmojis(digest);
             }
             postDO.setDigest(digest);
@@ -339,7 +343,7 @@ public class PostServiceImpl implements PostService {
         short type = (short) (posts.size() > 1 ? 3 : 1);
         int index = 0;
         StringBuilder sumTitle = new StringBuilder(); // 把title拼接起来，保存多图文总记录里面
-        for (PostDO postDO: posts){
+        for (PostDO postDO : posts) {
 
             sumTitle.append(postDO.getTitle());
 
@@ -503,7 +507,7 @@ public class PostServiceImpl implements PostService {
         List<PostDO> postDOList = new LinkedList<>();
         List<PostDTO.Item.Content.NewsItem> newsItems = postItem.getItem().getContent().getNewsItems();
         int key = 0;
-        for (PostDTO.Item.Content.NewsItem newsItem: newsItems) {
+        for (PostDTO.Item.Content.NewsItem newsItem : newsItems) {
             PostDO postDO = new PostDO();
             // 标题去除emoji
             postDO.setTitle(EmojiParser.removeAllEmojis(newsItem.getTitle()));
@@ -558,7 +562,7 @@ public class PostServiceImpl implements PostService {
         }
 
         List<PostDTO.PostItem> postItemList = new LinkedList<>();
-        for (PostDTO postDTO: postDTOList) {
+        for (PostDTO postDTO : postDTOList) {
             postItemList.addAll(postDTO.toPostItemList(weixinAppid));
         }
 
@@ -569,8 +573,8 @@ public class PostServiceImpl implements PostService {
         mediaIdsSet.addAll(mediaIds);
 
         // 对比差异
-        for (PostDTO.PostItem postItem: postItemList) {
-            if (! mediaIdsSet.contains(postItem.getItem().getMediaId())) {
+        for (PostDTO.PostItem postItem : postItemList) {
+            if (!mediaIdsSet.contains(postItem.getItem().getMediaId())) {
                 differPostItems.add(postItem);
             }
         }
@@ -589,7 +593,7 @@ public class PostServiceImpl implements PostService {
         if (str == null || prefix == null) return str;
 
         if (str.contains(prefix)) {
-            str = str.substring(str.lastIndexOf(prefix)+prefix.length());
+            str = str.substring(str.lastIndexOf(prefix) + prefix.length());
             try {
                 str = URLEncoder.encode(str, "UTF-8");
             } catch (UnsupportedEncodingException e) {
@@ -630,7 +634,7 @@ public class PostServiceImpl implements PostService {
      */
     private String getKzImgUrlByWeixinImgUrl(String imgUrl, long userId) {
         // 若不是微信图片则返回原url
-        if (! imgUrl.contains("mmbiz")) return imgUrl;
+        if (!imgUrl.contains("mmbiz")) return imgUrl;
 
         // 去除脚本造成的老数据
         imgUrl = removeUrlPrefixIfExists(imgUrl, "url=");

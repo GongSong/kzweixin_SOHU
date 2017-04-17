@@ -67,7 +67,7 @@ public class PostServiceTest {
 
     @Test
     public void export2KzArticle() throws Exception {
-        postService.export2KzArticle(601145633L,1136830965,123,123456L);
+        postService.export2KzArticle(1900333742L,3911574514L,123456L);
     }
 
     @Test
