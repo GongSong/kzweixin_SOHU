@@ -29,8 +29,7 @@ public abstract class BaseController {
             ParamException paramException = new ParamException();
             return new JsonResponse(paramException.getCode(), paramException.getMsg(), null);
         } else {
-            // TODO: 此处可能忽略掉异常
-            ServerException serverException = new ServerException();
+            ServerException serverException = new ServerException(ex);
             return new JsonResponse(serverException.getCode(), serverException.getMsg(), null);
         }
     }
