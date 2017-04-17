@@ -88,11 +88,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDO> listMultiPosts(String mediaId) throws DaoException, MongoException {
+    public List<PostDO> listMultiPosts(long weixinAppid, String mediaId) throws DaoException, MongoException {
 
         List<PostDO> multiPosts;
         try {
-            multiPosts = postDao.listMultiPosts(mediaId);
+            multiPosts = postDao.listMultiPosts(weixinAppid, mediaId);
         } catch (Exception e) {
             throw new DaoException(e);
         }

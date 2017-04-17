@@ -35,7 +35,7 @@ public interface PostDao {
      * @param mediaId 图文消息的mediaId
      * @return
      */
-    List<PostDO> listMultiPosts(String mediaId);
+    List<PostDO> listMultiPosts(@Param("weixinAppId") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**
      * 根据mediaId删除图文, 逻辑删除
