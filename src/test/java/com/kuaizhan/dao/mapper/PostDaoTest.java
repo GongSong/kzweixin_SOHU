@@ -1,0 +1,27 @@
+package com.kuaizhan.dao.mapper;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+
+import static org.junit.Assert.*;
+
+/**
+ * Created by zixiong on 2017/4/17.
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:spring/*.xml")
+public class PostDaoTest {
+
+    @Resource
+    PostDao postDao;
+
+    @Test
+    public void deletePostReal() throws Exception {
+        postDao.deletePostReal(1789089804, "vleui19nacBl3_Of7NdcuLESnAt4laEOG1rEptHY4TE");
+    }
+
+}
