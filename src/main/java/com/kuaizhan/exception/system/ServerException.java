@@ -8,6 +8,7 @@ import com.kuaizhan.exception.BaseException;
  */
 public class ServerException extends SystemException {
     public ServerException() {
+        // TODO: 这里的null留下了NPE祸根
         super(ErrorCodeConfig.SERVER_ERROR.getCode(), ErrorCodeConfig.SERVER_ERROR.getMsg(), null);
     }
     public ServerException(Exception e) {

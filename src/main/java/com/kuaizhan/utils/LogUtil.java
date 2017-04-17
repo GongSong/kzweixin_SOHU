@@ -23,6 +23,8 @@ public class LogUtil {
             logger.fatal(output(((SystemException) e).getDate(), ((SystemException) e).getMsg(), ((SystemException) e).getErrorStack()));
         } else if (e instanceof BusinessException) {
             logger.warn(output(((BusinessException) e).getDate(), ((BusinessException) e).getMsg(), ((BusinessException) e).getErrorStack()));
+        } else {
+            logger.error("[未知错误]", e);
         }
     }
 
