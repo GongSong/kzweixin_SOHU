@@ -50,13 +50,13 @@
         update `weixin_post`
         --   type=3表示多图文消息中的一条
         set `status` = 2
-        where `weixin_appid`=#{weixinAppId} and `media_id`=#{mediaId} and `status` = 1
+        where `weixin_appid`=#{weixinAppid} and `media_id`=#{mediaId} and `status` = 1
     </update>
 
     <!--根据mediaId物理删除图文-->
     <delete id="deletePostReal">
         DELETE FROM `weixin_post`
-        where `weixin_appid`=#{weixinAppId} and `media_id`=#{mediaId} and `status` = 1
+        where `weixin_appid`=#{weixinAppid} and `media_id`=#{mediaId} and `status` = 1
     </delete>
 
     <select id="getPost" parameterType="long" resultType="com.kuaizhan.pojo.DO.PostDO">
