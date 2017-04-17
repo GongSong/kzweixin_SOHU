@@ -1,6 +1,7 @@
 package com.kuaizhan.service;
 
 
+import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 
 import com.kuaizhan.pojo.DO.PostDO;
@@ -61,8 +62,9 @@ public class PostServiceTest {
 
     @Test
     public void getKzArticle() throws Exception {
-        ArticleDTO articleDTO = postService.getKzArticle(2745017759L);
-        System.out.println("------>" + articleDTO.toString());
+        System.out.println("----->"+ ApiConfig.kzArticleUrl(3337333798L));
+//        ArticleDTO articleDTO = postService.getKzArticle(3337333798L);
+//        System.out.println("------>" + articleDTO.toString());
     }
 
     @Test
