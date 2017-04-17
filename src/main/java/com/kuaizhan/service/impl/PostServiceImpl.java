@@ -226,9 +226,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception {
 
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
         // 在方法执行过程中，有失效的风险
-        String accessToken = accountDO.getAccessToken();
+        String accessToken = accountService.getAccessToken(weixinAppid);
 
         // 对图文数据做预处理
         posts = cleanPosts(posts, accessToken);
@@ -251,8 +250,7 @@ public class PostServiceImpl implements PostService {
             throw new PostNotExistException();
         }
 
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        String accessToken = accountDO.getAccessToken();
+        String accessToken = accountService.getAccessToken(weixinAppid);
 
         // 对图文数据做预处理
         posts = cleanPosts(posts, accessToken);
@@ -579,7 +577,7 @@ public class PostServiceImpl implements PostService {
         List<PostDTO.PostItem> differPostItems = new LinkedList<>();
 
         // 获取所有微信图文
-        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccountByWeixinAppId(weixinAppid).getAccessToken());
+        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccessToken(weixinAppid));
 
         if (postDTOList == null || postDTOList.size() <= 0) {
             return differPostItems;

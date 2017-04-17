@@ -80,6 +80,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String getAccessToken(long weixinAppId) throws RedisException, DaoException, AccountNotExistException {
+        //存在高并发场景下access_token失效的问题
         String accessToken;
         try {
             accessToken = redisAccountDao.getAccessToken(weixinAppId);
@@ -142,7 +143,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDO getAccountByWeixinAppId(long weinxinAppid) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
-        //TODO：高并发场景下access_token失效 锁
         AccountDO accountDO;
         //从缓存拿
         try {
@@ -168,24 +168,6 @@ public class AccountServiceImpl implements AccountService {
                 throw new RedisException(e);
             }
         }
-
-        //查看access_token是否失效
-        if (System.currentTimeMillis() / 1000 > accountDO.getExpiresTime()) {
-            AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
-            accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
-            accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
-            try {
-                accountDao.updateAccountByWeixinAppId(accountDO);
-            } catch (Exception e) {
-                throw new DaoException(e);
-            }
-            try {
-                redisAccountDao.deleteAccountInfo(accountDO.getWeixinAppId());
-            } catch (Exception e) {
-                throw new RedisException(e);
-            }
-        }
-
         return accountDO;
     }
 
@@ -215,7 +197,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateAppSecrect(long siteId, String appSecret) throws DaoException {
+    public void updateAppSecret(long siteId, String appSecret) throws DaoException {
         AccountDO account = new AccountDO();
         account.setSiteId(siteId);
         account.setAppSecret(appSecret);

@@ -161,8 +161,7 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
     public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) throws RedisException, DaoException, AccountNotExistException, MaterialDeleteException, JsonParseException, MongoException {
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        postService.deletePost(weixinAppid, pageId, accountDO.getAccessToken());
+        postService.deletePost(weixinAppid, pageId, accountService.getAccessToken(weixinAppid));
         return new JsonResponse(null);
     }
 
@@ -194,7 +193,7 @@ public class PostController extends BaseController {
     public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws KZPostAddException, DaoException, MongoException, IOException, AccountNotExistException, RedisException, JsonParseException {
         JSONObject jsonObject = new JSONObject(postData);
         Long weixinAppid = jsonObject.optLong("weixinAppid");
-        AccountDO accountDO=accountService.getAccountByWeixinAppId(weixinAppid);
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
         Long categoryId = jsonObject.optLong("categoryId");
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         for (Long pageId: pageIds){
@@ -234,8 +233,7 @@ public class PostController extends BaseController {
         if (weixinAppid == 0 || imgUrl == null){
             throw new ParamException();
         }
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        Map result = weixinPostService.uploadImage(accountDO.getAccessToken(), imgUrl);
+        Map result = weixinPostService.uploadImage(accountService.getAccessToken(weixinAppid), imgUrl);
 
         return new JsonResponse(result);
     }
