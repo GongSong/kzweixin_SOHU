@@ -191,19 +191,15 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/posts/kzweixin_syncs", method = RequestMethod.POST)
-    public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws KZPostAddException, DaoException, MongoException, IOException {
-
+    public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws KZPostAddException, DaoException, MongoException, IOException, AccountNotExistException, RedisException, JsonParseException {
         JSONObject jsonObject = new JSONObject(postData);
-
         Long weixinAppid = jsonObject.optLong("weixinAppid");
-        Long siteId = jsonObject.optLong("siteId");
+        AccountDO accountDO=accountService.getAccountByWeixinAppId(weixinAppid);
         Long categoryId = jsonObject.optLong("categoryId");
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
-
         for (Long pageId: pageIds){
-            postService.export2KzArticle(weixinAppid, pageId, categoryId, siteId);
+            postService.export2KzArticle(pageId, categoryId, accountDO.getSiteId());
         }
-
         return new JsonResponse(null);
     }
 

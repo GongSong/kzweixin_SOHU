@@ -177,7 +177,7 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public void export2KzArticle(long weixinAppid, long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {
+    public void export2KzArticle(long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             JSONObject jsonObject = new JSONObject();

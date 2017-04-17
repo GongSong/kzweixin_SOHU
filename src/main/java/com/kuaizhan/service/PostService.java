@@ -77,9 +77,8 @@ public interface PostService {
     /**
      * 快站微信文章导入快站文章
      *
-     * @param weixinAppid
      */
-    void export2KzArticle(long weixinAppid,long pageId,long categoryId,long siteId) throws DaoException, KZPostAddException, MongoException;
+    void export2KzArticle(long pageId,long categoryId,long siteId) throws DaoException, KZPostAddException, MongoException;
 
     /**
      * 新增一条多图文消息，并同步到微信服务器
