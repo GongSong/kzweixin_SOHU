@@ -37,7 +37,7 @@
     </select>
 
     <!--根据mediaId查询多图文-->
-    <select id="listMultiPosts" parameterType="String" resultType="com.kuaizhan.pojo.DO.PostDO">
+    <select id="listMultiPosts" resultType="com.kuaizhan.pojo.DO.PostDO">
         select *
         from `weixin_post`
         --   type=3表示多图文消息中的一条
