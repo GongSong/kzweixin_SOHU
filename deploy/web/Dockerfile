@@ -1,11 +1,11 @@
-FROM registry.kuaizhan.com/kuaizhan-plf/java-env:latest
+FROM private-registry.sohucs.com/kuaizhan-plf/java-env:latest
 MAINTAINER "chengliu" <chengliu@sohu-inc.com>
 
 ENV PREFIX /opt/kuaizhan
-ENV WAR_FILE ../../target/kzweixin.war
+ENV WAR_FILE ./target/kzweixin.war
 
 COPY $WAR_FILE $PREFIX/jetty/webapps/
-COPY ./init-tpl.sh /init-tpl.sh
+COPY ./deploy/web/init-tpl.sh /init-tpl.sh
 
 ENTRYPOINT source /root/.bashrc && \
     domeize -template /init-tpl.sh:/init.sh && \
