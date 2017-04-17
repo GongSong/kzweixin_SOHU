@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = ApplicationConfig.VERSION + "/common", produces = "application/json")
 public class CommonController extends BaseController{
 
-    @RequestMapping(value = "/ping", method = RequestMethod.POST)
+    @RequestMapping(value = "/ping", method = RequestMethod.GET)
     public JsonResponse ping(){
         return new JsonResponse(null);
     }
