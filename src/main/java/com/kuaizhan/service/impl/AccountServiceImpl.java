@@ -88,7 +88,7 @@ public class AccountServiceImpl implements AccountService {
             throw new RedisException(e);
         }
         if (accessToken == null) {
-            //从数据库拿
+            //从数据库拿refresh key刷新
             try {
                 AccountDO accountDO = accountDao.getAccountByWeixinAppId(weixinAppId);
                 if (accountDO == null) {
@@ -96,10 +96,14 @@ public class AccountServiceImpl implements AccountService {
                 }
                 //刷新
                 AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
-                accountDO.setAccessToken(authorizationInfoDTO.getAccessToken());
-                accountDO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+                accessToken = authorizationInfoDTO.getAccessToken();
+                // 更新数据库
                 try {
-                    accountDao.updateAccountByWeixinAppId(accountDO);
+                    AccountDO updateAccountDo = new AccountDO();
+                    updateAccountDo.setWeixinAppId(accountDO.getWeixinAppId());
+                    updateAccountDo.setAccessToken(authorizationInfoDTO.getAccessToken());
+                    updateAccountDo.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+                    accountDao.updateAccountByWeixinAppId(updateAccountDo);
                 } catch (Exception e) {
                     throw new DaoException(e);
                 }
@@ -115,7 +119,7 @@ public class AccountServiceImpl implements AccountService {
             }
 
         }
-        return null;
+        return accessToken;
     }
 
     @Override
