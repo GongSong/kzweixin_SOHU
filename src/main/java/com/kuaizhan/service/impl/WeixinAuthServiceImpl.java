@@ -12,6 +12,7 @@ import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.weixin.AesException;
 import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -28,6 +29,8 @@ import java.util.Arrays;
  */
 @Service("weixinAuthService")
 public class WeixinAuthServiceImpl implements WeixinAuthService {
+
+    public static final Logger logger = Logger.getLogger(WeixinAuthServiceImpl.class);
 
     @Resource
     RedisAuthDao redisAuthDao;
@@ -103,6 +106,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
                 jsonObject.put("component_appsecret", ApplicationConfig.WEIXIN_APP_SECRET_THIRD);
                 jsonObject.put("component_verify_ticket", ticket);
                 String returnJson = HttpClientUtil.postJson(ApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
+                logger.info("[微信第三方平台] 获取componentAccessToken, params: " + jsonObject + " return: " + returnJson);
                 result = new JSONObject(returnJson);
                 result.put("expires_time", System.currentTimeMillis() / 1000 + 7100);
                 componentAccessToken = result.getString("component_access_token");

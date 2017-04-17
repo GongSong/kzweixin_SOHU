@@ -7,6 +7,7 @@ import com.kuaizhan.utils.ParamUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,12 @@ public class ControllerAspect {
     private void controllerMethod() {
 
     }
+    @Before("controllerMethod()")
+    public void before(){
+
+    }
+
+
 
     @Around("controllerMethod()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {

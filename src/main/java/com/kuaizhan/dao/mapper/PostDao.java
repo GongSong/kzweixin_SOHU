@@ -38,7 +38,7 @@ public interface PostDao {
     List<PostDO> listMultiPosts(String mediaId);
 
     /**
-     * 根据mediaId删除图文
+     * 根据mediaId删除图文, 逻辑删除
      *
      * @param weixinAppid  为了利用索引, 传此参数
      * @param mediaId
@@ -46,6 +46,11 @@ public interface PostDao {
      */
     // TODO: 考虑更改索引结构，按weixinAppId mediaId分别单独建索引
     int deletePost(@Param("weixinAppId") long weixinAppid, @Param("mediaId") String mediaId);
+
+    /**
+     * 根据mediaId删除图文, 物理删除
+     */
+    int deletePostReal(@Param("weixinAppId") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**
      * 根据pageId获取图文

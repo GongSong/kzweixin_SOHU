@@ -113,14 +113,12 @@ public class WeixinPostServiceImpl implements WeixinPostService {
             jsonArray.put(postJson);
         }
 
+        // 上传
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("articles", jsonArray);
-
-        // 上传
-        logger.info("[微信] 上传多图文开始, data: " + jsonObject);
         String result = HttpClientUtil.postJson(ApiConfig.getCreatePostsUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
-        logger.info("[微信] 上传多图文结束, result:" + returnJson);
+        logger.info("[微信] 上传多图文结束, param: " + jsonObject + ", result: "  + returnJson);
 
         if (returnJson.optInt("errcode") != 0) {
             logger.error("[微信] 上传多图文失败, data:"+ jsonObject + " result:" + returnJson);

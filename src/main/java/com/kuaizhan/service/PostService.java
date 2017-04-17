@@ -45,10 +45,16 @@ public interface PostService {
 
     /**
      * 删除图文
-     *
+     * 根据pageId，会删除多图文下面的所有图文
      * @param pageId
      */
     void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException;
+
+
+    /**
+     * 物理删除图文
+     */
+    void deletePostReal(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException;
 
     /**
      * 获取图文
@@ -77,9 +83,8 @@ public interface PostService {
     /**
      * 快站微信文章导入快站文章
      *
-     * @param weixinAppid
      */
-    void export2KzArticle(long weixinAppid,long pageId,long categoryId,long siteId) throws DaoException, KZPostAddException, MongoException;
+    void export2KzArticle(long pageId,long categoryId,long siteId) throws DaoException, KZPostAddException, MongoException;
 
     /**
      * 新增一条多图文消息，并同步到微信服务器
