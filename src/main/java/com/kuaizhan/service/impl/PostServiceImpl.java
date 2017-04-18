@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException, MongoException {
+    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException {
 
         Page<PostDO> postDOPage = new Page<>(page, ApplicationConfig.PAGE_SIZE_LARGE);
 
@@ -68,15 +68,6 @@ public class PostServiceImpl implements PostService {
             posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage);
         } catch (Exception e) {
             throw new DaoException(e);
-        }
-
-        try {
-            // 从Mongo中取content
-            for (PostDO postDO : posts) {
-                postDO.setContent(mongoPostDao.getContentById(postDO.getPageId()));
-            }
-        } catch (Exception e) {
-            throw new MongoException(e);
         }
 
         long totalCount = postDao.count(weixinAppid, title);
@@ -99,7 +90,7 @@ public class PostServiceImpl implements PostService {
         try {
             // 从Mongo中取content
             for (PostDO postDO : multiPosts) {
-                postDO.setContent(mongoPostDao.getContentById(postDO.getPageId()));
+                postDO.setContent(getPostContent(postDO.getPageId()));
             }
         } catch (Exception e) {
             throw new MongoException(e);
@@ -175,14 +166,38 @@ public class PostServiceImpl implements PostService {
 
         if (postDO != null) {
             // 获取content
-            try {
-                postDO.setContent(mongoPostDao.getContentById(postDO.getPageId()));
-            } catch (Exception e) {
-                throw new MongoException(e);
-            }
+            postDO.setContent(getPostContent(pageId));
         }
 
         return postDO;
+    }
+
+    @Override
+    public String getPostContent(long pageId) throws MongoException {
+        // 先从mongo中获取
+        String content;
+        try {
+            content = mongoPostDao.getContentById(pageId);
+        } catch (Exception e) {
+            throw new MongoException(e);
+        }
+        // 从mongo中获取不到，则从接口中获取，并写入mongo
+        if (content == null) {
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Host", ApplicationConfig.getKzServiceHost());
+            String result = HttpClientUtil.get(ApiConfig.getKzGetPostContentUrl(pageId), headers);
+            if (result != null && result.startsWith("{")) {
+                JSONObject jsonObject = new JSONObject(result);
+                content = jsonObject.getJSONObject("data").optString("content");
+
+                // 存入本地mongo
+                if (content != null && ! "".equals(content)) {
+                    logger.info("从快站接口获取内容成功, pageId: " + pageId);
+                    mongoPostDao.upsertPost(pageId, content);
+                }
+            }
+        }
+        return content;
     }
 
     @Override
@@ -218,7 +233,7 @@ public class PostServiceImpl implements PostService {
             param.put("post_desc", postDO.getDigest());
             param.put("pic_url", UrlUtil.fixProtocol(postDO.getThumbUrl()));
             try {
-                param.put("post_content", mongoPostDao.getContentById(pageId));
+                param.put("post_content", getPostContent(pageId));
             } catch (Exception e) {
                 throw new MongoException(e);
             }

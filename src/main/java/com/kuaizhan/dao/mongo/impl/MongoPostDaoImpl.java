@@ -28,7 +28,7 @@ public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostDo> implements M
         param.put("id", pageId);
         Object obj = get(param, MongoPostDo.class);
         if (obj == null) {
-            return "";
+            return null;
         }
         MongoPostDo mongoPostDo = (MongoPostDo) obj;
         return mongoPostDo.getContent();

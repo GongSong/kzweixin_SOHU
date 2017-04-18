@@ -1,6 +1,7 @@
 package com.kuaizhan.service;
 
 
+import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.KZPostAddException;
 import com.kuaizhan.exception.business.MaterialDeleteException;
@@ -32,7 +33,7 @@ public interface PostService {
      * @param title 按title模糊搜索
      * @return
      */
-    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException, MongoException;
+    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException;
 
     /**
      * 根据mediaId获取所有的多图文
@@ -70,6 +71,15 @@ public interface PostService {
      * @return
      */
     PostDO getPostByPageId(long pageId) throws DaoException, MongoException;
+
+
+    /**
+     * 临时接口，根据pageId, 获取图文内容
+     * @param pageId
+     * @return
+     * @throws MongoException
+     */
+    String getPostContent(long pageId) throws MongoException;
 
     /**
      * 获取快站文章

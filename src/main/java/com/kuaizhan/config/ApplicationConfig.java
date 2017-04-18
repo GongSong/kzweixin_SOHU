@@ -75,6 +75,10 @@ public class ApplicationConfig {
         return PropertiesUtil.getString(PROP, "kz.pic.host");
     }
 
+    public static String getKzServiceHost() {
+        return PropertiesUtil.getString(PROP, "kz.service.host");
+    }
+
     public static String getPicReplaceHost(){
         return PropertiesUtil.getString(PROP, "kz.pic.replaceHost");
     }

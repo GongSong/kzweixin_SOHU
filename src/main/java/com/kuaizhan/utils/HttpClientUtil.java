@@ -40,10 +40,19 @@ public final class HttpClientUtil {
      * @return
      */
     public static String get(String url) {
-        String res = null;
+        return get(url, null);
+    }
+
+    public static String get(String url, Map<String, String> headers) {
+        String res;
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
             HttpGet httpGet = new HttpGet(url);
+            if (headers != null){
+                for (Map.Entry<String, String> entry: headers.entrySet()){
+                    httpGet.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
             res = execute(httpClient, httpGet);
         } finally {
             doHttpClientClose(httpClient);

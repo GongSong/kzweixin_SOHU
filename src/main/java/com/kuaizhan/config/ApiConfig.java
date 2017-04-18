@@ -35,18 +35,28 @@ public class ApiConfig {
     /**
      * 快站接口
      */
-    //获取单个文章的信息
-    public static final String KZ_ARTICLE = "/post/service-get-post?page_id=";
-    public static final String KZ_POST_ARTICLE = "/post/service-sync-to-kz-post";
+    private static final String KZ_ARTICLE = "/post/service-get-post?page_id=";
+    private static final String KZ_POST_ARTICLE = "/post/service-sync-to-kz-post";
+    private static final String KZ_GET_POST_CONTENT = "/weixin/service-get-post?page_id=";
+
 
     /**
-     * 获取单个文章的信息
+     * 获取快文的信息
      *
      * @param pageId
      * @return
      */
     public static String kzArticleUrl(long pageId) {
-        return "http://"+PropertiesUtil.getString(PROP,"kz.service.host") + KZ_ARTICLE + pageId;
+        return "http://"+ PropertiesUtil.getString(PROP,"kz.service.host") + KZ_ARTICLE + pageId;
+    }
+
+    /**
+     * 从快站获取快文内容
+     * @param pageId
+     * @return
+     */
+    public static String getKzGetPostContentUrl(long pageId){
+        return "http://" + PropertiesUtil.getString(PROP, "kz.service.ip") + KZ_GET_POST_CONTENT + pageId;
     }
 
     /**
