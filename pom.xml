@@ -325,6 +325,17 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.2.14.v20151106</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <!--允许HttpURLConnection设置Host头-->
+                        <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
