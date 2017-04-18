@@ -57,12 +57,6 @@ public class ApplicationConfig {
     }
 
 
-    //接口前缀
-    public static String getApiPrefix() {
-        return PropertiesUtil.getString(PROP, "api.prefix");
-    }
-
-
     public static String getMongoCollectionPrefix() {
         return PropertiesUtil.getString(PROP, "mongo.collection.prefix");
     }

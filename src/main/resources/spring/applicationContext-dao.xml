@@ -40,11 +40,11 @@
         <constructor-arg>
             <set>
                 <bean class="redis.clients.jedis.HostAndPort">
-                    <constructor-arg name="host" value="${redis.host}"/>
+                    <constructor-arg name="host" value="${redis.host1}"/>
                     <constructor-arg name="port" value="${redis.port1}"/>
                 </bean>
                 <bean class="redis.clients.jedis.HostAndPort">
-                    <constructor-arg name="host" value="${redis.host}"/>
+                    <constructor-arg name="host" value="${redis.host2}"/>
                     <constructor-arg name="port" value="${redis.port2}"/>
                 </bean>
             </set>
