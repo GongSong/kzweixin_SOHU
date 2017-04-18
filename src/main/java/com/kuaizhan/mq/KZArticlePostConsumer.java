@@ -1,5 +1,6 @@
 package com.kuaizhan.mq;
 
+import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.service.AccountService;
@@ -31,6 +32,7 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
         //TODO:畅言
         long weixinAppid = (long) msgMap.get("weixinAppid");
         List<Long> pageIds = (List<Long>) msgMap.get("pageIds");
+        int i = 0;
         for (Long pageId : pageIds) {
             List<PostDO> postDOList = new ArrayList<>();
 
@@ -47,13 +49,39 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
                     stringBuilder.append(str);
                 }
                 postDO.setContent(stringBuilder.toString());
-                postDO.setThumbUrl(articleDTO.getCoverUrl());
+
+                if (articleDTO.getCoverUrl() != null && !"".equals(articleDTO.getCoverUrl())) {
+                    postDO.setThumbUrl(articleDTO.getCoverUrl());
+                } else {
+                    String picUrl = (i == 0) ? getFirstPostDefaultThumbUrl() : getCommonPostDefaultThumbUrl();
+                    postDO.setThumbUrl(picUrl);
+                }
+
 
                 postDOList.add(postDO);
+                i++;
             }
             // 新增文章
             postService.insertMultiPosts(weixinAppid, postDOList);
         }
 
+    }
+
+    /**
+     * 多图文第一篇图文的默认封面图
+     *
+     * @return
+     */
+    private String getFirstPostDefaultThumbUrl() {
+        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
+    }
+
+    /**
+     * 多图文非第一篇图文的默认封面图
+     *
+     * @return
+     */
+    private String getCommonPostDefaultThumbUrl() {
+        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-200-200.png");
     }
 }
