@@ -38,10 +38,11 @@ public interface PostService {
      * 根据mediaId获取所有的多图文
      *
      * @param mediaId
+     * @param weixinAppid 同一篇文章，可能在不同的weixinAppid下
      * @return
      * @throws DaoException
      */
-    List<PostDO> listMultiPosts(String mediaId) throws DaoException, MongoException;
+    List<PostDO> listMultiPosts(long weixinAppid, String mediaId) throws DaoException, MongoException;
 
     /**
      * 删除图文

@@ -88,11 +88,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDO> listMultiPosts(String mediaId) throws DaoException, MongoException {
+    public List<PostDO> listMultiPosts(long weixinAppid, String mediaId) throws DaoException, MongoException {
 
         List<PostDO> multiPosts;
         try {
-            multiPosts = postDao.listMultiPosts(mediaId);
+            multiPosts = postDao.listMultiPosts(weixinAppid, mediaId);
         } catch (Exception e) {
             throw new DaoException(e);
         }
@@ -226,9 +226,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception {
 
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
         // 在方法执行过程中，有失效的风险
-        String accessToken = accountDO.getAccessToken();
+        String accessToken = accountService.getAccessToken(weixinAppid);
 
         // 对图文数据做预处理
         posts = cleanPosts(posts, accessToken);
@@ -251,8 +250,7 @@ public class PostServiceImpl implements PostService {
             throw new PostNotExistException();
         }
 
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        String accessToken = accountDO.getAccessToken();
+        String accessToken = accountService.getAccessToken(weixinAppid);
 
         // 对图文数据做预处理
         posts = cleanPosts(posts, accessToken);
@@ -262,7 +260,7 @@ public class PostServiceImpl implements PostService {
             PostDO post = posts.get(0);
 
             // 更新到微信
-            weixinPostService.updatePost(accessToken, oldPost.getMediaId(), post);
+            weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wrapWeiXinPost(accessToken, post));
 
             // 更新到数据库
 
@@ -298,22 +296,32 @@ public class PostServiceImpl implements PostService {
      * 把存数据库的多图文DO对象，封装成同步给微信的。
      * 替换了内容中的图片url为wx_src
      */
+    private PostDO wrapWeiXinPost(String accessToken, PostDO postDO) throws Exception {
+
+        PostDO wxPost = new PostDO();
+        wxPost.setTitle(postDO.getTitle());
+        wxPost.setThumbMediaId(postDO.getThumbMediaId());
+        wxPost.setAuthor(postDO.getAuthor());
+        wxPost.setDigest(postDO.getDigest());
+        wxPost.setShowCoverPic(postDO.getShowCoverPic());
+        wxPost.setContentSourceUrl(postDO.getContentSourceUrl());
+
+        // 替换内容
+        String replacedContent = replaceContentForUpload(accessToken, postDO.getContent());
+        wxPost.setContent(replacedContent);
+
+        return wxPost;
+    }
+
+
+    /**
+     * 批量操作wrapWeixinPost
+     */
     private List<PostDO> wrapWeiXinPosts(String accessToken, List<PostDO> posts) throws Exception {
         List<PostDO> wxPosts = new ArrayList<>();
         for (PostDO postDO : posts) {
             // 封装上传微信的PostDO list
-            PostDO wxPost = new PostDO();
-            wxPost.setTitle(postDO.getTitle());
-            wxPost.setThumbMediaId(postDO.getThumbMediaId());
-            wxPost.setAuthor(postDO.getAuthor());
-            wxPost.setDigest(postDO.getDigest());
-            wxPost.setShowCoverPic(postDO.getShowCoverPic());
-            wxPost.setContentSourceUrl(postDO.getContentSourceUrl());
-
-            // 替换内容
-            String replacedContent = replaceContentForUpload(accessToken, postDO.getContent());
-            wxPost.setContent(replacedContent);
-            wxPosts.add(wxPost);
+            wxPosts.add(wrapWeiXinPost(accessToken, postDO));
         }
         return wxPosts;
     }
@@ -579,7 +587,7 @@ public class PostServiceImpl implements PostService {
         List<PostDTO.PostItem> differPostItems = new LinkedList<>();
 
         // 获取所有微信图文
-        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccountByWeixinAppId(weixinAppid).getAccessToken());
+        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccessToken(weixinAppid));
 
         if (postDTOList == null || postDTOList.size() <= 0) {
             return differPostItems;

@@ -15,16 +15,12 @@ import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 
 import com.kuaizhan.utils.JsonUtil;
-import com.kuaizhan.utils.ParamUtil;
-import org.apache.ibatis.annotations.Param;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 账号controller
@@ -56,6 +52,7 @@ public class AccountController extends BaseController {
         accountVO.setVerifyType(accountDO.getVerifyType());
         return new JsonResponse(accountVO);
     }
+
     @RequestMapping(value = "/account/site_id", method = RequestMethod.GET)
     public JsonResponse getAccountInfoBySiteId(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, IOException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
@@ -105,7 +102,7 @@ public class AccountController extends BaseController {
         } catch (Exception e) {
             throw new ParamException();
         }
-        accountService.updateAppSecrect(siteId, appSecret);
+        accountService.updateAppSecret(siteId, appSecret);
         return new JsonResponse(null);
     }
 

@@ -35,7 +35,7 @@ public interface PostDao {
      * @param mediaId 图文消息的mediaId
      * @return
      */
-    List<PostDO> listMultiPosts(String mediaId);
+    List<PostDO> listMultiPosts(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**
      * 根据mediaId删除图文, 逻辑删除
@@ -44,13 +44,13 @@ public interface PostDao {
      * @param mediaId
      * @return
      */
-    // TODO: 考虑更改索引结构，按weixinAppId mediaId分别单独建索引
-    int deletePost(@Param("weixinAppId") long weixinAppid, @Param("mediaId") String mediaId);
+    // TODO: 考虑更改索引结构，按weixinAppid mediaId分别单独建索引
+    int deletePost(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**
      * 根据mediaId删除图文, 物理删除
      */
-    int deletePostReal(@Param("weixinAppId") long weixinAppid, @Param("mediaId") String mediaId);
+    int deletePostReal(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**
      * 根据pageId获取图文

@@ -76,7 +76,7 @@ public class PostController extends BaseController {
 
                 // 获取图文总记录下面的多图文
                 if (postDO.getType() == 2) {
-                    List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getMediaId());
+                    List<PostDO> multiPostDOList = postService.listMultiPosts(weixinAppid, postDO.getMediaId());
                     if (multiPostDOList != null) {
                         for (PostDO multiPostDo : multiPostDOList) {
                             PostVO multiPostVO = pojoSwitcher.postDOToVO(multiPostDo);
@@ -121,7 +121,7 @@ public class PostController extends BaseController {
         if (postDO != null) {
             // 如果图文type为3（多图文中的一条），根据mediaId找出多图文
             if (postDO.getType() == 3) {
-                List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getMediaId());
+                List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getWeixinAppid(), postDO.getMediaId());
 
                 for (PostDO multipostDO : multiPostDOList) {
 
@@ -161,8 +161,7 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
     public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) throws RedisException, DaoException, AccountNotExistException, MaterialDeleteException, JsonParseException, MongoException {
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        postService.deletePost(weixinAppid, pageId, accountDO.getAccessToken());
+        postService.deletePost(weixinAppid, pageId, accountService.getAccessToken(weixinAppid));
         return new JsonResponse(null);
     }
 
@@ -194,7 +193,7 @@ public class PostController extends BaseController {
     public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws KZPostAddException, DaoException, MongoException, IOException, AccountNotExistException, RedisException, JsonParseException {
         JSONObject jsonObject = new JSONObject(postData);
         Long weixinAppid = jsonObject.optLong("weixinAppid");
-        AccountDO accountDO=accountService.getAccountByWeixinAppId(weixinAppid);
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
         Long categoryId = jsonObject.optLong("categoryId");
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         for (Long pageId: pageIds){
@@ -227,15 +226,14 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
     public JsonResponse uploadWeixinThumb(@RequestBody String postData) throws ParamException, RedisException,
-            JsonParseException, DaoException, AccountNotExistException, AddMaterialException {
+            JsonParseException, DaoException, AccountNotExistException, AddMaterialException, DownloadFileFailedException {
         JSONObject jsonObject = new JSONObject(postData);
         Long weixinAppid = jsonObject.optLong("weixinAppid");
         String imgUrl = jsonObject.optString("imgUrl");
         if (weixinAppid == 0 || imgUrl == null){
             throw new ParamException();
         }
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        Map result = weixinPostService.uploadImage(accountDO.getAccessToken(), imgUrl);
+        Map result = weixinPostService.uploadImage(accountService.getAccessToken(weixinAppid), imgUrl);
 
         return new JsonResponse(result);
     }

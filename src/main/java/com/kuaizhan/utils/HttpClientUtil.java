@@ -1,5 +1,6 @@
 package com.kuaizhan.utils;
 
+import com.kuaizhan.exception.business.DownloadFileFailedException;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -95,7 +96,7 @@ public final class HttpClientUtil {
      * @return
      */
     public static String postJson(String url, String jsonStr) {
-        String res = null;
+        String res;
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
             HttpPost httpPost = new HttpPost(url);
@@ -122,7 +123,7 @@ public final class HttpClientUtil {
      * @param fileUrl
      * @return
      */
-    public static String postMedia(String url, String fileUrl) {
+    public static String postMedia(String url, String fileUrl) throws DownloadFileFailedException {
         File file = FileUtil.download(fileUrl);
         return postMedia(url, file);
     }
@@ -151,17 +152,15 @@ public final class HttpClientUtil {
 
             OutputStream out = new DataOutputStream(conn.getOutputStream());
 
-            StringBuffer strBuf = new StringBuffer();
-            strBuf.append("\r\n").append("--").append(BOUNDARY).append("\r\n");
-            strBuf.append("Content-Disposition: form-data;name=\"media\";filelength=\"" + file.length() + "\";filename=\""
+            String str = "\r\n" + "--" + BOUNDARY + "\r\n" +
+                    "Content-Disposition: form-data;name=\"media\";filelength=\"" + file.length() + "\";filename=\""
+                    + file.getName() + "\"\r\n" +
+                    "Content-Type:application/octet-stream\r\n\r\n";
 
-                    + file.getName() + "\"\r\n");
-            strBuf.append("Content-Type:application/octet-stream\r\n\r\n");
-
-            out.write(strBuf.toString().getBytes());
+            out.write(str.getBytes());
 
             DataInputStream in = new DataInputStream(new FileInputStream(file));
-            int bytes = 0;
+            int bytes;
             byte[] bufferOut = new byte[1024];
             while ((bytes = in.read(bufferOut)) != -1) {
                 out.write(bufferOut, 0, bytes);
@@ -176,15 +175,14 @@ public final class HttpClientUtil {
             out.close();
 
             // 读取返回数据
-            StringBuffer resBuf = new StringBuffer();
+            StringBuilder stringBuilder = new StringBuilder();
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
-                resBuf.append(line).append("\n");
+                stringBuilder.append(line).append("\n");
             }
-            res = resBuf.toString();
+            res = stringBuilder.toString();
             reader.close();
-            reader = null;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

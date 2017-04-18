@@ -1,5 +1,8 @@
 package com.kuaizhan.utils;
 
+import com.kuaizhan.exception.business.DownloadFileFailedException;
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,9 +15,14 @@ import java.net.URL;
  */
 public class FileUtil {
 
+    private static final Logger logger = Logger.getLogger(FileUtil.class);
 
-    public static File download(String url) {
+
+    static File download(String url) throws DownloadFileFailedException {
         InputStream inputStream = getInputStream(url);
+        if (inputStream == null){
+            throw new DownloadFileFailedException();
+        }
         FileOutputStream fileOutputStream = null;
         byte[] data = new byte[1024];
         int len;
@@ -30,7 +38,9 @@ public class FileUtil {
         } finally {
             try {
                 inputStream.close();
-                fileOutputStream.close();
+                if (fileOutputStream != null){
+                    fileOutputStream.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -57,7 +67,7 @@ public class FileUtil {
                 inputStream = httpURLConnection.getInputStream();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("[getInputStream] get input stream failed, e:", e);
         }
         return inputStream;
     }

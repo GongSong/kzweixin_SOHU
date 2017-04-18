@@ -37,11 +37,11 @@
     </select>
 
     <!--根据mediaId查询多图文-->
-    <select id="listMultiPosts" parameterType="String" resultType="com.kuaizhan.pojo.DO.PostDO">
+    <select id="listMultiPosts" resultType="com.kuaizhan.pojo.DO.PostDO">
         select *
         from `weixin_post`
         --   type=3表示多图文消息中的一条
-        where `status` = 1 AND `type` = 3 AND `media_id` = #{mediaId}
+        where weixin_appid = #{weixinAppid} AND `media_id` = #{mediaId} AND `status` = 1 AND `type` = 3
         order by `index`
     </select>
 
@@ -50,20 +50,19 @@
         update `weixin_post`
         --   type=3表示多图文消息中的一条
         set `status` = 2
-        where `weixin_appid`=#{weixinAppId} and `media_id`=#{mediaId} and `status` = 1
+        where `weixin_appid`=#{weixinAppid} and `media_id`=#{mediaId} and `status` = 1
     </update>
 
     <!--根据mediaId物理删除图文-->
     <delete id="deletePostReal">
         DELETE FROM `weixin_post`
-        where `weixin_appid`=#{weixinAppId} and `media_id`=#{mediaId} and `status` = 1
+        where `weixin_appid`=#{weixinAppid} and `media_id`=#{mediaId} and `status` = 1
     </delete>
 
     <select id="getPost" parameterType="long" resultType="com.kuaizhan.pojo.DO.PostDO">
         select *
         from `weixin_post`
-        where `status` = 1
-        and `page_id`=#{pageId}
+        where `status` = 1 and `page_id`=#{pageId}
     </select>
 
     <!--新增图文-->

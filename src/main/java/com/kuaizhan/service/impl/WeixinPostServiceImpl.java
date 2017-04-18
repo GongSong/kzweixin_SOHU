@@ -48,7 +48,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException {
+    public HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException, DownloadFileFailedException {
         // 处理没有http头的问题
         if (imgUrl.indexOf("//") == 0) {
             imgUrl = "http:" + imgUrl;
@@ -66,7 +66,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException {
+    public String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException, DownloadFileFailedException {
         // 处理没有http头的问题
         if (imgUrl.indexOf("//") == 0) {
             imgUrl = "http:" + imgUrl;
@@ -168,6 +168,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         String result = HttpClientUtil.postJson(ApiConfig.getMaterial(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
+            logger.error("[微信获取素材错误], param: " + jsonObject + " result: " +returnJson);
             throw new MaterialGetException();
         }
         try {
