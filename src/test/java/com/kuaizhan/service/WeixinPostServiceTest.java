@@ -43,6 +43,11 @@ public class WeixinPostServiceTest {
     }
 
     @Test
+    public void uploadImageForPost() throws Exception{
+        weixinPostService.uploadImgForPost(accountService.getAccessToken(2326841584L), "http://pic.kuaizhan.com/g1/M01/37/F3/CgpQU1YawjyABj6HAATcqHQantk1904826/imageView/v1/thumbnail/240x180");
+    }
+
+    @Test
     public void uploadImage() throws Exception {
         weixinPostService.uploadImage(accountService.getAccessToken(weixinAppid),"http://192.168.110.218/g1/M00/01/27/CgoYr1YnRIWAUvk9AAAuGB6TobA1781741");
     }

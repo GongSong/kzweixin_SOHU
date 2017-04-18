@@ -9,4 +9,8 @@ public class DownloadFileFailedException extends BusinessException {
     public DownloadFileFailedException() {
         super(ErrorCodeConfig.DOWNLOAD_FILE_ERROR.getCode(), ErrorCodeConfig.DOWNLOAD_FILE_ERROR.getMsg());
     }
+
+    public DownloadFileFailedException(String msg) {
+        super(ErrorCodeConfig.DOWNLOAD_FILE_ERROR.getCode(), msg);
+    }
 }

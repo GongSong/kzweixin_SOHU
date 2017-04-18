@@ -11,6 +11,7 @@ import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.LogUtil;
+import com.kuaizhan.utils.UrlUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,9 +19,11 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -50,10 +53,12 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     @Override
     public HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException, DownloadFileFailedException {
         // 处理没有http头的问题
-        if (imgUrl.indexOf("//") == 0) {
-            imgUrl = "http:" + imgUrl;
-        }
-        String result = HttpClientUtil.postMedia(ApiConfig.addMaterialUrl(accessToken, "image"), imgUrl);
+
+        imgUrl = UrlUtil.fixProtocol(imgUrl);
+        // 获取内部地址
+        Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
+        String result = HttpClientUtil.postMedia(ApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
+
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
             logger.error("[微信] 上传永久图片素材失败: result: " + returnJson);
@@ -67,22 +72,23 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
     @Override
     public String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException, DownloadFileFailedException {
-        // 处理没有http头的问题
-        if (imgUrl.indexOf("//") == 0) {
-            imgUrl = "http:" + imgUrl;
-        }
         // 本来就是微信url的不再上传
         if (imgUrl.indexOf("https://mmbiz") == 0 || imgUrl.indexOf("http://mmbiz") == 0) {
             return imgUrl;
         }
 
+        imgUrl = UrlUtil.fixProtocol(imgUrl);
         // 先从redis中取
         String wxUrl = redisImageDao.getImageUrl(imgUrl);
         if (wxUrl != null) {
             return wxUrl;
         }
 
-        String result = HttpClientUtil.postMedia(ApiConfig.getAddPostImageUrl(accessToken), imgUrl);
+        // 获取内部地址
+        Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
+        System.out.println("---->" + address);
+        String result = HttpClientUtil.postMedia(ApiConfig.getAddPostImageUrl(accessToken), address.get("url"), address.get("host"));
+
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
             logger.error("[微信] 上传图文中图片失败: result: " + returnJson);

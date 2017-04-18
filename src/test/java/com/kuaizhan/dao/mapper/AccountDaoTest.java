@@ -32,8 +32,13 @@ public class AccountDaoTest {
     }
 
     @Test
+    public void getAccountByWeixinAppid() throws Exception {
+        System.out.println("---->" + accountDao.getAccountByWeixinAppId(1336029815L));
+    }
+
+    @Test
     public void getAccountBySiteId() throws Exception {
-        System.out.println("------>" + accountDao.getAccountBySiteId(123456L));
+        System.out.println("------>" + accountDao.getAccountBySiteId(111111L));
     }
 
     @Test

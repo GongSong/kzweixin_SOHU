@@ -77,6 +77,18 @@ public class ApplicationConfig {
         return "http://" + PropertiesUtil.getString(PROP, "kz.service.ip") + "/pic/service-upload-pic-by-url";
     }
 
+    public static String getPicHost() {
+        return PropertiesUtil.getString(PROP, "kz.pic.host");
+    }
+
+    public static String getPicReplaceHost(){
+        return PropertiesUtil.getString(PROP, "kz.pic.replaceHost");
+    }
+
+    public static String getPicIp(){
+        return PropertiesUtil.getString(PROP, "kz.pic.ip");
+    }
+
     // 获取PHP端service host
     public static String getTestServiceHost() {
         return PropertiesUtil.getString(PROP, "kz.service.host");

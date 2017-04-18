@@ -124,9 +124,22 @@ public final class HttpClientUtil {
      * @return
      */
     public static String postMedia(String url, String fileUrl) throws DownloadFileFailedException {
-        File file = FileUtil.download(fileUrl);
+        File file = FileUtil.download(fileUrl, null);
         return postMedia(url, file);
     }
+
+    /**
+     * 上传文件，携带特定的host下载文件
+     * @param url
+     * @param fileUrl
+     * @return
+     * @throws DownloadFileFailedException
+     */
+    public static String postMedia(String url, String fileUrl, String fileHost) throws DownloadFileFailedException {
+        File file = FileUtil.download(fileUrl, fileHost);
+        return postMedia(url, file);
+    }
+
 
     /**
      * 上传文件

@@ -66,7 +66,7 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("access_token", authorizationInfoDTO.getAccessToken());
             jsonObject.put("refresh_token", authorizationInfoDTO.getRefreshToken());
-            jsonObject.put("expires_time", System.currentTimeMillis()/1000+authorizationInfoDTO.getExpiresIn()-10*60);
+            jsonObject.put("expires_time", System.currentTimeMillis() / 1000 + authorizationInfoDTO.getExpiresIn() - 10 * 60);
             setData(ApplicationConfig.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId, jsonObject.toString(), 2 * 60 * 60);
         }
     }

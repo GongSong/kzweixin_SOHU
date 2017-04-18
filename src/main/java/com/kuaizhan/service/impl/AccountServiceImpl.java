@@ -89,35 +89,41 @@ public class AccountServiceImpl implements AccountService {
         }
         if (accessToken == null) {
             //从数据库拿refresh key刷新
+            AccountDO accountDO;
             try {
-                AccountDO accountDO = accountDao.getAccountByWeixinAppId(weixinAppId);
-                if (accountDO == null) {
-                    throw new AccountNotExistException();
-                }
-                //刷新
-                AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
+                accountDO = accountDao.getAccountByWeixinAppId(weixinAppId);
+            } catch (Exception e){
+                throw new DaoException(e);
+            }
+            if (accountDO == null) {
+                throw new AccountNotExistException();
+            }
+            //刷新
+            AuthorizationInfoDTO authorizationInfoDTO;
+            try {
+                authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
                 accessToken = authorizationInfoDTO.getAccessToken();
-                // 更新数据库
-                try {
-                    AccountDO updateAccountDo = new AccountDO();
-                    updateAccountDo.setWeixinAppId(accountDO.getWeixinAppId());
-                    updateAccountDo.setAccessToken(authorizationInfoDTO.getAccessToken());
-                    updateAccountDo.setRefreshToken(authorizationInfoDTO.getRefreshToken());
-                    accountDao.updateAccountByWeixinAppId(updateAccountDo);
-                } catch (Exception e) {
-                    throw new DaoException(e);
-                }
-                //设置缓存
-                try {
-                    redisAccountDao.setAccessToken(weixinAppId, authorizationInfoDTO);
-                } catch (Exception e) {
-                    throw new RedisException(e);
-                }
-
-            } catch (Exception e) {
+            } catch (Exception e){
+                // FIXME: 重新定义这里的异常
                 throw new DaoException(e);
             }
 
+            // 更新数据库
+            try {
+                AccountDO updateAccountDo = new AccountDO();
+                updateAccountDo.setWeixinAppId(accountDO.getWeixinAppId());
+                updateAccountDo.setAccessToken(authorizationInfoDTO.getAccessToken());
+                updateAccountDo.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+                accountDao.updateAccountByWeixinAppId(updateAccountDo);
+            } catch (Exception e) {
+                throw new DaoException(e);
+            }
+            //设置缓存
+            try {
+                redisAccountDao.setAccessToken(weixinAppId, authorizationInfoDTO);
+            } catch (Exception e) {
+                throw new RedisException(e);
+            }
         }
         return accessToken;
     }

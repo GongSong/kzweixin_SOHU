@@ -18,10 +18,10 @@ public class FileUtil {
     private static final Logger logger = Logger.getLogger(FileUtil.class);
 
 
-    static File download(String url) throws DownloadFileFailedException {
-        InputStream inputStream = getInputStream(url);
+    static File download(String url, String urlHost) throws DownloadFileFailedException {
+        InputStream inputStream = getInputStream(url, urlHost);
         if (inputStream == null){
-            throw new DownloadFileFailedException();
+            throw new DownloadFileFailedException("url: " + url);
         }
         FileOutputStream fileOutputStream = null;
         byte[] data = new byte[1024];
@@ -54,14 +54,18 @@ public class FileUtil {
      * @param fileUrl
      * @return
      */
-    private static InputStream getInputStream(String fileUrl) {
+    private static InputStream getInputStream(String fileUrl, String fileHost) {
         InputStream inputStream = null;
         HttpURLConnection httpURLConnection;
         try {
             URL url = new URL(fileUrl);
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(3000);
+            httpURLConnection.setReadTimeout(10 * 1000);
             httpURLConnection.setRequestMethod("GET");
+            if (fileHost != null){
+                httpURLConnection.setRequestProperty("Host", fileHost);
+            }
             int responseCode = httpURLConnection.getResponseCode();
             if (responseCode == 200) {
                 inputStream = httpURLConnection.getInputStream();
