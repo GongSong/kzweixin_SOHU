@@ -55,6 +55,9 @@ public class FileUtil {
      * @return
      */
     private static InputStream getInputStream(String fileUrl, String fileHost) {
+        // 允许使用Host等不安全的头
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+
         InputStream inputStream = null;
         HttpURLConnection httpURLConnection;
         try {
