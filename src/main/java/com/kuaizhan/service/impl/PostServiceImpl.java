@@ -217,7 +217,7 @@ public class PostServiceImpl implements PostService {
             param.put("post_category_id", categoryId);
             param.put("post_title", postDO.getTitle());
             param.put("post_desc", postDO.getDigest());
-            param.put("pic_url", "http:"+postDO.getThumbUrl());
+            param.put("pic_url", UrlUtil.fixProtocol(postDO.getThumbUrl()));
             try {
                 param.put("post_content", mongoPostDao.getContentById(pageId));
             } catch (Exception e) {
