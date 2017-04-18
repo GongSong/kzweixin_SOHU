@@ -58,6 +58,12 @@ public interface PostService {
     void deletePostReal(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException;
 
     /**
+     * 是否存在微信图文
+     * @return
+     */
+    Boolean exist(long weixinAppid, String mediaId) throws DaoException;
+
+    /**
      * 获取图文
      *
      * @param pageId

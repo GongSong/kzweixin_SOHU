@@ -111,6 +111,12 @@ public class PostServiceTest {
     }
 
     @Test
+    public void exist() throws Exception {
+        System.out.println("---->" + postService.exist(9616507302L, "x_L_iJd0_WYtc9HUX4QILyfIWnPc2TE3CtSE2oBuR4k"));
+
+    }
+
+    @Test
     public void listNonExistsPostItemsFromWeixin() throws Exception {
         long weixinAppid = 1789089804L;
         List<PostDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);

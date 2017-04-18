@@ -24,4 +24,10 @@ public class PostDaoTest {
         postDao.deletePostReal(1789089804, "vleui19nacBl3_Of7NdcuLESnAt4laEOG1rEptHY4TE");
     }
 
+    @Test
+    public void exists() {
+        System.out.println("---->" +  1);
+        System.out.println("---->" + postDao.exist(9616507302L, "x_L_iJd0_WYtc9HUX4QILyfIWnPc2TE3CtSE2oBuR4k"));
+    }
+
 }

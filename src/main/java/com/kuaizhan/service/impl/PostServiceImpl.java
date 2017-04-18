@@ -156,6 +156,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Boolean exist(long weixinAppid, String mediaId) throws DaoException {
+        try {
+            return postDao.exist(weixinAppid, mediaId);
+        } catch (Exception e){
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
     public PostDO getPostByPageId(long pageId) throws DaoException, MongoException {
         PostDO postDO;
         try {

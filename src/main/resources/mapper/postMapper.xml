@@ -133,4 +133,10 @@
         WHERE `page_id` = #{pageId}
     </insert>
 
+    <select id="exist" resultType="Boolean">
+        SELECT COUNT(*)
+        FROM weixin_post
+        WHERE `weixin_appid` = #{weixinAppid} AND `media_id` = #{mediaId} AND `status` = 1
+    </select>
+
 </mapper>

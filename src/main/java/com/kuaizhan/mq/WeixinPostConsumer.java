@@ -22,11 +22,19 @@ public class WeixinPostConsumer extends BaseMqConsumer {
 
     @Override
     protected void onMessage(Map msgMap) throws Exception {
-        logger.info("[mq:从微信导入单条图文], map:" + msgMap);
 
         long userId = (long) msgMap.get("userId");
         String postItemJson = (String) msgMap.get("postItem");
         PostDTO.PostItem postItem = JsonUtil.string2Bean(postItemJson, PostDTO.PostItem.class);
-        postService.importWeixinPost(postItem, userId);
+
+        Long weixinAppid = postItem.getWeixinAppid();
+        String mediaId = postItem.getItem().getMediaId();
+
+        if (! postService.exist(weixinAppid, mediaId)){
+            logger.info("[mq:从微信导入单条图文], weixinAppid: " + weixinAppid + " mediaId: " + mediaId);
+            postService.importWeixinPost(postItem, userId);
+        } else {
+            logger.info("[mq:图文已存在], weixinAppid: " + weixinAppid + " mediaId: " + mediaId);
+        }
     }
 }

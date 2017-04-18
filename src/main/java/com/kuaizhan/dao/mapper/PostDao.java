@@ -37,6 +37,12 @@ public interface PostDao {
      */
     List<PostDO> listMultiPosts(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
 
+
+    /**
+     * 判断是否存在微信图文
+     */
+    Boolean exist(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
+
     /**
      * 根据mediaId删除图文, 逻辑删除
      *
