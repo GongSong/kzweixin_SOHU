@@ -6,25 +6,25 @@ import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
+import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 从快站文章导入，消费者
  * Created by liangjiateng on 2017/3/28.
  */
 
-public class KZArticlePostConsumer extends BaseMqConsumer {
+public class KZArticleImportConsumer extends BaseMqConsumer {
+
+    private static final Logger logger = Logger.getLogger(KZArticleImportConsumer.class);
 
     @Resource
     PostService postService;
-    @Resource
-    WeixinPostService weixinPostService;
-    @Resource
-    AccountService accountService;
 
     @Override
     public void onMessage(Map msgMap) throws Exception {
@@ -32,9 +32,7 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
         //TODO:畅言
         long weixinAppid = (long) msgMap.get("weixinAppid");
         List<Long> pageIds = (List<Long>) msgMap.get("pageIds");
-        int i = 0;
         for (Long pageId : pageIds) {
-            List<PostDO> postDOList = new ArrayList<>();
 
             // 调用接口
             ArticleDTO articleDTO = postService.getKzArticle(pageId);
@@ -48,21 +46,26 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
                 for (String str : articleDTO.getContent()) {
                     stringBuilder.append(str);
                 }
-                postDO.setContent(stringBuilder.toString());
+                String content = stringBuilder.toString();
+                if (Objects.equals(content, "")){
+                    logger.info("快站文章内容为空, 忽略新增, pageId:" + pageId);
+                    return ;
+                }
+                postDO.setContent(content);
 
-                if (articleDTO.getCoverUrl() != null && !"".equals(articleDTO.getCoverUrl())) {
+                if (articleDTO.getCoverUrl() != null && ! "".equals(articleDTO.getCoverUrl())) {
                     postDO.setThumbUrl(articleDTO.getCoverUrl());
                 } else {
-                    String picUrl = (i == 0) ? getFirstPostDefaultThumbUrl() : getCommonPostDefaultThumbUrl();
+                    String picUrl = getFirstPostDefaultThumbUrl();
                     postDO.setThumbUrl(picUrl);
                 }
 
 
+                List<PostDO> postDOList = new ArrayList<>();
                 postDOList.add(postDO);
-                i++;
+                postService.insertMultiPosts(weixinAppid, postDOList);
             }
             // 新增文章
-            postService.insertMultiPosts(weixinAppid, postDOList);
         }
 
     }
@@ -75,13 +78,5 @@ public class KZArticlePostConsumer extends BaseMqConsumer {
     private String getFirstPostDefaultThumbUrl() {
         return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
     }
-
-    /**
-     * 多图文非第一篇图文的默认封面图
-     *
-     * @return
-     */
-    private String getCommonPostDefaultThumbUrl() {
-        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-200-200.png");
-    }
 }
+

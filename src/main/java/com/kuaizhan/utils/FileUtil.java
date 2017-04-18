@@ -21,7 +21,7 @@ public class FileUtil {
     static File download(String url, String urlHost) throws DownloadFileFailedException {
         InputStream inputStream = getInputStream(url, urlHost);
         if (inputStream == null){
-            throw new DownloadFileFailedException("url: " + url);
+            throw new DownloadFileFailedException("下载图片失败，url: " + url);
         }
         FileOutputStream fileOutputStream = null;
         byte[] data = new byte[1024];
@@ -35,6 +35,7 @@ public class FileUtil {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw new DownloadFileFailedException("下载图片失败，url: " + url);
         } finally {
             try {
                 inputStream.close();
