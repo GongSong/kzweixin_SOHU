@@ -7,6 +7,7 @@ import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.param.PostsParam;
+import com.kuaizhan.param.WxSyncsPostParam;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.Page;
@@ -171,15 +172,8 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
-    public JsonResponse wxSyncsPost(@RequestBody String postData) throws ParamException, SyncWXPostTooOftenException {
-        JSONObject jsonObject = new JSONObject(postData);
-
-        Long weixinAppid = jsonObject.optLong("weixinAppid");
-        long uid = jsonObject.optLong("uid");
-        if (uid == 0 || weixinAppid == 0){
-            throw new ParamException("uid和weixinAppid是必传参数");
-        }
-        postService.syncWeixinPosts(weixinAppid, uid);
+    public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) throws ParamException, SyncWXPostTooOftenException {
+        postService.syncWeixinPosts(wxSyncsPostParam.getWeixinAppid(), wxSyncsPostParam.getUid());
         return new JsonResponse(null);
     }
 
