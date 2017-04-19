@@ -1,6 +1,6 @@
 package com.kuaizhan.dao.redis;
 
-import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.constant.RedisConstant;
 import com.kuaizhan.utils.RedisUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ public class RedisImageDaoTest {
 
         assertEquals(weixinUrl, redisImageDao.getImageUrl(originUrl));
 
-        redisUtil.delete(ApplicationConfig.KEY_IMAGE_WEIXIN_RUL + originUrl);
+        redisUtil.delete(RedisConstant.KEY_IMAGE_WEIXIN_RUL + originUrl);
         assertEquals(redisImageDao.getImageUrl(originUrl), null);
     }
 }

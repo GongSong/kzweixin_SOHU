@@ -8,12 +8,16 @@ import java.util.Properties;
 
 /**
  * 应用配置
+ * 读取自application.properties
  * Created by liangjiateng on 2017/3/1.
  */
 public class ApplicationConfig {
 
     //资源读取工具
     private static final Properties PROP = PropertiesUtil.loadProps("application.properties");
+
+    public static final String REDIS_PREFIX = PropertiesUtil.getString(PROP, "redis.key.prefix");
+
     //版本号
     public static final String VERSION = "v1";
     //PHP项目版本号
@@ -102,38 +106,4 @@ public class ApplicationConfig {
     public static final String WEIXIN_APP_SECRET_THIRD = PropertiesUtil.getString(PROP, "weixin.third.appSecret");
     public static final String WEIXIN_AES_KEY = PropertiesUtil.getString(PROP, "weixin.third.aesKey");
 
-
-    //redis缓存前缀
-    private static final String REDIS_PREFIX = PropertiesUtil.getString(PROP, "redis.key.prefix");
-
-    //账户
-
-    //缓存component_verify_ticket
-    public static final String KEY_WEIXIN_COMPONENT_VERIFY_TICKET = REDIS_PREFIX + "kz_weixin:ticket";
-    //缓存component_access_token
-    public static final String KEY_WEIXIN_COMPONENT_ACCESS_TOKEN = REDIS_PREFIX + "kz_weixin:component_access_token";
-    //缓存公众号的access_token
-    public static final String KEY_WEIXIN_USER_ACCESS_TOKEN = REDIS_PREFIX + "kz_weixin:user_access_token:";
-
-    //缓存预授权码
-    public static final String KEY_WEIXIN_PRE_AUTH_CODE = REDIS_PREFIX + "pre_auth_code:";
-    //缓存账户信息
-    public static final String KEY_ACCOUNT_INFO = REDIS_PREFIX + "account_info:";
-
-    //粉丝
-
-    //缓存粉丝列表
-    public static final String KEY_FAN_LIST = REDIS_PREFIX + "fan_list:";
-    //缓存标签
-    public static final String KEY_TAG = REDIS_PREFIX + "tag:";
-
-    //消息
-
-    //缓存消息列表
-    public static final String KEY_MSG_LIST = REDIS_PREFIX + "msg_list:";
-    //缓存单个用户消息
-    public static final String KEY_MSG_USER = REDIS_PREFIX + "msg_user:";
-
-    // 上传过的图片资源
-    public static final String KEY_IMAGE_WEIXIN_RUL = REDIS_PREFIX + "origin_url:";
 }
