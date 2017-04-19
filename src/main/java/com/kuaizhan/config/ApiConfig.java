@@ -317,12 +317,8 @@ public class ApiConfig {
 
     /**
      * 新增永久素材
-     * <<<<<<< HEAD
-     *
      * @param accessToken
      * @param type
-     * @return =======
-     * >>>>>>> d77f9d46f42d48eb6e914065c18879bfafb75f85
      */
     public static String addMaterialUrl(String accessToken, String type) {
         return DOMAIN_WEIXIN_API + WEIXIN_ADD_MATERIAL + accessToken + "&type=" + type;
