@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -111,7 +110,7 @@ public class MsgServiceImpl implements MsgService {
                     if (msgDO.getOpenId().equals(fanDO.getOpenId())) {
                         msgDO.setNickName(fanDO.getNickName());
                         msgDO.setHeadImgUrl(fanDO.getHeadImgUrl());
-                        msgDO.setIsFoucs(fanDO.getStatus());
+                        msgDO.setIsFocus(fanDO.getStatus());
                     }
                 }
             }

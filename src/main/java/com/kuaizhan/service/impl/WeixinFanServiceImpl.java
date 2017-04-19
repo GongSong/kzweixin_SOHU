@@ -149,13 +149,13 @@ public class WeixinFanServiceImpl implements WeixinFanService {
             fans.setHeadImgUrl(jsonObject.getString("headimgurl"));
             fans.setUnionId(jsonObject.getString("unionid"));
             fans.setSubscribeTime(jsonObject.getLong("subscribe_time"));
-            fans.setGroupId(jsonObject.getInt("groupid"));
+            fans.setGroupId(jsonObject.getLong("groupid"));
             fans.setAppId(appId);
             fans.setTagIdsJson(jsonObject.getJSONArray("tagid_list").toString());
             fans.setInBlackList(0);
             fans.setRemark(jsonObject.getString("remark"));
             fans.setStatus(1);
-            fans.setLastInteractTime(0);
+            fans.setLastInteractTime(0L);
             return fans;
         }
     }

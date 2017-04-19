@@ -164,7 +164,7 @@ public class MsgController extends BaseController {
                 msgVO.setOpenId(msgDO.getOpenId());
                 msgVO.setContent(msgDO.getContent());
                 msgVO.setHeadImgUrl(msgDO.getHeadImgUrl());
-                msgVO.setIsFocus(msgDO.getIsFoucs());
+                msgVO.setIsFocus(msgDO.getIsFocus());
                 msgVO.setName(msgDO.getNickName());
                 msgVO.setTime(msgDO.getCreateTime());
                 msgListVO.getMsgs().add(msgVO);
