@@ -47,8 +47,7 @@ public abstract class BaseMongoDaoImpl<T> {
             Object value = entry.getValue();
             query.addCriteria(Criteria.where(key).is(value));
         }
-        List result = mongoTemplate.find(query, cls, collectionName);
-        return result;
+        return mongoTemplate.find(query, cls, collectionName);
     }
 
     //修改

@@ -76,8 +76,7 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>json-schema-validator</artifactId>
-            <version>3.0.2</version>
-            <scope>test</scope>
+            <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -253,11 +252,6 @@
             <artifactId>jsp-api</artifactId>
             <version>${jsp-api.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>json-schema-validator</artifactId>
-            <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

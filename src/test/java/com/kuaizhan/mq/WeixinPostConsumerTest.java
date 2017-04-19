@@ -48,7 +48,7 @@ public class WeixinPostConsumerTest {
         item.setUpdateTime("DFASDF");
         postItem.setItem(item);
         postItem.setWeixinAppid(1123123);
-        Map<String, Object> message = new HashMap();
+        Map<String, Object> message = new HashMap<>();
         message.put("userId", 123456L);
         String postItemJson = JsonUtil.bean2String(postItem);
         message.put("postItem", postItemJson);
