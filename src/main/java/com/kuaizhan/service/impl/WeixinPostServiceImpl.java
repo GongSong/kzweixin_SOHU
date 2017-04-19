@@ -57,8 +57,8 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         imgUrl = UrlUtil.fixProtocol(imgUrl);
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
+        logger.info("[微信] 上传图片素材, address: " + address);
         String result = HttpClientUtil.postMedia(ApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
-        logger.info("[微信] 上传图片素材, address: " + address + " result: " + result);
 
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
