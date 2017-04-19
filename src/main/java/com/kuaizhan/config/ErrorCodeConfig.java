@@ -69,6 +69,8 @@ public enum ErrorCodeConfig {
 
     MEDIA_ID_NOT_EXIST_ERROR(107007, "图文素材或者缩略图素材可能在微信后台被删除"),
 
+    SYNC_WX_POST_TOO_OFTEN_ERROR(107008, "同步微信图文太频繁(3分钟一次)"),
+
     //KZPic(08)
     KZPIC_UPLOAD_ERROR(108001, "上传至KZPic失败");
 

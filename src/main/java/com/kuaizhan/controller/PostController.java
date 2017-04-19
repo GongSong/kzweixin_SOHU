@@ -171,7 +171,7 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
-    public JsonResponse wxSyncsPost(@RequestBody String postData) throws ParamException {
+    public JsonResponse wxSyncsPost(@RequestBody String postData) throws ParamException, SyncWXPostTooOftenException {
         JSONObject jsonObject = new JSONObject(postData);
 
         Long weixinAppid = jsonObject.optLong("weixinAppid");

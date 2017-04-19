@@ -25,17 +25,21 @@ public class RedisConstant {
     //粉丝
 
     //缓存粉丝列表
-    public static final String KEY_FAN_LIST = ApplicationConfig.REDIS_PREFIX + "fan_list:";
+    public static final String KEY_FAN_LIST = ApplicationConfig.REDIS_PREFIX + "kzweixin:fan_list:";
     //缓存标签
-    public static final String KEY_TAG = ApplicationConfig.REDIS_PREFIX + "tag:";
+    public static final String KEY_TAG = ApplicationConfig.REDIS_PREFIX + "kzweixin:tag:";
 
     //消息
 
     //缓存消息列表
-    public static final String KEY_MSG_LIST = ApplicationConfig.REDIS_PREFIX + "msg_list:";
+    public static final String KEY_MSG_LIST = ApplicationConfig.REDIS_PREFIX + "kzweixin:msg_list:";
     //缓存单个用户消息
-    public static final String KEY_MSG_USER = ApplicationConfig.REDIS_PREFIX + "msg_user:";
+    public static final String KEY_MSG_USER = ApplicationConfig.REDIS_PREFIX + "kzweixin:msg_user:";
 
     // 上传过的图片资源
-    public static final String KEY_IMAGE_WEIXIN_RUL = ApplicationConfig.REDIS_PREFIX + "origin_url:";
+    public static final String KEY_IMAGE_WEIXIN_RUL = ApplicationConfig.REDIS_PREFIX + "kzweixin:origin_url:";
+
+    // 图文模块
+    public static final String KEY_COUNLD_SYNC_WX_POST = ApplicationConfig.REDIS_PREFIX + "kzweixin:could_sync_wx_post:";
+    public static final int EXPIRE_COULD_SYNC_WX_POST = 3 * 60;
 }

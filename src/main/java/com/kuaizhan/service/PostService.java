@@ -2,10 +2,7 @@ package com.kuaizhan.service;
 
 
 import com.kuaizhan.dao.mongo.MongoPostDao;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.KZPostAddException;
-import com.kuaizhan.exception.business.MaterialDeleteException;
-import com.kuaizhan.exception.business.MaterialGetException;
+import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
@@ -128,8 +125,9 @@ public interface PostService {
      * 同步微信消息(异步)
      * @param weixinAppid
      * @param uid 用户id，用于上传图片
+     * @return 是否可以同步
      */
-    void syncWeixinPosts(long weixinAppid, long uid);
+    void syncWeixinPosts(long weixinAppid, long uid) throws SyncWXPostTooOftenException;
 
     /**
      * 由微信导入图文

@@ -1,0 +1,23 @@
+package com.kuaizhan.dao.redis.impl;
+
+import com.kuaizhan.constant.RedisConstant;
+import com.kuaizhan.dao.redis.RedisPostDao;
+import org.springframework.stereotype.Repository;
+
+/**
+ * Created by zixiong on 2017/4/19.
+ */
+@Repository("redisPostDao")
+public class RedisPostDaoImpl extends RedisBaseDaoImpl implements RedisPostDao {
+
+    @Override
+    public boolean couldSyncWxPost(long weixinAppid) {
+        String key = RedisConstant.KEY_COUNLD_SYNC_WX_POST + weixinAppid;
+        if (exist(key)){
+            return false;
+        } else {
+            setData(key, "true", RedisConstant.EXPIRE_COULD_SYNC_WX_POST);
+            return true;
+        }
+    }
+}

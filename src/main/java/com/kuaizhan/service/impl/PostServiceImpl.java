@@ -4,6 +4,7 @@ import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.MqConfig;
 import com.kuaizhan.dao.mapper.PostDao;
+import com.kuaizhan.dao.redis.RedisPostDao;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.system.DaoException;
@@ -50,6 +51,9 @@ public class PostServiceImpl implements PostService {
 
     @Resource
     MongoPostDao mongoPostDao;
+
+    @Resource
+    RedisPostDao redisPostDao;
 
     @Resource
     AccountService accountService;
@@ -549,7 +553,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void syncWeixinPosts(long weixinAppid, long uid) {
+    public void syncWeixinPosts(long weixinAppid, long uid) throws SyncWXPostTooOftenException {
+        if (! redisPostDao.couldSyncWxPost(weixinAppid)) {
+            throw new SyncWXPostTooOftenException();
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("weixinAppid", weixinAppid);
         map.put("uid", uid);
