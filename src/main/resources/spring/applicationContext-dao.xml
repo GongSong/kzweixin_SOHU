@@ -56,7 +56,7 @@
 
 
     <!--配置mongoDB客户端集群版-->
-    <mongo:mongo-client id="mongo"  replica-set="${mongo.replicaSet}" credentials="${mongo.username}:${mongo.password}@${mongo.dbName}">
+    <mongo:mongo-client id="mongo" replica-set="${mongo.replicaSet}" credentials="${mongo.username}:${mongo.password}@${mongo.dbName}">
         <mongo:client-options
                 connections-per-host="${mongo.connectionsPerHost}"
                 min-connections-per-host="${mongo.minConnectionsPerHost}"
