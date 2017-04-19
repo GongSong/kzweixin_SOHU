@@ -16,7 +16,7 @@ case "${ENV}" in
         build_image test registry.kuaizhan.com/kuaizhan-plf/weixin-web:test
     ;;
     'pre')
-        build_image production private-registry.sohucs.com/kuaizhan-plf/weixin-web:pre
+        build_image pre private-registry.sohucs.com/kuaizhan-plf/weixin-web:pre
     ;;
     'prod')
         build_image production private-registry.sohucs.com/kuaizhan-plf/weixin-web:prod

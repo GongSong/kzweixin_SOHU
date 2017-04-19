@@ -1,4 +1,4 @@
-FROM registry.kuaizhan.com/kuaizhan-plf/java-env:latest
+FROM private-registry.sohucs.com/kuaizhan-plf/java-env:prod
 MAINTAINER "chengliu" <chengliu@sohu-inc.com>
 
 ENV PREFIX /opt/kuaizhan
