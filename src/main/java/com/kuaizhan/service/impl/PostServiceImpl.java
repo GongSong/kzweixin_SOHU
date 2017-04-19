@@ -65,7 +65,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException {
 
-        Page<PostDO> postDOPage = new Page<>(page, ApplicationConfig.PAGE_SIZE_LARGE);
+        Page<PostDO> postDOPage = new Page<>(page, ApplicationConfig.PAGE_SIZE_MIDDLE);
 
         List<PostDO> posts;
         try {
