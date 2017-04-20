@@ -2,6 +2,8 @@ package com.kuaizhan.utils;
 
 import com.kuaizhan.config.ApplicationConfig;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,11 +14,54 @@ public class UrlUtil {
 
     /**
      * 补全网址协议
-     *
-     * @param url
      */
     public static String fixProtocol(String url) {
         return url.startsWith("//") ? "http:" + url : url;
+    }
+
+    /**
+     * 删除url前后的单双引号
+     *
+     * @return
+     */
+    public static String fixQuote(String url) {
+        url = removePrefixIfExists(url,"&quot;");
+        url = removeSuffixIfExists(url, "&quot;");
+        return url;
+    }
+
+    /**
+     * 去除某字符串前缀
+     *
+     * @param str
+     * @param prefix
+     * @return
+     */
+    public static String removePrefixIfExists(String str, String prefix) {
+        if (str == null || prefix == null) return str;
+
+        if (str.startsWith(prefix)) {
+            str = str.substring(prefix.length());
+        }
+
+        return str;
+    }
+
+    /**
+     * 去除某字符串后缀
+     *
+     * @param str
+     * @param suffix
+     * @return
+     */
+    public static String removeSuffixIfExists(String str, String suffix) {
+        if (str == null || suffix == null) return str;
+
+        if (str.endsWith(suffix)) {
+            str = str.substring(0, str.lastIndexOf(suffix));
+        }
+
+        return str;
     }
 
 

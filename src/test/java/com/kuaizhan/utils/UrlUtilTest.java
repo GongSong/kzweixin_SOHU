@@ -2,8 +2,6 @@ package com.kuaizhan.utils;
 
 import org.junit.Test;
 
-import java.net.URL;
-
 import static org.junit.Assert.*;
 
 /**
@@ -12,11 +10,26 @@ import static org.junit.Assert.*;
 public class UrlUtilTest {
     @Test
     public void fixProtocol() throws Exception {
-        System.out.println("---->" + UrlUtil.fixProtocol("//www.baidu.com//fdafefdqa"));
     }
 
     @Test
     public void getPicIntranetAddress() throws Exception {
         System.out.println("---->" + UrlUtil.getPicIntranetAddress("pic.t1.com/aaa/bbb"));
     }
+
+    @Test
+    public void removeUrlPrefixIfExists() throws Exception {
+        String prefix = "prefix";
+        String content = "content" + prefix;
+        System.out.println("---->" + UrlUtil.removePrefixIfExists(prefix + content, prefix));
+        assertEquals(UrlUtil.removePrefixIfExists(prefix + content, prefix), content);
+    }
+
+    @Test
+    public void removeUrlSuffixIfExists() throws Exception {
+        String suffix = "suffix";
+        String content = suffix +"fda3vcdfasefel" + suffix;
+        assertEquals(content, UrlUtil.removeSuffixIfExists(content + suffix, suffix));
+    }
+
 }

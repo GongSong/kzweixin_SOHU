@@ -55,6 +55,8 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         // 处理没有http头的问题
 
         imgUrl = UrlUtil.fixProtocol(imgUrl);
+        imgUrl = UrlUtil.fixQuote(imgUrl);
+
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
         logger.info("[微信] 上传图片素材, address: " + address);
@@ -73,12 +75,14 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
     @Override
     public String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException, DownloadFileFailedException {
+        imgUrl = UrlUtil.fixProtocol(imgUrl);
+        imgUrl = UrlUtil.fixQuote(imgUrl);
+
         // 本来就是微信url的不再上传
         if (imgUrl.indexOf("https://mmbiz") == 0 || imgUrl.indexOf("http://mmbiz") == 0) {
             return imgUrl;
         }
 
-        imgUrl = UrlUtil.fixProtocol(imgUrl);
         // 先从redis中取
         String wxUrl = redisImageDao.getImageUrl(imgUrl);
         if (wxUrl != null) {

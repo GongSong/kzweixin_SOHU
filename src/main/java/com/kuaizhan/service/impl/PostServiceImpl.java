@@ -769,7 +769,7 @@ public class PostServiceImpl implements PostService {
                 return "(" + getKzImgUrlByWeixinImgUrl(matcher.group(1), userId) + ")";
             }
         };
-        regex = "\\((https?:\\/\\/mmbiz[^)]+)\\)";
+        regex = "\\((\"?'?https?:\\/\\/mmbiz[^)]+)\"?'?\\)";
         replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         replaceCallbackMatcher.replaceMatches(content, callback);
 
