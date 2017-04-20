@@ -16,7 +16,12 @@ public class ApplicationConfig {
     //资源读取工具
     private static final Properties PROP = PropertiesUtil.loadProps("application.properties");
 
+    // redis前缀
     public static final String REDIS_PREFIX = PropertiesUtil.getString(PROP, "redis.key.prefix");
+
+    // 快站服务
+    public static final String KZ_SERVICE_HOST = PropertiesUtil.getString(PROP, "kz.service.host");
+    public static final String KZ_SERVICE_IP = PropertiesUtil.getString(PROP, "kz.service.ip");
 
     //版本号
     public static final String VERSION = "v1";
@@ -72,7 +77,7 @@ public class ApplicationConfig {
 
     //图片上传路径
     public static String getPicUploadUrl() {
-        return "http://" + PropertiesUtil.getString(PROP, "kz.service.ip") + "/pic/service-upload-pic-by-url";
+        return "http://" + KZ_SERVICE_IP + "/pic/service-upload-pic-by-url";
     }
 
     public static String getPicHost() {
@@ -89,11 +94,6 @@ public class ApplicationConfig {
 
     public static String getPicIp(){
         return PropertiesUtil.getString(PROP, "kz.pic.ip");
-    }
-
-    // 获取PHP端service host
-    public static String getTestServiceHost() {
-        return PropertiesUtil.getString(PROP, "kz.service.host");
     }
 
     //大分页

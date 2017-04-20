@@ -46,15 +46,16 @@ public class KZPicServiceImpl implements KZPicService {
         params.put("uid", userId);
         // 指定host
         Map<String, String> headers = new HashMap<>();
-        headers.put("Host", ApplicationConfig.getTestServiceHost());
+        headers.put("Host", ApplicationConfig.KZ_SERVICE_HOST);
 
+        System.out.println("---->" + ApplicationConfig.getPicUploadUrl());
         String result = HttpClientUtil.post(ApplicationConfig.getPicUploadUrl(), params, headers);
 
         JSONObject returnJson;
         try {
             returnJson = new JSONObject(result);
         }catch (JSONException e){
-            logger.info("[上传图片到快站] 上传失败，url: " + url + " result: " + result);
+            logger.info("[上传图片到快站] 上传失败，param: " + params + "headers: " + headers + " result: " + result);
             throw new KZPicUploadException();
         }
 
@@ -62,7 +63,7 @@ public class KZPicServiceImpl implements KZPicService {
             JSONObject data = returnJson.getJSONObject("data");
             return data.getString("url");
         } else {
-            logger.info("[上传图片到快站] 上传失败，url: " + url + " result: " + returnJson);
+            logger.info("[上传图片到快站] 上传失败，param: " + params + " result: " + result);
             throw new KZPicUploadException();
         }
     }
