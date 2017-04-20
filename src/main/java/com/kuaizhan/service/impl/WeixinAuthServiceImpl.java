@@ -96,6 +96,9 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             componentAccessToken = redisAuthDao.getComponentAccessToken();
             //从缓存中拿ticket
             ticket = redisAuthDao.getComponentVerifyTicket();
+            if (ticket == null || "".equals(ticket)){
+                logger.error("获取ticket失败, ticket:" + ticket);
+            }
         } catch (Exception e) {
             throw new RedisException(e);
         }
