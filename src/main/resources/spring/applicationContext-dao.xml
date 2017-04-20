@@ -27,32 +27,6 @@
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.kuaizhan.dao.mapper"/>
     </bean>
-    <!--配置redis的连接池-->
-    <bean id="redisPool" class="org.apache.commons.pool2.impl.GenericObjectPoolConfig">
-        <property name="maxIdle" value="${redis.maxIdle}"/>
-        <property name="maxTotal" value="${redis.maxTotal}"/>
-        <property name="minIdle" value="${redis.minIdle}"/>
-        <property name="maxWaitMillis" value="${redis.maxWait}"/>
-        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
-    </bean>
-    <!-- 配置redis客户端集群版 -->
-    <bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
-        <constructor-arg>
-            <set>
-                <bean class="redis.clients.jedis.HostAndPort">
-                    <constructor-arg name="host" value="${redis.host1}"/>
-                    <constructor-arg name="port" value="${redis.port1}"/>
-                </bean>
-                <bean class="redis.clients.jedis.HostAndPort">
-                    <constructor-arg name="host" value="${redis.host2}"/>
-                    <constructor-arg name="port" value="${redis.port2}"/>
-                </bean>
-            </set>
-        </constructor-arg>
-        <!--设置超时时间-->
-        <constructor-arg index="1" value="${redis.timeout}"/>
-        <constructor-arg type="org.apache.commons.pool2.impl.GenericObjectPoolConfig" ref="redisPool"/>
-    </bean>
 
 
     <!--配置mongoDB客户端集群版-->

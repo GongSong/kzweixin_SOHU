@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--配置redis的连接池-->
+    <bean id="redisPool" class="org.apache.commons.pool2.impl.GenericObjectPoolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="maxTotal" value="${redis.maxTotal}"/>
+        <property name="minIdle" value="${redis.minIdle}"/>
+        <property name="maxWaitMillis" value="${redis.maxWait}"/>
+        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+    </bean>
+    <!-- 配置redis客户端集群版 -->
+    <bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+        <constructor-arg name="node">
+            <bean class="redis.clients.jedis.HostAndPort">
+                <constructor-arg name="host" value="${redis.host}"/>
+                <constructor-arg name="port" value="${redis.port}"/>
+            </bean>
+        </constructor-arg>
+        <!--设置超时时间-->
+        <constructor-arg name="connectionTimeout" value="${redis.timeout}"/>
+        <constructor-arg name="soTimeout" value="${redis.timeout}"/>
+        <constructor-arg name="maxAttempts" value="3"/>
+        <constructor-arg name="password" value="${redis.password}"/>
+        <constructor-arg name="poolConfig" type="org.apache.commons.pool2.impl.GenericObjectPoolConfig" ref="redisPool"/>
+    </bean>
+</beans>
