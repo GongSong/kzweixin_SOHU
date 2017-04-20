@@ -2,8 +2,6 @@ package com.kuaizhan.utils;
 
 import com.kuaizhan.config.ApplicationConfig;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
