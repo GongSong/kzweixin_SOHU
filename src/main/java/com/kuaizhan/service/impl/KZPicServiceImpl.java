@@ -63,7 +63,7 @@ public class KZPicServiceImpl implements KZPicService {
             JSONObject data = returnJson.getJSONObject("data");
             return data.getString("url");
         } else {
-            logger.info("[上传图片到快站] 上传失败，param: " + params + " result: " + result);
+            logger.info("[上传图片到快站] 上传失败，param: " + params + "headers: " + headers + " result: " + result);
             throw new KZPicUploadException();
         }
     }
