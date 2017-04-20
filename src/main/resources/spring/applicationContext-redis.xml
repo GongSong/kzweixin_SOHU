@@ -4,7 +4,7 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!--集群测试-->
+    <!--集群连接-->
     <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" p:usePool="true">
         <constructor-arg name="clusterConfig">
             <bean class="org.springframework.data.redis.connection.RedisClusterConfiguration">

@@ -129,8 +129,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         //检查缓存
         try {
             String preAuthCode = redisAuthDao.getPreAuthCode();
-            // TODO: 简化判断
-            if (redisAuthDao != null && ! "".equals(preAuthCode)) {
+            if (preAuthCode != null && ! "".equals(preAuthCode)) {
                 return preAuthCode;
             }
         } catch (Exception e) {
