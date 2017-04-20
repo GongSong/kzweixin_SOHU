@@ -38,17 +38,6 @@ public class RedisAuthDaoImpl extends RedisBaseDaoImpl implements RedisAuthDao {
         setData(RedisConstant.KEY_WEIXIN_COMPONENT_ACCESS_TOKEN, componentAccessToken, 110 * 60);
     }
 
-
-    @Override
-    public boolean existComponentAccessToken() {
-        return exist(RedisConstant.KEY_WEIXIN_COMPONENT_ACCESS_TOKEN);
-    }
-
-    @Override
-    public boolean equalComponentAccessToken(String componentAccessToken) {
-        return equal(RedisConstant.KEY_WEIXIN_COMPONENT_ACCESS_TOKEN, componentAccessToken);
-    }
-
     @Override
     public String getPreAuthCode() {
         return getData(RedisConstant.KEY_WEIXIN_PRE_AUTH_CODE);
@@ -58,16 +47,4 @@ public class RedisAuthDaoImpl extends RedisBaseDaoImpl implements RedisAuthDao {
     public void setPreAuthCode(String preAuthCode) {
         setData(RedisConstant.KEY_WEIXIN_PRE_AUTH_CODE, preAuthCode, 19 * 60);
     }
-
-    @Override
-    public boolean existPreAuthCode() {
-        return exist(RedisConstant.KEY_WEIXIN_PRE_AUTH_CODE);
-    }
-
-    @Override
-    public boolean equalPreAuthCode(String preAuthCode) {
-        return equal(RedisConstant.KEY_WEIXIN_PRE_AUTH_CODE, preAuthCode);
-    }
-
-
 }

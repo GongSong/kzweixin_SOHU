@@ -70,15 +70,4 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
             setData(RedisConstant.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId, jsonObject.toString(), 2 * 60 * 60);
         }
     }
-
-    @Override
-    public void deleteAccessToken(long weixinAppId) {
-        deleteData(RedisConstant.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId);
-    }
-
-    @Override
-    public boolean equalAccessToken(long weixinAppId, String accessToken) {
-        return equal(RedisConstant.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId, accessToken);
-    }
-
 }

@@ -13,7 +13,9 @@ public class RedisPostDaoImpl extends RedisBaseDaoImpl implements RedisPostDao {
     @Override
     public boolean couldSyncWxPost(long weixinAppid) {
         String key = RedisConstant.KEY_COUNLD_SYNC_WX_POST + weixinAppid;
-        if (exist(key)){
+
+        String val = getData(key);
+        if (val != null && ! "".equals(val)){
             return false;
         } else {
             setData(key, "true", RedisConstant.EXPIRE_COULD_SYNC_WX_POST);

@@ -26,8 +26,4 @@ public interface RedisAccountDao {
     String getAccessToken(long weixinAppId);
 
     void setAccessToken(long weixinAppId,AuthorizationInfoDTO authorizationInfoDTO);
-
-    void deleteAccessToken(long weixinAppId);
-
-    boolean equalAccessToken(long weixinAppId,String accessToken);
 }

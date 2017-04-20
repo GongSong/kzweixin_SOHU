@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Created by liangjiateng on 2017/3/15.
@@ -127,8 +128,10 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     public String getPreAuthCode(String componentAccessToken) throws RedisException, JsonParseException {
         //检查缓存
         try {
-            if (redisAuthDao.existPreAuthCode()) {
-                return redisAuthDao.getPreAuthCode();
+            String preAuthCode = redisAuthDao.getPreAuthCode();
+            // TODO: 简化判断
+            if (redisAuthDao != null && ! "".equals(preAuthCode)) {
+                return preAuthCode;
             }
         } catch (Exception e) {
             throw new RedisException(e);
@@ -146,8 +149,11 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         }
         //存缓存
         try {
-            if (!redisAuthDao.equalPreAuthCode(preAuthCode))
+            // 不相等则存
+            String oldPreAuthCode = redisAuthDao.getPreAuthCode();
+            if (!Objects.equals(oldPreAuthCode, preAuthCode)){
                 redisAuthDao.setPreAuthCode(preAuthCode);
+            }
         } catch (Exception e) {
             throw new RedisException(e);
         }

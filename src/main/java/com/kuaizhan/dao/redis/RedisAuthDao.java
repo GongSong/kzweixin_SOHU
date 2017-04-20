@@ -13,17 +13,7 @@ public interface RedisAuthDao {
 
     void setComponentAccessToken(String componentAccessToken);
 
-    boolean existComponentAccessToken();
-
-    boolean equalComponentAccessToken(String componentAccessToken);
-
     String getPreAuthCode();
 
     void setPreAuthCode(String preAuthCode);
-
-    boolean existPreAuthCode();
-
-    boolean equalPreAuthCode(String preAuthCode);
-
-
 }

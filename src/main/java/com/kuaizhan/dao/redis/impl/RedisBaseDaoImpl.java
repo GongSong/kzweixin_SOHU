@@ -13,24 +13,8 @@ public abstract class RedisBaseDaoImpl {
     @Resource
     private RedisUtil redisUtil;
 
-
-    protected boolean exist(String key) {
-        return redisUtil.exists(key);
-    }
-
-
-    protected boolean exist(String key, String field) {
-        return redisUtil.exists(key, field);
-    }
-
-
     protected long getTtl(String key) {
         return redisUtil.getTtl(key);
-    }
-
-
-    protected boolean equal(String key, String str) {
-        return redisUtil.equal(key, str);
     }
 
 
@@ -39,9 +23,9 @@ public abstract class RedisBaseDaoImpl {
     }
 
 
-    protected void setData(String key, String field, String value, int expire) {
-        redisUtil.setHash(key, field, value);
-        redisUtil.setTimeout(key, expire);
+    protected void setData(String key, String hashKey, String value, int expire) {
+        redisUtil.setHash(key, hashKey, value);
+        redisUtil.expire(key, expire);
     }
 
 
