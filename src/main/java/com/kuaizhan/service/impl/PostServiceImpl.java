@@ -766,14 +766,15 @@ public class PostServiceImpl implements PostService {
         callback = new ReplaceCallbackMatcher.Callback() {
             @Override
             public String getReplacement(Matcher matcher) throws Exception {
-                logger.debug("----> groupCount: " + matcher.groupCount() + " group1: " + matcher.group(1));
-                return "url(" + getKzImgUrlByWeixinImgUrl(matcher.group(1), userId) + ")";
+                logger.debug("----> goupCount:" + matcher.groupCount());
+                String result = "url(" + getKzImgUrlByWeixinImgUrl(matcher.group(1), userId) + ")";
+                logger.debug("----> origin: " + matcher.group(0) + " result:" + result);
+                return result;
             }
         };
-        logger.debug("content: " + content);
         regex = "url\\(\"?'?(?:&quot;)?(https?:\\/\\/mmbiz[^)]+?)(?:&quot;)?\"?'?\\)";
         replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
-        replaceCallbackMatcher.replaceMatches(content, callback);
+        content = replaceCallbackMatcher.replaceMatches(content, callback);
 
         return content;
     }

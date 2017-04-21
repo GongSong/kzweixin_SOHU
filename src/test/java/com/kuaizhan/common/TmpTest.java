@@ -2,10 +2,7 @@ package com.kuaizhan.common;
 
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
 import org.junit.Test;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
 
-import java.net.URI;
 import java.util.regex.Matcher;
 
 /**
@@ -16,14 +13,16 @@ public class TmpTest {
 
     @Test
     public void test() throws Exception {
-        String content = "url('&quot;http://mmbiz.qpic.cn/&quot;mmbiz_png/Ipanel6KSKO6yRR3CwbickSMZarcdTzP1t7M0JlB1ZkhoCnzLiaS2OXFw9m8x6NseL08JxCPgqAxCic8ZeVuHrFEQ/0?wx_fmt=png&quot;\")";
+        String content = "我是多余的内容你听过url('&quot;http://mmbiz.qpic.cn/&quot;mmbiz_png/Ipanel6KSKO6yRR3CwbickSMZarcdTzP1t7M0JlB1ZkhoCnzLiaS2OXFw9m8x6NseL08JxCPgqAxCic8ZeVuHrFEQ/0?wx_fmt=png&quot;\")hahdfa";
         // 背景图中的微信图片转成快站链接
         ReplaceCallbackMatcher.Callback callback = new ReplaceCallbackMatcher.Callback() {
             @Override
             public String getReplacement(Matcher matcher) throws Exception {
-                System.out.println("---->" + matcher.groupCount());
-                System.out.println("---->" + matcher.group(1));
-                return "url(" + "被替换的url" + ")";
+
+                System.out.println("----> goupCount:" + matcher.groupCount());
+                String result = "url(" + "被替换的url" + ")";
+                System.out.println("----> origin: " + matcher.group(0) + " result:" + result);
+                return result;
             }
         };
         String regex = "url\\(\"?'?(?:&quot;)?(https?:\\/\\/mmbiz[^)]+?)(?:&quot;)?\"?'?\\)";
