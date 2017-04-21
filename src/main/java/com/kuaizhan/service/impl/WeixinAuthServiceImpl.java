@@ -171,6 +171,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             jsonObject.put("component_appid", componentAppId);
             jsonObject.put("authorization_code", authCode);
             String result = HttpClientUtil.postJson(ApiConfig.getQueryAuthUrl(componentAccessToken), jsonObject.toString());
+            // TODO: 此处有NPE问题
             JSONObject jsonObject1 = new JSONObject(result);
             result = jsonObject1.get("authorization_info").toString();
             //反序列化

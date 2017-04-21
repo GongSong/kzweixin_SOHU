@@ -13,6 +13,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
+import sun.rmi.runtime.Log;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -28,6 +30,7 @@ import java.util.Map;
 public final class HttpClientUtil {
 
 
+    private static final Logger logger = Logger.getLogger(HttpClientUtil.class);
     private static final String CHARSET_UTF_8 = "UTF-8";
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String CONTENT_TYPE_FILE = "multipart/form-data";
@@ -113,7 +116,7 @@ public final class HttpClientUtil {
             try {
                 stringEntity = new StringEntity(jsonStr, "UTF-8");
             } catch (Exception e) {
-
+                logger.error("[HttpClientUtil.postJson] utf-8解码失败", e);
                 return null;
             }
             httpPost.setHeader("Content-Type", CONTENT_TYPE_JSON);
