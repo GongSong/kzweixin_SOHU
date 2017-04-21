@@ -10,4 +10,8 @@ public class KZPicUploadException extends BaseException {
     public KZPicUploadException() {
         super(ErrorCodeConfig.KZPIC_UPLOAD_ERROR.getCode(), ErrorCodeConfig.KZPIC_UPLOAD_ERROR.getMsg());
     }
+
+    public KZPicUploadException(String msg) {
+        super(ErrorCodeConfig.KZPIC_UPLOAD_ERROR.getCode(), msg);
+    }
 }
