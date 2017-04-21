@@ -24,7 +24,9 @@ public class UrlUtil {
      */
     public static String fixQuote(String url) {
         url = removePrefixIfExists(url,"&quot;");
+        url = removePrefixIfExists(url,"\"");
         url = removeSuffixIfExists(url, "&quot;");
+        url = removeSuffixIfExists(url, "\"");
         return url;
     }
 

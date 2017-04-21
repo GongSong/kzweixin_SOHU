@@ -32,4 +32,10 @@ public class UrlUtilTest {
         assertEquals(content, UrlUtil.removeSuffixIfExists(content + suffix, suffix));
     }
 
+    @Test
+    public void fixQuote() throws Exception{
+        String tmp = "http:haha.com";
+        assertEquals(tmp, UrlUtil.fixQuote("\"" + tmp + "\""));
+    }
+
 }
