@@ -14,6 +14,9 @@ public class UrlUtil {
      * 补全网址协议
      */
     public static String fixProtocol(String url) {
+        if (url == null){
+            return null;
+        }
         return url.startsWith("//") ? "http:" + url : url;
     }
 

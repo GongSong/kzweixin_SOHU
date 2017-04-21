@@ -766,7 +766,7 @@ public class PostServiceImpl implements PostService {
         callback = new ReplaceCallbackMatcher.Callback() {
             @Override
             public String getReplacement(Matcher matcher) throws Exception {
-                logger.debug("----> goupCount:" + matcher.groupCount());
+                logger.debug("----> groupCount:" + matcher.groupCount());
                 String result = "url(" + getKzImgUrlByWeixinImgUrl(matcher.group(1), userId) + ")";
                 logger.debug("----> origin: " + matcher.group(0) + " result:" + result);
                 return result;

@@ -4,6 +4,7 @@ import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.business.KZPicUploadException;
 import com.kuaizhan.service.KZPicService;
 import com.kuaizhan.utils.HttpClientUtil;
+import com.kuaizhan.utils.UrlUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +61,7 @@ public class KZPicServiceImpl implements KZPicService {
 
         if (returnJson.getInt("ret") == 0) {
             JSONObject data = returnJson.getJSONObject("data");
-            return data.getString("url");
+            return UrlUtil.fixProtocol(data.getString("url"));
         } else {
             String msg = "[上传图片到快站] 上传失败，url: " +  ApplicationConfig.getPicUploadUrl() + " param: " + params + "headers: " + headers + " result: " + result;
             throw new KZPicUploadException(msg);
