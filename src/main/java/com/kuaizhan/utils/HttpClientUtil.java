@@ -14,7 +14,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import sun.rmi.runtime.Log;
 
 import java.io.*;
 import java.net.HttpURLConnection;
