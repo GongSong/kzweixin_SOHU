@@ -15,10 +15,10 @@ public class PostDO {
     private String  thumbMediaId;
     private String thumbUrl;
     private Short showCoverPic;
-    private String author; //1
-    private String digest; //1
+    private String author;
+    private String digest;
     private String postUrl = "";
-    private String contentSourceUrl; //1
+    private String contentSourceUrl;
     private String mediaId;
     private Integer syncTime;
     private Short type; // 1.单图文 2. 多图文总记录 3.多图文中的一条
@@ -26,5 +26,5 @@ public class PostDO {
     private Short status; //1 为正常发布，2 为删除
     private Integer createTime;
     private Integer updateTime;
-    private String content; //图文信息中的内容含有标签
+    private String content; //图文的内容
 }

@@ -128,7 +128,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePostReal(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException {
-        // TODO: 怎么优雅的清楚与deletePost的重复代码
+        // TODO: 怎么优雅的清除与deletePost的重复代码
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             String mediaId = postDO.getMediaId();
@@ -400,11 +400,9 @@ public class PostServiceImpl implements PostService {
 
         // 1. 单图文 2. 多图文总记录 3. 多图文中的一条
         short type = (short) (posts.size() > 1 ? 3 : 1);
-        int index = 0;
-        StringBuilder sumTitle = new StringBuilder(); // 把title拼接起来，保存多图文总记录里面
-        for (PostDO postDO : posts) {
 
-            sumTitle.append(postDO.getTitle());
+        int index = 0;
+        for (PostDO postDO : posts) {
 
             // 没有指定pageId, 则生成
             if (postDO.getPageId() == null || postDO.getPageId() == 0) {
@@ -424,19 +422,26 @@ public class PostServiceImpl implements PostService {
         if (posts.size() > 1) {
 
             PostDO sumPost = new PostDO();
-            // 生成pageId
-            sumPost.setPageId(IdGeneratorUtil.getID());
-            // 多图文根据mediaId表示是一组图文
-            sumPost.setMediaId(posts.get(0).getMediaId());
+            // 有效数据
             sumPost.setWeixinAppid(weixinAppid);
-            sumPost.setTitle(sumTitle.toString());
-            sumPost.setThumbMediaId(posts.get(0).getThumbMediaId());
-            sumPost.setThumbUrl(posts.get(0).getThumbUrl());
-            sumPost.setShowCoverPic(posts.get(0).getShowCoverPic());
-            sumPost.setAuthor(posts.get(0).getAuthor());
-            sumPost.setDigest(posts.get(0).getDigest());
-            sumPost.setContentSourceUrl(posts.get(0).getContentSourceUrl());
+            sumPost.setPageId(IdGeneratorUtil.getID());
             sumPost.setType((short) 2);
+            sumPost.setIndex(0);
+            sumPost.setMediaId(posts.get(0).getMediaId());
+            // 把title拼接起来，保存多图文总记录里面
+            StringBuilder sumTitle = new StringBuilder();
+            for (PostDO postDO : posts) {
+                sumTitle.append(postDO.getTitle());
+            }
+            sumPost.setTitle(sumTitle.toString());
+
+            // 无效数据
+            sumPost.setThumbMediaId("");
+            sumPost.setThumbUrl("");
+            sumPost.setAuthor("");
+            sumPost.setDigest("");
+            sumPost.setContentSourceUrl("");
+            sumPost.setShowCoverPic((short) 0);
 
             postDao.insertPost(sumPost);
         }
