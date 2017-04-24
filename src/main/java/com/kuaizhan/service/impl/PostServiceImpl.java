@@ -387,6 +387,9 @@ public class PostServiceImpl implements PostService {
 
             // 清除封面尺寸---"/imageView/v1/thumbnail"
             postDO.setThumbUrl(postDO.getThumbUrl().replaceAll("/imageView/v1/thumbnail.*$", ""));
+            if (postDO.getShowCoverPic() == null){
+                postDO.setShowCoverPic((short) 0);
+            }
         }
 
         return posts;
