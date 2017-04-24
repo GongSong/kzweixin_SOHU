@@ -20,13 +20,16 @@
     <rabbit:queue id="queueImportWeixinPostList" name="sys-kzweixin-import-weixin-post-list" durable="true" auto-delete="false" />
     <!-- 从微信导入单条文章的queue -->
     <rabbit:queue id="queueImportWeixinPost" name="sys-kzweixin-import-weixin-post" durable="true" auto-delete="false" />
+    <!-- 数据迁移的queue -->
+    <rabbit:queue id="queueDataMigration" name="sys-kzweixin-data-migration" durable="true" auto-delete="false" />
 
-    <!-- Exchange的声明 -->
+    <!-- Exchange的声明和绑定 -->
     <rabbit:direct-exchange id="directExchange" name="${rabbit.exchange}" durable="true" auto-delete="false">
         <rabbit:bindings>
             <rabbit:binding queue="queueImportKuaizhanPost" key="sys-kzweixin-import-kuaizhan-post"/>
             <rabbit:binding queue="queueImportWeixinPostList" key="sys-kzweixin-import-weixin-post-list" />
             <rabbit:binding queue="queueImportWeixinPost" key="sys-kzweixin-import-weixin-post" />
+            <rabbit:binding queue="queueDataMigration" key="sys-kzweixin-data-migration" />
         </rabbit:bindings>
     </rabbit:direct-exchange>
 

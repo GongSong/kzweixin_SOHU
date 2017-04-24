@@ -12,4 +12,6 @@ public class MqConfig {
     public static final String IMPORT_WEIXIN_POST_LIST = "sys-kzweixin-import-weixin-post-list";
     //从微信文章导入
     public static final String IMPORT_WEIXIN_POST = "sys-kzweixin-import-weixin-post";
+    //数据迁移(临时)
+    public static final String DATA_MIGRATION = "sys-kzweixin-data-migration";
 }
