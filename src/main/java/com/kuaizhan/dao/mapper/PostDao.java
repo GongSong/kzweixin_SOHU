@@ -82,11 +82,5 @@ public interface PostDao {
      * @return
      */
     List<String> listMediaIdsByWeixinAppid(long weixinAppid);
-
-    /**
-     * 为迁移数据而存在，待删除
-     * @return
-     */
-    List<Long> listPageId();
 }
 

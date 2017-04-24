@@ -144,10 +144,4 @@
         WHERE `weixin_appid` = #{weixinAppid} AND `media_id` = #{mediaId} AND `status` = 1
     </select>
 
-    <!--TODO: 为迁移数据而存在，待删除-->
-    <select id="listPageId" resultType="Long">
-        SELECT page_id
-        FROM weixin_post
-    </select>
-
 </mapper>
