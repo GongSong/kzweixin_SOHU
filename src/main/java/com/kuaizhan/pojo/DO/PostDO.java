@@ -17,7 +17,6 @@ public class PostDO {
     private Short showCoverPic;
     private String author;
     private String digest;
-    private String postUrl = "";
     private String contentSourceUrl;
     private String mediaId;
     private Integer syncTime;

@@ -16,8 +16,8 @@ public class PojoSwitcher {
         if (postDO == null) {
             return null;
         }
-
         PostVO postVO = new PostVO();
+
         postVO.setPageId(postDO.getPageId());
         postVO.setMediaId(postDO.getMediaId());
         postVO.setTitle(postDO.getTitle());
@@ -27,6 +27,7 @@ public class PojoSwitcher {
         postVO.setThumbUrl(postDO.getThumbUrl());
         postVO.setThumbMediaId(postDO.getThumbMediaId());
         postVO.setContentSourceUrl(postDO.getContentSourceUrl());
+        postVO.setShowCoverPic(postDO.getShowCoverPic());
         postVO.setUpdateTime(postDO.getUpdateTime());
         return postVO;
     }

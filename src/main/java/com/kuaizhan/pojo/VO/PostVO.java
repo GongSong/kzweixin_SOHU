@@ -16,5 +16,6 @@ public class PostVO {
     private String thumbUrl;
     private String thumbMediaId;
     private String contentSourceUrl;
+    private Short showCoverPic;
     private Integer updateTime;
 }
