@@ -91,13 +91,9 @@ public class PostServiceImpl implements PostService {
             throw new DaoException(e);
         }
 
-        try {
-            // 从Mongo中取content
-            for (PostDO postDO : multiPosts) {
-                postDO.setContent(getPostContent(postDO.getPageId()));
-            }
-        } catch (Exception e) {
-            throw new MongoException(e);
+        // 从Mongo中取content
+        for (PostDO postDO : multiPosts) {
+            postDO.setContent(getPostContent(postDO.getPageId()));
         }
 
         return multiPosts;
@@ -177,14 +173,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public String getPostContent(long pageId) throws MongoException {
+    public String getPostContent(long pageId) {
         // 先从mongo中获取
         String content;
-        try {
-            content = mongoPostDao.getContentById(pageId);
-        } catch (Exception e) {
-            throw new MongoException(e);
-        }
+        content = mongoPostDao.getContentById(pageId);
+
         // 从mongo中获取不到，则从接口中获取，并写入mongo
         if (content == null) {
             Map<String, String> headers = new HashMap<>();
@@ -236,15 +229,12 @@ public class PostServiceImpl implements PostService {
             param.put("post_title", postDO.getTitle());
             param.put("post_desc", postDO.getDigest());
             param.put("pic_url", UrlUtil.fixProtocol(postDO.getThumbUrl()));
-            try {
-                param.put("post_content", getPostContent(pageId));
-            } catch (Exception e) {
-                throw new MongoException(e);
-            }
+            param.put("post_content", getPostContent(pageId));
+
             String ret = HttpClientUtil.post(ApiConfig.kzPostArticleUrl(), param);
             JSONObject returnJson = new JSONObject(ret);
             if (returnJson.getInt("ret") != 0) {
-                logger.error("[同步到快站文章失败]param:" + param + "return: " + returnJson);
+                logger.error("[同步到快站文章失败] pageId: " + pageId + "return: " + returnJson);
                 throw new KZPostAddException();
             }
         }
