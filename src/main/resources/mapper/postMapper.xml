@@ -93,8 +93,15 @@
         `kuaizhan_post_id`=0,
         `status`=1,
         `sync_time`=unix_timestamp(now()),
-        `create_time`=unix_timestamp(now()),
-        `update_time`=unix_timestamp(now());
+        <choose>
+            <when test="post.updateTime != null">
+                `update_time`=#{post.updateTime},
+            </when>
+            <otherwise>
+                `update_time`=unix_timestamp(now()),
+            </otherwise>
+        </choose>
+        `create_time`=unix_timestamp(now());
     </insert>
 
     <!--修改图文-->

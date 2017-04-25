@@ -38,19 +38,19 @@ public class WeixinPostConsumerTest {
 
     @Test
     public void onMessage() throws Exception {
-        PostDTO.PostItem postItem = new PostDTO.PostItem();
-        PostDTO.Item item = new PostDTO.Item();
-        PostDTO.Item.Content content = new PostDTO.Item.Content();
-        item.setContent(content);
-        item.setMediaId("asdfasdf");
-        item.setUpdateTime("DFASDF");
-        postItem.setItem(item);
-        postItem.setWeixinAppid(1123123);
-        Map<String, Object> message = new HashMap<>();
-        message.put("userId", 123456L);
-        String postItemJson = JsonUtil.bean2String(postItem);
-        message.put("postItem", postItemJson);
-        mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, message);
+//        PostDTO.PostItem postItem = new PostDTO.PostItem();
+//        PostDTO.Item item = new PostDTO.Item();
+//        PostDTO.Item.Content content = new PostDTO.Item.Content();
+//        item.setContent(content);
+//        item.setMediaId("asdfasdf");
+//        item.setUpdateTime("DFASDF");
+//        postItem.setItem(item);
+//        postItem.setWeixinAppid(1123123);
+//        Map<String, Object> message = new HashMap<>();
+//        message.put("userId", 123456L);
+//        String postItemJson = JsonUtil.bean2String(postItem);
+//        message.put("postItem", postItemJson);
+//        mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, message);
     }
 
 }

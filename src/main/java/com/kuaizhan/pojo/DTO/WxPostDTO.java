@@ -1,5 +1,6 @@
 package com.kuaizhan.pojo.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -7,6 +8,7 @@ import lombok.Data;
  * Created by zixiong on 2017/4/25.
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WxPostDTO {
 
     @JsonProperty("title")

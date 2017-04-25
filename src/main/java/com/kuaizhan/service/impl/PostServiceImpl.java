@@ -567,6 +567,8 @@ public class PostServiceImpl implements PostService {
         // 将微信返回的文章处理为数据库存储的图文
         List<PostDO> postDOList = new LinkedList<>();
         List<PostDTO.Item.Content.NewsItem> newsItems = postItem.getItem().getContent().getNewsItems();
+        int updateTime = postItem.getItem().getUpdateTime();
+        logger.info("----> updateTime" + updateTime);
         int key = 0;
         for (PostDTO.Item.Content.NewsItem newsItem : newsItems) {
             PostDO postDO = new PostDO();
@@ -596,9 +598,7 @@ public class PostServiceImpl implements PostService {
             // 图文mediaId
             postDO.setMediaId(postItem.getItem().getMediaId());
             // 更新时间
-            postDO.setUpdateTime(DateUtil.timestampSec());
-            // 同步时间
-            postDO.setSyncTime(DateUtil.timestampSec());
+            postDO.setUpdateTime(updateTime);
             // 状态
             postDO.setStatus((short) 1);
 
