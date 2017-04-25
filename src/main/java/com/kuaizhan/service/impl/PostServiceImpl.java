@@ -234,7 +234,7 @@ public class PostServiceImpl implements PostService {
             String ret = HttpClientUtil.post(ApiConfig.kzPostArticleUrl(), param);
             JSONObject returnJson = new JSONObject(ret);
             if (returnJson.getInt("ret") != 0) {
-                logger.error("[同步到快站文章失败] pageId: " + pageId + "return: " + returnJson);
+                logger.error("[同步到快站文章失败] pageId: " + pageId + "return: " + returnJson + " param:" + param);
                 throw new KZPostAddException();
             }
         }
