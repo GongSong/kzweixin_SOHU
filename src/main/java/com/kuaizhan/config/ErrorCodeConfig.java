@@ -71,6 +71,8 @@ public enum ErrorCodeConfig {
 
     SYNC_WX_POST_TOO_OFTEN_ERROR(107008, "同步微信图文太频繁(3分钟一次)"),
 
+    POST_DELETED_IN_WEIXIN(107009, "图文在微信后台被删除"),
+
     //KZPic(08)
     KZPIC_UPLOAD_ERROR(108001, "上传至KZPic失败");
 
