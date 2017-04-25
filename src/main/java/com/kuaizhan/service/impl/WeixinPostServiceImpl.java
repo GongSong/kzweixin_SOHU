@@ -7,6 +7,7 @@ import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
@@ -19,10 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -175,7 +173,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         jsonObject.put("type", "news");
         jsonObject.put("offset", offset);
         jsonObject.put("count", count);
-        String result = HttpClientUtil.postJson(WxApiConfig.getMaterial(accessToken), jsonObject.toString());
+        String result = HttpClientUtil.postJson(WxApiConfig.getBatchMaterialUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
             logger.error("[微信获取素材错误], param: " + jsonObject + " result: " +returnJson);
@@ -185,6 +183,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
             PostDTO postDTO = JsonUtil.<PostDTO>string2Bean(result, PostDTO.class);
             return postDTO;
         } catch (IOException e) {
+            // FIXME: 这么搞，有效错误信息都丢失啦
             throw new MaterialGetException();
         }
     }
@@ -207,5 +206,32 @@ public class WeixinPostServiceImpl implements WeixinPostService {
             }
         }
         return postDTOList;
+    }
+
+    @Override
+    public List<WxPostDTO> getWxPost(String mediaId, String accessToken) throws WxPostDeletedException {
+        List<WxPostDTO> wxPostDTOS = new ArrayList<>();
+
+        JSONObject params = new JSONObject();
+        params.put("media_id", mediaId);
+        String result = HttpClientUtil.postJson(WxApiConfig.getMaterialUrl(accessToken), params.toString());
+        JSONObject returnJson = new JSONObject(result);
+
+        if (returnJson.optInt("errcode") == 40007) {
+            throw new WxPostDeletedException();
+        }
+
+        JSONArray postArray = returnJson.getJSONArray("news_item");
+        for (int i = 0; i < postArray.length(); i++) {
+            JSONObject jsonObject = postArray.getJSONObject(i);
+            WxPostDTO wxPostDTO;
+            try {
+                wxPostDTO = JsonUtil.string2Bean(jsonObject.toString(), WxPostDTO.class);
+            } catch (IOException e) {
+                throw new RuntimeException("序列化wxPostDTO失败", e);
+            }
+            wxPostDTOS.add(wxPostDTO);
+        }
+        return wxPostDTOS;
     }
 }

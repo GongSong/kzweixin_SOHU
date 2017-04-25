@@ -292,7 +292,7 @@
 
         ```
         {
-         "wx_url": "http://mq.weixin.com/xxx"
+         "wxUrl": "http://mq.weixin.com/xxx"
         }
         ```
         

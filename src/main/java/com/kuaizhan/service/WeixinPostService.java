@@ -4,6 +4,7 @@ import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostDTO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,4 +67,10 @@ public interface WeixinPostService {
      * @throws MaterialGetException
      */
     List<PostDTO> listAllPosts(String accessToken) throws MaterialGetException;
+
+
+    /**
+     * 根据mediaId获取微信图文
+     */
+    List<WxPostDTO> getWxPost(String mediaId, String accessToken) throws WxPostDeletedException;
 }

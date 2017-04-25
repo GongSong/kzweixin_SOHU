@@ -11,6 +11,7 @@ import com.kuaizhan.param.WxSyncsPostParam;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.pojo.VO.PostListVO;
 import com.kuaizhan.pojo.VO.PostVO;
@@ -26,6 +27,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -230,4 +232,14 @@ public class PostController extends BaseController {
         return new JsonResponse(result);
     }
 
+    @RequestMapping(value = "/posts/{pageId}/wx_url", method = RequestMethod.GET)
+    public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) throws MongoException, DaoException, RedisException, AccountNotExistException, WxPostDeletedException {
+        PostDO postDO = postService.getPostByPageId(pageId);
+        List<WxPostDTO> wxPostDTOS = weixinPostService.getWxPost(postDO.getMediaId(), accountService.getAccessToken(weixinAppid));
+        String wxUrl = wxPostDTOS.get(postDO.getIndex()).getUrl();
+
+        Map<String ,String> result = new HashMap<>();
+        result.put("wxUrl", wxUrl);
+        return new JsonResponse(result);
+    }
 }

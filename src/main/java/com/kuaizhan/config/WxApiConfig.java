@@ -236,7 +236,9 @@ public class WxApiConfig {
     //获取素材总数
     private static final String WEIXIN_GET_MATERIAL_COUNT = "/cgi-bin/material/get_materialcount?access_token=";
     //获取素材列表
-    private static final String WEIXIN_GET_MATERIAL = "/cgi-bin/material/batchget_material?access_token=";
+    private static final String WEIXIN_BATCH_GET_MATERIAL = "/cgi-bin/material/batchget_material?access_token=";
+    // 获取素材
+    private static final String WEIXIN_GET_MATERIAL = "/cgi-bin/material/get_material?access_token=";
 
     // 图文
     // 上传多图文
@@ -278,15 +280,16 @@ public class WxApiConfig {
         return DOMAIN_WEIXIN_API + WEIXIN_GET_MATERIAL_COUNT + accessToken;
     }
 
-    /**
-     * 获取素材列表
-     *
-     * @param accessToken
-     * @return
-     */
-    public static String getMaterial(String accessToken) {
+    // 获取素材列表
+    public static String getBatchMaterialUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_BATCH_GET_MATERIAL + accessToken;
+    }
+
+    // 获取素材
+    public static String getMaterialUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_GET_MATERIAL + accessToken;
     }
+
 
     public static String getCreatePostsUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_CREATE_POSTS + accessToken;
