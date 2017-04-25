@@ -1,7 +1,7 @@
 package com.kuaizhan.service.impl;
 
 
-import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.dao.mapper.MsgDao;
 import com.kuaizhan.dao.redis.RedisMsgDao;
@@ -14,6 +14,7 @@ import com.kuaizhan.pojo.DO.MsgDO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.WeixinMsgService;
+import com.kuaizhan.utils.DBTableUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class MsgServiceImpl implements MsgService {
         if (keyword == null) {
             keyword = "";
         }
-        List<String> tableNames = ApplicationConfig.getMsgTableNames();
+        List<String> tableNames = DBTableUtil.getMsgTableNames();
         long total = 0;
         try {
             List<Long> counts = msgDao.count(appId, sendType, status, keyword, isHide, tableNames);
@@ -59,7 +60,7 @@ public class MsgServiceImpl implements MsgService {
         if (keyword == null)
             keyword = "";
         String field = "page:" + page + "keyword:" + keyword + "isHide:" + isHide;
-        Page<MsgDO> pagingResult = new Page<>(page, ApplicationConfig.PAGE_SIZE_LARGE);
+        Page<MsgDO> pagingResult = new Page<>(page, AppConstant.PAGE_SIZE_LARGE);
         pagingResult.setTotalCount(countMsg(appId, 2, 1, keyword, isHide));
 
         //从redis拿数据
@@ -82,7 +83,7 @@ public class MsgServiceImpl implements MsgService {
         map.put("isHide", isHide);
         pagingResult.setParams(map);
 
-        List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
+        List<String> msgTableNames = DBTableUtil.getMsgTableNames();
         List<String> openIds = new ArrayList<>();
         List<MsgDO> msgs;
         try {
@@ -94,7 +95,7 @@ public class MsgServiceImpl implements MsgService {
             openIds.add(msgDO.getOpenId());
         }
 
-        List<String> fansTableNames = ApplicationConfig.getFanTableNames();
+        List<String> fansTableNames = DBTableUtil.getFanTableNames();
 
         if (openIds.size() > 0) {
 
@@ -137,7 +138,7 @@ public class MsgServiceImpl implements MsgService {
     @Override
     public List<MsgDO> listNewMsgs(String appId) throws DaoException {
 
-        List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
+        List<String> msgTableNames = DBTableUtil.getMsgTableNames();
         List<MsgDO> msgs;
         try {
             msgs = msgDao.listNewMsgs(appId, msgTableNames);
@@ -149,7 +150,7 @@ public class MsgServiceImpl implements MsgService {
         for (MsgDO msg : msgs) {
             openIds.add(msg.getOpenId());
         }
-        List<String> fansTableNames = ApplicationConfig.getFanTableNames();
+        List<String> fansTableNames = DBTableUtil.getFanTableNames();
 
         if (openIds.size() > 0) {
             try {
@@ -172,7 +173,7 @@ public class MsgServiceImpl implements MsgService {
 
     @Override
     public Page<MsgDO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException {
-        Page<MsgDO> pageEntity = new Page<>(page, ApplicationConfig.PAGE_SIZE_MIDDLE);
+        Page<MsgDO> pageEntity = new Page<>(page, AppConstant.PAGE_SIZE_MIDDLE);
         try {
             List<MsgDO> msgDOList = redisMsgDao.listMsgsByOpenId(siteId, openId, page);
             if (msgDOList != null) {
@@ -183,7 +184,7 @@ public class MsgServiceImpl implements MsgService {
             throw new RedisException(e);
         }
 
-        List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
+        List<String> msgTableNames = DBTableUtil.getMsgTableNames();
 
         Map<String, Object> param = new HashMap<>();
         param.put("appId", appId);
@@ -217,7 +218,7 @@ public class MsgServiceImpl implements MsgService {
         for (MsgDO msg : msgs) {
             msg.setStatus(2);
         }
-        List<String> msgTableNames = ApplicationConfig.getMsgTableNames();
+        List<String> msgTableNames = DBTableUtil.getMsgTableNames();
         try {
             msgDao.updateMsgBatch(msgTableNames, msgs);
         } catch (Exception e) {
@@ -234,7 +235,7 @@ public class MsgServiceImpl implements MsgService {
 
     @Override
     public void insertMsg(long siteId, String appId, MsgDO msgDO) throws DaoException, RedisException {
-        String tableName = ApplicationConfig.chooseMsgTable(System.currentTimeMillis());
+        String tableName = DBTableUtil.chooseMsgTable(System.currentTimeMillis());
         try {
             msgDao.insertMsg(tableName, msgDO);
         } catch (Exception e) {
@@ -261,7 +262,7 @@ public class MsgServiceImpl implements MsgService {
         msg.setSendType(2);
         msg.setStatus(2);
         try {
-            msgDao.insertMsg(ApplicationConfig.chooseMsgTable(System.currentTimeMillis()), msg);
+            msgDao.insertMsg(DBTableUtil.chooseMsgTable(System.currentTimeMillis()), msg);
         } catch (Exception e) {
             throw new DaoException(e);
         }

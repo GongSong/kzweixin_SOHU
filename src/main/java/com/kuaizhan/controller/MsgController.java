@@ -1,8 +1,7 @@
 package com.kuaizhan.controller;
 
 
-import com.kuaizhan.config.ApplicationConfig;
-
+import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.business.SendCustomMsgException;
@@ -32,7 +31,7 @@ import java.util.*;
  * Created by Mr.Jadyn on 2016/12/29.
  */
 @RestController
-@RequestMapping(value = ApplicationConfig.VERSION, produces = "application/json")
+@RequestMapping(value = AppConstant.VERSION, produces = "application/json")
 public class MsgController extends BaseController {
 
     @Resource

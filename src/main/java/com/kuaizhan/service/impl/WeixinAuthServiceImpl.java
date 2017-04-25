@@ -1,6 +1,6 @@
 package com.kuaizhan.service.impl;
 
-import com.kuaizhan.config.ApiConfig;
+import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisAuthDao;
 import com.kuaizhan.exception.system.*;
@@ -109,7 +109,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
                 jsonObject.put("component_appid", ApplicationConfig.WEIXIN_APPID_THIRD);
                 jsonObject.put("component_appsecret", ApplicationConfig.WEIXIN_APP_SECRET_THIRD);
                 jsonObject.put("component_verify_ticket", ticket);
-                String returnJson = HttpClientUtil.postJson(ApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
+                String returnJson = HttpClientUtil.postJson(WxApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
                 logger.info("[微信第三方平台] 获取componentAccessToken, params: " + jsonObject + " return: " + returnJson);
                 result = new JSONObject(returnJson);
                 result.put("expires_time", System.currentTimeMillis() / 1000 + 7100);
@@ -143,7 +143,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("component_appid", ApplicationConfig.WEIXIN_APPID_THIRD);
-            String returnJson = HttpClientUtil.postJson(ApiConfig.getPreAuthCodeUrl(componentAccessToken), jsonObject.toString());
+            String returnJson = HttpClientUtil.postJson(WxApiConfig.getPreAuthCodeUrl(componentAccessToken), jsonObject.toString());
             JSONObject result = new JSONObject(returnJson);
             preAuthCode = result.getString("pre_auth_code");
         } catch (Exception e) {
@@ -170,7 +170,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("component_appid", componentAppId);
             jsonObject.put("authorization_code", authCode);
-            String result = HttpClientUtil.postJson(ApiConfig.getQueryAuthUrl(componentAccessToken), jsonObject.toString());
+            String result = HttpClientUtil.postJson(WxApiConfig.getQueryAuthUrl(componentAccessToken), jsonObject.toString());
             // TODO: 此处有NPE问题
             JSONObject jsonObject1 = new JSONObject(result);
             result = jsonObject1.get("authorization_info").toString();
@@ -192,7 +192,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             jsonObject.put("component_appid", componentAppId);
             jsonObject.put("authorizer_appid", authorizerAppId);
             jsonObject.put("authorizer_refresh_token", authorizerRefreshToken);
-            String result = HttpClientUtil.postJson(ApiConfig.getRefreshAuthUrl(componentAccessToken), jsonObject.toString());
+            String result = HttpClientUtil.postJson(WxApiConfig.getRefreshAuthUrl(componentAccessToken), jsonObject.toString());
             authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
         } catch (Exception e) {
             throw new JsonParseException(e);
@@ -207,7 +207,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("component_appid", componentAppId);
             jsonObject.put("authorizer_appid", authorizerAppId);
-            String result = HttpClientUtil.postJson(ApiConfig.getAuthorizerInfoUrl(componentAccessToken), jsonObject.toString());
+            String result = HttpClientUtil.postJson(WxApiConfig.getAuthorizerInfoUrl(componentAccessToken), jsonObject.toString());
             JSONObject jsonObject1 = new JSONObject(result);
             result = jsonObject1.get("authorizer_info").toString();
             authorizerInfoDTO = JsonUtil.string2Bean(result, AuthorizerInfoDTO.class);

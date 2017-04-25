@@ -2,7 +2,7 @@ package com.kuaizhan.controller;
 
 
 import com.kuaizhan.annotation.Validate;
-import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.business.AccountNotExistException;
 import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.system.DaoException;
@@ -27,7 +27,7 @@ import java.util.List;
  * Created by Mr.Jadyn on 2017/1/25.
  */
 @RestController
-@RequestMapping(value = ApplicationConfig.VERSION, produces = "application/json")
+@RequestMapping(value = AppConstant.VERSION, produces = "application/json")
 public class AccountController extends BaseController {
     @Resource
     AccountService accountService;
@@ -76,7 +76,7 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId, @Validate(key = "postData", path = ApplicationConfig.UNBIND_POSTDATAT_SCHEMA) @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException, JsonParseException {
+    public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId, @Validate(key = "postData", path = "json-schema/account/unbind-postdata-schema.json") @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException, JsonParseException {
         AccountDO account = accountService.getAccountBySiteId(siteId);
         JSONObject jsonObject = new JSONObject(postData);
         int type = jsonObject.getInt("type");

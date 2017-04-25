@@ -1,7 +1,7 @@
 package com.kuaizhan.controller;
 
 
-import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
@@ -30,7 +30,7 @@ import java.util.List;
  * Created by Mr.Jadyn on 2016/12/29.
  */
 @RestController
-@RequestMapping(value = ApplicationConfig.VERSION, produces = "application/json")
+@RequestMapping(value = AppConstant.VERSION, produces = "application/json")
 public class FanController extends BaseController {
 
     @Resource

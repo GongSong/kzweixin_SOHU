@@ -1,6 +1,6 @@
 package com.kuaizhan.mq;
 
-import com.kuaizhan.config.MqConfig;
+import com.kuaizhan.constant.MqConstant;
 import com.kuaizhan.pojo.DTO.PostDTO;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.MqUtil;
@@ -15,8 +15,6 @@ import javax.annotation.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by lorin on 17-3-31.
@@ -52,7 +50,7 @@ public class WeixinPostConsumerTest {
         message.put("userId", 123456L);
         String postItemJson = JsonUtil.bean2String(postItem);
         message.put("postItem", postItemJson);
-        mqUtil.publish(MqConfig.IMPORT_WEIXIN_POST, message);
+        mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, message);
     }
 
 }

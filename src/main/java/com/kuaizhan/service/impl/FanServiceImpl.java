@@ -1,6 +1,6 @@
 package com.kuaizhan.service.impl;
 
-import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.dao.redis.RedisFanDao;
 import com.kuaizhan.exception.business.*;
@@ -12,6 +12,7 @@ import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.TagDTO;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.WeixinFanService;
+import com.kuaizhan.utils.DBTableUtil;
 import org.json.JSONArray;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class FanServiceImpl implements FanService {
 
     @Override
     public long countFan(String appId, int isBlack, List<Integer> tagIds, String keyword) throws DaoException {
-        List<String> tables = ApplicationConfig.getFanTableNames();
+        List<String> tables = DBTableUtil.getFanTableNames();
         try {
             List<Long> counts = fanDao.count(appId, isBlack, tagIds, keyword, tables);
             long total = 0;
@@ -52,7 +53,7 @@ public class FanServiceImpl implements FanService {
     @Override
     public FanDO getFanByOpenId(String appId, String openId) throws DaoException {
         try {
-            return fanDao.getFanByOpenId(openId, appId, ApplicationConfig.getFanTableNames());
+            return fanDao.getFanByOpenId(openId, appId, DBTableUtil.getFanTableNames());
         } catch (Exception e) {
             throw new DaoException(e);
         }
@@ -69,7 +70,7 @@ public class FanServiceImpl implements FanService {
         }
         String field = "tags:" + tagIds.toString() + "isBlack:" + isBlack + "page:" + page + "keyword:" + keyword;
         long totalNum = countFan(appId, isBlack, tagIds, keyword);
-        Page<FanDO> fanDOPage = new Page<>(page, ApplicationConfig.PAGE_SIZE_LARGE);
+        Page<FanDO> fanDOPage = new Page<>(page, AppConstant.PAGE_SIZE_LARGE);
         fanDOPage.setTotalCount(totalNum);
         //从redis拿数据
         try {
@@ -91,7 +92,7 @@ public class FanServiceImpl implements FanService {
         map.put("keyword", keyword);
         fanDOPage.setParams(map);
 
-        List<String> tables = ApplicationConfig.getFanTableNames();
+        List<String> tables = DBTableUtil.getFanTableNames();
         List<FanDO> fanses;
         try {
             fanses = fanDao.listFansByPagination(fanDOPage, tables);
@@ -192,7 +193,7 @@ public class FanServiceImpl implements FanService {
 
             }
         }
-        List<String> tables = ApplicationConfig.getFanTableNames();
+        List<String> tables = DBTableUtil.getFanTableNames();
         //更新数据库
         try {
             List<FanDO> fanses = fanDao.listFansByOpenIds(appId, openIds, tables);
@@ -229,7 +230,7 @@ public class FanServiceImpl implements FanService {
             case 45057:
                 throw new TagDeleteFansNumberException();
             case 1:
-                List<String> tables = ApplicationConfig.getFanTableNames();
+                List<String> tables = DBTableUtil.getFanTableNames();
                 Map<String, Object> map = new HashMap<>();
                 map.put("appId", appId);
                 map.put("tagId", tagId);
@@ -304,7 +305,7 @@ public class FanServiceImpl implements FanService {
         for (FanDO fans : fanDOList) {
             fans.setInBlackList(1);
         }
-        List<String> tables = ApplicationConfig.getFanTableNames();
+        List<String> tables = DBTableUtil.getFanTableNames();
 
         //更新mysql
         try {
@@ -340,7 +341,7 @@ public class FanServiceImpl implements FanService {
             fan.setInBlackList(0);
         }
 
-        List<String> tables = ApplicationConfig.getFanTableNames();
+        List<String> tables = DBTableUtil.getFanTableNames();
 
         try {
             fanDao.updateFansBatch(fanDOList, tables);

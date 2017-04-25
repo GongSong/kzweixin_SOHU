@@ -1,9 +1,8 @@
 package com.kuaizhan.mq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kuaizhan.config.MqConfig;
+import com.kuaizhan.constant.MqConstant;
 import com.kuaizhan.exception.BaseException;
-import com.kuaizhan.exception.business.MaterialGetException;
 import com.kuaizhan.pojo.DTO.PostDTO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
@@ -52,7 +51,7 @@ public class WeixinPostListConsumer extends BaseMqConsumer {
             try {
                 String postItemJson = JsonUtil.bean2String(postItem);
                 message.put("postItem", postItemJson);
-                mqUtil.publish(MqConfig.IMPORT_WEIXIN_POST, message);
+                mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, message);
             } catch (JsonProcessingException e) {
                 LogUtil.logMsg(e);
             }

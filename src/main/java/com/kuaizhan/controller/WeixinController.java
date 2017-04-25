@@ -1,10 +1,10 @@
 package com.kuaizhan.controller;
 
 
-import com.kuaizhan.config.ApiConfig;
+import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.system.*;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
@@ -12,13 +12,7 @@ import com.kuaizhan.pojo.DTO.AuthorizerInfoDTO;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.WeixinAuthService;
-import com.kuaizhan.service.WeixinFanService;
 import com.kuaizhan.service.WeixinMsgService;
-import com.kuaizhan.utils.weixin.AesException;
-import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +24,7 @@ import javax.annotation.Resource;
  * Created by Mr.Jadyn on 2017/1/11.
  */
 @RestController
-@RequestMapping(value = ApplicationConfig.VERSION + "/weixin")
+@RequestMapping(value = AppConstant.VERSION + "/weixin")
 public class WeixinController extends BaseController {
 
     @Resource
@@ -61,7 +55,7 @@ public class WeixinController extends BaseController {
         String componentAccessToken = weixinAuthService.getComponentAccessToken();
         String preAuthCode = weixinAuthService.getPreAuthCode(componentAccessToken);
 //        String redirectUrl = ApplicationConfig.getApiPrefix() + "/" + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
-        String authPageUrl = ApiConfig.getAuthEntranceUrl(preAuthCode, redirectUrl);
+        String authPageUrl = WxApiConfig.getAuthEntranceUrl(preAuthCode, redirectUrl);
         return new JsonResponse(authPageUrl);
     }
 

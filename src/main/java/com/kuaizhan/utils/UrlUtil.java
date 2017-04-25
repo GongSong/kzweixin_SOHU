@@ -75,9 +75,9 @@ public class UrlUtil {
     public static Map<String ,String> getPicIntranetAddress(String url){
         Map<String, String> address = new HashMap<>();
 
-        String picHost = ApplicationConfig.getPicHost();
-        String replaceHost = ApplicationConfig.getPicReplaceHost();
-        String picIp = ApplicationConfig.getPicIp();
+        String picHost = ApplicationConfig.KZ_PIC_HOST;
+        String replaceHost = ApplicationConfig.KZ_PIC_REPLACE_HOST;
+        String picIp = ApplicationConfig.KZ_PIC_IP;
 
         if (url.contains(picHost)){
             address.put("url", url.replaceAll(picHost, picIp));

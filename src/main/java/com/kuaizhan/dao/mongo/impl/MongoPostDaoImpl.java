@@ -19,7 +19,7 @@ public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostDo> implements M
 
     public MongoPostDaoImpl() {
         //表名 wx-dev-是前缀
-        super(ApplicationConfig.getMongoCollectionPrefix() + "post");
+        super(ApplicationConfig.MONGO_PREFIX + "post");
     }
 
     @Override

@@ -1,11 +1,9 @@
 package com.kuaizhan.mq;
 
-import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.config.KzApiConfig;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
-import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
-import com.kuaizhan.service.WeixinPostService;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
@@ -76,7 +74,7 @@ public class KZArticleImportConsumer extends BaseMqConsumer {
      * @return
      */
     private String getFirstPostDefaultThumbUrl() {
-        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
+        return KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
     }
 }
 

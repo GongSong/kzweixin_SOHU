@@ -1,7 +1,7 @@
 package com.kuaizhan.service.impl;
 
 
-import com.kuaizhan.config.ApiConfig;
+import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.dao.redis.RedisImageDao;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.RedisException;
@@ -40,7 +40,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     public void deletePost(String mediaId, String accessToken) throws MaterialDeleteException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("media_id", mediaId);
-        String result = HttpClientUtil.postJson(ApiConfig.deleteMaterialUrl(accessToken), jsonObject.toString());
+        String result = HttpClientUtil.postJson(WxApiConfig.deleteMaterialUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         // 40007错误码是已经被删除，不报错
         if (returnJson.optInt("errcode") != 0 && returnJson.optInt("errcode") != 40007) {
@@ -59,7 +59,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
         logger.info("[微信] 上传图片素材, address: " + address);
-        String result = HttpClientUtil.postMedia(ApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
+        String result = HttpClientUtil.postMedia(WxApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
@@ -91,7 +91,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
         System.out.println("---->" + address);
-        String result = HttpClientUtil.postMedia(ApiConfig.getAddPostImageUrl(accessToken), address.get("url"), address.get("host"));
+        String result = HttpClientUtil.postMedia(WxApiConfig.getAddPostImageUrl(accessToken), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
@@ -126,7 +126,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         // 上传
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("articles", jsonArray);
-        String result = HttpClientUtil.postJson(ApiConfig.getCreatePostsUrl(accessToken), jsonObject.toString());
+        String result = HttpClientUtil.postJson(WxApiConfig.getCreatePostsUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         logger.info("[微信] 上传多图文结束, param: " + jsonObject + ", result: "  + returnJson);
 
@@ -155,7 +155,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
         jsonObject.put("articles", postJson);
 
-        String result = HttpClientUtil.postJson(ApiConfig.getUpdatePostUrl(accessToken), jsonObject.toString());
+        String result = HttpClientUtil.postJson(WxApiConfig.getUpdatePostUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
 
         if (returnJson.optInt("errcode") != 0) {
@@ -175,7 +175,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         jsonObject.put("type", "news");
         jsonObject.put("offset", offset);
         jsonObject.put("count", count);
-        String result = HttpClientUtil.postJson(ApiConfig.getMaterial(accessToken), jsonObject.toString());
+        String result = HttpClientUtil.postJson(WxApiConfig.getMaterial(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
             logger.error("[微信获取素材错误], param: " + jsonObject + " result: " +returnJson);

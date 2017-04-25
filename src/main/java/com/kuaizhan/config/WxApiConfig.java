@@ -1,77 +1,11 @@
 package com.kuaizhan.config;
 
-import com.kuaizhan.utils.PropertiesUtil;
-
-import java.util.Properties;
 
 /**
- * 第三方api
+ * 微信api
  * Created by liangjiateng on 2017/3/1.
  */
-public class ApiConfig {
-
-    //资源读取工具
-    private static final Properties PROP = PropertiesUtil.loadProps("application.properties");
-
-    /**
-     * 智能回复接口
-     */
-
-    //新闻接口
-    public static final String NEWS = "http://route.showapi.com/109-35";
-    //笑话接口
-    public static final String JOKE = "http://route.showapi.com/341-1";
-    //天气接口
-    public static final String WEATHER = "http://route.showapi.com/9-2";
-    //音乐接口(qq音乐)
-    public static final String MUSIC = "http://route.showapi.com/213-1";
-    //股票接口(名称)
-    public static final String STOCK_NAME = "http://route.showapi.com/131-43";
-    //股票接口(代码)
-    public static final String STOCK_CODE = "http://route.showapi.com/131-44";
-    //百度翻译
-    public static final String TRANSLATE = "http://api.fanyi.baidu.com/api/trans/vip/translate";
-
-    /**
-     * 快站接口
-     */
-    private static final String KZ_ARTICLE = "/post/service-get-post?page_id=";
-    private static final String KZ_POST_ARTICLE = "/post/service-sync-to-kz-post";
-    private static final String KZ_GET_POST_CONTENT = "/weixin/service-get-post?page_id=";
-
-
-    /**
-     * 获取快文的信息
-     *
-     * @param pageId
-     * @return
-     */
-    public static String kzArticleUrl(long pageId) {
-        return "http://"+ PropertiesUtil.getString(PROP,"kz.service.host") + KZ_ARTICLE + pageId;
-    }
-
-    /**
-     * 从快站获取快文内容
-     * @param pageId
-     * @return
-     */
-    public static String getKzGetPostContentUrl(long pageId){
-        return "http://" + PropertiesUtil.getString(PROP, "kz.service.ip") + KZ_GET_POST_CONTENT + pageId;
-    }
-
-    /**
-     * 新增快站文章
-     *
-     * @return
-     */
-    public static String kzPostArticleUrl() {
-        return "http://"+PropertiesUtil.getString(PROP,"kz.service.host") + KZ_POST_ARTICLE;
-    }
-
-
-    /**
-     * 微信接口
-     */
+public class WxApiConfig {
 
     //主域名
     private static final String DOMAIN_WEIXIN_API = "https://api.weixin.qq.com";

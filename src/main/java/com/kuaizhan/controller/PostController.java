@@ -1,6 +1,6 @@
 package com.kuaizhan.controller;
 
-import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
@@ -19,9 +19,7 @@ import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -36,7 +34,7 @@ import java.util.Map;
  * Created by zixiong on 2017/3/20.
  */
 @RestController
-@RequestMapping(value = ApplicationConfig.VERSION, produces = "application/json")
+@RequestMapping(value = AppConstant.VERSION, produces = "application/json")
 public class PostController extends BaseController {
 
     @Resource

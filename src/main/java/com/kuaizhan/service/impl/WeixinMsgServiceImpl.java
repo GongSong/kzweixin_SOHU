@@ -1,6 +1,6 @@
 package com.kuaizhan.service.impl;
 
-import com.kuaizhan.config.ApiConfig;
+import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisMsgDao;
 import com.kuaizhan.exception.business.AccountNotExistException;
@@ -186,7 +186,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                 jsonObject.put("news", content);
                 break;
         }
-        String result = HttpClientUtil.postJson(ApiConfig.sendByOpenIdUrl(accessToken), jsonObject.toString());
+        String result = HttpClientUtil.postJson(WxApiConfig.sendByOpenIdUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.getInt("errcode") != 0) {
             throw new SendCustomMsgException();

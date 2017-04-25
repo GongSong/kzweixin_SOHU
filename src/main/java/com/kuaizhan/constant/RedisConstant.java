@@ -40,6 +40,6 @@ public class RedisConstant {
     public static final String KEY_IMAGE_WEIXIN_RUL = ApplicationConfig.REDIS_PREFIX + "kzweixin:origin_url:";
 
     // 图文模块
-    public static final String KEY_COUNLD_SYNC_WX_POST = ApplicationConfig.REDIS_PREFIX + "kzweixin:could_sync_wx_post:";
+    public static final String KEY_COULD_SYNC_WX_POST = ApplicationConfig.REDIS_PREFIX + "kzweixin:could_sync_wx_post:";
     public static final int EXPIRE_COULD_SYNC_WX_POST = 3 * 60;
 }

@@ -1,8 +1,9 @@
 package com.kuaizhan.service.impl;
 
-import com.kuaizhan.config.ApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
-import com.kuaizhan.config.MqConfig;
+import com.kuaizhan.config.KzApiConfig;
+import com.kuaizhan.constant.MqConstant;
+import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.dao.mapper.PostDao;
 import com.kuaizhan.dao.redis.RedisPostDao;
 import com.kuaizhan.exception.business.*;
@@ -65,7 +66,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException {
 
-        Page<PostDO> postDOPage = new Page<>(page, ApplicationConfig.PAGE_SIZE_MIDDLE);
+        Page<PostDO> postDOPage = new Page<>(page, AppConstant.PAGE_SIZE_MIDDLE);
 
         List<PostDO> posts;
         try {
@@ -181,8 +182,8 @@ public class PostServiceImpl implements PostService {
         // 从mongo中获取不到，则从接口中获取，并写入mongo
         if (content == null) {
             Map<String, String> headers = new HashMap<>();
-            headers.put("Host", ApplicationConfig.getKzServiceHost());
-            String result = HttpClientUtil.get(ApiConfig.getKzGetPostContentUrl(pageId), headers);
+            headers.put("Host", ApplicationConfig.KZ_SERVICE_HOST);
+            String result = HttpClientUtil.get(KzApiConfig.getKzArticleContentUrl(pageId), headers);
             if (result != null && result.startsWith("{")) {
                 JSONObject jsonObject = new JSONObject(result);
                 content = jsonObject.getJSONObject("data").optString("content");
@@ -200,7 +201,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public ArticleDTO getKzArticle(long pageId) throws IOException {
 
-        String ret = HttpClientUtil.get(ApiConfig.kzArticleUrl(pageId));
+        String ret = HttpClientUtil.get(KzApiConfig.getKzArticleUrl(pageId));
         JSONObject jsonObject = new JSONObject(ret);
         ArticleDTO articleDTO = null;
         if (jsonObject.getInt("ret") == 0) {
@@ -215,7 +216,7 @@ public class PostServiceImpl implements PostService {
         param.put("weixinAppid", weixinAppid);
         param.put("pageIds", pageIds);
 
-        mqUtil.publish(MqConfig.IMPORT_KUAIZHAN_POST, param);
+        mqUtil.publish(MqConstant.IMPORT_KUAIZHAN_POST, param);
     }
 
 
@@ -231,7 +232,7 @@ public class PostServiceImpl implements PostService {
             param.put("pic_url", UrlUtil.fixProtocol(postDO.getThumbUrl()));
             param.put("post_content", getPostContent(pageId));
 
-            String ret = HttpClientUtil.post(ApiConfig.kzPostArticleUrl(), param);
+            String ret = HttpClientUtil.post(KzApiConfig.KZ_POST_ARTICLE_URL, param);
             JSONObject returnJson = new JSONObject(ret);
             if (returnJson.getInt("ret") != 0) {
                 logger.error("[同步到快站文章失败] pageId: " + pageId + "return: " + returnJson + " param:" + param);
@@ -558,7 +559,7 @@ public class PostServiceImpl implements PostService {
         Map<String, Object> map = new HashMap<>();
         map.put("weixinAppid", weixinAppid);
         map.put("uid", uid);
-        mqUtil.publish(MqConfig.IMPORT_WEIXIN_POST_LIST, map);
+        mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST_LIST, map);
     }
 
     @Override
@@ -796,7 +797,7 @@ public class PostServiceImpl implements PostService {
      * @return
      */
     private String getFirstPostDefaultThumbUrl() {
-        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
+        return KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
     }
 
     /**
@@ -805,7 +806,7 @@ public class PostServiceImpl implements PostService {
      * @return
      */
     private String getCommonPostDefaultThumbUrl() {
-        return ApplicationConfig.getResUrl("/res/weixin/images/post-default-cover-200-200.png");
+        return KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-200-200.png");
     }
 
 }
