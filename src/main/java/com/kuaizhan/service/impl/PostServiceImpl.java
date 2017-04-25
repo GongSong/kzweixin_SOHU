@@ -422,6 +422,7 @@ public class PostServiceImpl implements PostService {
             sumPost.setType((short) 2);
             sumPost.setIndex(0);
             sumPost.setMediaId(posts.get(0).getMediaId());
+            sumPost.setUpdateTime(posts.get(0).getUpdateTime());
             // 把title拼接起来，保存多图文总记录里面
             StringBuilder sumTitle = new StringBuilder();
             for (PostDO postDO : posts) {
