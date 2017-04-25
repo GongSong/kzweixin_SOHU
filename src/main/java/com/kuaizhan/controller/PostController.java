@@ -238,6 +238,7 @@ public class PostController extends BaseController {
         List<WxPostDTO> wxPostDTOS = weixinPostService.getWxPost(postDO.getMediaId(), accountService.getAccessToken(weixinAppid));
 
         String wxUrl = wxPostDTOS.get(postDO.getIndex()).getUrl();
+        wxUrl = wxUrl.replaceAll("&chksm=[^&]+", "");
 
         Map<String ,String> result = new HashMap<>();
         result.put("wxUrl", wxUrl);

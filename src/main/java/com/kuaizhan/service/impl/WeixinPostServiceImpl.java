@@ -93,7 +93,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
-            logger.error("[微信] 上传图文中图片失败: result: " + returnJson);
+            logger.error("[微信] 上传图文中图片失败: result: " + returnJson + " imgUrl: " + imgUrl);
             throw new AddMaterialException();
         }
         wxUrl = returnJson.getString("url");
@@ -161,7 +161,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
                 throw new MediaIdNotExistException();
             }
             // TODO: 考虑media、thumbMediaId已经被删除的异常情况, 40007
-            logger.error("[微信] 修改图文失败, data:"+ jsonObject + " result:" + returnJson);
+            logger.error("[微信] 修改多图文失败, result:"+ returnJson + " data:" + jsonObject);
             throw new UploadPostsException();
         }
 
