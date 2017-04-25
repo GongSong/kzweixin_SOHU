@@ -129,7 +129,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         logger.info("[微信] 上传多图文结束, param: " + jsonObject + ", result: "  + returnJson);
 
         if (returnJson.optInt("errcode") != 0) {
-            logger.error("[微信] 上传多图文失败, data:"+ jsonObject + " result:" + returnJson);
+            logger.error("[微信] 上传多图文失败, result:"+ returnJson + " data:" + jsonObject);
             throw new UploadPostsException();
         }
         return returnJson.getString("media_id");

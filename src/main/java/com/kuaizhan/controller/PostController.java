@@ -236,6 +236,7 @@ public class PostController extends BaseController {
     public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) throws MongoException, DaoException, RedisException, AccountNotExistException, WxPostDeletedException {
         PostDO postDO = postService.getPostByPageId(pageId);
         List<WxPostDTO> wxPostDTOS = weixinPostService.getWxPost(postDO.getMediaId(), accountService.getAccessToken(weixinAppid));
+
         String wxUrl = wxPostDTOS.get(postDO.getIndex()).getUrl();
 
         Map<String ,String> result = new HashMap<>();
