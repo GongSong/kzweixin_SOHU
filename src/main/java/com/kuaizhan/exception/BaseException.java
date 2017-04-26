@@ -28,14 +28,18 @@ public abstract class BaseException extends Exception {
     private String errorStack;
 
     public BaseException(int code, String msg, Exception e) {
+        super(msg, e);
         this.code = code;
         this.msg = msg;
-        StringWriter sw = new StringWriter();
-        e.printStackTrace(new PrintWriter(sw));
-        this.errorStack = sw.toString();
+        if (e != null) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            this.errorStack = sw.toString();
+        }
     }
 
     public BaseException(int code, String msg) {
+        super(msg);
         this.code = code;
         this.msg = msg;
         this.errorStack = null;

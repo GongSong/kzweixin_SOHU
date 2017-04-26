@@ -30,6 +30,7 @@ public final class HttpClientUtil {
 
 
     private static final Logger logger = Logger.getLogger(HttpClientUtil.class);
+
     private static final String CHARSET_UTF_8 = "UTF-8";
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String CONTENT_TYPE_FILE = "multipart/form-data";
@@ -174,13 +175,12 @@ public final class HttpClientUtil {
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
 
-            OutputStream out = new DataOutputStream(conn.getOutputStream());
-
             String str = "\r\n" + "--" + BOUNDARY + "\r\n" +
                     "Content-Disposition: form-data;name=\"media\";filelength=\"" + file.length() + "\";filename=\""
                     + file.getName() + "\"\r\n" +
                     "Content-Type:application/octet-stream\r\n\r\n";
 
+            OutputStream out = new DataOutputStream(conn.getOutputStream());
             out.write(str.getBytes());
 
             DataInputStream in = new DataInputStream(new FileInputStream(file));
@@ -190,8 +190,6 @@ public final class HttpClientUtil {
                 out.write(bufferOut, 0, bytes);
             }
             in.close();
-
-            file.delete();
 
             byte[] endData = ("\r\n--" + BOUNDARY + "--\r\n").getBytes();
             out.write(endData);
@@ -207,12 +205,14 @@ public final class HttpClientUtil {
             }
             res = stringBuilder.toString();
             reader.close();
+
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[postMedia]失败", e);
         } finally {
             if (conn != null) {
                 conn.disconnect();
             }
+            file.delete();
         }
         return res;
     }
@@ -252,7 +252,6 @@ public final class HttpClientUtil {
             try {
                 httpClient.close();
             } catch (IOException e) {
-
             }
         }
     }
