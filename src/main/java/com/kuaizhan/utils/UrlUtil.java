@@ -80,7 +80,11 @@ public class UrlUtil {
         String picIp = ApplicationConfig.KZ_PIC_IP;
 
         if (url.contains(picHost)){
-            address.put("url", url.replaceAll(picHost, picIp));
+            url = url.replaceAll(picHost, picIp);
+            // 把内网地址的https换成http
+            url = url.replaceAll("https", "http");
+
+            address.put("url", url);
             address.put("host", replaceHost);
         } else {
             address.put("url", url);

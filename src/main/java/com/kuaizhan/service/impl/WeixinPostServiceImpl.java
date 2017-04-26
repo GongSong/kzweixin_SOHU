@@ -61,7 +61,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
-            logger.error("[微信] 上传永久图片素材失败: result: " + returnJson);
+            logger.error("[微信] 上传永久图片素材失败: result: " + returnJson + " url:" + imgUrl);
             throw new AddMaterialException();
         }
         HashMap<String, String> map = new HashMap<>();
