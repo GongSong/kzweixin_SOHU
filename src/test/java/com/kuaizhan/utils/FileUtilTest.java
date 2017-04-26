@@ -10,7 +10,6 @@ import static org.junit.Assert.*;
 public class FileUtilTest {
     @Test
     public void download() throws Exception {
-        FileUtil.download("http://10.10.120.180/g1/M00/01/99/CgoYvFj0ncuAJEtIAAB-RvpkxrU5155940", "pic.t1.com");
     }
 
 }

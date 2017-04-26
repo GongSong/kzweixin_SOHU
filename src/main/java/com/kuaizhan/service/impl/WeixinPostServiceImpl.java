@@ -57,7 +57,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
         logger.info("[微信] 上传图片素材, address: " + address);
-        String result = HttpClientUtil.postMedia(WxApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
+        String result = HttpClientUtil.postFile(WxApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
@@ -89,7 +89,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
         System.out.println("---->" + address);
-        String result = HttpClientUtil.postMedia(WxApiConfig.getAddPostImageUrl(accessToken), address.get("url"), address.get("host"));
+        String result = HttpClientUtil.postFile(WxApiConfig.getAddPostImageUrl(accessToken), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
