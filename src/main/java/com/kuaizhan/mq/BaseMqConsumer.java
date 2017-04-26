@@ -19,7 +19,6 @@ public abstract class BaseMqConsumer {
         try {
             onMessage(msgMap);
         } catch (Exception e) {
-            e.printStackTrace();
             LogUtil.logMsg(e);
         }
     }
