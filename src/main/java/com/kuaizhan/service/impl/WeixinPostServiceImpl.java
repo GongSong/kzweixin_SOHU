@@ -125,12 +125,16 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("articles", jsonArray);
         String result = HttpClientUtil.postJson(WxApiConfig.getCreatePostsUrl(accessToken), jsonObject.toString());
+        if (result == null) {
+            throw new RuntimeException("[微信] 上传图文返回体为空");
+        }
         JSONObject returnJson = new JSONObject(result);
         logger.info("[微信] 上传多图文结束, param: " + jsonObject + ", result: "  + returnJson);
 
         if (returnJson.optInt("errcode") != 0) {
-            logger.error("[微信] 上传多图文失败, result:"+ returnJson + " data:" + jsonObject);
-            throw new UploadPostsException();
+            String msg = "[微信] 上传多图文失败, result:"+ returnJson + " data:" + jsonObject;
+            logger.error(msg);
+            throw new UploadPostsException(msg);
         }
         return returnJson.getString("media_id");
     }

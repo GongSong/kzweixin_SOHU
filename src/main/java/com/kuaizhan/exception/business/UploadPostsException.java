@@ -12,4 +12,8 @@ public class UploadPostsException extends BusinessException {
     public UploadPostsException() {
         super(ErrorCodeConfig.UPLOAD_POSTS_ERROR.getCode(), ErrorCodeConfig.UPLOAD_POSTS_ERROR.getMsg());
     }
+
+    public UploadPostsException(String msg) {
+        super(ErrorCodeConfig.UPLOAD_POSTS_ERROR.getCode(), msg);
+    }
 }
