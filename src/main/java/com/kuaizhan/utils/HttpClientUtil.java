@@ -220,7 +220,9 @@ public final class HttpClientUtil {
      */
     public static String postFile(String url, String fileUrl, String fileHost) throws DownloadFileFailedException {
         Map<String ,String> headers = new HashMap<>();
-        headers.put("Host", fileHost);
+        if (fileHost != null) {
+            headers.put("Host", fileHost);
+        }
         String filepath = getFile(fileUrl, headers);
 
         return postFile(url, filepath);
