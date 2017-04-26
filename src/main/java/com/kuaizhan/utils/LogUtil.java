@@ -20,9 +20,9 @@ public class LogUtil {
     public static void logMsg(Exception e) {
 
         if (e instanceof SystemException) {
-            logger.fatal(output(((SystemException) e).getDate(), ((SystemException) e).getMsg(), ((SystemException) e).getErrorStack()));
+            logger.fatal(output(((SystemException) e).getDate(), ((SystemException) e).getMsg(), ((SystemException) e).getErrorStack()), e);
         } else if (e instanceof BusinessException) {
-            logger.warn(output(((BusinessException) e).getDate(), ((BusinessException) e).getMsg(), ((BusinessException) e).getErrorStack()));
+            logger.warn(output(((BusinessException) e).getDate(), ((BusinessException) e).getMsg(), ((BusinessException) e).getErrorStack()), e);
         } else {
             logger.error("[未知错误]", e);
         }
