@@ -245,7 +245,8 @@ public final class HttpClientUtil {
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-            builder.addPart("file", fileBody);
+            // TODO: media字段是针对微信，此库需要改得更加通用
+            builder.addPart("media", fileBody);
             HttpEntity entity = builder.build();
             httpPost.setEntity(entity);
 

@@ -1,5 +1,6 @@
 package com.kuaizhan.utils;
 
+import com.kuaizhan.config.WxApiConfig;
 import org.junit.Test;
 
 import java.io.File;
@@ -35,11 +36,11 @@ public class HttpClientUtilTest {
 
     @Test
     public void postFile() throws Exception {
-        String fileUrl = "http://10.10.120.180/g1/M00/01/9C/CgoYvFj-rTyAOU-mAAQurpWibVs8508739";
-        String fileHost = "pic.t1.com";
+        String fileUrl = "http://pic.kuaizhan.com/g2/M01/38/31/wKjmqlYawtyAKaV1AAQukizzMt48087014/imageView/v1/thumbnail/240x180";
+        String fileHost = "pic.kuaizhan.com";
         String token = "rSTqmdGkavwEabhhY4WIgtMA5hBE62yTsmtt8dAQq69DjZdIk331i-d454KSsXiM8laxd4InKHPLTjEWFzfWy_rRJsTWjktxKgsSLupdLDhKYu2YaV4TEVpsGYORF8GUPBCbAKDVHI";
-        String url = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=" + token;
-        String res = HttpClientUtil.postFile(url, fileUrl, fileHost);
+        String url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=" + token;
+        String res = HttpClientUtil.postFile(WxApiConfig.addMaterialUrl(token, "image"), fileUrl, fileHost);
         System.out.println("---->" + res);
     }
 
