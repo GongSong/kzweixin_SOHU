@@ -41,7 +41,12 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         String result = HttpClientUtil.postJson(WxApiConfig.deleteMaterialUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         // 40007错误码是已经被删除，不报错
-        if (returnJson.optInt("errcode") != 0 && returnJson.optInt("errcode") != 40007) {
+        int errCode = returnJson.optInt("errcode");
+
+        if (errCode == 48005 ) {
+            throw new MaterialDeleteException("自定义菜单或自动回复中包含该图文，无法删除。");
+        }
+        if (errCode != 0 && returnJson.optInt("errcode") != 40007) {
             logger.error("[微信] 删除多图文失败: result: " + returnJson);
             throw new MaterialDeleteException();
         }

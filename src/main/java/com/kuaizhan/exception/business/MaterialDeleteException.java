@@ -11,4 +11,8 @@ public class MaterialDeleteException extends BusinessException {
     public MaterialDeleteException() {
         super(ErrorCodeConfig.DELETE_MATERIAL_ERROR.getCode(), ErrorCodeConfig.DELETE_MATERIAL_ERROR.getMsg());
     }
+
+    public MaterialDeleteException(String msg) {
+        super(ErrorCodeConfig.DELETE_MATERIAL_ERROR.getCode(), msg);
+    }
 }
