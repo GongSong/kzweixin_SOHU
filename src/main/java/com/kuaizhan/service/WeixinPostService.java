@@ -42,7 +42,7 @@ public interface WeixinPostService {
      * @param posts 多图文对象
      * @return
      */
-    String uploadPosts(String accessToken, List<PostDO> posts) throws UploadPostsException;
+    String uploadPosts(String accessToken, List<PostDO> posts) throws UploadPostsException, ThumbMediaIdNotExistException;
 
     /**
      * 更新微信的单图文

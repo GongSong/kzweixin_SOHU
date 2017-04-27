@@ -278,7 +278,15 @@ public class PostServiceImpl implements PostService {
             PostDO post = posts.get(0);
 
             // 更新到微信
-            weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wrapWeiXinPost(accessToken, post));
+            PostDO wxPost = wrapWeiXinPost(accessToken, post);
+            try {
+                weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wxPost);
+                // mediaId不存在，尝试新建
+            } catch (MediaIdNotExistException e) {
+                List<PostDO> wxPosts = new ArrayList<>();
+                wxPosts.add(wxPost);
+                weixinPostService.uploadPosts(accessToken, wxPosts);
+            }
 
             // 更新到数据库
 

@@ -73,8 +73,10 @@ public enum ErrorCodeConfig {
 
     POST_DELETED_IN_WEIXIN(107009, "图文在微信后台被删除"),
 
+    THUMB_MEDIA_ID_NOT_EXIST_ERROR(107010, "封面图在微信后台被删除，请重新上传"),
+
     //KZPic(08)
-    KZPIC_UPLOAD_ERROR(108001, "上传至KZPic失败");
+    KZ_PIC_UPLOAD_ERROR(108001, "上传至KZPic失败");
 
     private int code;
     private String msg;

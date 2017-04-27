@@ -1,5 +1,6 @@
 package com.kuaizhan.service;
 
+import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.PostDTO;
 
 import java.util.LinkedList;
@@ -56,6 +57,16 @@ public class WeixinPostServiceTest {
     public void getPostDTOByOffset() throws Exception {
         PostDTO postDTO = weixinPostService.getPostDTOByOffset(accountService.getAccessToken(601145633L), 0, 20);
         System.out.println("----->" + postDTO.toString());
+    }
+
+    @Test
+    public void updatePosts() throws Exception {
+        long weixinAppid = 2326841584L;
+        PostDO postDO = new PostDO();
+        postDO.setTitle("买房故事被修改");
+        postDO.setContent("我是个简单的内容");
+        postDO.setThumbMediaId("vleui19nacBl3_Of7NdcuEOXTNprXPU0do2qWNbLaps");
+        weixinPostService.updatePost(accountService.getAccessToken(weixinAppid),"vleui19nacBl3_Of7NdcuFpwLlYwyh7BafqUY9qGoMU", postDO);
     }
 
     @Test

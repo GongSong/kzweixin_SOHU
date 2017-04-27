@@ -109,7 +109,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public String uploadPosts(String accessToken, List<PostDO> posts) throws UploadPostsException{
+    public String uploadPosts(String accessToken, List<PostDO> posts) throws UploadPostsException, ThumbMediaIdNotExistException {
 
         // 组装articles
         JSONArray jsonArray = new JSONArray();
@@ -136,10 +136,14 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         JSONObject returnJson = new JSONObject(result);
         logger.info("[微信] 上传多图文结束, param: " + jsonObject + ", result: "  + returnJson);
 
-        if (returnJson.optInt("errcode") != 0) {
-            String msg = "[微信] 上传多图文失败, result:"+ returnJson + " data:" + jsonObject;
-            logger.error(msg);
-            throw new UploadPostsException(msg);
+        int errCode = returnJson.optInt("errcode");
+        if (errCode != 0) {
+            if (errCode == 40007) {
+                throw new ThumbMediaIdNotExistException();
+            }
+            // 未知错误
+            logger.error("[微信] 上传多图文失败, result:"+ returnJson + " data:" + jsonObject);
+            throw new UploadPostsException();
         }
         return returnJson.getString("media_id");
     }
@@ -169,7 +173,6 @@ public class WeixinPostServiceImpl implements WeixinPostService {
             if (returnJson.optInt("errcode") == 40007) {
                 throw new MediaIdNotExistException();
             }
-            // TODO: 考虑media、thumbMediaId已经被删除的异常情况, 40007
             logger.error("[微信] 修改多图文失败, result:"+ returnJson + " data:" + jsonObject);
             throw new UploadPostsException();
         }
