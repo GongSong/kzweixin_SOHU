@@ -250,7 +250,7 @@ public class PostController extends BaseController {
     }
 
     @RequestMapping(value = "/posts/{pageId}/wx_url", method = RequestMethod.GET)
-    public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) throws MongoException, DaoException, RedisException, AccountNotExistException, WxPostDeletedException {
+    public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) throws MongoException, DaoException, RedisException, AccountNotExistException, WxPostDeletedException, WxPostLessThenPost {
         Map<String ,String> result = new HashMap<>();
         result.put("wxUrl", postService.getPostWxUrl(weixinAppid, pageId));
         return new JsonResponse(result);
