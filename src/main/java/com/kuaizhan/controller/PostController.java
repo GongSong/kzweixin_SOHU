@@ -7,6 +7,7 @@ import com.kuaizhan.exception.system.JsonParseException;
 import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.param.PostsParam;
+import com.kuaizhan.param.UploadPicParam;
 import com.kuaizhan.param.WxSyncsPostParam;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.PostDO;
@@ -20,6 +21,7 @@ import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
+import com.mongodb.util.JSON;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -215,20 +217,20 @@ public class PostController extends BaseController {
 
     /**
      * 上传素材到微信服务器
-     * @param postData
      * @return
      */
     @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
-    public JsonResponse uploadWeixinThumb(@RequestBody String postData) throws ParamException, RedisException,
-            JsonParseException, DaoException, AccountNotExistException, AddMaterialException, DownloadFileFailedException {
-        JSONObject jsonObject = new JSONObject(postData);
-        Long weixinAppid = jsonObject.optLong("weixinAppid");
-        String imgUrl = jsonObject.optString("imgUrl");
-        if (weixinAppid == 0 || imgUrl == null){
-            throw new ParamException();
-        }
-        Map result = weixinPostService.uploadImage(accountService.getAccessToken(weixinAppid), imgUrl);
+    public JsonResponse uploadWeixinThumb(@Valid @RequestBody UploadPicParam uploadPicParam) throws RedisException, JsonParseException, DaoException, AccountNotExistException, AddMaterialException, DownloadFileFailedException {
+        Map result = weixinPostService.uploadImage(accountService.getAccessToken(uploadPicParam.getWeixinAppid()), uploadPicParam.getImgUrl());
 
+        return new JsonResponse(result);
+    }
+
+    @RequestMapping(value = "weixin_pics", method = RequestMethod.POST)
+    public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws DaoException, AccountNotExistException, RedisException, AddMaterialException, DownloadFileFailedException {
+        String url = weixinPostService.uploadImgForPost(accountService.getAccessToken(uploadPicParam.getWeixinAppid()), uploadPicParam.getImgUrl());
+        Map<String ,String> result = new HashMap<>();
+        result.put("url", url);
         return new JsonResponse(result);
     }
 
