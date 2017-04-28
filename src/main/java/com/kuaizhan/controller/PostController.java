@@ -14,6 +14,7 @@ import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.pojo.VO.JsonResponse;
+import com.kuaizhan.pojo.VO.PostListFlatVO;
 import com.kuaizhan.pojo.VO.PostListVO;
 import com.kuaizhan.pojo.VO.PostVO;
 import com.kuaizhan.service.AccountService;
@@ -58,44 +59,61 @@ public class PostController extends BaseController {
      */
 
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
-    public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam(required = false) String title)
+    public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam(required = false) String title, @RequestParam(defaultValue = "0") Boolean flat)
             throws DaoException, MongoException {
 
-        Page<PostDO> postDOPage = postService.listPostsByPagination(weixinAppid, title, page);
-
+        Page<PostDO> postDOPage = postService.listPostsByPagination(weixinAppid, title, page, flat);
         List<PostDO> postDOList = postDOPage.getResult();
 
-        PostListVO postListVO = new PostListVO();
+        // 展开多图文
+        if (flat) {
+            PostListFlatVO postListFlatVO = new PostListFlatVO();
 
-        if (postDOList != null) {
+            postListFlatVO.setTotalNum(postDOPage.getTotalCount());
+            postListFlatVO.setCurrentPage(postDOPage.getPageNo());
+            postListFlatVO.setTotalPage(postDOPage.getTotalPages());
+
+            for (PostDO postDO: postDOList) {
+                postListFlatVO.getPosts().add(pojoSwitcher.postDOToVO(postDO));
+            }
+
+            return new JsonResponse(postListFlatVO);
+
+        // 不展开多图文
+        } else {
+            PostListVO postListVO = new PostListVO();
+
             postListVO.setTotalNum(postDOPage.getTotalCount());
             postListVO.setCurrentPage(postDOPage.getPageNo());
             postListVO.setTotalPage(postDOPage.getTotalPages());
 
-            for (PostDO postDO : postDOList) {
+            if (postDOList != null) {
 
-                // 多图文实体是一个list
-                List<PostVO> multiPostVOList = new ArrayList<>();
+                for (PostDO postDO : postDOList) {
 
-                // 获取图文总记录下面的多图文
-                if (postDO.getType() == 2) {
-                    List<PostDO> multiPostDOList = postService.listMultiPosts(weixinAppid, postDO.getMediaId());
-                    if (multiPostDOList != null) {
-                        for (PostDO multiPostDo : multiPostDOList) {
-                            PostVO multiPostVO = pojoSwitcher.postDOToVO(multiPostDo);
-                            multiPostVOList.add(multiPostVO);
+                    // 多图文实体是一个list
+                    List<PostVO> multiPostVOList = new ArrayList<>();
+
+                    // 获取图文总记录下面的多图文
+                    if (postDO.getType() == 2) {
+                        List<PostDO> multiPostDOList = postService.listMultiPosts(weixinAppid, postDO.getMediaId());
+                        if (multiPostDOList != null) {
+                            for (PostDO multiPostDo : multiPostDOList) {
+                                PostVO multiPostVO = pojoSwitcher.postDOToVO(multiPostDo);
+                                multiPostVOList.add(multiPostVO);
+                            }
+                            postListVO.getPosts().add(multiPostVOList);
                         }
+                    } else {
+                        PostVO postVO = pojoSwitcher.postDOToVO(postDO);
+
+                        multiPostVOList.add(postVO);
                         postListVO.getPosts().add(multiPostVOList);
                     }
-                } else {
-                    PostVO postVO = pojoSwitcher.postDOToVO(postDO);
-
-                    multiPostVOList.add(postVO);
-                    postListVO.getPosts().add(multiPostVOList);
                 }
             }
+            return new JsonResponse(postListVO);
         }
-        return new JsonResponse(postListVO);
     }
 
 

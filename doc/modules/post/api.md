@@ -5,12 +5,13 @@
 * **方法**：GET
 * **URL**：/v1/posts
 * **参数**：
-    * weixinAppid 微信Appid 
-    * title 按title模糊搜索
-    * page 当前请求页码
+    * weixinAppid 微信Appid 必传
+    * title 按title模糊搜索 非必需
+    * page 当前请求页码 必传
+    * flat 是否展开多图文(1/0) 默认0
 
 * **返回**：
-    * 获取成功时返回:
+    * flat为0时返回:
 
         ```
         {
@@ -30,6 +31,25 @@
            ]
         }
         ```
+        
+    * flat为1时返回
+    
+        ```
+        {
+            "totalNum": 11,
+            "currentPage": 1,
+            "totalPage": 3,
+            "posts": [
+                {
+                 "pageId": 1023151612, 
+                 "title": "我的买房故事",
+                 "thumbUrl": "http://192.168.110.218/g1/M00/01/32/CgoYvFb4lkyAIXPGAAKXxGRjh_U4764144",
+                 "updateTime": 1463542009
+                }
+              ]
+        }
+        ```
+    
     * 异常情况:
         * 缺少参数weixinAppid或page，返回码 101001 
         * 数据库异常 返回码 100001

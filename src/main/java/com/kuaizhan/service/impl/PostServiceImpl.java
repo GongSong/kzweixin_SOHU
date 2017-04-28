@@ -64,18 +64,18 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException {
+    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat) throws DaoException {
 
         Page<PostDO> postDOPage = new Page<>(page, AppConstant.PAGE_SIZE_MIDDLE);
 
         List<PostDO> posts;
         try {
-            posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage);
+            posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage, flat);
         } catch (Exception e) {
             throw new DaoException(e);
         }
 
-        long totalCount = postDao.count(weixinAppid, title);
+        long totalCount = postDao.count(weixinAppid, title, flat);
         postDOPage.setTotalCount(totalCount);
         postDOPage.setResult(posts);
 

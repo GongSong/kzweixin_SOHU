@@ -28,9 +28,10 @@ public interface PostService {
      * @param weixinAppid 微信appid
      * @param page  页码
      * @param title 按title模糊搜索
+     * @param flat 是否展开多图文
      * @return
      */
-    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page) throws DaoException;
+    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat) throws DaoException;
 
     /**
      * 根据mediaId获取所有的多图文

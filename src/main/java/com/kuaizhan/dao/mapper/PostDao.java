@@ -18,7 +18,7 @@ public interface PostDao {
      * @param weixinAppid 微信appid
      * @return
      */
-    Long count(@Param("weixinAppid") long weixinAppid, @Param("title") String title);
+    Long count(@Param("weixinAppid") long weixinAppid, @Param("title") String title, @Param("flat") Boolean flat);
 
     /**
      * 查询图文消息列表
@@ -27,7 +27,7 @@ public interface PostDao {
      * @param page
      * @return
      */
-    List<PostDO> listPostsByPagination(@Param("weixinAppid") long weixinAppid, @Param("title") String title, @Param("pageEntity") Page page);
+    List<PostDO> listPostsByPagination(@Param("weixinAppid") long weixinAppid, @Param("title") String title, @Param("pageEntity") Page page, @Param("flat") Boolean flat);
 
     /**
      * 获取图文消息的多图文
