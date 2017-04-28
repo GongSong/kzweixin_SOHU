@@ -300,7 +300,7 @@ public class PostServiceImpl implements PostService {
         }
 
 
-        updateMultiPostsDB(weixinAppid, posts);
+        updateMultiPostsDB(weixinAppid, oldPost.getMediaId(), posts);
     }
 
     /**
@@ -336,7 +336,7 @@ public class PostServiceImpl implements PostService {
      * 修改图文的数据存储
      * 此方法假设图文的数目不变
      */
-    private void updateMultiPostsDB(long weixinAppid, List<PostDO> posts) {
+    private void updateMultiPostsDB(long weixinAppid, String mediaId, List<PostDO> posts) {
         // 更新每篇图文的数据库，修改内容
         StringBuilder titleSum = new StringBuilder();
         for (PostDO postDO: posts) {
@@ -347,8 +347,10 @@ public class PostServiceImpl implements PostService {
 
         // 修改图文总记录
         if (posts.size() > 1) {
-            PostDO postSum = postDao.getPostSum(weixinAppid, posts.get(0).getMediaId());
+            PostDO postSum = postDao.getPostSum(weixinAppid, mediaId);
+
             postSum.setTitle(titleSum.toString());
+            postSum.setMediaId(posts.get(0).getMediaId());
             postDao.updatePost(postSum, postSum.getPageId());
         }
     }
