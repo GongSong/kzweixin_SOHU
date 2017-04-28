@@ -9,4 +9,8 @@ public class WxPostLessThenPost extends BusinessException {
     public WxPostLessThenPost() {
         super(ErrorCodeConfig.WX_POST_LESS_THEN_POST.getCode(), ErrorCodeConfig.WX_POST_LESS_THEN_POST.getMsg());
     }
+
+    public WxPostLessThenPost(String msg) {
+        super(ErrorCodeConfig.WX_POST_LESS_THEN_POST.getCode(), msg);
+    }
 }

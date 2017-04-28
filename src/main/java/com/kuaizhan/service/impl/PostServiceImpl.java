@@ -192,7 +192,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException, WxPostDeletedException {
+    public String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException, WxPostDeletedException, WxPostLessThenPost {
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             String wxUrl = postDO.getPostUrl();
@@ -209,7 +209,7 @@ public class PostServiceImpl implements PostService {
                 // 单图文
                 if (postDO.getType() == 1) {
                     if (urls.size() != 1) {
-                        throw new WxPostDeletedException("多图文在微信后台的数目与快站的不一致，无法准确获取链接");
+                        throw new WxPostLessThenPost("多图文在微信后台的数目与快站的不一致，无法准确获取链接");
                     }
                     PostDO updatePostDo = new PostDO();
                     updatePostDo.setPostUrl(urls.get(0));
@@ -219,7 +219,7 @@ public class PostServiceImpl implements PostService {
                 } else {
                     List<PostDO> multiPosts = listMultiPosts(weixinAppid, postDO.getMediaId(), false);
                     if (urls.size() != multiPosts.size()) {
-                        throw new WxPostDeletedException("多图文在微信后台的数目与快站的不一致，无法准确获取链接");
+                        throw new WxPostLessThenPost("多图文在微信后台的数目与快站的不一致，无法准确获取链接");
                     }
                     for (int i = 0; i < urls.size(); i++ ) {
                         PostDO updatePostDo = new PostDO();
@@ -291,7 +291,7 @@ public class PostServiceImpl implements PostService {
 
         // 数目不对应, 接口调用错误
         if (oldPosts.size() != posts.size()) {
-            throw new RuntimeException("不能修改图文的数目:" + oldPosts.size());
+            throw new ParamException("由于微信限制，不能修改多图文的数目:" + oldPosts.size());
         }
 
         String accessToken = accountService.getAccessToken(weixinAppid);

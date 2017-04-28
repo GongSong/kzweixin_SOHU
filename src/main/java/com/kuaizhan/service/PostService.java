@@ -111,7 +111,7 @@ public interface PostService {
      * 获取post在微信的url
      * @return
      */
-    String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException, WxPostDeletedException;
+    String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException, WxPostDeletedException, WxPostLessThenPost;
 
     /**
      * 根据weixinAppid获取mediaId列表

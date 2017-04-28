@@ -302,7 +302,7 @@
 
 #### 10 获取图文微信url
 * **协议**： HTTPS
-* **方法**： DELETE
+* **方法**： GET
 * **URL**： /v1/posts/`<pageId>`/wx_url
 * **参数**：
     * weixinAppid 微信Appid
