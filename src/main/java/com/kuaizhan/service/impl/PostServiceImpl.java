@@ -278,6 +278,7 @@ public class PostServiceImpl implements PostService {
             PostDO post = posts.get(0);
 
             // 更新到微信
+            String mediaId = oldPost.getMediaId();
             PostDO wxPost = wrapWeiXinPost(accessToken, post);
             try {
                 weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wxPost);
@@ -285,14 +286,14 @@ public class PostServiceImpl implements PostService {
             } catch (MediaIdNotExistException e) {
                 List<PostDO> wxPosts = new ArrayList<>();
                 wxPosts.add(wxPost);
-                weixinPostService.uploadPosts(accessToken, wxPosts);
+                mediaId = weixinPostService.uploadPosts(accessToken, wxPosts);
             }
 
             // 更新到数据库
 
             // 数据修正
             post.setWeixinAppid(weixinAppid);
-            post.setMediaId(oldPost.getMediaId());
+            post.setMediaId(mediaId);
             post.setIndex(0);
             post.setType((short) 1);
 
