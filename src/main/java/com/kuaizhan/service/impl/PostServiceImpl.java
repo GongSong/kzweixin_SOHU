@@ -252,7 +252,7 @@ public class PostServiceImpl implements PostService {
             oldPosts = new ArrayList<>();
             oldPosts.add(oldPost);
         } else {
-            oldPosts = listMultiPosts(weixinAppid, oldPost.getMediaId(), false);
+            oldPosts = listMultiPosts(weixinAppid, oldPost.getMediaId(), true);
         }
 
         // 数目不对应, 接口调用错误
@@ -273,7 +273,10 @@ public class PostServiceImpl implements PostService {
         try {
             for (PostDO wxPost: wxPosts) {
                 // TODO: catch index不对的异常
-                weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wxPost);
+                if (! wxPostEqual(oldPosts.get(curUpdatedIndex), posts.get(curUpdatedIndex))) {
+                    System.out.println("----> 更新了" + curUpdatedIndex);
+                    weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wxPost);
+                }
                 curUpdatedIndex ++;
             }
         } catch (MediaIdNotExistException e) {
@@ -298,6 +301,34 @@ public class PostServiceImpl implements PostService {
 
 
         updateMultiPostsDB(weixinAppid, posts);
+    }
+
+    /**
+     * 比较两个post上传给微信的字段是否不同
+     */
+    private boolean wxPostEqual(PostDO postDO1, PostDO postDO2) {
+        if (!Objects.equals(postDO1.getTitle(), postDO2.getTitle())) {
+            return false;
+        }
+        if (!Objects.equals(postDO1.getThumbMediaId(), postDO2.getThumbMediaId())) {
+            return false;
+        }
+        if (!Objects.equals(postDO1.getAuthor(), postDO2.getAuthor())) {
+            return false;
+        }
+        if (!Objects.equals(postDO1.getDigest(), postDO2.getDigest())) {
+            return false;
+        }
+        if (!Objects.equals(postDO1.getShowCoverPic(), postDO2.getShowCoverPic())) {
+            return false;
+        }
+        if (!Objects.equals(postDO1.getContentSourceUrl(), postDO2.getContentSourceUrl())) {
+            return false;
+        }
+        if (!Objects.equals(postDO1.getContent(), postDO2.getContent())) {
+            return false;
+        }
+        return true;
     }
 
 
