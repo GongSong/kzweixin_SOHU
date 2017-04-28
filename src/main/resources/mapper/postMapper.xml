@@ -159,8 +159,10 @@
         <if test="post.index != null">
             `index`=#{post.index},
         </if>
-        `sync_time`=unix_timestamp(now()),
-        `update_time`=unix_timestamp(now())
+        <if test="post.updateTime != null">
+            `update_time`=#{post.updateTime},
+        </if>
+        `sync_time`=unix_timestamp(now())
         WHERE `page_id` = #{pageId}
     </update>
 

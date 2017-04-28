@@ -319,6 +319,10 @@ public class PostServiceImpl implements PostService {
             if (curUpdateTime == 0) {
                 // 尝试新建
                 mediaId = weixinPostService.uploadPosts(accessToken, wxPosts);
+                // 清空post url
+                for (PostDO postDO: posts) {
+                    postDO.setPostUrl("");
+                }
             } else {
                 throw new ThumbMediaIdNotExistException("第" + (curIndex + 1) + "篇图文的封面图在微信后台被删除，请重新上传");
             }
@@ -374,7 +378,12 @@ public class PostServiceImpl implements PostService {
     private void updateMultiPostsDB(long weixinAppid, String mediaId, List<PostDO> posts) {
         // 更新每篇图文的数据库，修改内容
         StringBuilder titleSum = new StringBuilder();
+
+        int updateTime = (int) System.currentTimeMillis();
+
         for (PostDO postDO: posts) {
+
+            postDO.setUpdateTime(updateTime);
             postDao.updatePost(postDO, postDO.getPageId());
             mongoPostDao.upsertPost(postDO.getPageId(), postDO.getContent());
             titleSum.append(postDO.getTitle());
@@ -384,6 +393,7 @@ public class PostServiceImpl implements PostService {
         if (posts.size() > 1) {
             PostDO postSum = postDao.getPostSum(weixinAppid, mediaId);
 
+            postSum.setUpdateTime(updateTime);
             postSum.setTitle(titleSum.toString());
             postSum.setMediaId(posts.get(0).getMediaId());
             postDao.updatePost(postSum, postSum.getPageId());
