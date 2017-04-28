@@ -269,22 +269,24 @@ public class PostServiceImpl implements PostService {
 
         // 修改微信后台文章
         String mediaId = oldPost.getMediaId();
-        int curUpdatedIndex = 0;
+
+        int curIndex = 0;
+        int curUpdateTime = 0;
         try {
-            for (PostDO wxPost: wxPosts) {
-                // TODO: catch index不对的异常
-                if (! wxPostEqual(oldPosts.get(curUpdatedIndex), posts.get(curUpdatedIndex))) {
-                    weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wxPost);
+            for (int index = 0; index < wxPosts.size(); index++) {
+                if (! wxPostEqual(oldPosts.get(index), posts.get(index))) {
+                    weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wxPosts.get(index));
+                    curIndex = index;
+                    curUpdateTime++;
                 }
-                curUpdatedIndex ++;
             }
         } catch (MediaIdNotExistException e) {
             // 第一篇图文报mediaId不存在，可能是mediaId，也可能是thumbMediaId。
-            if (curUpdatedIndex == 0) {
+            if (curUpdateTime == 0) {
                 // 尝试新建
                 mediaId = weixinPostService.uploadPosts(accessToken, wxPosts);
             } else {
-                throw new ThumbMediaIdNotExistException("第" + (curUpdatedIndex + 1) + "篇图文的封面图在微信后台被删除，请重新上传");
+                throw new ThumbMediaIdNotExistException("第" + (curIndex + 1) + "篇图文的封面图在微信后台被删除，请重新上传");
             }
         }
 
