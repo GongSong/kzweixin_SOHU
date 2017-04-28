@@ -379,7 +379,7 @@ public class PostServiceImpl implements PostService {
         // 更新每篇图文的数据库，修改内容
         StringBuilder titleSum = new StringBuilder();
 
-        int updateTime = (int) System.currentTimeMillis();
+        int updateTime = (int) (System.currentTimeMillis() / 1000);
 
         for (PostDO postDO: posts) {
 
