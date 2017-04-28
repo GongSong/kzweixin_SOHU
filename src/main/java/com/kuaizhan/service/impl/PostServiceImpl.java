@@ -16,6 +16,7 @@ import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.KZPicService;
 import com.kuaizhan.service.PostService;
@@ -83,7 +84,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) throws DaoException, MongoException {
+    public List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) throws DaoException {
 
         List<PostDO> multiPosts;
         try {
@@ -135,20 +136,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDO getPostByPageId(long pageId) throws DaoException, MongoException {
-        PostDO postDO;
-        try {
+    public PostDO getPostByPageId(long pageId) {
 
-            postDO = postDao.getPost(pageId);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-
+        PostDO postDO = postDao.getPost(pageId);
         if (postDO != null) {
-            // 获取content
             postDO.setContent(getPostContent(pageId));
         }
-
         return postDO;
     }
 
@@ -198,6 +191,47 @@ public class PostServiceImpl implements PostService {
         mqUtil.publish(MqConstant.IMPORT_KUAIZHAN_POST, param);
     }
 
+    @Override
+    public String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException, WxPostDeletedException {
+        PostDO postDO = getPostByPageId(pageId);
+        if (postDO != null) {
+            String wxUrl = postDO.getPostUrl();
+            if (wxUrl != null && wxUrl.contains("mp.weixin.qq.com")) {
+                return wxUrl;
+            // 更新
+            } else {
+                List<WxPostDTO> wxPostDTOS = weixinPostService.getWxPost(postDO.getMediaId(), accountService.getAccessToken(weixinAppid));
+                // 简化url
+                List<String> urls = new ArrayList<>();
+                for (WxPostDTO postDTO: wxPostDTOS) {
+                    urls.add(postDTO.getUrl().replaceAll("&chksm=[^&]+", ""));
+                }
+                // 单图文
+                if (postDO.getType() == 1) {
+                    if (urls.size() != 1) {
+                        throw new WxPostDeletedException("多图文在微信后台的数目与快站的不一致，无法准确获取链接");
+                    }
+                    PostDO updatePostDo = new PostDO();
+                    updatePostDo.setPostUrl(urls.get(0));
+                    postDao.updatePost(updatePostDo, pageId);
+                    return urls.get(0);
+                // 多图文
+                } else {
+                    List<PostDO> multiPosts = listMultiPosts(weixinAppid, postDO.getMediaId(), false);
+                    if (urls.size() != multiPosts.size()) {
+                        throw new WxPostDeletedException("多图文在微信后台的数目与快站的不一致，无法准确获取链接");
+                    }
+                    for (int i = 0; i < urls.size(); i++ ) {
+                        PostDO updatePostDo = new PostDO();
+                        updatePostDo.setPostUrl(urls.get(i));
+                        postDao.updatePost(updatePostDo, multiPosts.get(i).getPageId());
+                    }
+                    return urls.get(postDO.getIndex());
+                }
+            }
+        }
+        return null;
+    }
 
     @Override
     public void export2KzArticle(long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {

@@ -147,6 +147,9 @@
         <if test="post.contentSourceUrl != null">
             `content_source_url`=#{post.contentSourceUrl},
         </if>
+        <if test="post.postUrl != null">
+            `post_url`=#{post.postUrl},
+        </if>
         <if test="post.mediaId != null">
             `media_id`=#{post.mediaId},
         </if>

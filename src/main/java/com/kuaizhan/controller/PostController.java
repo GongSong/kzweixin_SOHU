@@ -251,18 +251,8 @@ public class PostController extends BaseController {
 
     @RequestMapping(value = "/posts/{pageId}/wx_url", method = RequestMethod.GET)
     public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) throws MongoException, DaoException, RedisException, AccountNotExistException, WxPostDeletedException {
-        PostDO postDO = postService.getPostByPageId(pageId);
-        List<WxPostDTO> wxPostDTOS = weixinPostService.getWxPost(postDO.getMediaId(), accountService.getAccessToken(weixinAppid));
-
-        if (wxPostDTOS.size() <= postDO.getIndex()) {
-            throw new WxPostDeletedException("此条图文在微信后台被删除");
-        }
-
-        String wxUrl = wxPostDTOS.get(postDO.getIndex()).getUrl();
-        wxUrl = wxUrl.replaceAll("&chksm=[^&]+", "");
-
         Map<String ,String> result = new HashMap<>();
-        result.put("wxUrl", wxUrl);
+        result.put("wxUrl", postService.getPostWxUrl(weixinAppid, pageId));
         return new JsonResponse(result);
     }
 }

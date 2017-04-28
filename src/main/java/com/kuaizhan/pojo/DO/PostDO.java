@@ -20,6 +20,7 @@ public class PostDO {
     private String contentSourceUrl;
     private String mediaId;
     private Integer syncTime;
+    private String postUrl;
     private Short type; // 1.单图文 2. 多图文总记录 3.多图文中的一条
     private Integer index;
     private Short status; //1 为正常发布，2 为删除

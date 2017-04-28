@@ -40,7 +40,7 @@ public interface PostService {
      * @return
      * @throws DaoException
      */
-    List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) throws DaoException, MongoException;
+    List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) throws DaoException;
 
     /**
      * 删除图文
@@ -61,7 +61,7 @@ public interface PostService {
      * @param pageId
      * @return
      */
-    PostDO getPostByPageId(long pageId) throws DaoException, MongoException;
+    PostDO getPostByPageId(long pageId);
 
 
     /**
@@ -105,6 +105,13 @@ public interface PostService {
      * 更新一条多图文消息，并同步到微信服务器
      */
     void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception;
+
+
+    /**
+     * 获取post在微信的url
+     * @return
+     */
+    String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException, WxPostDeletedException;
 
     /**
      * 根据weixinAppid获取mediaId列表
