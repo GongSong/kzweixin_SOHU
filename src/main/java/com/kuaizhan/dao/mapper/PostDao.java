@@ -54,11 +54,6 @@ public interface PostDao {
     int deletePost(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**
-     * 根据mediaId删除图文, 物理删除
-     */
-    int deletePostReal(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
-
-    /**
      * 根据pageId获取图文
      *
      * @param pageId
@@ -66,6 +61,11 @@ public interface PostDao {
      */
     PostDO getPost(long pageId);
 
+    /**
+     * 根据mediaId, 获取图文总记录
+     * @return
+     */
+    PostDO getPostSum(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
     /**
      * 新增单个图文
      */

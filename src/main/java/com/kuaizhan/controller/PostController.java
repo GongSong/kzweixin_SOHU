@@ -22,7 +22,6 @@ import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
-import com.mongodb.util.JSON;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,7 +95,7 @@ public class PostController extends BaseController {
 
                     // 获取图文总记录下面的多图文
                     if (postDO.getType() == 2) {
-                        List<PostDO> multiPostDOList = postService.listMultiPosts(weixinAppid, postDO.getMediaId());
+                        List<PostDO> multiPostDOList = postService.listMultiPosts(weixinAppid, postDO.getMediaId(), false);
                         if (multiPostDOList != null) {
                             for (PostDO multiPostDo : multiPostDOList) {
                                 PostVO multiPostVO = pojoSwitcher.postDOToVO(multiPostDo);
@@ -142,11 +141,9 @@ public class PostController extends BaseController {
         if (postDO != null) {
             // 如果图文type为3（多图文中的一条），根据mediaId找出多图文
             if (postDO.getType() == 3) {
-                List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getWeixinAppid(), postDO.getMediaId());
-
-                for (PostDO multipostDO : multiPostDOList) {
-
-                    multiPostVOList.add(pojoSwitcher.postDOToVO(multipostDO));
+                List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getWeixinAppid(), postDO.getMediaId(), true);
+                for (PostDO multiPostDO : multiPostDOList) {
+                    multiPostVOList.add(pojoSwitcher.postDOToVO(multiPostDO));
                 }
             } else {
                 multiPostVOList.add(pojoSwitcher.postDOToVO(postDO));

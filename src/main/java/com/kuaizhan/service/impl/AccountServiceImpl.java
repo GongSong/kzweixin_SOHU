@@ -87,6 +87,7 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             throw new RedisException(e);
         }
+        // TODO: 在这里实现分布式锁，否则在消息队列和web同时调用的情况下，有一定几率相互覆盖
         if (accessToken == null) {
             //从数据库拿refresh key刷新
             AccountDO accountDO;

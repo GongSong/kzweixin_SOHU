@@ -9,4 +9,8 @@ public class ThumbMediaIdNotExistException extends BusinessException {
     public ThumbMediaIdNotExistException() {
         super(ErrorCodeConfig.THUMB_MEDIA_ID_NOT_EXIST_ERROR.getCode(), ErrorCodeConfig.THUMB_MEDIA_ID_NOT_EXIST_ERROR.getMsg());
     }
+
+    public ThumbMediaIdNotExistException(String msg) {
+        super(ErrorCodeConfig.THUMB_MEDIA_ID_NOT_EXIST_ERROR.getCode(), msg);
+    }
 }

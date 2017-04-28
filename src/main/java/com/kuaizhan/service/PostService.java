@@ -38,10 +38,11 @@ public interface PostService {
      *
      * @param mediaId
      * @param weixinAppid 同一篇文章，可能在不同的weixinAppid下
+     * @param withContent 是否获取content字段
      * @return
      * @throws DaoException
      */
-    List<PostDO> listMultiPosts(long weixinAppid, String mediaId) throws DaoException, MongoException;
+    List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) throws DaoException, MongoException;
 
     /**
      * 删除图文
@@ -49,12 +50,6 @@ public interface PostService {
      * @param pageId
      */
     void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException;
-
-
-    /**
-     * 物理删除图文
-     */
-    void deletePostReal(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException;
 
     /**
      * 是否存在微信图文

@@ -93,7 +93,6 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
-        System.out.println("---->" + address);
         String result = HttpClientUtil.postFile(WxApiConfig.getAddPostImageUrl(accessToken), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
@@ -152,7 +151,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     public void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException, MediaIdNotExistException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("media_id", mediaId);
-        jsonObject.put("index", 0); // 只更新单图文, 都是0
+        jsonObject.put("index", postDO.getIndex());
 
         // 组装articles
         JSONObject postJson = new JSONObject();

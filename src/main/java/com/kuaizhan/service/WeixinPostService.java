@@ -45,7 +45,7 @@ public interface WeixinPostService {
     String uploadPosts(String accessToken, List<PostDO> posts) throws UploadPostsException, ThumbMediaIdNotExistException;
 
     /**
-     * 更新微信的单图文
+     * 更新微信图文的某一篇
      * @throws UploadPostsException
      */
     void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException, MediaIdNotExistException;

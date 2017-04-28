@@ -21,7 +21,6 @@ public class PostDaoTest {
 
     @Test
     public void deletePostReal() throws Exception {
-        postDao.deletePostReal(1789089804, "vleui19nacBl3_Of7NdcuLESnAt4laEOG1rEptHY4TE");
     }
 
     @Test
