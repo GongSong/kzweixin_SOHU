@@ -148,7 +148,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException, MediaIdNotExistException {
+    public void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException, MediaIdNotExistException, WxPostLessThenPost {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("media_id", mediaId);
         jsonObject.put("index", postDO.getIndex());
@@ -168,9 +168,13 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         String result = HttpClientUtil.postJson(WxApiConfig.getUpdatePostUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
 
-        if (returnJson.optInt("errcode") != 0) {
-            if (returnJson.optInt("errcode") == 40007) {
+        int errCode = returnJson.optInt("errcode");
+        if (errCode != 0) {
+            if (errCode == 40007) {
                 throw new MediaIdNotExistException();
+            }
+            if (errCode == 40114) {
+                throw new WxPostLessThenPost();
             }
             logger.error("[微信] 修改多图文失败, result:"+ returnJson + " data:" + jsonObject);
             throw new UploadPostsException();

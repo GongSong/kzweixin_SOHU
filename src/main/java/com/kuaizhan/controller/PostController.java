@@ -254,6 +254,10 @@ public class PostController extends BaseController {
         PostDO postDO = postService.getPostByPageId(pageId);
         List<WxPostDTO> wxPostDTOS = weixinPostService.getWxPost(postDO.getMediaId(), accountService.getAccessToken(weixinAppid));
 
+        if (wxPostDTOS.size() <= postDO.getIndex()) {
+            throw new WxPostDeletedException("此条图文在微信后台被删除");
+        }
+
         String wxUrl = wxPostDTOS.get(postDO.getIndex()).getUrl();
         wxUrl = wxUrl.replaceAll("&chksm=[^&]+", "");
 

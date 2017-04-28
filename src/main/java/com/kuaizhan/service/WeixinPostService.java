@@ -48,7 +48,7 @@ public interface WeixinPostService {
      * 更新微信图文的某一篇
      * @throws UploadPostsException
      */
-    void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException, MediaIdNotExistException;
+    void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException, MediaIdNotExistException, WxPostLessThenPost;
 
     /**
      * 根据偏移获取微信图文列表

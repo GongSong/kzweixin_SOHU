@@ -9,4 +9,8 @@ public class WxPostDeletedException extends BusinessException {
     public WxPostDeletedException() {
         super(ErrorCodeConfig.POST_DELETED_IN_WEIXIN.getCode(), ErrorCodeConfig.POST_DELETED_IN_WEIXIN.getMsg());
     }
+
+    public WxPostDeletedException(String msg) {
+        super(ErrorCodeConfig.POST_DELETED_IN_WEIXIN.getCode(), msg);
+    }
 }

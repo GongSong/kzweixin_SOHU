@@ -36,8 +36,6 @@ public interface PostService {
     /**
      * 根据mediaId获取所有的多图文
      *
-     * @param mediaId
-     * @param weixinAppid 同一篇文章，可能在不同的weixinAppid下
      * @param withContent 是否获取content字段
      * @return
      * @throws DaoException

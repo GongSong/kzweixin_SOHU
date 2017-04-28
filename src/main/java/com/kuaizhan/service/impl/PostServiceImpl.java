@@ -274,7 +274,6 @@ public class PostServiceImpl implements PostService {
             for (PostDO wxPost: wxPosts) {
                 // TODO: catch index不对的异常
                 if (! wxPostEqual(oldPosts.get(curUpdatedIndex), posts.get(curUpdatedIndex))) {
-                    System.out.println("----> 更新了" + curUpdatedIndex);
                     weixinPostService.updatePost(accessToken, oldPost.getMediaId(), wxPost);
                 }
                 curUpdatedIndex ++;
