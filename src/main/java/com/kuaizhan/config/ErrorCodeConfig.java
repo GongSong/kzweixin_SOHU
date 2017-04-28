@@ -75,7 +75,7 @@ public enum ErrorCodeConfig {
 
     THUMB_MEDIA_ID_NOT_EXIST_ERROR(107010, "封面图在微信后台被删除，请重新上传"),
 
-    WX_POST_LESS_THEN_POST(107011, "多图文在微信后台的条数不一致，请前往微信后台修改"),
+    WX_POST_LESS_THEN_POST(107011, "多图文的条数在微信后台与快站不一致，请前往微信公众平台查看。"),
 
     //KZPic(08)
     KZ_PIC_UPLOAD_ERROR(108001, "上传至KZPic失败");

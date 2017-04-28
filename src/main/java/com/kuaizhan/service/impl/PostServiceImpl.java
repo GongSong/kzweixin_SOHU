@@ -209,7 +209,7 @@ public class PostServiceImpl implements PostService {
                 // 单图文
                 if (postDO.getType() == 1) {
                     if (urls.size() != 1) {
-                        throw new WxPostLessThenPost("多图文在微信后台的数目与快站的不一致，无法准确获取链接");
+                        throw new WxPostLessThenPost("多图文的条数在微信后台与快站不一致，请前往微信公众平台查看。");
                     }
                     PostDO updatePostDo = new PostDO();
                     updatePostDo.setPostUrl(urls.get(0));
@@ -219,7 +219,7 @@ public class PostServiceImpl implements PostService {
                 } else {
                     List<PostDO> multiPosts = listMultiPosts(weixinAppid, postDO.getMediaId(), false);
                     if (urls.size() != multiPosts.size()) {
-                        throw new WxPostLessThenPost("多图文在微信后台的数目与快站的不一致，无法准确获取链接");
+                        throw new WxPostLessThenPost("多图文的条数在微信后台与快站不一致，请前往微信公众平台查看。");
                     }
                     for (int i = 0; i < urls.size(); i++ ) {
                         PostDO updatePostDo = new PostDO();
