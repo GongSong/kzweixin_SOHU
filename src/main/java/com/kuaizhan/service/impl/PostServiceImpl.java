@@ -800,64 +800,27 @@ public class PostServiceImpl implements PostService {
         }
     }
 
-    /*** 去除某字符串前缀 ***/
-    private String removeUrlPrefixIfExists(String str, String prefix) {
-        if (str == null || prefix == null) return str;
-
-        if (str.contains(prefix)) {
-            str = str.substring(str.lastIndexOf(prefix) + prefix.length());
-            try {
-                str = URLEncoder.encode(str, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                return str;
-            }
-        }
-
-        return str;
-    }
-
-    /*** 去除某字符串后缀 ***/
-    private String removeUrlSuffixIfExists(String str, String suffix) {
-        if (str == null || suffix == null) return str;
-
-        if (str.contains(suffix)) {
-            str = str.substring(0, str.lastIndexOf(suffix));
-            try {
-                str = URLEncoder.encode(str, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                return str;
-            }
-        }
-
-        return str;
-    }
 
     /*** 微信图片地址生成快站图片url，若失败则返回原url ***/
      private String getKzImgUrlByWeixinImgUrl(String imgUrl, long userId) {
         // 若不是微信图片则返回原url
         if (!imgUrl.contains("mmbiz")) return imgUrl;
 
-        // 去除脚本造成的老数据
-        imgUrl = removeUrlPrefixIfExists(imgUrl, "url=");
-
-        // 去除pic-redirect前缀
-        imgUrl = removeUrlPrefixIfExists(imgUrl, "pic-redirect?url=");
-        imgUrl = removeUrlPrefixIfExists(imgUrl, "pic-redirect.php?url=");
-
-        // 去除微信某些图片的后缀，否则getimagesize失败
-        imgUrl = removeUrlSuffixIfExists(imgUrl, "&tp=webp");
-        imgUrl = removeUrlSuffixIfExists(imgUrl, "?tp=webp");
-        imgUrl = removeUrlPrefixIfExists(imgUrl, "&amp;");
-
-        String kzPicUrl = imgUrl;
+        // 去掉微信图片中的tp=webp
+         String kzPicUrl = imgUrl;
+         kzPicUrl = kzPicUrl.replaceAll("&tp=webp", "");
+         kzPicUrl = kzPicUrl.replaceAll("\\?tp=webp", "");
+         // 去掉所有&amp;后的内容
+         kzPicUrl = kzPicUrl.replaceAll("&amp;.*$", "");
 
         try {
-            kzPicUrl = kZPicService.uploadByUrlAndUserId(imgUrl, userId);
+            return kZPicService.uploadByUrlAndUserId(kzPicUrl, userId);
         } catch (KZPicUploadException e) {
             LogUtil.logMsg(e);
         }
 
-        return kzPicUrl;
+        // 上传失败，返回原始url
+        return imgUrl;
     }
 
     /*** 替换微信内容中的微信图片链接为快站链接 ***/

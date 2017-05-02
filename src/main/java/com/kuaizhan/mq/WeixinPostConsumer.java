@@ -31,16 +31,11 @@ public class WeixinPostConsumer extends BaseMqConsumer {
 
         long userId = (long) msgMap.get("userId");
         long weixinAppid = (long) msgMap.get("weixinAppid");
-        long updateTime = (long) msgMap.get("updateTime");
+        long updateTime = (long) (int) msgMap.get("updateTime");
         String mediaId = (String) msgMap.get("mediaId");
         Boolean isNew = (boolean) msgMap.get("isNew");
 
-        JSONArray wxPostsJson = new JSONArray(msgMap.get("wxPostDTOs"));
-        List<WxPostDTO> wxPostDTOS = new ArrayList<>();
-        for (int i = 0; i < wxPostsJson.length(); i++) {
-            WxPostDTO wxPostDTO = JsonUtil.string2Bean(wxPostsJson.getString(i), WxPostDTO.class);
-            wxPostDTOS.add(wxPostDTO);
-        }
+        List<WxPostDTO> wxPostDTOS = JsonUtil.string2List((String) msgMap.get("wxPostDTOs"), WxPostDTO.class);
 
         // 新增
         if (isNew) {
