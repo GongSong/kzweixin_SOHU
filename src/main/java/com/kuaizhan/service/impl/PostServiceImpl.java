@@ -793,6 +793,7 @@ public class PostServiceImpl implements PostService {
                 postDO.setThumbUrl("");
                 postDO.setAuthor("");
                 postDO.setDigest("");
+                postDO.setPostUrl("");
                 postDO.setContentSourceUrl("");
                 postDO.setShowCoverPic((short) 0);
                 postDao.updatePost(postDO, postDO.getPageId());
