@@ -1,7 +1,6 @@
 package com.kuaizhan.service;
 
 
-import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
@@ -10,7 +9,7 @@ import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
-import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostListDTO;
 
 import java.io.IOException;
 import java.util.List;
@@ -135,7 +134,7 @@ public interface PostService {
      *
      * @param postItem
      */
-    void importWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception;
+    void importWeixinPost(WxPostListDTO.PostItem postItem, long userId) throws Exception;
 
     /**
      * 本地不存在的微信图文mediaId列表
@@ -143,5 +142,5 @@ public interface PostService {
      * @param weixinAppid
      * @return
      */
-    List<PostDTO.PostItem> listNonExistsPostItemsFromWeixin(long weixinAppid) throws DaoException, AccountNotExistException, RedisException, JsonParseException, MaterialGetException;
+    List<WxPostListDTO.PostItem> listNonExistsPostItemsFromWeixin(long weixinAppid) throws DaoException, AccountNotExistException, RedisException, JsonParseException, MaterialGetException;
 }

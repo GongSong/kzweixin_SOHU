@@ -1,10 +1,11 @@
 package com.kuaizhan.service;
 
 import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostListDTO;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,8 +56,8 @@ public class WeixinPostServiceTest {
 
     @Test
     public void getPostDTOByOffset() throws Exception {
-        PostDTO postDTO = weixinPostService.getPostDTOByOffset(accountService.getAccessToken(601145633L), 0, 20);
-        System.out.println("----->" + postDTO.toString());
+        WxPostListDTO wxPostListDTO = weixinPostService.getPostDTOByOffset(accountService.getAccessToken(601145633L), 0, 20);
+        System.out.println("----->" + wxPostListDTO.toString());
     }
 
     @Test
@@ -72,12 +73,12 @@ public class WeixinPostServiceTest {
     @Test
     public void listAllPosts() throws Exception {
         long weixinAppid = 1789089804L;
-        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccessToken(weixinAppid));
-        List<PostDTO.PostItem> postItemList = new LinkedList<>();
-        for (PostDTO postDTO: postDTOList) {
-            postItemList.addAll(postDTO.toPostItemList(weixinAppid));
+        List<WxPostListDTO> wxPostListDTOList = weixinPostService.listAllPosts(accountService.getAccessToken(weixinAppid));
+        List<WxPostListDTO.PostItem> postItemList = new LinkedList<>();
+        for (WxPostListDTO wxPostListDTO : wxPostListDTOList) {
+            postItemList.addAll(wxPostListDTO.toPostItemList(weixinAppid));
         }
-        for (PostDTO.PostItem postItem :
+        for (WxPostListDTO.PostItem postItem :
                 postItemList) {
             System.out.println("----->" + postItem.toString());
         }

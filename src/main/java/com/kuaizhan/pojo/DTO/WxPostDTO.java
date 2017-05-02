@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
+ * 获取微信图文的单篇图文DTO
+ * 接口文档: https://mp.weixin.qq.com/wiki/12/3c12fac7c14cb4d0e0d4fe2fbc87b638.html
  * Created by zixiong on 2017/4/25.
  */
 @Data

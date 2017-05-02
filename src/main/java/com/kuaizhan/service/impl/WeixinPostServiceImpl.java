@@ -6,7 +6,7 @@ import com.kuaizhan.dao.redis.RedisImageDao;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.HttpClientUtil;
@@ -183,7 +183,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public PostDTO getPostDTOByOffset(String accessToken, int offset, int count) throws MaterialGetException {
+    public WxPostListDTO getPostDTOByOffset(String accessToken, int offset, int count) throws MaterialGetException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "news");
         jsonObject.put("offset", offset);
@@ -195,8 +195,8 @@ public class WeixinPostServiceImpl implements WeixinPostService {
             throw new MaterialGetException();
         }
         try {
-            PostDTO postDTO = JsonUtil.<PostDTO>string2Bean(result, PostDTO.class);
-            return postDTO;
+            WxPostListDTO wxPostListDTO = JsonUtil.<WxPostListDTO>string2Bean(result, WxPostListDTO.class);
+            return wxPostListDTO;
         } catch (IOException e) {
             // FIXME: 这么搞，有效错误信息都丢失啦
             throw new MaterialGetException();
@@ -204,23 +204,23 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public List<PostDTO> listAllPosts(String accessToken) throws MaterialGetException {
-        List<PostDTO> postDTOList = new LinkedList<>();
+    public List<WxPostListDTO> listAllPosts(String accessToken) throws MaterialGetException {
+        List<WxPostListDTO> wxPostListDTOList = new LinkedList<>();
         int MAX_MATERIAL_COUNT_EACH_FETCH = 20;
-        PostDTO postDTO = getPostDTOByOffset(accessToken, 0, MAX_MATERIAL_COUNT_EACH_FETCH);
-        postDTOList.add(postDTO);
-        int index = postDTO.getItemCount(), totalCount = postDTO.getTotalCount();
+        WxPostListDTO wxPostListDTO = getPostDTOByOffset(accessToken, 0, MAX_MATERIAL_COUNT_EACH_FETCH);
+        wxPostListDTOList.add(wxPostListDTO);
+        int index = wxPostListDTO.getItemCount(), totalCount = wxPostListDTO.getTotalCount();
         while (index < totalCount) {
             try {
-                postDTO = getPostDTOByOffset(accessToken, index, MAX_MATERIAL_COUNT_EACH_FETCH);
-                postDTOList.add(postDTO);
+                wxPostListDTO = getPostDTOByOffset(accessToken, index, MAX_MATERIAL_COUNT_EACH_FETCH);
+                wxPostListDTOList.add(wxPostListDTO);
             } catch (MaterialGetException e) {
                 LogUtil.logMsg(e);
             } finally {
                 index += MAX_MATERIAL_COUNT_EACH_FETCH;
             }
         }
-        return postDTOList;
+        return wxPostListDTOList;
     }
 
     @Override

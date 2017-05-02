@@ -3,7 +3,7 @@ package com.kuaizhan.mq;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.constant.MqConstant;
 import com.kuaizhan.exception.BaseException;
-import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
@@ -42,10 +42,10 @@ public class WeixinPostListConsumer extends BaseMqConsumer {
         long userId = (long) msgMap.get("uid");
 
         // 获取不存在的微信图文
-        List<PostDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);
+        List<WxPostListDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);
 
         // 分别导入
-        for (PostDTO.PostItem postItem: postItemList) {
+        for (WxPostListDTO.PostItem postItem: postItemList) {
             Map<String, Object> message = new HashMap<>();
             message.put("userId", userId);
             try {

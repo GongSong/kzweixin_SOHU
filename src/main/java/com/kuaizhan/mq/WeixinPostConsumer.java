@@ -1,6 +1,6 @@
 package com.kuaizhan.mq;
 
-import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
 import org.apache.log4j.Logger;
@@ -25,7 +25,7 @@ public class WeixinPostConsumer extends BaseMqConsumer {
 
         long userId = (long) msgMap.get("userId");
         String postItemJson = (String) msgMap.get("postItem");
-        PostDTO.PostItem postItem = JsonUtil.string2Bean(postItemJson, PostDTO.PostItem.class);
+        WxPostListDTO.PostItem postItem = JsonUtil.string2Bean(postItemJson, WxPostListDTO.PostItem.class);
 
         Long weixinAppid = postItem.getWeixinAppid();
         String mediaId = postItem.getItem().getMediaId();

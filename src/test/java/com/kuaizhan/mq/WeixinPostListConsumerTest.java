@@ -1,6 +1,6 @@
 package com.kuaizhan.mq;
 
-import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.service.PostService;
 import org.junit.After;
 import org.junit.Before;
@@ -11,8 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by lorin on 17-4-1.
@@ -38,8 +36,8 @@ public class WeixinPostListConsumerTest {
 
     @Test
     public void onMessage() throws Exception {
-        List<PostDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(WEIXIN_APPID);
-        for (PostDTO.PostItem postItem: postItemList) {
+        List<WxPostListDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(WEIXIN_APPID);
+        for (WxPostListDTO.PostItem postItem: postItemList) {
             System.out.println("----->" + postItem.getItem().getMediaId());
         }
     }

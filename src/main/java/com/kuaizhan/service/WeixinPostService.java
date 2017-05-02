@@ -3,7 +3,7 @@ package com.kuaizhan.service;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.pojo.DTO.WxPostDTO;
 
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public interface WeixinPostService {
      * @return
      * @throws MaterialGetException
      */
-    PostDTO getPostDTOByOffset(String accessToken, int offset, int count) throws MaterialGetException;
+    WxPostListDTO getPostDTOByOffset(String accessToken, int offset, int count) throws MaterialGetException;
 
     /**
      * 获取所有微信图文消息
@@ -66,7 +66,7 @@ public interface WeixinPostService {
      * @return
      * @throws MaterialGetException
      */
-    List<PostDTO> listAllPosts(String accessToken) throws MaterialGetException;
+    List<WxPostListDTO> listAllPosts(String accessToken) throws MaterialGetException;
 
 
     /**

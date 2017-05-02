@@ -2,7 +2,7 @@ package com.kuaizhan.service;
 
 
 import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -113,8 +113,8 @@ public class PostServiceTest {
     @Test
     public void listNonExistsPostItemsFromWeixin() throws Exception {
         long weixinAppid = 1789089804L;
-        List<PostDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);
-        for (PostDTO.PostItem postItem: postItemList){
+        List<WxPostListDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);
+        for (WxPostListDTO.PostItem postItem: postItemList){
             System.out.println("------>" + postItem);
         }
     }

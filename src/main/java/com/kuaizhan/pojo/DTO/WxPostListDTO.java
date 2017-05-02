@@ -8,13 +8,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 微信图文返回结果
- *
+ * 微信图文列表返回结果
+ * 接口文档: https://mp.weixin.qq.com/wiki/15/8386c11b7bc4cdd1499c572bfe2e95b3.html
  * Created by lorin on 17-3-29.
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PostDTO {
+public class WxPostListDTO {
     @JsonProperty("total_count")
     private Integer totalCount;
     @JsonProperty("item_count")
@@ -45,30 +45,7 @@ public class PostDTO {
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Content {
             @JsonProperty("news_item")
-            List<NewsItem> newsItems;
-
-            /**
-             * 微信图文
-             *
-             * Created by lorin on 17-3-29
-             */
-            @Data
-            @JsonIgnoreProperties(ignoreUnknown = true)
-            public static class NewsItem {
-                private String title;
-                @JsonProperty("thumb_media_id")
-                private String thumbMediaId;
-                @JsonProperty("thumb_url")
-                private String thumbUrl;
-                @JsonProperty("show_cover_pic")
-                private Short showCoverPic;
-                private String author;
-                private String digest;
-                private String content;
-                private String url;
-                @JsonProperty("content_source_url")
-                private String contentSourceUrl;
-            }
+            List<WxPostDTO> newsItems;
         }
     }
 

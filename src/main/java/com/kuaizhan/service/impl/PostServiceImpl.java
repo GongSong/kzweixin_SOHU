@@ -15,7 +15,7 @@ import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
-import com.kuaizhan.pojo.DTO.PostDTO;
+import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.KZPicService;
@@ -651,14 +651,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void importWeixinPost(PostDTO.PostItem postItem, long userId) throws Exception {
+    public void importWeixinPost(WxPostListDTO.PostItem postItem, long userId) throws Exception {
         // 将微信返回的文章处理为数据库存储的图文
         List<PostDO> postDOList = new LinkedList<>();
-        List<PostDTO.Item.Content.NewsItem> newsItems = postItem.getItem().getContent().getNewsItems();
+        List<WxPostDTO> newsItems = postItem.getItem().getContent().getNewsItems();
         int updateTime = postItem.getItem().getUpdateTime();
         logger.info("----> updateTime" + updateTime);
         int key = 0;
-        for (PostDTO.Item.Content.NewsItem newsItem : newsItems) {
+        for (WxPostDTO newsItem : newsItems) {
             PostDO postDO = new PostDO();
             // 标题去除emoji
             postDO.setTitle(EmojiParser.removeAllEmojis(newsItem.getTitle()));
@@ -700,19 +700,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO.PostItem> listNonExistsPostItemsFromWeixin(long weixinAppid) throws DaoException, AccountNotExistException, RedisException, JsonParseException, MaterialGetException {
-        List<PostDTO.PostItem> differPostItems = new LinkedList<>();
+    public List<WxPostListDTO.PostItem> listNonExistsPostItemsFromWeixin(long weixinAppid) throws DaoException, AccountNotExistException, RedisException, JsonParseException, MaterialGetException {
+        List<WxPostListDTO.PostItem> differPostItems = new LinkedList<>();
 
         // 获取所有微信图文
-        List<PostDTO> postDTOList = weixinPostService.listAllPosts(accountService.getAccessToken(weixinAppid));
+        List<WxPostListDTO> wxPostListDTOList = weixinPostService.listAllPosts(accountService.getAccessToken(weixinAppid));
 
-        if (postDTOList == null || postDTOList.size() <= 0) {
+        if (wxPostListDTOList == null || wxPostListDTOList.size() <= 0) {
             return differPostItems;
         }
 
-        List<PostDTO.PostItem> postItemList = new LinkedList<>();
-        for (PostDTO postDTO : postDTOList) {
-            postItemList.addAll(postDTO.toPostItemList(weixinAppid));
+        List<WxPostListDTO.PostItem> postItemList = new LinkedList<>();
+        for (WxPostListDTO wxPostListDTO : wxPostListDTOList) {
+            postItemList.addAll(wxPostListDTO.toPostItemList(weixinAppid));
         }
 
         // 获取本地所有微信图文
@@ -722,7 +722,7 @@ public class PostServiceImpl implements PostService {
         mediaIdsSet.addAll(mediaIds);
 
         // 对比差异
-        for (PostDTO.PostItem postItem : postItemList) {
+        for (WxPostListDTO.PostItem postItem : postItemList) {
             if (!mediaIdsSet.contains(postItem.getItem().getMediaId())) {
                 differPostItems.add(postItem);
             }

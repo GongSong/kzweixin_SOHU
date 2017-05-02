@@ -1,8 +1,5 @@
 package com.kuaizhan.mq;
 
-import com.kuaizhan.constant.MqConstant;
-import com.kuaizhan.pojo.DTO.PostDTO;
-import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.MqUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -12,9 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by lorin on 17-3-31.
@@ -38,9 +32,9 @@ public class WeixinPostConsumerTest {
 
     @Test
     public void onMessage() throws Exception {
-//        PostDTO.PostItem postItem = new PostDTO.PostItem();
-//        PostDTO.Item item = new PostDTO.Item();
-//        PostDTO.Item.Content content = new PostDTO.Item.Content();
+//        WxPostListDTO.PostItem postItem = new WxPostListDTO.PostItem();
+//        WxPostListDTO.Item item = new WxPostListDTO.Item();
+//        WxPostListDTO.Item.Content content = new WxPostListDTO.Item.Content();
 //        item.setContent(content);
 //        item.setMediaId("asdfasdf");
 //        item.setUpdateTime("DFASDF");
