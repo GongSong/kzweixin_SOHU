@@ -9,6 +9,7 @@ import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.pojo.DTO.WxPostListDTO;
 
 import java.io.IOException;
@@ -52,7 +53,7 @@ public interface PostService {
      * 是否存在微信图文
      * @return
      */
-    Boolean exist(long weixinAppid, String mediaId) throws DaoException;
+    Boolean exist(long weixinAppid, String mediaId);
 
     /**
      * 获取图文
@@ -62,6 +63,10 @@ public interface PostService {
      */
     PostDO getPostByPageId(long pageId);
 
+    /**
+     * 根据mediaId获取单篇图文(单图文，或者多图文的第一篇)
+     */
+    PostDO getPostByMediaId(long weixinAppid, String mediaId);
 
     /**
      * 临时接口，根据pageId, 获取图文内容
@@ -113,34 +118,25 @@ public interface PostService {
     String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException, WxPostDeletedException, WxPostLessThenPost;
 
     /**
-     * 根据weixinAppid获取mediaId列表
-     *
-     * @param weixinAppid
-     * @return
-     * @throws DaoException
-     */
-    List<String> listMediaIdsByWeixinAppid(long weixinAppid) throws DaoException;
-
-    /**
      * 同步微信消息(异步)
      * @param weixinAppid
-     * @param uid 用户id，用于上传图片
+     * @param userId 用户id，用于上传图片
      * @return 是否可以同步
      */
-    void syncWeixinPosts(long weixinAppid, long uid) throws SyncWXPostTooOftenException;
+    void syncWeixinPosts(long weixinAppid, long userId) throws SyncWXPostTooOftenException;
+
+    /**
+     * 计算应该同步的微信图文
+     */
+    void calSyncWeixinPosts(long weixinAppid, long userId) throws DaoException, AccountNotExistException, RedisException, MaterialGetException;
 
     /**
      * 由微信导入图文
-     *
-     * @param postItem
      */
-    void importWeixinPost(WxPostListDTO.PostItem postItem, long userId) throws Exception;
+    void importWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception;
 
     /**
-     * 本地不存在的微信图文mediaId列表
-     *
-     * @param weixinAppid
-     * @return
+     * 更新微信图文
      */
-    List<WxPostListDTO.PostItem> listNonExistsPostItemsFromWeixin(long weixinAppid) throws DaoException, AccountNotExistException, RedisException, JsonParseException, MaterialGetException;
+    void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception;
 }

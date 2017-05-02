@@ -56,7 +56,7 @@ public class WeixinPostServiceTest {
 
     @Test
     public void getPostDTOByOffset() throws Exception {
-        WxPostListDTO wxPostListDTO = weixinPostService.getPostDTOByOffset(accountService.getAccessToken(601145633L), 0, 20);
+        WxPostListDTO wxPostListDTO = weixinPostService.getWxPostList(accountService.getAccessToken(601145633L), 0, 20);
         System.out.println("----->" + wxPostListDTO.toString());
     }
 
@@ -70,17 +70,4 @@ public class WeixinPostServiceTest {
         weixinPostService.updatePost(accountService.getAccessToken(weixinAppid),"vleui19nacBl3_Of7NdcuFpwLlYwyh7BafqUY9qGoMU", postDO);
     }
 
-    @Test
-    public void listAllPosts() throws Exception {
-        long weixinAppid = 1789089804L;
-        List<WxPostListDTO> wxPostListDTOList = weixinPostService.listAllPosts(accountService.getAccessToken(weixinAppid));
-        List<WxPostListDTO.PostItem> postItemList = new LinkedList<>();
-        for (WxPostListDTO wxPostListDTO : wxPostListDTOList) {
-            postItemList.addAll(wxPostListDTO.toPostItemList(weixinAppid));
-        }
-        for (WxPostListDTO.PostItem postItem :
-                postItemList) {
-            System.out.println("----->" + postItem.toString());
-        }
-    }
 }

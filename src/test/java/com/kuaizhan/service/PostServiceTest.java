@@ -92,30 +92,7 @@ public class PostServiceTest {
     }
 
     @Test
-    public void listPostsByWeixinAppid() throws Exception {
-
-    }
-
-    @Test
-    public void listMediaIdsByWeixinAppid() throws Exception {
-        List<String> mediaIds = postService.listMediaIdsByWeixinAppid(weixinAppid);
-        for (String mediaId: mediaIds) {
-            System.out.println("----->" + mediaId);
-        }
-    }
-
-    @Test
-    public void exist() throws Exception {
-        System.out.println("---->" + postService.exist(9616507302L, "x_L_iJd0_WYtc9HUX4QILyfIWnPc2TE3CtSE2oBuR4k"));
-
-    }
-
-    @Test
-    public void listNonExistsPostItemsFromWeixin() throws Exception {
-        long weixinAppid = 1789089804L;
-        List<WxPostListDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);
-        for (WxPostListDTO.PostItem postItem: postItemList){
-            System.out.println("------>" + postItem);
-        }
+    public void calSyncWeixinPosts() throws Exception {
+//        postService.calSyncWeixinPosts(2326841584L, 1);
     }
 }

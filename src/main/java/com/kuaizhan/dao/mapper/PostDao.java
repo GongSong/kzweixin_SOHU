@@ -46,12 +46,14 @@ public interface PostDao {
     /**
      * 根据mediaId删除图文, 逻辑删除
      *
-     * @param weixinAppid  为了利用索引, 传此参数
-     * @param mediaId
-     * @return
      */
     // TODO: 考虑更改索引结构，按weixinAppid mediaId分别单独建索引
     int deletePost(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
+
+    /**
+     * 根据pageId逻辑删除单篇图文
+     */
+    int deletePostByPageId(long pageId);
 
     /**
      * 根据pageId获取图文
@@ -61,11 +63,12 @@ public interface PostDao {
      */
     PostDO getPost(long pageId);
 
+
     /**
-     * 根据mediaId, 获取图文总记录
-     * @return
+     * 根据mediaId, 获取单图文或图文总记录
      */
-    PostDO getPostSum(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
+    PostDO getPostByMediaId(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
+
     /**
      * 新增单个图文
      */

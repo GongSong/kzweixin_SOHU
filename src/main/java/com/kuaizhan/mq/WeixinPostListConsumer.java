@@ -24,13 +24,7 @@ import javax.annotation.Resource;
 public class WeixinPostListConsumer extends BaseMqConsumer {
 
     @Resource
-    WeixinPostService weixinPostService;
-    @Resource
     PostService postService;
-    @Resource
-    AccountService accountService;
-    @Resource
-    MqUtil mqUtil;
 
     private static final Logger logger = Logger.getLogger(WeixinPostListConsumer.class);
 
@@ -42,19 +36,6 @@ public class WeixinPostListConsumer extends BaseMqConsumer {
         long userId = (long) msgMap.get("uid");
 
         // 获取不存在的微信图文
-        List<WxPostListDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(weixinAppid);
-
-        // 分别导入
-        for (WxPostListDTO.PostItem postItem: postItemList) {
-            Map<String, Object> message = new HashMap<>();
-            message.put("userId", userId);
-            try {
-                String postItemJson = JsonUtil.bean2String(postItem);
-                message.put("postItem", postItemJson);
-                mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, message);
-            } catch (JsonProcessingException e) {
-                LogUtil.logMsg(e);
-            }
-        }
+        postService.calSyncWeixinPosts(weixinAppid, userId);
     }
 }

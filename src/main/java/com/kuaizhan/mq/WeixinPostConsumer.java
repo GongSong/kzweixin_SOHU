@@ -1,11 +1,17 @@
 package com.kuaizhan.mq;
 
+import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
+import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,17 +30,29 @@ public class WeixinPostConsumer extends BaseMqConsumer {
     protected void onMessage(Map msgMap) throws Exception {
 
         long userId = (long) msgMap.get("userId");
-        String postItemJson = (String) msgMap.get("postItem");
-        WxPostListDTO.PostItem postItem = JsonUtil.string2Bean(postItemJson, WxPostListDTO.PostItem.class);
+        long weixinAppid = (long) msgMap.get("weixinAppid");
+        long updateTime = (long) msgMap.get("updateTime");
+        String mediaId = (String) msgMap.get("mediaId");
+        Boolean isNew = (boolean) msgMap.get("isNew");
 
-        Long weixinAppid = postItem.getWeixinAppid();
-        String mediaId = postItem.getItem().getMediaId();
+        JSONArray wxPostsJson = new JSONArray(msgMap.get("wxPostDTOs"));
+        List<WxPostDTO> wxPostDTOS = new ArrayList<>();
+        for (int i = 0; i < wxPostsJson.length(); i++) {
+            WxPostDTO wxPostDTO = JsonUtil.string2Bean(wxPostsJson.getString(i), WxPostDTO.class);
+            wxPostDTOS.add(wxPostDTO);
+        }
 
-        if (! postService.exist(weixinAppid, mediaId)){
-            logger.info("[mq:从微信导入单条图文], weixinAppid: " + weixinAppid + " mediaId: " + mediaId);
-            postService.importWeixinPost(postItem, userId);
+        // 新增
+        if (isNew) {
+            if (!postService.exist(weixinAppid, mediaId)) {
+                logger.info("[mq:从微信导入单条图文], weixinAppid: " + weixinAppid + " mediaId: " + mediaId);
+                postService.importWeixinPost(weixinAppid, mediaId, updateTime, userId, wxPostDTOS);
+            } else {
+                logger.info("[mq:图文已存在], weixinAppid: " + weixinAppid + " mediaId: " + mediaId);
+            }
+        // 更新
         } else {
-            logger.info("[mq:图文已存在], weixinAppid: " + weixinAppid + " mediaId: " + mediaId);
+            postService.updateWeixinPost(weixinAppid, mediaId, updateTime, userId, wxPostDTOS);
         }
     }
 }

@@ -42,15 +42,6 @@
         limit #{pageEntity.offset}, #{pageEntity.limit}
     </select>
 
-    <!--根据weixin_appid查询所有图文消息mediaId列表-->
-    <select id="listMediaIdsByWeixinAppid" parameterType="Long"
-            resultType="String">
-        select media_id
-        from weixin_post
-        --       status=1表示未删除；type in (1,2)只查询单图文和多图文总记录
-        where weixin_appid = #{weixinAppid} and `status` = 1 and `type` in (1, 2)
-    </select>
-
     <!--根据mediaId查询多图文-->
     <select id="listMultiPosts" resultType="com.kuaizhan.pojo.DO.PostDO">
         select *
@@ -68,16 +59,23 @@
         where `weixin_appid`=#{weixinAppid} and `media_id`=#{mediaId} and `status` = 1
     </update>
 
+    <!--根据pageId逻辑删除图文-->
+    <update id="deletePostByPageId">
+        UPDATE `weixin_post`
+        SET `status` = 2
+        WHERE `page_id`=#{pageId}
+    </update>
+
     <select id="getPost" parameterType="long" resultType="com.kuaizhan.pojo.DO.PostDO">
         select *
         from `weixin_post`
         where `status` = 1 and `page_id`=#{pageId}
     </select>
 
-    <select id="getPostSum" resultType="com.kuaizhan.pojo.DO.PostDO">
+    <select id="getPostByMediaId" resultType="com.kuaizhan.pojo.DO.PostDO">
         select *
         from `weixin_post`
-        where `weixin_appid`=#{weixinAppid} AND `media_id`=#{mediaId} AND `type`=2 AND `status` = 1
+        where `weixin_appid`=#{weixinAppid} AND `media_id`=#{mediaId} AND `type` in (1, 2) AND `status` = 1
         limit 1
     </select>
 
@@ -102,7 +100,15 @@
         `digest`=#{post.digest},
         `content_source_url`=#{post.contentSourceUrl},
         `media_id`=#{post.mediaId},
-        `post_url`="",
+        <choose>
+            <when test="post.postUrl != null">
+                `post_url`=#{post.postUrl},
+            </when>
+            <otherwise>
+                --                 提供默认值0
+                `post_url`="",
+            </otherwise>
+        </choose>
         `type`=#{post.type},
         `index`=#{post.index},
 --         解耦后全部设为零，后期工单删掉

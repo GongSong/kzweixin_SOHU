@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -47,24 +46,5 @@ public class WxPostListDTO {
             @JsonProperty("news_item")
             List<WxPostDTO> newsItems;
         }
-    }
-
-    public List<PostItem> toPostItemList(long weixinAppid) {
-        List<PostItem> postItemList = new LinkedList<>();
-        for (Item item: items) {
-            PostItem postItem = new PostItem();
-            postItem.setWeixinAppid(weixinAppid);
-            postItem.setItem(item);
-            postItemList.add(postItem);
-        }
-        return postItemList;
-    }
-
-    @Data
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class PostItem {
-        @JsonProperty("weixin_appid")
-        Long weixinAppid;
-        Item item;
     }
 }

@@ -58,7 +58,7 @@ public interface WeixinPostService {
      * @return
      * @throws MaterialGetException
      */
-    WxPostListDTO getPostDTOByOffset(String accessToken, int offset, int count) throws MaterialGetException;
+    WxPostListDTO getWxPostList(String accessToken, int offset, int count) throws MaterialGetException;
 
     /**
      * 获取所有微信图文消息

@@ -36,10 +36,6 @@ public class WeixinPostListConsumerTest {
 
     @Test
     public void onMessage() throws Exception {
-        List<WxPostListDTO.PostItem> postItemList = postService.listNonExistsPostItemsFromWeixin(WEIXIN_APPID);
-        for (WxPostListDTO.PostItem postItem: postItemList) {
-            System.out.println("----->" + postItem.getItem().getMediaId());
-        }
     }
 
 }
