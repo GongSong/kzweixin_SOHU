@@ -43,10 +43,10 @@ public interface PostService {
 
     /**
      * 删除图文
-     * 根据pageId，会删除多图文下面的所有图文
+     * 根据pageId，删除多图文下面的所有图文, 同时删除在微信后台的图文
      * @param pageId
      */
-    void deletePost(long weixinAppid, long pageId, String accessToken) throws DaoException, MaterialDeleteException, MongoException;
+    void deletePost(long weixinAppid, long pageId, String accessToken) throws MaterialDeleteException;
 
     /**
      * 是否存在微信图文
