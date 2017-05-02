@@ -22,6 +22,7 @@ import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +50,8 @@ public class PostController extends BaseController {
     PojoSwitcher pojoSwitcher;
     @Resource
     WeixinPostService weixinPostService;
+
+    private static final Logger logger = Logger.getLogger(PostController.class);
 
 
     /**
@@ -102,7 +105,11 @@ public class PostController extends BaseController {
                                 multiPostVOList.add(multiPostVO);
                             }
                             postListVO.getPosts().add(multiPostVOList);
+                        } else {
+                            // 发现垃圾数据
+                            logger.error("【图文垃圾数据】总记录下没有多图文, pageId:" + postDO.getPageId());
                         }
+                    // 单图文
                     } else {
                         PostVO postVO = pojoSwitcher.postDOToVO(postDO);
 
