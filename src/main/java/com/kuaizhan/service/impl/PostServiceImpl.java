@@ -29,8 +29,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -41,6 +39,9 @@ import java.util.regex.Matcher;
 public class PostServiceImpl implements PostService {
 
     private static final Logger logger = Logger.getLogger(PostServiceImpl.class);
+
+    // 最长的title字符数
+    private static final int TITLE_MAX = 640;
 
     @Resource
     PostDao postDao;
@@ -387,7 +388,8 @@ public class PostServiceImpl implements PostService {
             }
 
             postSum.setUpdateTime(updateTime);
-            postSum.setTitle(titleSum.toString());
+            int endIndex = titleSum.length() < TITLE_MAX? titleSum.length(): TITLE_MAX;
+            postSum.setTitle(titleSum.toString().substring(0, endIndex));
             postSum.setMediaId(posts.get(0).getMediaId());
             postDao.updatePost(postSum, postSum.getPageId());
         }
@@ -550,7 +552,8 @@ public class PostServiceImpl implements PostService {
             for (PostDO postDO : posts) {
                 sumTitle.append(postDO.getTitle());
             }
-            sumPost.setTitle(sumTitle.toString());
+            int endIndex = sumTitle.length() < TITLE_MAX? sumTitle.length(): TITLE_MAX;
+            sumPost.setTitle(sumTitle.toString().substring(0, endIndex));
 
             // 无效数据
             sumPost.setThumbMediaId("");
