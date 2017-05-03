@@ -1,9 +1,12 @@
 package com.kuaizhan.common;
 
-import com.kuaizhan.utils.ReplaceCallbackMatcher;
+import com.kuaizhan.utils.JsonUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
-import java.util.regex.Matcher;
+import java.util.*;
+
 
 /**
  * 临时测试入口, 不用加载spring的测试
@@ -13,21 +16,23 @@ public class TmpTest {
 
     @Test
     public void test() throws Exception {
-        String content = "我是多余的内容你听过url('&quot;http://mmbiz.qpic.cn/&quot;mmbiz_png/Ipanel6KSKO6yRR3CwbickSMZarcdTzP1t7M0JlB1ZkhoCnzLiaS2OXFw9m8x6NseL08JxCPgqAxCic8ZeVuHrFEQ/0?wx_fmt=png&quot;\")hahdfa";
-        // 背景图中的微信图片转成快站链接
-        ReplaceCallbackMatcher.Callback callback = new ReplaceCallbackMatcher.Callback() {
-            @Override
-            public String getReplacement(Matcher matcher) throws Exception {
+        String title = "我带了双引号”“";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("title", title);
 
-                System.out.println("----> goupCount:" + matcher.groupCount());
-                String result = "url(" + "被替换的url" + ")";
-                System.out.println("----> origin: " + matcher.group(0) + " result:" + result);
-                return result;
-            }
-        };
-        String regex = "url\\(\"?'?(?:&quot;)?(https?:\\/\\/mmbiz[^)]+?)(?:&quot;)?\"?'?\\)";
-        ReplaceCallbackMatcher replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
-        content = replaceCallbackMatcher.replaceMatches(content, callback);
-        System.out.println("---->" + content);
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("title", "我带了双引号\\u201d\\u201c");
+
+        System.out.println("---->" + jsonObject.toString());
+        System.out.println("---->" + jsonObject1.toString());
+        System.out.println(Objects.equals("---->" + jsonObject.toString(), jsonObject1.toString()));
+
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(jsonObject);
+
+        JSONObject out = new JSONObject();
+        out.put("articles", jsonArray);
+
+        System.out.println("---->" + JsonUtil.bean2String(out.toMap()));
     }
 }

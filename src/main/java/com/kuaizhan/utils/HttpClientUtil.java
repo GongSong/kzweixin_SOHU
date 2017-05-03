@@ -192,7 +192,7 @@ public final class HttpClientUtil {
             HttpPost httpPost = new HttpPost(url);
             httpPost.setHeader("Content-Type", CONTENT_TYPE_JSON);
             try {
-                StringEntity stringEntity = new StringEntity(jsonStr, "UTF-8");
+                StringEntity stringEntity = new StringEntity(jsonStr, ContentType.APPLICATION_JSON);
                 httpPost.setEntity(stringEntity);
             } catch (Exception e) {
                 logger.error("[HttpClientUtil.postJson] utf-8解码失败, jsonStr:" + jsonStr, e);

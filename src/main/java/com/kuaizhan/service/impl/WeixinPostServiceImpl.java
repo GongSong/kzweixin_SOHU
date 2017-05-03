@@ -1,6 +1,7 @@
 package com.kuaizhan.service.impl;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.dao.redis.RedisImageDao;
 import com.kuaizhan.exception.business.*;
@@ -128,7 +129,14 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         // 上传
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("articles", jsonArray);
-        String result = HttpClientUtil.postJson(WxApiConfig.getCreatePostsUrl(accessToken), jsonObject.toString());
+
+        String jsonStr;
+        try {
+            jsonStr = JsonUtil.bean2String(jsonObject.toMap());
+        } catch (JsonProcessingException e) {
+            throw new UploadPostsException("[微信] 上传图文，准备数据失败", e);
+        }
+        String result = HttpClientUtil.postJson(WxApiConfig.getCreatePostsUrl(accessToken), jsonStr);
         if (result == null) {
             throw new RuntimeException("[微信] 上传图文返回体为空");
         }
@@ -165,7 +173,13 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
         jsonObject.put("articles", postJson);
 
-        String result = HttpClientUtil.postJson(WxApiConfig.getUpdatePostUrl(accessToken), jsonObject.toString());
+        String jsonStr;
+        try {
+            jsonStr = JsonUtil.bean2String(jsonObject.toMap());
+        } catch (JsonProcessingException e) {
+            throw new UploadPostsException("[微信] 上传图文，准备数据失败", e);
+        }
+        String result = HttpClientUtil.postJson(WxApiConfig.getUpdatePostUrl(accessToken), jsonStr);
         JSONObject returnJson = new JSONObject(result);
 
         int errCode = returnJson.optInt("errcode");

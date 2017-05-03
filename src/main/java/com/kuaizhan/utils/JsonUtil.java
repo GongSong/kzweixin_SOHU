@@ -26,15 +26,13 @@ public class JsonUtil {
     public static <T> List<T> string2List(String jsonStr, Class<?> cls) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         JavaType javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, cls);
-        List<T> list = objectMapper.readValue(jsonStr, javaType);
-        return list;
+        return objectMapper.readValue(jsonStr, javaType);
     }
 
     public static <T> String list2Str(List<T> list , Class<?> cla) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JavaType javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, cla);
-        String res = objectMapper.writeValueAsString(list);
-        return res ;
+        return objectMapper.writeValueAsString(list);
     }
 
     /**
@@ -61,8 +59,7 @@ public class JsonUtil {
      */
     public static <T> String bean2String(T bean) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        String res =objectMapper.writeValueAsString(bean);
-        return res ;
+        return objectMapper.writeValueAsString(bean);
     }
 
 }
