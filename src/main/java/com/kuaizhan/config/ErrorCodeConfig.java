@@ -52,33 +52,7 @@ public enum ErrorCodeConfig {
 
     TAG_DELETE_FANS_NUMBER_ERROR(104010, "该标签下粉丝数超过10w，不允许直接删除"),
 
-    BLACK_ADD_NUMBER_ERROR(104011, "一次只能拉黑20个用户"),
-
-    //图文(07)
-    DELETE_MATERIAL_ERROR(107001, "删除图文失败"),
-
-    ADD_MATERIAL_ERROR(107002, "新增素材失败"),
-
-    GET_MATERIAL_ERROR(107003, "获取图文失败"),
-
-    UPLOAD_POSTS_ERROR(107004, "上传微信多图文失败"),
-
-    ADD_KZ_POST_ERROR(107005, "同步快站文章失败"),
-
-    POST_NOT_EXIST_ERROR(107006, "图文id不存在"),
-
-    MEDIA_ID_NOT_EXIST_ERROR(107007, "图文素材或者缩略图素材可能在微信后台被删除"),
-
-    SYNC_WX_POST_TOO_OFTEN_ERROR(107008, "10分钟内已经提交过同步请求，请稍后再试。"),
-
-    POST_DELETED_IN_WEIXIN(107009, "图文在微信后台被删除"),
-
-    THUMB_MEDIA_ID_NOT_EXIST_ERROR(107010, "封面图在微信后台被删除，请重新上传"),
-
-    WX_POST_LESS_THEN_POST(107011, "多图文的条数在微信后台与快站不一致，请前往微信公众平台查看"),
-
-    //KZPic(08)
-    KZ_PIC_UPLOAD_ERROR(108001, "上传至KZPic失败");
+    BLACK_ADD_NUMBER_ERROR(104011, "一次只能拉黑20个用户");
 
     private int code;
     private String msg;

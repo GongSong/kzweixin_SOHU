@@ -1,6 +1,6 @@
 package com.kuaizhan.utils;
 
-import com.kuaizhan.exception.business.DownloadFileFailedException;
+import com.kuaizhan.exception.common.DownloadFileFailedException;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;

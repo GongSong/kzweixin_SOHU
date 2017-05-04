@@ -1,7 +1,6 @@
 package com.kuaizhan.exception.system;
 
 import com.kuaizhan.config.ErrorCodeConfig;
-import com.kuaizhan.exception.BaseException;
 
 /**
  * 数据存储异常

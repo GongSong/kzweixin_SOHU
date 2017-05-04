@@ -2,7 +2,7 @@ package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.KzApiConfig;
-import com.kuaizhan.exception.business.KZPicUploadException;
+import com.kuaizhan.exception.common.KZPicUploadException;
 import com.kuaizhan.service.KZPicService;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.UrlUtil;
@@ -51,13 +51,17 @@ public class KZPicServiceImpl implements KZPicService {
         headers.put("Host", ApplicationConfig.KZ_SERVICE_HOST);
 
         String result = HttpClientUtil.post(KzApiConfig.KZ_UPLOAD_PIC_URL, params, headers);
+        if (result == null) {
+            String msg = "[上传图片到快站] 上传失败，url: " +  KzApiConfig.KZ_UPLOAD_PIC_URL + " param: " + params + "headers: " + headers + " result: " + result;
+            throw new KZPicUploadException(msg);
+        }
 
         JSONObject returnJson;
         try {
             returnJson = new JSONObject(result);
         }catch (JSONException e){
             String msg = "[上传图片到快站] 上传失败，url: " +  KzApiConfig.KZ_UPLOAD_PIC_URL + " param: " + params + "headers: " + headers + " result: " + result;
-            throw new KZPicUploadException(msg);
+            throw new KZPicUploadException(msg, e);
         }
 
         if (returnJson.getInt("ret") == 0) {

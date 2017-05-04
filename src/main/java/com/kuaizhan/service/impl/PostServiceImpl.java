@@ -3,14 +3,17 @@ package com.kuaizhan.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.KzApiConfig;
+import com.kuaizhan.constant.ErrorCodes;
 import com.kuaizhan.constant.MqConstant;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.dao.mapper.PostDao;
 import com.kuaizhan.dao.redis.RedisPostDao;
+import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.dao.mongo.MongoPostDao;
+import com.kuaizhan.exception.common.KZPicUploadException;
+import com.kuaizhan.exception.common.MediaIdNotExistException;
 import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
@@ -105,7 +108,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(long weixinAppid, long pageId, String accessToken) throws MaterialDeleteException {
+    public void deletePost(long weixinAppid, long pageId, String accessToken) {
 
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
@@ -183,7 +186,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException, WxPostDeletedException, WxPostLessThenPost {
+    public String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException {
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             String wxUrl = postDO.getPostUrl();
@@ -200,7 +203,7 @@ public class PostServiceImpl implements PostService {
                 // 单图文
                 if (postDO.getType() == 1) {
                     if (urls.size() != 1) {
-                        throw new WxPostLessThenPost("多图文的条数在微信后台与快站不一致，请前往微信公众平台查看。");
+                        throw new BusinessException(ErrorCodes.DIFFERENT_POSTS_NUM_ERROR);
                     }
                     PostDO updatePostDo = new PostDO();
                     updatePostDo.setPostUrl(urls.get(0));
@@ -210,7 +213,7 @@ public class PostServiceImpl implements PostService {
                 } else {
                     List<PostDO> multiPosts = listMultiPosts(weixinAppid, postDO.getMediaId(), false);
                     if (urls.size() != multiPosts.size()) {
-                        throw new WxPostLessThenPost("多图文的条数在微信后台与快站不一致，请前往微信公众平台查看。");
+                        throw new BusinessException(ErrorCodes.DIFFERENT_POSTS_NUM_ERROR);
                     }
                     for (int i = 0; i < urls.size(); i++ ) {
                         PostDO updatePostDo = new PostDO();
@@ -225,7 +228,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void export2KzArticle(long pageId, long categoryId, long siteId) throws DaoException, KZPostAddException, MongoException {
+    public void export2KzArticle(long pageId, long categoryId, long siteId) throws DaoException {
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             Map<String,Object> param=new HashMap<>();
@@ -240,7 +243,7 @@ public class PostServiceImpl implements PostService {
             JSONObject returnJson = new JSONObject(ret);
             if (returnJson.getInt("ret") != 0) {
                 logger.error("[同步到快站文章失败] pageId: " + pageId + "return: " + returnJson + " param:" + param);
-                throw new KZPostAddException();
+                throw new BusinessException(ErrorCodes.OPERATION_FAILED);
             }
         }
     }
@@ -271,7 +274,7 @@ public class PostServiceImpl implements PostService {
         List<PostDO> oldPosts;
         PostDO oldPost = getPostByPageId(pageId);
         if (oldPost == null || oldPost.getType() == 2) {
-            throw new PostNotExistException();
+            throw new BusinessException(ErrorCodes.POST_NOT_EXIST_ERROR);
         }
         if (oldPost.getType() == 1) {
             oldPosts = new ArrayList<>();
@@ -315,7 +318,8 @@ public class PostServiceImpl implements PostService {
                     postDO.setPostUrl("");
                 }
             } else {
-                throw new ThumbMediaIdNotExistException("第" + (curIndex + 1) + "篇图文的封面图在微信后台被删除，请重新上传");
+                String message = "第" + (curIndex + 1) + "篇图文的封面图在微信后台被删除，请重新上传";
+                throw new BusinessException(ErrorCodes.THUMB_MEDIA_ID_NOT_EXIST_ERROR, message);
             }
         }
 
@@ -679,9 +683,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void syncWeixinPosts(long weixinAppid, long userId) throws SyncWXPostTooOftenException {
+    public void syncWeixinPosts(long weixinAppid, long userId) {
         if (! redisPostDao.couldSyncWxPost(weixinAppid)) {
-            throw new SyncWXPostTooOftenException();
+            throw new BusinessException(ErrorCodes.SYNC_WX_POST_TOO_OFTEN_ERROR);
         }
         Map<String, Object> map = new HashMap<>();
         map.put("weixinAppid", weixinAppid);
@@ -690,7 +694,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void calSyncWeixinPosts(long weixinAppid, long userId) throws DaoException, AccountNotExistException, RedisException, MaterialGetException {
+    public void calSyncWeixinPosts(long weixinAppid, long userId) throws DaoException, AccountNotExistException, RedisException {
         int fetchCount = 20;
         String accessToken = accountService.getAccessToken(weixinAppid);
 

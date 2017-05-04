@@ -3,14 +3,11 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.exception.business.*;
 import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.JsonParseException;
-import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.WxPostDTO;
-import com.kuaizhan.pojo.DTO.WxPostListDTO;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,7 +44,7 @@ public interface PostService {
      * 根据pageId，删除多图文下面的所有图文, 同时删除在微信后台的图文
      * @param pageId
      */
-    void deletePost(long weixinAppid, long pageId, String accessToken) throws MaterialDeleteException;
+    void deletePost(long weixinAppid, long pageId, String accessToken);
 
     /**
      * 是否存在微信图文
@@ -72,9 +69,8 @@ public interface PostService {
      * 临时接口，根据pageId, 获取图文内容
      * @param pageId
      * @return
-     * @throws MongoException
      */
-    String getPostContent(long pageId) throws MongoException;
+    String getPostContent(long pageId);
 
     /**
      * 获取快站文章
@@ -96,7 +92,7 @@ public interface PostService {
      * 快站微信文章导入快站文章
      *
      */
-    void export2KzArticle(long pageId,long categoryId,long siteId) throws DaoException, KZPostAddException, MongoException;
+    void export2KzArticle(long pageId,long categoryId,long siteId) throws DaoException;
 
     /**
      * 新增一条多图文消息，并同步到微信服务器
@@ -115,7 +111,7 @@ public interface PostService {
      * 获取post在微信的url
      * @return
      */
-    String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException, WxPostDeletedException, WxPostLessThenPost;
+    String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException;
 
     /**
      * 同步微信消息(异步)
@@ -123,12 +119,12 @@ public interface PostService {
      * @param userId 用户id，用于上传图片
      * @return 是否可以同步
      */
-    void syncWeixinPosts(long weixinAppid, long userId) throws SyncWXPostTooOftenException;
+    void syncWeixinPosts(long weixinAppid, long userId);
 
     /**
      * 计算应该同步的微信图文
      */
-    void calSyncWeixinPosts(long weixinAppid, long userId) throws DaoException, AccountNotExistException, RedisException, MaterialGetException;
+    void calSyncWeixinPosts(long weixinAppid, long userId) throws DaoException, AccountNotExistException, RedisException;
 
     /**
      * 由微信导入图文

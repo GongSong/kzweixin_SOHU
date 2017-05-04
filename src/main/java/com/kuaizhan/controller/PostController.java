@@ -2,9 +2,9 @@ package com.kuaizhan.controller;
 
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.business.*;
+import com.kuaizhan.exception.common.DownloadFileFailedException;
 import com.kuaizhan.exception.system.DaoException;
 import com.kuaizhan.exception.system.JsonParseException;
-import com.kuaizhan.exception.system.MongoException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.param.PostsParam;
 import com.kuaizhan.param.UploadPicParam;
@@ -12,7 +12,6 @@ import com.kuaizhan.param.WxSyncsPostParam;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.Page;
-import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.pojo.VO.PostListFlatVO;
 import com.kuaizhan.pojo.VO.PostListVO;
@@ -62,7 +61,7 @@ public class PostController extends BaseController {
 
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
     public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam(required = false) String title, @RequestParam(defaultValue = "0") Boolean flat)
-            throws DaoException, MongoException {
+            throws DaoException {
 
         Page<PostDO> postDOPage = postService.listPostsByPagination(weixinAppid, title, page, flat);
         List<PostDO> postDOList = postDOPage.getResult();
@@ -129,7 +128,7 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.GET)
-    public JsonResponse getPost(@PathVariable long pageId) throws DaoException, MongoException {
+    public JsonResponse getPost(@PathVariable long pageId) throws DaoException {
         PostDO postDO = postService.getPostByPageId(pageId);
         PostVO postVO = pojoSwitcher.postDOToVO(postDO);
         return new JsonResponse(postVO);
@@ -141,7 +140,7 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
-    public JsonResponse getMultiPost(@PathVariable long pageId) throws DaoException, MongoException {
+    public JsonResponse getMultiPost(@PathVariable long pageId) throws DaoException {
         PostDO postDO = postService.getPostByPageId(pageId);
 
         List<PostVO> multiPostVOList = new ArrayList<>();
@@ -185,7 +184,7 @@ public class PostController extends BaseController {
      * @param pageId
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
-    public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) throws RedisException, AccountNotExistException, MaterialDeleteException, JsonParseException, DaoException {
+    public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) throws RedisException, AccountNotExistException, JsonParseException, DaoException {
         postService.deletePost(weixinAppid, pageId, accountService.getAccessToken(weixinAppid));
         return new JsonResponse(null);
     }
@@ -196,7 +195,7 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
-    public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) throws ParamException, SyncWXPostTooOftenException {
+    public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) throws ParamException {
         postService.syncWeixinPosts(wxSyncsPostParam.getWeixinAppid(), wxSyncsPostParam.getUid());
         return new JsonResponse(null);
     }
@@ -208,7 +207,7 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/posts/kzweixin_syncs", method = RequestMethod.POST)
-    public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws KZPostAddException, DaoException, MongoException, IOException, AccountNotExistException, RedisException, JsonParseException {
+    public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws DaoException, IOException, AccountNotExistException, RedisException, JsonParseException {
         JSONObject jsonObject = new JSONObject(postData);
         Long weixinAppid = jsonObject.optLong("weixinAppid");
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
@@ -242,14 +241,14 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
-    public JsonResponse uploadWeixinThumb(@Valid @RequestBody UploadPicParam uploadPicParam) throws RedisException, JsonParseException, DaoException, AccountNotExistException, AddMaterialException, DownloadFileFailedException {
+    public JsonResponse uploadWeixinThumb(@Valid @RequestBody UploadPicParam uploadPicParam) throws RedisException, JsonParseException, DaoException, AccountNotExistException, DownloadFileFailedException {
         Map result = weixinPostService.uploadImage(accountService.getAccessToken(uploadPicParam.getWeixinAppid()), uploadPicParam.getImgUrl());
 
         return new JsonResponse(result);
     }
 
     @RequestMapping(value = "weixin_pics", method = RequestMethod.POST)
-    public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws DaoException, AccountNotExistException, RedisException, AddMaterialException, DownloadFileFailedException {
+    public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws DaoException, AccountNotExistException, RedisException, DownloadFileFailedException {
         String url = weixinPostService.uploadImgForPost(accountService.getAccessToken(uploadPicParam.getWeixinAppid()), uploadPicParam.getImgUrl());
         Map<String ,String> result = new HashMap<>();
         result.put("url", url);
@@ -257,7 +256,7 @@ public class PostController extends BaseController {
     }
 
     @RequestMapping(value = "/posts/{pageId}/wx_url", method = RequestMethod.GET)
-    public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) throws MongoException, DaoException, RedisException, AccountNotExistException, WxPostDeletedException, WxPostLessThenPost {
+    public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) throws DaoException, RedisException, AccountNotExistException {
         Map<String ,String> result = new HashMap<>();
         result.put("wxUrl", postService.getPostWxUrl(weixinAppid, pageId));
         return new JsonResponse(result);

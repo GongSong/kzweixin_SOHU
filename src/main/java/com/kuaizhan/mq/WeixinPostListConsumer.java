@@ -29,7 +29,7 @@ public class WeixinPostListConsumer extends BaseMqConsumer {
     private static final Logger logger = Logger.getLogger(WeixinPostListConsumer.class);
 
     @Override
-    public void onMessage(Map msgMap) throws BaseException {
+    public void onMessage(Map msgMap) throws Exception {
         logger.info("[mq:同步微信图文], map: "+ msgMap);
 
         long weixinAppid = (long) msgMap.get("weixinAppid");

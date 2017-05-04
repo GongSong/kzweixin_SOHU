@@ -2,6 +2,7 @@ package com.kuaizhan.controller;
 
 import com.kuaizhan.exception.BaseException;
 
+import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.business.ParamException;
 import com.kuaizhan.exception.system.ServerException;
 import com.kuaizhan.pojo.VO.JsonResponse;
@@ -32,6 +33,15 @@ public abstract class BaseController {
             ServerException serverException = new ServerException(ex);
             return new JsonResponse(serverException.getCode(), serverException.getMsg(), null);
         }
+    }
+
+    /**
+     * 业务异常返回异常码和错误信息
+     */
+    @ExceptionHandler
+    @ResponseBody
+    public JsonResponse handleBusinessException(BusinessException e){
+        return new JsonResponse(e.getCode(), e.getMessage(), null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -1,6 +1,7 @@
 package com.kuaizhan.service;
 
-import com.kuaizhan.exception.business.*;
+import com.kuaizhan.exception.common.DownloadFileFailedException;
+import com.kuaizhan.exception.common.MediaIdNotExistException;
 import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.WxPostListDTO;
@@ -21,56 +22,41 @@ public interface WeixinPostService {
      * @param mediaId
      * @param accessToken
      */
-    void deletePost(String mediaId, String accessToken) throws MaterialDeleteException;
+    void deletePost(String mediaId, String accessToken);
 
     /**
      * 上传图片到微信永久素材
      * @param accessToken
      * @param imgUrl
      */
-    HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws AddMaterialException, DownloadFileFailedException;
+    HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws DownloadFileFailedException;
 
     /**
      * 上传图文中的图片到微信服务器
      * @param imgUrl 原始的url
      * @return 在微信服务器的url
      */
-    String uploadImgForPost(String accessToken, String imgUrl) throws AddMaterialException, RedisException, DownloadFileFailedException;
+    String uploadImgForPost(String accessToken, String imgUrl) throws RedisException, DownloadFileFailedException;
 
     /**
      * 上传多图文到微信
      * @param posts 多图文对象
      * @return
      */
-    String uploadPosts(String accessToken, List<PostDO> posts) throws UploadPostsException, ThumbMediaIdNotExistException;
+    String uploadPosts(String accessToken, List<PostDO> posts);
 
     /**
      * 更新微信图文的某一篇
-     * @throws UploadPostsException
      */
-    void updatePost(String accessToken, String mediaId, PostDO postDO) throws UploadPostsException, MediaIdNotExistException, WxPostLessThenPost;
+    void updatePost(String accessToken, String mediaId, PostDO postDO) throws MediaIdNotExistException;
 
     /**
      * 根据偏移获取微信图文列表
-     * @param accessToken
-     * @param offset
-     * @param count
-     * @return
-     * @throws MaterialGetException
      */
-    WxPostListDTO getWxPostList(String accessToken, int offset, int count) throws MaterialGetException;
-
-    /**
-     * 获取所有微信图文消息
-     * @param accessToken
-     * @return
-     * @throws MaterialGetException
-     */
-    List<WxPostListDTO> listAllPosts(String accessToken) throws MaterialGetException;
-
+    WxPostListDTO getWxPostList(String accessToken, int offset, int count);
 
     /**
      * 根据mediaId获取微信图文
      */
-    List<WxPostDTO> getWxPost(String mediaId, String accessToken) throws WxPostDeletedException;
+    List<WxPostDTO> getWxPost(String mediaId, String accessToken);
 }

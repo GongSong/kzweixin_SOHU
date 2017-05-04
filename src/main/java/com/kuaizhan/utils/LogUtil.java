@@ -23,8 +23,11 @@ public class LogUtil {
             logger.fatal(output(((SystemException) e).getDate(), ((SystemException) e).getMsg(), ((SystemException) e).getErrorStack()), e);
         } else if (e instanceof BusinessException) {
             logger.warn(output(((BusinessException) e).getDate(), ((BusinessException) e).getMsg(), ((BusinessException) e).getErrorStack()), e);
+        } else if (e instanceof com.kuaizhan.exception.BusinessException) {
+            // 简单记录业务异常
+            logger.info(e.toString());
         } else {
-            logger.error("[未知错误]", e);
+            logger.error("[Unknown Exception]", e);
         }
     }
 
