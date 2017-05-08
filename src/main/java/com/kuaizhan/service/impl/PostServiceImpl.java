@@ -598,9 +598,23 @@ public class PostServiceImpl implements PostService {
      * 上传图文content中的图片到微信，并写入wx_src到img标签
      */
     private String uploadContentImg(final String accessToken, String content) throws Exception {
-
-        // 定义替换callback
+        // 对wx_src垃圾数据进行清理，即wx_src标签下的内容不是微信链接。
+        String wxSrcRegex = "(wx_src=)[\"'](?<wxSrc>[^\"']+?)[\"']";
+        ReplaceCallbackMatcher callbackMatcher = new ReplaceCallbackMatcher(wxSrcRegex);
         ReplaceCallbackMatcher.Callback callback = new ReplaceCallbackMatcher.Callback() {
+            @Override
+            public String getReplacement(Matcher matcher) throws Exception {
+                String wxSrc = matcher.group("wxSrc");
+                wxSrc = weixinPostService.uploadImgForPost(accessToken, wxSrc);
+                return "wx_src=\"" + wxSrc + "\"";
+            }
+        };
+        content = callbackMatcher.replaceMatches(content, callback);
+
+        // 正常为图片标签建立wxSrc
+        String regex = "(<img[^>]* src=)[\"'](?<src>[^\"']+)[\"']([^>]*>)";
+        callbackMatcher = new ReplaceCallbackMatcher(regex);
+        callback = new ReplaceCallbackMatcher.Callback() {
             @Override
             public String getReplacement(Matcher matcher) throws Exception {
                 String replacement;
@@ -616,10 +630,6 @@ public class PostServiceImpl implements PostService {
                 return replacement;
             }
         };
-
-        // 执行替换
-        String regex = "(<img[^>]* src=)[\"'](?<src>[^\"']+)[\"']([^>]*>)";
-        ReplaceCallbackMatcher callbackMatcher = new ReplaceCallbackMatcher(regex);
         content = callbackMatcher.replaceMatches(content, callback);
 
         return content;
