@@ -3,8 +3,11 @@ package com.kuaizhan.service.impl;
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisAuthDao;
+import com.kuaizhan.exception.common.DecryptException;
 import com.kuaizhan.exception.common.GetComponentAccessTokenFailed;
-import com.kuaizhan.exception.system.*;
+import com.kuaizhan.exception.common.RedisException;
+import com.kuaizhan.exception.common.XMLParseException;
+import com.kuaizhan.exception.deprecated.system.*;
 import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
 import com.kuaizhan.pojo.DTO.AuthorizerInfoDTO;
 import com.kuaizhan.service.WeixinAuthService;
@@ -13,7 +16,6 @@ import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.weixin.AesException;
 import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
-import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -59,31 +61,27 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     }
 
     @Override
-    public void getComponentVerifyTicket(String signature, String timestamp, String nonce, String postData) throws DecryptException, XMLParseException, RedisException {
+    public void getComponentVerifyTicket(String signature, String timestamp, String nonce, String postData) {
         //对消息进行解密
         String msg;
         try {
             WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN, ApplicationConfig.WEIXIN_AES_KEY, ApplicationConfig.WEIXIN_APPID_THIRD);
             msg = wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
         } catch (AesException e) {
-            throw new DecryptException(e);
+            throw new DecryptException("[WeiXin:getComponentVerifyTicket] decrypt failed", e);
         }
         //解析xml
         Document document;
         try {
             document = DocumentHelper.parseText(msg);
         } catch (DocumentException e) {
-            throw new XMLParseException(e);
+            throw new XMLParseException("[WeiXin:getComponentVerifyTicket] xml parse failed", e);
         }
         Element root = document.getRootElement();
         Element ticket = root.element("ComponentVerifyTicket");
         //缓存
         if (ticket != null) {
-            try {
-                redisAuthDao.setComponentVerifyTicket(ticket.getText());
-            } catch (Exception e) {
-                throw new RedisException(e);
-            }
+            redisAuthDao.setComponentVerifyTicket(ticket.getText());
         }
     }
 

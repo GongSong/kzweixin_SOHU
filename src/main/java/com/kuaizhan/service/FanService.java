@@ -1,9 +1,9 @@
 package com.kuaizhan.service;
 
-import com.kuaizhan.exception.business.*;
-import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.RedisException;
-import com.kuaizhan.exception.system.ServerException;
+import com.kuaizhan.exception.deprecated.business.*;
+import com.kuaizhan.exception.common.DaoException;
+import com.kuaizhan.exception.common.RedisException;
+import com.kuaizhan.exception.deprecated.system.ServerException;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.TagDTO;

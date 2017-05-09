@@ -1,4 +1,4 @@
-package com.kuaizhan.exception.business;
+package com.kuaizhan.exception.deprecated.business;
 
 import com.kuaizhan.exception.BaseException;
 

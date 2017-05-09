@@ -1,9 +1,9 @@
 package com.kuaizhan.service;
 
 
-import com.kuaizhan.exception.business.SendCustomMsgException;
-import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
+import com.kuaizhan.exception.common.DaoException;
+import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.MsgDO;
 import com.kuaizhan.pojo.DTO.Page;

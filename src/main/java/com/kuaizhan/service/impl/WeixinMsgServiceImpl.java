@@ -3,12 +3,12 @@ package com.kuaizhan.service.impl;
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisMsgDao;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.SendCustomMsgException;
-import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.EncryptException;
-import com.kuaizhan.exception.system.RedisException;
-import com.kuaizhan.exception.system.XMLParseException;
+import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
+import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
+import com.kuaizhan.exception.common.DaoException;
+import com.kuaizhan.exception.deprecated.system.EncryptException;
+import com.kuaizhan.exception.common.RedisException;
+import com.kuaizhan.exception.common.XMLParseException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.MsgDO;
 import com.kuaizhan.service.AccountService;
@@ -60,7 +60,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
         try {
             document = DocumentHelper.parseText(msg);
         } catch (Exception e) {
-            throw new XMLParseException(e);
+            throw new XMLParseException("[Weixin:handleWeiXinPushMsg] xml parse failed", e);
         }
         Element root = document.getRootElement();
         Element msgType = root.element("MsgType");

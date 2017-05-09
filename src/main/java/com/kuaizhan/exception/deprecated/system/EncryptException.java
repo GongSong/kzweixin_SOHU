@@ -1,7 +1,6 @@
-package com.kuaizhan.exception.system;
+package com.kuaizhan.exception.deprecated.system;
 
 import com.kuaizhan.config.ErrorCodeConfig;
-import com.kuaizhan.exception.BaseException;
 
 /**
  * 加密异常

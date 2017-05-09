@@ -1,7 +1,6 @@
-package com.kuaizhan.exception.business;
+package com.kuaizhan.exception.deprecated.business;
 
 import com.kuaizhan.config.ErrorCodeConfig;
-import com.kuaizhan.exception.BaseException;
 
 /**
  * Created by liangjiateng on 2017/3/17.

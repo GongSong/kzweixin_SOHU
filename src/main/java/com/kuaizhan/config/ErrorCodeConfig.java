@@ -1,7 +1,11 @@
 package com.kuaizhan.config;
 
 /**
- * 错误码
+ * ################### 已废弃 ####################
+ * ################### 待重构 ####################
+ */
+
+/**
  * Created by liangjiateng on 2017/3/1.
  */
 public enum ErrorCodeConfig {
@@ -12,12 +16,8 @@ public enum ErrorCodeConfig {
     //系统级(00)
     SUCCESS(200, "ok"),
     SERVER_ERROR(100000, "服务器未知错误"),
-    DATABASE_ERROR(100001, "数据库存储错误"),
-    REDIS_ERROR(100002, "redis缓存错误"),
     JSON_PARSE_ERROR(100003, "JSON解析错误"),
-    XML_PARSE_ERROR(100004, "XML解析错误"),
     ENCRYPT_ERROR(100005, "加密错误"),
-    DECRYPT_ERROR(100006, "解密错误"),
 
     //公共(01)
     PARAM_ERROR(101001, "请求参数错误"),

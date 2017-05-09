@@ -1,7 +1,7 @@
 package com.kuaizhan.aspect;
 
 import com.kuaizhan.annotation.Validate;
-import com.kuaizhan.exception.business.ParamException;
+import com.kuaizhan.exception.deprecated.business.ParamException;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.utils.LogUtil;
 import com.kuaizhan.utils.ParamUtil;

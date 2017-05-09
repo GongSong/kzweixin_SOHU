@@ -2,8 +2,8 @@ package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.dao.mapper.FanDao;
-import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.XMLParseException;
+import com.kuaizhan.exception.common.DaoException;
+import com.kuaizhan.exception.common.XMLParseException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.FanDO;
 import com.kuaizhan.pojo.DTO.TagDTO;

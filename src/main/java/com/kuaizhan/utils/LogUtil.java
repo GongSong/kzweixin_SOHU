@@ -1,8 +1,8 @@
 package com.kuaizhan.utils;
 
 
-import com.kuaizhan.exception.business.BusinessException;
-import com.kuaizhan.exception.system.SystemException;
+import com.kuaizhan.exception.deprecated.business.BusinessException;
+import com.kuaizhan.exception.deprecated.system.SystemException;
 import org.apache.log4j.Logger;
 
 import java.util.Date;

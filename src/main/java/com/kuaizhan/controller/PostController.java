@@ -1,7 +1,7 @@
 package com.kuaizhan.controller;
 
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.exception.business.*;
+import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.exception.common.DownloadFileFailedException;
 import com.kuaizhan.param.PostsParam;
 import com.kuaizhan.param.UploadPicParam;

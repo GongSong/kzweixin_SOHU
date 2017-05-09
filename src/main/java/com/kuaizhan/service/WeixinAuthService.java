@@ -1,7 +1,9 @@
 package com.kuaizhan.service;
 
 
-import com.kuaizhan.exception.system.*;
+import com.kuaizhan.exception.common.DecryptException;
+import com.kuaizhan.exception.common.RedisException;
+import com.kuaizhan.exception.deprecated.system.*;
 import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
 import com.kuaizhan.pojo.DTO.AuthorizerInfoDTO;
 
@@ -24,7 +26,7 @@ public interface WeixinAuthService {
      *
      * @return
      */
-    void getComponentVerifyTicket(String signature, String timestamp, String nonce, String postData) throws DecryptException, XMLParseException, RedisException;
+    void getComponentVerifyTicket(String signature, String timestamp, String nonce, String postData);
 
     /**
      * 获取第三方平台component_access_token

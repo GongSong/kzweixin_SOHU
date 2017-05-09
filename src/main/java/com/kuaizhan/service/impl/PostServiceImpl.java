@@ -8,7 +8,7 @@ import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.dao.mapper.PostDao;
 import com.kuaizhan.dao.redis.RedisPostDao;
 import com.kuaizhan.exception.BusinessException;
-import com.kuaizhan.exception.business.*;
+import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.common.KZPicUploadException;
 import com.kuaizhan.exception.common.MediaIdNotExistException;

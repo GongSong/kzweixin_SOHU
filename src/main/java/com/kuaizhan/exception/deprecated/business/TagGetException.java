@@ -1,7 +1,6 @@
-package com.kuaizhan.exception.business;
+package com.kuaizhan.exception.deprecated.business;
 
 import com.kuaizhan.config.ErrorCodeConfig;
-import com.kuaizhan.exception.BaseException;
 
 /**
  * 获取标签异常

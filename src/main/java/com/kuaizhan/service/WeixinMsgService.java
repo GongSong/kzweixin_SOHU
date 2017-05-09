@@ -1,11 +1,11 @@
 package com.kuaizhan.service;
 
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.SendCustomMsgException;
-import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.EncryptException;
-import com.kuaizhan.exception.system.RedisException;
-import com.kuaizhan.exception.system.XMLParseException;
+import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
+import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
+import com.kuaizhan.exception.common.DaoException;
+import com.kuaizhan.exception.deprecated.system.EncryptException;
+import com.kuaizhan.exception.common.RedisException;
+import com.kuaizhan.exception.common.XMLParseException;
 import org.json.JSONObject;
 
 /**

@@ -1,7 +1,7 @@
 package com.kuaizhan.service;
 
 
-import com.kuaizhan.exception.business.*;
+import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;

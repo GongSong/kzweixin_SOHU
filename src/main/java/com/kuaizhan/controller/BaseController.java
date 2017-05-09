@@ -3,8 +3,8 @@ package com.kuaizhan.controller;
 import com.kuaizhan.exception.BaseException;
 
 import com.kuaizhan.exception.BusinessException;
-import com.kuaizhan.exception.business.ParamException;
-import com.kuaizhan.exception.system.ServerException;
+import com.kuaizhan.exception.deprecated.business.ParamException;
+import com.kuaizhan.exception.deprecated.system.ServerException;
 import com.kuaizhan.pojo.VO.JsonResponse;
 
 import org.springframework.validation.ObjectError;

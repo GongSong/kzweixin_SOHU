@@ -3,11 +3,11 @@ package com.kuaizhan.controller;
 
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.business.ParamException;
-import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.JsonParseException;
-import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
+import com.kuaizhan.exception.deprecated.business.ParamException;
+import com.kuaizhan.exception.common.DaoException;
+import com.kuaizhan.exception.deprecated.system.JsonParseException;
+import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
 import com.kuaizhan.pojo.VO.AccountVO;

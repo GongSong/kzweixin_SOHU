@@ -4,8 +4,11 @@ package com.kuaizhan.controller;
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.exception.business.AccountNotExistException;
-import com.kuaizhan.exception.system.*;
+import com.kuaizhan.exception.common.DaoException;
+import com.kuaizhan.exception.common.RedisException;
+import com.kuaizhan.exception.common.XMLParseException;
+import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
+import com.kuaizhan.exception.deprecated.system.*;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
 import com.kuaizhan.pojo.DTO.AuthorizerInfoDTO;
@@ -40,7 +43,7 @@ public class WeixinController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/auth/callback", method = RequestMethod.POST)
-    public String receiver(@RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody String postData) throws XMLParseException, DecryptException, RedisException {
+    public String receiver(@RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody String postData) {
         weixinAuthService.getComponentVerifyTicket(signature, timestamp, nonce, postData);
         return "success";
     }
