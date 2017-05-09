@@ -26,7 +26,7 @@ public interface AccountService {
      * @param weixinAppId
      * @return
      */
-    String getAccessToken(long weixinAppId) throws RedisException, DaoException, AccountNotExistException;
+    String getAccessToken(long weixinAppId) throws AccountNotExistException;
 
     /**
      * 根据siteId获取账号信息
@@ -49,7 +49,7 @@ public interface AccountService {
      *
      * @return
      */
-    AccountDO getAccountByWeixinAppId(long weixinAppid) throws RedisException, DaoException, AccountNotExistException, JsonParseException;
+    AccountDO getAccountByWeixinAppId(long weixinAppid) throws AccountNotExistException;
 
     /**
      * 解绑账号

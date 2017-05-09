@@ -1,7 +1,6 @@
 package com.kuaizhan.exception.system;
 
 import com.kuaizhan.config.ErrorCodeConfig;
-import com.kuaizhan.exception.BaseException;
 
 /**
  * redis缓存异常

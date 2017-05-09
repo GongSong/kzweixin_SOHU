@@ -21,19 +21,18 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
 
 
     @Override
-    public AccountDO getAccountInfoByWeixinAppId(long weixinAppId) throws IOException {
+    public AccountDO getAccountInfoByWeixinAppId(long weixinAppId) {
         String key = RedisConstant.KEY_ACCOUNT_INFO + weixinAppId;
         String result = getData(key);
         if (result == null) {
             return null;
-        } else {
-            return JsonUtil.string2Bean(result, AccountDO.class);
         }
+        return JsonUtil.string2Bean(result, AccountDO.class);
     }
 
 
     @Override
-    public void setAccountInfo(AccountDO account) throws JsonProcessingException {
+    public void setAccountInfo(AccountDO account) {
         String key = RedisConstant.KEY_ACCOUNT_INFO + account.getWeixinAppId();
         String str = JsonUtil.bean2String(account);
         setData(key, str, 7000);

@@ -3,6 +3,7 @@ package com.kuaizhan.service.impl;
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisAuthDao;
+import com.kuaizhan.exception.common.GetComponentAccessTokenFailed;
 import com.kuaizhan.exception.system.*;
 import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
 import com.kuaizhan.pojo.DTO.AuthorizerInfoDTO;
@@ -12,6 +13,7 @@ import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.weixin.AesException;
 import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
+import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -86,43 +88,33 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     }
 
     @Override
-    public String getComponentAccessToken() throws RedisException, JsonParseException {
+    public String getComponentAccessToken() {
         //TODO: component_access_token 直接存储json
-        String ticket;
-        String componentAccessToken;
-        JSONObject result;
-        try {
-            //从redis拿componentAccessToken
-            componentAccessToken = redisAuthDao.getComponentAccessToken();
-            //从缓存中拿ticket
-            ticket = redisAuthDao.getComponentVerifyTicket();
-            if (ticket == null || "".equals(ticket)){
-                logger.error("获取ticket失败, ticket:" + ticket);
-            }
-        } catch (Exception e) {
-            throw new RedisException(e);
+        String ticket = redisAuthDao.getComponentVerifyTicket();
+        if (ticket == null || "".equals(ticket)){
+            logger.error("[Weixin:getComponentAccessToken] get ticket failed:" + ticket);
         }
+
+        String componentAccessToken = redisAuthDao.getComponentAccessToken();
         if (componentAccessToken == null) {
-            try {
                 //请求微信接口
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("component_appid", ApplicationConfig.WEIXIN_APPID_THIRD);
-                jsonObject.put("component_appsecret", ApplicationConfig.WEIXIN_APP_SECRET_THIRD);
-                jsonObject.put("component_verify_ticket", ticket);
-                String returnJson = HttpClientUtil.postJson(WxApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
-                logger.info("[微信第三方平台] 获取componentAccessToken, params: " + jsonObject + " return: " + returnJson);
-                result = new JSONObject(returnJson);
-                result.put("expires_time", System.currentTimeMillis() / 1000 + 7100);
-                componentAccessToken = result.getString("component_access_token");
-            } catch (Exception e) {
-                throw new JsonParseException(e);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("component_appid", ApplicationConfig.WEIXIN_APPID_THIRD);
+            jsonObject.put("component_appsecret", ApplicationConfig.WEIXIN_APP_SECRET_THIRD);
+            jsonObject.put("component_verify_ticket", ticket);
+
+            String result = HttpClientUtil.postJson(WxApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
+            logger.info("[WeiXin:getComponentAccessToken] get componentAccessToken, params: " + jsonObject + " return: " + result);
+
+            if (result == null) {
+                throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] result is null");
             }
-            try {
-                //检查token是否一样
-                redisAuthDao.setComponentAccessToken(result.toString());
-            } catch (Exception e) {
-                throw new RedisException(e);
-            }
+
+            JSONObject resultJson = new JSONObject(result);
+            resultJson.put("expires_time", System.currentTimeMillis() / 1000 + 7100);
+            componentAccessToken = resultJson.getString("component_access_token");
+            //检查token是否一样
+            redisAuthDao.setComponentAccessToken(resultJson.toString());
         }
         return componentAccessToken;
     }
@@ -184,19 +176,14 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     }
 
     @Override
-    public AuthorizationInfoDTO refreshAuthorizationInfo(String componentAccessToken, String componentAppId, String authorizerAppId, String authorizerRefreshToken) throws JsonParseException {
+    public AuthorizationInfoDTO refreshAuthorizationInfo(String componentAccessToken, String componentAppId, String authorizerAppId, String authorizerRefreshToken) {
         AuthorizationInfoDTO authorizationInfoDTO;
-        try {
-            // TODO: 获取token失败时，应该抛异常。
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("component_appid", componentAppId);
-            jsonObject.put("authorizer_appid", authorizerAppId);
-            jsonObject.put("authorizer_refresh_token", authorizerRefreshToken);
-            String result = HttpClientUtil.postJson(WxApiConfig.getRefreshAuthUrl(componentAccessToken), jsonObject.toString());
-            authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
-        } catch (Exception e) {
-            throw new JsonParseException(e);
-        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("component_appid", componentAppId);
+        jsonObject.put("authorizer_appid", authorizerAppId);
+        jsonObject.put("authorizer_refresh_token", authorizerRefreshToken);
+        String result = HttpClientUtil.postJson(WxApiConfig.getRefreshAuthUrl(componentAccessToken), jsonObject.toString());
+        authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
         return authorizationInfoDTO;
     }
 

@@ -79,52 +79,31 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String getAccessToken(long weixinAppId) throws RedisException, DaoException, AccountNotExistException {
+    public String getAccessToken(long weixinAppId) throws AccountNotExistException {
         //存在高并发场景下access_token失效的问题
-        String accessToken;
-        try {
-            accessToken = redisAccountDao.getAccessToken(weixinAppId);
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
+        String accessToken = redisAccountDao.getAccessToken(weixinAppId);
         // TODO: 在这里实现分布式锁，否则在消息队列和web同时调用的情况下，有一定几率相互覆盖
         if (accessToken == null) {
             //从数据库拿refresh key刷新
-            AccountDO accountDO;
-            try {
-                accountDO = accountDao.getAccountByWeixinAppId(weixinAppId);
-            } catch (Exception e){
-                throw new DaoException(e);
-            }
+            AccountDO accountDO  = accountDao.getAccountByWeixinAppId(weixinAppId);
             if (accountDO == null) {
                 throw new AccountNotExistException();
             }
             //刷新
-            AuthorizationInfoDTO authorizationInfoDTO;
-            try {
-                authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken());
-                accessToken = authorizationInfoDTO.getAccessToken();
-            } catch (Exception e){
-                // FIXME: 重新定义这里的异常
-                throw new DaoException(e);
-            }
+            AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(
+                    weixinAuthService.getComponentAccessToken(),
+                    ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(),
+                    accountDO.getRefreshToken());
+            accessToken = authorizationInfoDTO.getAccessToken();
 
             // 更新数据库
-            try {
-                AccountDO updateAccountDo = new AccountDO();
-                updateAccountDo.setWeixinAppId(accountDO.getWeixinAppId());
-                updateAccountDo.setAccessToken(authorizationInfoDTO.getAccessToken());
-                updateAccountDo.setRefreshToken(authorizationInfoDTO.getRefreshToken());
-                accountDao.updateAccountByWeixinAppId(updateAccountDo);
-            } catch (Exception e) {
-                throw new DaoException(e);
-            }
+            AccountDO updateAccountDo = new AccountDO();
+            updateAccountDo.setWeixinAppId(accountDO.getWeixinAppId());
+            updateAccountDo.setAccessToken(authorizationInfoDTO.getAccessToken());
+            updateAccountDo.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+            accountDao.updateAccountByWeixinAppId(updateAccountDo);
             //设置缓存
-            try {
-                redisAccountDao.setAccessToken(weixinAppId, authorizationInfoDTO);
-            } catch (Exception e) {
-                throw new RedisException(e);
-            }
+            redisAccountDao.setAccessToken(weixinAppId, authorizationInfoDTO);
         }
         return accessToken;
     }
@@ -153,31 +132,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDO getAccountByWeixinAppId(long weinxinAppid) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
-        AccountDO accountDO;
-        //从缓存拿
-        try {
-            accountDO = redisAccountDao.getAccountInfoByWeixinAppId(weinxinAppid);
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
+    public AccountDO getAccountByWeixinAppId(long weinxinAppid) throws AccountNotExistException {
+        // 从缓存拿
+        AccountDO accountDO = redisAccountDao.getAccountInfoByWeixinAppId(weinxinAppid);
+
         if (accountDO == null) {
             //从数据库拿
-            try {
-                accountDO = accountDao.getAccountByWeixinAppId(weinxinAppid);
-            } catch (Exception e) {
-                throw new DaoException(e);
-            }
+            accountDO = accountDao.getAccountByWeixinAppId(weinxinAppid);
             if (accountDO == null) {
                 throw new AccountNotExistException();
             }
 
             //存缓存
-            try {
-                redisAccountDao.setAccountInfo(accountDO);
-            } catch (Exception e) {
-                throw new RedisException(e);
-            }
+            redisAccountDao.setAccountInfo(accountDO);
         }
         return accountDO;
     }

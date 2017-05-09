@@ -1,6 +1,5 @@
 package com.kuaizhan.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.KzApiConfig;
 import com.kuaizhan.constant.ErrorCodes;
@@ -13,8 +12,6 @@ import com.kuaizhan.exception.business.*;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.common.KZPicUploadException;
 import com.kuaizhan.exception.common.MediaIdNotExistException;
-import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
@@ -69,16 +66,12 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat) throws DaoException {
+    public Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat) {
 
         Page<PostDO> postDOPage = new Page<>(page, AppConstant.PAGE_SIZE_MIDDLE);
 
         List<PostDO> posts;
-        try {
-            posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage, flat);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
+        posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage, flat);
 
         long totalCount = postDao.count(weixinAppid, title, flat);
         postDOPage.setTotalCount(totalCount);
@@ -88,14 +81,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) throws DaoException {
+    public List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) {
 
-        List<PostDO> multiPosts;
-        try {
-            multiPosts = postDao.listMultiPosts(weixinAppid, mediaId);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
+        List<PostDO> multiPosts = postDao.listMultiPosts(weixinAppid, mediaId);
 
         // 从Mongo中取content
         if (withContent) {
@@ -186,7 +174,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException {
+    public String getPostWxUrl(long weixinAppid, long pageId) throws AccountNotExistException {
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             String wxUrl = postDO.getPostUrl();
@@ -228,7 +216,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void export2KzArticle(long pageId, long categoryId, long siteId) throws DaoException {
+    public void export2KzArticle(long pageId, long categoryId, long siteId) {
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             Map<String,Object> param=new HashMap<>();
@@ -694,7 +682,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void calSyncWeixinPosts(long weixinAppid, long userId) throws DaoException, AccountNotExistException, RedisException {
+    public void calSyncWeixinPosts(long weixinAppid, long userId) throws AccountNotExistException {
         int fetchCount = 20;
         String accessToken = accountService.getAccessToken(weixinAppid);
 
@@ -721,20 +709,16 @@ public class PostServiceImpl implements PostService {
     /*** 判断是否应该同步微信图文，并发布mq消息 ***/
     private void publishSyncWeixinPost(List<WxPostDTO> wxPostDTOs, String mediaId, int updateTime, long weixinAppid, long userId) {
         PostDO postDO = getPostByMediaId(weixinAppid, mediaId);
-        try {
-            // 需要新增或者需要更新
-            if (postDO == null || updateTime - postDO.getUpdateTime() > 2) {
-                Map<String, Object> message = new HashMap<>();
-                message.put("userId", userId);
-                message.put("weixinAppid", weixinAppid);
-                message.put("mediaId", mediaId);
-                message.put("updateTime", updateTime);
-                message.put("wxPostDTOs", JsonUtil.bean2String(wxPostDTOs));
-                message.put("isNew", postDO == null);
-                mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, message);
-            }
-        } catch (JsonProcessingException e) {
-            logger.error(e);
+        // 需要新增或者需要更新
+        if (postDO == null || updateTime - postDO.getUpdateTime() > 2) {
+            Map<String, Object> message = new HashMap<>();
+            message.put("userId", userId);
+            message.put("weixinAppid", weixinAppid);
+            message.put("mediaId", mediaId);
+            message.put("updateTime", updateTime);
+            message.put("wxPostDTOs", JsonUtil.bean2String(wxPostDTOs));
+            message.put("isNew", postDO == null);
+            mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, message);
         }
     }
 

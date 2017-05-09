@@ -31,7 +31,7 @@ public interface WeixinAuthService {
      *
      * @return
      */
-    String getComponentAccessToken() throws RedisException, JsonParseException;
+    String getComponentAccessToken();
 
     /**
      * 获取预授权码
@@ -58,7 +58,7 @@ public interface WeixinAuthService {
      * @param authorizerRefreshToken
      * @return
      */
-    AuthorizationInfoDTO refreshAuthorizationInfo(String componentAccessToken, String componentAppId, String authorizerAppId, String authorizerRefreshToken) throws JsonParseException;
+    AuthorizationInfoDTO refreshAuthorizationInfo(String componentAccessToken, String componentAppId, String authorizerAppId, String authorizerRefreshToken);
 
     /**
      * 获取授权方的公众号帐号基本信息

@@ -3,6 +3,8 @@ package com.kuaizhan.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kuaizhan.exception.common.Bean2StringFailedException;
+import com.kuaizhan.exception.common.String2BeanFailedException;
 
 
 import java.io.IOException;
@@ -44,9 +46,13 @@ public class JsonUtil {
      * @return
      * @throws IOException
      */
-    public static <T> T string2Bean(String jsonStr, Class<?> cls) throws IOException {
+    public static <T> T string2Bean(String jsonStr, Class<?> cls) {
         ObjectMapper objectMapper = new ObjectMapper();
-        return (T) objectMapper.readValue(jsonStr, cls);
+        try {
+            return (T) objectMapper.readValue(jsonStr, cls);
+        } catch (IOException e) {
+            throw new String2BeanFailedException("[String2Bean] failed, Class:" + cls + " jsonStr" + jsonStr, e);
+        }
     }
 
     /**
@@ -57,9 +63,13 @@ public class JsonUtil {
      * @return
      * @throws JsonProcessingException
      */
-    public static <T> String bean2String(T bean) throws JsonProcessingException {
+    public static <T> String bean2String(T bean) {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(bean);
+        try {
+            return objectMapper.writeValueAsString(bean);
+        } catch (JsonProcessingException e) {
+            throw new Bean2StringFailedException("[bean2String] failed, bean:" + bean, e);
+        }
     }
 
 }

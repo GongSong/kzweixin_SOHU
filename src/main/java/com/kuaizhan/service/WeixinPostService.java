@@ -2,7 +2,6 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.exception.common.DownloadFileFailedException;
 import com.kuaizhan.exception.common.MediaIdNotExistException;
-import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.pojo.DTO.WxPostDTO;
@@ -36,7 +35,7 @@ public interface WeixinPostService {
      * @param imgUrl 原始的url
      * @return 在微信服务器的url
      */
-    String uploadImgForPost(String accessToken, String imgUrl) throws RedisException, DownloadFileFailedException;
+    String uploadImgForPost(String accessToken, String imgUrl) throws DownloadFileFailedException;
 
     /**
      * 上传多图文到微信

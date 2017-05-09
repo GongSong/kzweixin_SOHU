@@ -1,15 +1,11 @@
 package com.kuaizhan.service.impl;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.constant.ErrorCodes;
 import com.kuaizhan.dao.redis.RedisImageDao;
 import com.kuaizhan.exception.BusinessException;
-import com.kuaizhan.exception.common.DownloadFileFailedException;
-import com.kuaizhan.exception.common.WxPostListGetException;
-import com.kuaizhan.exception.common.MediaIdNotExistException;
-import com.kuaizhan.exception.system.RedisException;
+import com.kuaizhan.exception.common.*;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.pojo.DTO.WxPostDTO;
@@ -23,7 +19,6 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.*;
 
 
@@ -96,7 +91,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
     }
 
     @Override
-    public String uploadImgForPost(String accessToken, String imgUrl) throws RedisException, DownloadFileFailedException {
+    public String uploadImgForPost(String accessToken, String imgUrl) throws DownloadFileFailedException {
         imgUrl = UrlUtil.fixQuote(imgUrl);
         imgUrl = UrlUtil.fixProtocol(imgUrl);
 
@@ -152,7 +147,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         String jsonStr;
         try {
             jsonStr = JsonUtil.bean2String(jsonObject.toMap());
-        } catch (JsonProcessingException e) {
+        } catch (Bean2StringFailedException e) {
             logger.error("[WeiXin:uploadPosts] bean to string failed" + jsonObject, e);
             throw new BusinessException(ErrorCodes.OPERATION_FAILED, "上传图文到微信失败，请稍后再试");
         }
@@ -198,7 +193,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         String jsonStr;
         try {
             jsonStr = JsonUtil.bean2String(jsonObject.toMap());
-        } catch (JsonProcessingException e) {
+        } catch (Bean2StringFailedException e) {
             logger.error("[WeiXin:updatePost] bean to string failed" + jsonObject, e);
             throw new BusinessException(ErrorCodes.OPERATION_FAILED, "修改微信图文失败，请稍后再试");
         }
@@ -241,8 +236,8 @@ public class WeixinPostServiceImpl implements WeixinPostService {
             throw new WxPostListGetException(msg);
         }
         try {
-            return JsonUtil.<WxPostListDTO>string2Bean(result, WxPostListDTO.class);
-        } catch (IOException e) {
+            return JsonUtil.string2Bean(result, WxPostListDTO.class);
+        } catch (String2BeanFailedException e) {
             String msg = "[WeiXin:getWxPostList] serializing failed , param: " + jsonObject + " result: " +returnJson;
             throw new WxPostListGetException(msg, e);
         }
@@ -267,7 +262,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
             WxPostDTO wxPostDTO;
             try {
                 wxPostDTO = JsonUtil.string2Bean(jsonObject.toString(), WxPostDTO.class);
-            } catch (IOException e) {
+            } catch (String2BeanFailedException e) {
                 throw new RuntimeException("序列化wxPostDTO失败", e);
             }
             wxPostDTOS.add(wxPostDTO);

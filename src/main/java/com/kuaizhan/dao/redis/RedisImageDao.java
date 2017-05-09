@@ -1,7 +1,5 @@
 package com.kuaizhan.dao.redis;
 
-import com.kuaizhan.exception.system.RedisException;
-
 /**
  * Created by zixiong on 2017/4/6.
  */
@@ -12,11 +10,11 @@ public interface RedisImageDao {
      * @param originUrl 原来的url
      * @param url 在微信的url
      */
-    void setImageUrl(String originUrl, String url) throws RedisException;
+    void setImageUrl(String originUrl, String url);
 
 
     /**
      * 获取缓存的上传过的图片url
      */
-    String getImageUrl(String originUrl) throws RedisException;
+    String getImageUrl(String originUrl);
 }

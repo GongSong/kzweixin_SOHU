@@ -2,8 +2,6 @@ package com.kuaizhan.service;
 
 
 import com.kuaizhan.exception.business.*;
-import com.kuaizhan.exception.system.DaoException;
-import com.kuaizhan.exception.system.RedisException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
@@ -28,16 +26,14 @@ public interface PostService {
      * @param flat 是否展开多图文
      * @return
      */
-    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat) throws DaoException;
+    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat);
 
     /**
      * 根据mediaId获取所有的多图文
      *
      * @param withContent 是否获取content字段
-     * @return
-     * @throws DaoException
      */
-    List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) throws DaoException;
+    List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent);
 
     /**
      * 删除图文
@@ -92,7 +88,7 @@ public interface PostService {
      * 快站微信文章导入快站文章
      *
      */
-    void export2KzArticle(long pageId,long categoryId,long siteId) throws DaoException;
+    void export2KzArticle(long pageId,long categoryId,long siteId);
 
     /**
      * 新增一条多图文消息，并同步到微信服务器
@@ -111,7 +107,7 @@ public interface PostService {
      * 获取post在微信的url
      * @return
      */
-    String getPostWxUrl(long weixinAppid, long pageId) throws DaoException, AccountNotExistException, RedisException;
+    String getPostWxUrl(long weixinAppid, long pageId) throws AccountNotExistException;
 
     /**
      * 同步微信消息(异步)
@@ -124,7 +120,7 @@ public interface PostService {
     /**
      * 计算应该同步的微信图文
      */
-    void calSyncWeixinPosts(long weixinAppid, long userId) throws DaoException, AccountNotExistException, RedisException;
+    void calSyncWeixinPosts(long weixinAppid, long userId) throws AccountNotExistException;
 
     /**
      * 由微信导入图文
