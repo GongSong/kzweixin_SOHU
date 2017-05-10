@@ -21,6 +21,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -44,26 +45,24 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     public boolean checkMsg(String signature, String timestamp, String nonce) throws EncryptException {
         String[] arrTmp = {ApplicationConfig.WEIXIN_TOKEN, timestamp, nonce};
         Arrays.sort(arrTmp);
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < arrTmp.length; i++) {
-            sb.append(arrTmp[i]);
+        StringBuilder sb = new StringBuilder();
+        for (String anArrTmp : arrTmp) {
+            sb.append(anArrTmp);
         }
-        String pwd = null;
+        String pwd;
         try {
             pwd = EncryptUtil.sha1(sb.toString());
         } catch (NoSuchAlgorithmException e) {
             throw new EncryptException(e);
         }
-        if (pwd.equals(signature)) {
-            return true;
-        }
-        return false;
+        return pwd.equals(signature);
     }
 
     @Override
     public void getComponentVerifyTicket(String signature, String timestamp, String nonce, String postData) {
         //对消息进行解密
         String msg;
+        logger.info("[WeiXin:ticket] ticket callback calling.");
         try {
             WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN, ApplicationConfig.WEIXIN_AES_KEY, ApplicationConfig.WEIXIN_APPID_THIRD);
             msg = wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
@@ -79,6 +78,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         }
         Element root = document.getRootElement();
         Element ticket = root.element("ComponentVerifyTicket");
+        logger.info("[WeiXin:ticket] get ticket:" + ticket);
         //缓存
         if (ticket != null) {
             redisAuthDao.setComponentVerifyTicket(ticket.getText());
@@ -90,7 +90,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         //TODO: component_access_token 直接存储json
         String ticket = redisAuthDao.getComponentVerifyTicket();
         if (ticket == null || "".equals(ticket)){
-            logger.error("[Weixin:getComponentAccessToken] get ticket failed:" + ticket);
+            throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] ticket is null");
         }
 
         String componentAccessToken = redisAuthDao.getComponentAccessToken();
@@ -108,9 +108,15 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
                 throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] result is null");
             }
 
-            JSONObject resultJson = new JSONObject(result);
+            JSONObject resultJson;
+            try {
+                resultJson = new JSONObject(result);
+                componentAccessToken = resultJson.getString("component_access_token");
+            } catch (JSONException e) {
+                throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] json exception, result:" + result, e);
+            }
+
             resultJson.put("expires_time", System.currentTimeMillis() / 1000 + 7100);
-            componentAccessToken = resultJson.getString("component_access_token");
             //检查token是否一样
             redisAuthDao.setComponentAccessToken(resultJson.toString());
         }
