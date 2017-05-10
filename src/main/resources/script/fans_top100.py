@@ -134,10 +134,11 @@ def write_csv(fans_rank):
                           "开通" if item["attract_fans"] else "未开通", "开通" if item["vote"] else "未开通"]
             file.write(",".join([str(value) for value in value_list]) + "\n")
 
-fans_rank = get_fans_rank()
 
-get_weixin_info(fans_rank)
-get_fans_detail(fans_rank)
-get_site_name(fans_rank)
-get_user_info(fans_rank)
-write_csv(fans_rank)
+if __name__ == "__main__":
+    fans_rank = get_fans_rank()
+    get_weixin_info(fans_rank)
+    get_fans_detail(fans_rank)
+    get_site_name(fans_rank)
+    get_user_info(fans_rank)
+    write_csv(fans_rank)
