@@ -15,11 +15,11 @@ public class ReplaceCallbackMatcher {
     /**
      * 回调Callback实现
      */
-    public static interface Callback {
+    public interface Callback {
         /**
          * 根据matchResult获取要替换的字符串
          */
-        public String getReplacement(Matcher matcher) throws Exception;
+        String getReplacement(Matcher matcher) throws Exception;
     }
 
     private final Pattern pattern;

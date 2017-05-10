@@ -571,17 +571,9 @@ public class PostServiceImpl implements PostService {
         html = html.replaceAll("<script[^>]*?>.*?</script>", "");
 
         // 删除onclick等事件
-        // 定义callback
-        ReplaceCallbackMatcher.Callback callback = new ReplaceCallbackMatcher.Callback() {
-            @Override
-            public String getReplacement(Matcher matcher) throws Exception {
-                // 去掉中间匹配到的onclick部分
-                return matcher.group(1) + matcher.group(3);
-            }
-        };
         String regex = "(<\\S+?\\s+?)(on[a-z]+?=[\"'][^\"']*?[\"])([^>]*?>)";
         ReplaceCallbackMatcher callbackMatcher = new ReplaceCallbackMatcher(regex);
-        html = callbackMatcher.replaceMatches(html, callback);
+        html = callbackMatcher.replaceMatches(html, matcher -> matcher.group(1) + matcher.group(3));
 
         return html;
     }
@@ -593,36 +585,33 @@ public class PostServiceImpl implements PostService {
         // 对wx_src垃圾数据进行清理，即wx_src标签下的内容不是微信链接。
         String wxSrcRegex = "(wx_src=)[\"'](?<wxSrc>[^\"']+?)[\"']";
         ReplaceCallbackMatcher callbackMatcher = new ReplaceCallbackMatcher(wxSrcRegex);
-        ReplaceCallbackMatcher.Callback callback = new ReplaceCallbackMatcher.Callback() {
-            @Override
-            public String getReplacement(Matcher matcher) throws Exception {
-                String wxSrc = matcher.group("wxSrc");
-                wxSrc = weixinPostService.uploadImgForPost(accessToken, wxSrc);
-                return "wx_src=\"" + wxSrc + "\"";
-            }
-        };
-        content = callbackMatcher.replaceMatches(content, callback);
+
+        content = callbackMatcher.replaceMatches(content,
+                matcher -> {
+                    String wxSrc = matcher.group("wxSrc");
+                    wxSrc = weixinPostService.uploadImgForPost(accessToken, wxSrc);
+                    return "wx_src=\"" + wxSrc + "\"";
+                }
+        );
 
         // 正常为图片标签建立wxSrc
         String regex = "(<img[^>]* src=)[\"'](?<src>[^\"']+)[\"']([^>]*>)";
         callbackMatcher = new ReplaceCallbackMatcher(regex);
-        callback = new ReplaceCallbackMatcher.Callback() {
-            @Override
-            public String getReplacement(Matcher matcher) throws Exception {
-                String replacement;
-                if (matcher.group().contains("wx_src")) {
-                    // 存在wx_src则不替换
-                    replacement = matcher.group();
-                } else {
-                    // 不存在wx_src，则从微信服务器换取wx_src，并加入到img标签中。
-                    String src = matcher.group("src");
-                    String wxSrc = weixinPostService.uploadImgForPost(accessToken, src);
-                    replacement = matcher.group(1) + "\"" + src + "\" wx_src=\"" + wxSrc + "\"" + matcher.group(3);
+        content = callbackMatcher.replaceMatches(content,
+                matcher -> {
+                    String replacement;
+                    if (matcher.group().contains("wx_src")) {
+                        // 存在wx_src则不替换
+                        replacement = matcher.group();
+                    } else {
+                        // 不存在wx_src，则从微信服务器换取wx_src，并加入到img标签中。
+                        String src = matcher.group("src");
+                        String wxSrc = weixinPostService.uploadImgForPost(accessToken, src);
+                        replacement = matcher.group(1) + "\"" + src + "\" wx_src=\"" + wxSrc + "\"" + matcher.group(3);
+                    }
+                    return replacement;
                 }
-                return replacement;
-            }
-        };
-        content = callbackMatcher.replaceMatches(content, callback);
+        );
 
         return content;
 
@@ -635,15 +624,16 @@ public class PostServiceImpl implements PostService {
      * @return
      */
     private String replaceContentForUpload(final String accessToken, String content) throws Exception {
+
         // 用微信wx_src替换src
 
-        // 定义callback
-        ReplaceCallbackMatcher.Callback callback = new ReplaceCallbackMatcher.Callback() {
-            @Override
-            public String getReplacement(Matcher matcher) {
-                return matcher.group(1) + matcher.group("wxSrc") + matcher.group(3) + matcher.group("wxSrc") + matcher.group(5);
-            }
-        };
+        // 替换的回调
+        ReplaceCallbackMatcher.Callback callback =
+                matcher -> matcher.group(1) +
+                        matcher.group("wxSrc") +
+                        matcher.group(3) +
+                        matcher.group("wxSrc") +
+                        matcher.group(5);
 
         // wx_src在src前
         String regex = "(<img[^>]* src=\")(?<src>[^\"]+)(\"[^>]* wx_src=\")(?<wxSrc>[^\"]+)(\"[^>]*>)";
@@ -655,16 +645,13 @@ public class PostServiceImpl implements PostService {
         callbackMatcher = new ReplaceCallbackMatcher(regex);
         content = callbackMatcher.replaceMatches(content, callback);
 
-        // 替换background-image的callback
-        callback = new ReplaceCallbackMatcher.Callback() {
-            @Override
-            public String getReplacement(Matcher matcher) throws Exception {
-                return matcher.group(1) + weixinPostService.uploadImgForPost(accessToken, matcher.group(2)) + matcher.group(3);
-            }
-        };
+        // 替换background-image
         regex = "(background-image: url\\()([^\\)]+)(\\))";
         callbackMatcher = new ReplaceCallbackMatcher(regex);
-        content = callbackMatcher.replaceMatches(content, callback);
+        content = callbackMatcher.replaceMatches(content,
+                matcher -> matcher.group(1) +
+                        weixinPostService.uploadImgForPost(accessToken, matcher.group(2)) + matcher.group(3)
+        );
 
         // TODO: 对中转链接的替换； 校验上传成功的微信图片，肯定是小于1M的。
         return content;
@@ -831,49 +818,32 @@ public class PostServiceImpl implements PostService {
         content = content.replaceAll("(<img [^>]*)(data-src)", "$1src");
 
         // img中的微信图片转成快站链接,记录wx_src
-        ReplaceCallbackMatcher.Callback callback = new ReplaceCallbackMatcher.Callback() {
-            @Override
-            public String getReplacement(Matcher matcher) throws Exception {
-                return matcher.group(1)
+        String regex = "(<img[^>]* src=\")([^\"]+)(\"[^>]*>)";
+        ReplaceCallbackMatcher replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
+        content = replaceCallbackMatcher.replaceMatches(content,
+                matcher -> matcher.group(1)
                         + getKzImgUrlByWeixinImgUrl(matcher.group(2), userId)
                         + "\" wx_src=\""
                         + matcher.group(2)
                         + matcher.group(3)
-                        ;
-            }
-        };
-        String regex = "(<img[^>]* src=\")([^\"]+)(\"[^>]*>)";
-        ReplaceCallbackMatcher replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
-        content = replaceCallbackMatcher.replaceMatches(content, callback);
+        );
 
-        callback = new ReplaceCallbackMatcher.Callback() {
-            @Override
-            public String getReplacement(Matcher matcher) throws Exception {
-                return matcher.group(1)
+        regex = "(<img[^>]* src=')([^']+)('[^>]*>)";
+        replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
+        content = replaceCallbackMatcher.replaceMatches(content,
+                matcher -> matcher.group(1)
                         + getKzImgUrlByWeixinImgUrl(matcher.group(2), userId)
                         + "' wx_src='"
                         + matcher.group(2)
                         + matcher.group(3)
-                        ;
-            }
-        };
-        regex = "(<img[^>]* src=')([^']+)('[^>]*>)";
-        replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
-        content = replaceCallbackMatcher.replaceMatches(content, callback);
+        );
 
         // 背景图中的微信图片转成快站链接
-        callback = new ReplaceCallbackMatcher.Callback() {
-            @Override
-            public String getReplacement(Matcher matcher) throws Exception {
-                logger.debug("----> groupCount:" + matcher.groupCount());
-                String result = "url(" + getKzImgUrlByWeixinImgUrl(matcher.group(1), userId) + ")";
-                logger.debug("----> origin: " + matcher.group(0) + " result:" + result);
-                return result;
-            }
-        };
         regex = "url\\(\"?'?(?:&quot;)?(https?:\\/\\/mmbiz[^)]+?)(?:&quot;)?\"?'?\\)";
         replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
-        content = replaceCallbackMatcher.replaceMatches(content, callback);
+        content = replaceCallbackMatcher.replaceMatches(content,
+                matcher -> "url(" + getKzImgUrlByWeixinImgUrl(matcher.group(1), userId) + ")"
+        );
 
         return content;
     }
@@ -882,7 +852,9 @@ public class PostServiceImpl implements PostService {
     private String replaceVideoFromWeixinPost(String content) {
         return content.replaceAll(
                 "<iframe[^>]*class=\"video_iframe\"[^>]*data-src=\"([^\"]+)vid=([^&]+)([^\"]+)\"[^>]*>",
-                "<iframe style=\"z-index:1;\" class=\"video_iframe\" data-src=\"$1vid=$2$3\" frameborder=\"0\" allowfullscreen=\"\" src=\"https://v.qq.com/iframe/player.html?vid=$2&tiny=0&auto=0\" width=\"280px\" height=\"100%\">"
+                "<iframe style=\"z-index:1;\" class=\"video_iframe\" data-src=\"$1vid=$2$3\" " +
+                        "frameborder=\"0\" allowfullscreen=\"\" " +
+                        "src=\"https://v.qq.com/iframe/player.html?vid=$2&tiny=0&auto=0\" width=\"280px\" height=\"100%\">"
         );
     }
 }
