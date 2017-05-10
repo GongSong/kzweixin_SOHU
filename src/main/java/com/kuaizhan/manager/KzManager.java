@@ -1,48 +1,53 @@
-package com.kuaizhan.service.impl;
+package com.kuaizhan.manager;
 
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.KzApiConfig;
+import com.kuaizhan.exception.common.GetKzArticleException;
 import com.kuaizhan.exception.common.KZPicUploadException;
-import com.kuaizhan.service.KZPicService;
+import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.utils.HttpClientUtil;
+import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 快站图片服务
- *
- * Created by lorin on 17-3-30.
+ * 对主站Api的封装和异常转换
+ * Created by zixiong on 2017/5/10.
  */
+@Component("kzManager")
+public class KzManager {
 
-@Service("kZPicService")
-public class KZPicServiceImpl implements KZPicService {
+    /**
+     * 获取根据pageId获取快文
+     */
+    public ArticleDTO getKzArticle(long pageId) throws GetKzArticleException{
+        String result = HttpClientUtil.get(KzApiConfig.getKzArticleUrl(pageId));
 
-    private static Logger logger = Logger.getLogger(KZPicServiceImpl.class);
-
-    @Override
-    public File download(String url, int timeout) {
-        return null;
+        if (result == null) {
+            throw new GetKzArticleException("[Kz:getKzArticle] result is null, pageId:" + pageId);
+        }
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(result);
+        } catch (JSONException e) {
+            throw new GetKzArticleException("[Kz:getKzArticle] json parse failed, pageId:" + pageId, e);
+        }
+        ArticleDTO articleDTO = null;
+        if (jsonObject.getInt("ret") == 0) {
+            articleDTO = JsonUtil.string2Bean(jsonObject.get("data").toString(), ArticleDTO.class);
+        }
+        return articleDTO;
     }
 
-    @Override
-    public File download(String url) {
-        return download(url, 4);
-    }
-
-    @Override
-    public String uploadByPathAndUserId(String path, long userId) throws KZPicUploadException {
-        return null;
-    }
-
-    @Override
-    public String uploadByUrlAndUserId(String url, long userId) throws KZPicUploadException {
+    /**
+     * 把外部图片上传到主站，转换为快站链接
+     */
+    public String uploadPicToKz(String url, long userId) throws KZPicUploadException {
         Map<String, Object> params = new HashMap<>();
         params.put("img_url", url);
         params.put("uid", userId);
@@ -52,7 +57,7 @@ public class KZPicServiceImpl implements KZPicService {
 
         String result = HttpClientUtil.post(KzApiConfig.KZ_UPLOAD_PIC_URL, params, headers);
         if (result == null) {
-            String msg = "[上传图片到快站] 上传失败，url: " +  KzApiConfig.KZ_UPLOAD_PIC_URL + " param: " + params + "headers: " + headers + " result: " + result;
+            String msg = "[上传图片到快站] 上传失败，url: " +  KzApiConfig.KZ_UPLOAD_PIC_URL + " param: " + params + "headers: " + headers;
             throw new KZPicUploadException(msg);
         }
 

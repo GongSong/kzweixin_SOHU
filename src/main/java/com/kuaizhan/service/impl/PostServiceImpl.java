@@ -8,17 +8,18 @@ import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.dao.mapper.PostDao;
 import com.kuaizhan.dao.redis.RedisPostDao;
 import com.kuaizhan.exception.BusinessException;
+import com.kuaizhan.exception.common.GetKzArticleException;
 import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.common.KZPicUploadException;
 import com.kuaizhan.exception.common.MediaIdNotExistException;
+import com.kuaizhan.manager.KzManager;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.pojo.DTO.Page;
 import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.pojo.DTO.WxPostDTO;
 import com.kuaizhan.service.AccountService;
-import com.kuaizhan.service.KZPicService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.*;
@@ -28,9 +29,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
 
 /**
  * Created by zixiong on 2017/3/20.
@@ -62,7 +61,7 @@ public class PostServiceImpl implements PostService {
     AccountService accountService;
 
     @Resource
-    KZPicService kZPicService;
+    KzManager kzManager;
 
 
     @Override
@@ -153,15 +152,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ArticleDTO getKzArticle(long pageId) throws IOException {
-
-        String ret = HttpClientUtil.get(KzApiConfig.getKzArticleUrl(pageId));
-        JSONObject jsonObject = new JSONObject(ret);
-        ArticleDTO articleDTO = null;
-        if (jsonObject.getInt("ret") == 0) {
-            articleDTO = JsonUtil.string2Bean(jsonObject.get("data").toString(), ArticleDTO.class);
-        }
-        return articleDTO;
+    public ArticleDTO getKzArticle(long pageId) throws GetKzArticleException {
+        // TODO: 这一块，联合mq发布消息一起重构
+        return kzManager.getKzArticle(pageId);
     }
 
     @Override
@@ -803,7 +796,7 @@ public class PostServiceImpl implements PostService {
          kzPicUrl = kzPicUrl.replaceAll("&amp;.*$", "");
 
         try {
-            return kZPicService.uploadByUrlAndUserId(kzPicUrl, userId);
+            return kzManager.uploadPicToKz(kzPicUrl, userId);
         } catch (KZPicUploadException e) {
             LogUtil.logMsg(e);
         }

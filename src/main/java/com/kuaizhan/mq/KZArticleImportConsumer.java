@@ -1,6 +1,8 @@
 package com.kuaizhan.mq;
 
 import com.kuaizhan.config.KzApiConfig;
+import com.kuaizhan.exception.common.GetKzArticleException;
+import com.kuaizhan.exception.common.String2BeanFailedException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.service.PostService;
@@ -33,7 +35,13 @@ public class KZArticleImportConsumer extends BaseMqConsumer {
         for (Long pageId : pageIds) {
 
             // 调用接口
-            ArticleDTO articleDTO = postService.getKzArticle(pageId);
+            ArticleDTO articleDTO;
+            try {
+                articleDTO = postService.getKzArticle(pageId);
+            } catch (Exception e) {
+                logger.error("[KzArticleImport] get article failed", e);
+                continue;
+            }
             if (articleDTO != null) {
 
                 PostDO postDO = new PostDO();

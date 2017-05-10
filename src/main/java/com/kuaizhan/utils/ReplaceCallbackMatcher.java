@@ -38,6 +38,7 @@ public class ReplaceCallbackMatcher {
             // 获取本次匹配的替换内容
             String replacement = callback.getReplacement(matcher);
             // 拼接替换后的字符串
+            // TODO: IllegalArgumentException 被发现
             matcher.appendReplacement(resultBuffer, replacement);
         }
 

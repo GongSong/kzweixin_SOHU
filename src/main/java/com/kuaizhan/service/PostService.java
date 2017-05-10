@@ -1,6 +1,7 @@
 package com.kuaizhan.service;
 
 
+import com.kuaizhan.exception.common.GetKzArticleException;
 import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
@@ -74,7 +75,7 @@ public interface PostService {
      * @param pageId
      * @return
      */
-    ArticleDTO getKzArticle(long pageId) throws IOException;
+    ArticleDTO getKzArticle(long pageId) throws GetKzArticleException;
 
     /**
      * 从快站文章导入

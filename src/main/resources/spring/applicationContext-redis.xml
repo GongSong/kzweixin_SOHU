@@ -18,6 +18,6 @@
         </constructor-arg>
     </bean>
 
-    <!-- redis template definition -->
+    <!-- redis template 定义 -->
     <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate" p:connectionFactory-ref="jedisConnectionFactory"/>
 </beans>
