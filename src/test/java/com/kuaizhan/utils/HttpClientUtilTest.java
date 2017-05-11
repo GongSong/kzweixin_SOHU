@@ -16,10 +16,8 @@ import static org.junit.Assert.*;
 public class HttpClientUtilTest {
     @Test
     public void get() throws Exception {
-        String res = HttpClientUtil.get("http://pic.kuaizhan.sohuno.com/g1/M01/07/58/CgpQU1j7HMuALn2vAAgpLit1NxU9412817");
-        FileOutputStream fileOutputStream = new FileOutputStream("test.png");
-        fileOutputStream.write(res.getBytes());
-        fileOutputStream.close();
+        String res = HttpClientUtil.get("http://localhost:8080");
+        System.out.println("---->" + res);
     }
 
     @Test

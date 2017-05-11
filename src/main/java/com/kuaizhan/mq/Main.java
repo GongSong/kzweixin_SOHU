@@ -11,7 +11,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Main {
 
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring/*.xml",
-                "classpath:mq-consumer/applicationContext-mq.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext(
+                "classpath:spring/applicationContext-dao.xml",
+                "classpath:spring/applicationContext-mq.xml",
+                "classpath:spring/applicationContext-redis.xml",
+                "classpath:spring/applicationContext-service.xml",
+                "classpath:spring/applicationContext-util.xml",
+                "classpath:spring/springmvc.xml",
+                "classpath:spring-consumer/applicationContext-mq.xml");
     }
 }

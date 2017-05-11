@@ -14,6 +14,9 @@ public class ApplicationConfig {
     //资源读取工具
     private static final Properties PROP = PropertiesUtil.loadProps("application.properties");
 
+    // 通用
+    public static final String ENV_ALIAS = PropertiesUtil.getString(PROP, "env.alias");
+
     // redis前缀
     public static final String REDIS_PREFIX = PropertiesUtil.getString(PROP, "redis.key.prefix");
     // mongo前缀

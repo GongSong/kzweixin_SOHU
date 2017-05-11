@@ -8,6 +8,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -59,6 +60,13 @@ public final class HttpClientUtil {
                     httpGet.setHeader(entry.getKey(), entry.getValue());
                 }
             }
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectionRequestTimeout(3000)
+                    .setConnectTimeout(3000)
+                    .setSocketTimeout(10 * 1000)
+                    .build();
+            httpGet.setConfig(requestConfig);
+
             response = httpClient.execute(httpGet);
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity, CHARSET_UTF_8);
@@ -162,6 +170,13 @@ public final class HttpClientUtil {
                     httpPost.setHeader(entry.getKey(), entry.getValue());
                 }
             }
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectionRequestTimeout(3000)
+                    .setConnectTimeout(3000)
+                    .setSocketTimeout(10 * 1000)
+                    .build();
+            httpPost.setConfig(requestConfig);
+
             response = httpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity, CHARSET_UTF_8);
@@ -200,6 +215,43 @@ public final class HttpClientUtil {
             }
 
             response = httpClient.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            return EntityUtils.toString(entity, CHARSET_UTF_8);
+        } catch (IOException e) {
+            logger.error("[HttpClientUtil.postJson] post failed, url:" + url + " jsonStr:" + jsonStr , e);
+        } finally {
+            doClose(response);
+            doClose(httpClient);
+        }
+        return null;
+    }
+
+    /**
+     * post json数据
+     *
+     * @param url
+     * @param jsonStr
+     * @return
+     */
+    public static String putJson(String url, String jsonStr) {
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpResponse response = null;
+
+        try {
+            HttpPut httpPut = new HttpPut(url);
+            httpPut.setHeader("Content-Type", CONTENT_TYPE_JSON);
+            if (jsonStr != null) {
+                try {
+                    StringEntity stringEntity = new StringEntity(jsonStr, ContentType.APPLICATION_JSON);
+                    httpPut.setEntity(stringEntity);
+                } catch (Exception e) {
+                    logger.error("[HttpClientUtil.postJson] utf-8解码失败, jsonStr:" + jsonStr, e);
+                    return null;
+                }
+            }
+
+            response = httpClient.execute(httpPut);
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity, CHARSET_UTF_8);
         } catch (IOException e) {

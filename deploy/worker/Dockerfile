@@ -6,7 +6,4 @@ ENV JAR_FILE ./target/kzweixin.jar
 
 COPY $JAR_FILE $PREFIX/worker/
 
-RUN echo "source ~/.bashrc" > /init.sh && \
-    echo "java -jar $PREFIX/worker/kzweixin.jar" >> /init.sh
-
-CMD /bin/bash /init.sh
+CMD java -jar $PREFIX/worker/kzweixin.jar
