@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 
 /**
@@ -63,6 +64,24 @@ public class PostServiceImpl implements PostService {
 
     @Resource
     KZPicService kZPicService;
+
+    @Override
+    public long genPageId() {
+        final long MIN = 1000000000L;
+        final long MAX = 9999999999L;
+        int count = 1;
+
+        long pageId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+        while (postDao.isPageIdExist(pageId)) {
+            pageId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+            count++;
+        }
+        // 随机三次及以上才随机到，报警
+        if (count >= 3) {
+            logger.warn("[genPageId] gen times reach " + count);
+        }
+        return pageId;
+    }
 
 
     @Override
@@ -525,7 +544,7 @@ public class PostServiceImpl implements PostService {
         for (PostDO postDO : posts) {
 
             // 生成pageId
-            postDO.setPageId(IdGeneratorUtil.getID());
+            postDO.setPageId(genPageId());
             // 先把content保存到mongo
             mongoPostDao.upsertPost(postDO.getPageId(), postDO.getContent());
 
@@ -542,7 +561,7 @@ public class PostServiceImpl implements PostService {
             PostDO sumPost = new PostDO();
             // 有效数据
             sumPost.setWeixinAppid(weixinAppid);
-            sumPost.setPageId(IdGeneratorUtil.getID());
+            sumPost.setPageId(genPageId());
             sumPost.setType((short) 2);
             sumPost.setIndex(0);
             sumPost.setMediaId(posts.get(0).getMediaId());
@@ -786,7 +805,7 @@ public class PostServiceImpl implements PostService {
                     }
                     // 不存在老图文则新建
                     else {
-                        newPost.setPageId(IdGeneratorUtil.getID());
+                        newPost.setPageId(genPageId());
                         mongoPostDao.upsertPost(newPost.getPageId(), newPost.getContent());
                         postDao.insertPost(newPost);
                     }

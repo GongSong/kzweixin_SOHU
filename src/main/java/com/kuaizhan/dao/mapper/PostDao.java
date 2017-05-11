@@ -80,10 +80,10 @@ public interface PostDao {
     void updatePost(@Param("post") PostDO post, @Param("pageId") long pageId);
 
     /**
-     * 根据weixinAppid获取mediaId列表
-     * @param weixinAppid
-     * @return
+     * 检测某个pageId是否存在
+     * 用于id生成
+     * @param pageId
      */
-    List<String> listMediaIdsByWeixinAppid(long weixinAppid);
+    Boolean isPageIdExist(long pageId);
 }
 

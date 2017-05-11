@@ -23,6 +23,11 @@ import java.util.List;
 public interface PostService {
 
     /**
+     * 生成pageId
+     */
+    long genPageId();
+
+    /**
      * 获取图文消息列表
      *
      * @param weixinAppid 微信appid
