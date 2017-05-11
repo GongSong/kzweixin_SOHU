@@ -27,38 +27,9 @@ public class PostServiceTest {
 
     long weixinAppid = 601145633L;
 
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
     @Test
-    public void listPostsByPagination() throws Exception {
-
-    }
-
-    @Test
-    public void listMultiPosts() throws Exception {
-
-    }
-
-    @Test
-    public void deletePost() throws Exception {
-
-    }
-
-    @Test
-    public void getPostByPageId() throws Exception {
-
-    }
-
-    @Test
-    public void getKzArticle() throws Exception {
+    public void genPageId() {
+        System.out.println("---->" + postService.genPageId());
     }
 
     @Test

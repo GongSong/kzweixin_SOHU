@@ -178,4 +178,10 @@
         WHERE `weixin_appid` = #{weixinAppid} AND `media_id` = #{mediaId} AND `status` = 1
     </select>
 
+    <select id="isPageIdExist" resultType="Boolean">
+        SELECT COUNT(*)
+        FROM weixin_post
+        WHERE `page_id` = #{pageId}
+    </select>
+
 </mapper>
