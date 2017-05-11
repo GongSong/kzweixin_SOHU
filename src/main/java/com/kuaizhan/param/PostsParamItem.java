@@ -16,7 +16,7 @@ public class PostsParamItem {
     @Size(min = 1, max = 64, message = "图文的标题不能为空或者只含有空格（标题会过滤emoji表情等特殊字符")
     private String title;
 
-    @Size(max = 8, message = "作者的长度不能超过8个字符")
+    // 作者字段前端不能编辑，不校验
     private String author;
 
     @Size(max = 120, message = "摘要不能超过120个字符")
