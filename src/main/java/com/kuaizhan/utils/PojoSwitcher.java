@@ -1,17 +1,17 @@
 package com.kuaizhan.utils;
 
+import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.PostDO;
+import com.kuaizhan.pojo.VO.AccountVO;
 import com.kuaizhan.pojo.VO.PostVO;
-import org.springframework.stereotype.Component;
 
 /**
  * pojo的转换组件
  * Created by zixiong on 2017/3/30.
  */
-@Component("pojoSwitcher")
 public class PojoSwitcher {
 
-    public PostVO postDOToVO(PostDO postDO) {
+    public static PostVO postDOToVO(PostDO postDO) {
 
         if (postDO == null) {
             return null;
@@ -30,5 +30,21 @@ public class PojoSwitcher {
         postVO.setShowCoverPic(postDO.getShowCoverPic());
         postVO.setUpdateTime(postDO.getUpdateTime());
         return postVO;
+    }
+
+    public static AccountVO accountDOToVO(AccountDO accountDO) {
+        if (accountDO == null) {
+            return null;
+        }
+        AccountVO accountVO = new AccountVO();
+        accountVO.setWeixinAppid(accountDO.getWeixinAppId());
+        accountVO.setAppSecret(accountDO.getAppSecret());
+        accountVO.setHeadImg(accountDO.getHeadImg());
+        accountVO.setInterest(JsonUtil.string2List(accountDO.getInterestJson(), String.class));
+        accountVO.setName(accountDO.getNickName());
+        accountVO.setQrcode(accountDO.getQrcodeUrl());
+        accountVO.setServiceType(accountDO.getServiceType());
+        accountVO.setVerifyType(accountDO.getVerifyType());
+        return accountVO;
     }
 }

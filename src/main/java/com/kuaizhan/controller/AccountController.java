@@ -11,6 +11,7 @@ import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 
 import com.kuaizhan.utils.JsonUtil;
+import com.kuaizhan.utils.PojoSwitcher;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,16 +34,7 @@ public class AccountController extends BaseController {
     @RequestMapping(value = "/accounts/site/{siteId}", method = RequestMethod.GET)
     public JsonResponse getAccountInfoBySiteId(@PathVariable long siteId) {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
-        AccountVO accountVO = new AccountVO();
-        accountVO.setWeixinAppid(accountDO.getWeixinAppId());
-        accountVO.setAppSecret(accountDO.getAppSecret());
-        accountVO.setHeadImg(accountDO.getHeadImg());
-        List<String> list = JsonUtil.string2List(accountDO.getInterestJson(), String.class);
-        accountVO.setInterest(list);
-        accountVO.setName(accountDO.getNickName());
-        accountVO.setQrcode(accountDO.getQrcodeUrl());
-        accountVO.setServiceType(accountDO.getServiceType());
-        accountVO.setVerifyType(accountDO.getVerifyType());
+        AccountVO accountVO = PojoSwitcher.accountDOToVO(accountDO);
         return new JsonResponse(accountVO);
     }
 
@@ -52,16 +44,7 @@ public class AccountController extends BaseController {
     @RequestMapping(value = "/accounts/{weixinAppid}", method = RequestMethod.GET)
     public JsonResponse getAccountInfo(@RequestParam long weixinAppid) {
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        AccountVO accountVO = new AccountVO();
-        accountVO.setWeixinAppid(accountDO.getWeixinAppId());
-        accountVO.setAppSecret(accountDO.getAppSecret());
-        accountVO.setHeadImg(accountDO.getHeadImg());
-        List<String> list = JsonUtil.string2List(accountDO.getInterestJson(), String.class);
-        accountVO.setInterest(list);
-        accountVO.setName(accountDO.getNickName());
-        accountVO.setQrcode(accountDO.getQrcodeUrl());
-        accountVO.setServiceType(accountDO.getServiceType());
-        accountVO.setVerifyType(accountDO.getVerifyType());
+        AccountVO accountVO = PojoSwitcher.accountDOToVO(accountDO);
         return new JsonResponse(accountVO);
     }
 

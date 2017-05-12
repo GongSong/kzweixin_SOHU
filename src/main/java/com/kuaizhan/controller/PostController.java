@@ -43,8 +43,6 @@ public class PostController extends BaseController {
     @Resource
     AccountService accountService;
     @Resource
-    PojoSwitcher pojoSwitcher;
-    @Resource
     WeixinPostService weixinPostService;
 
     private static final Logger logger = Logger.getLogger(PostController.class);
@@ -69,7 +67,7 @@ public class PostController extends BaseController {
             postListFlatVO.setTotalPage(postDOPage.getTotalPages());
 
             for (PostDO postDO: postDOList) {
-                postListFlatVO.getPosts().add(pojoSwitcher.postDOToVO(postDO));
+                postListFlatVO.getPosts().add(PojoSwitcher.postDOToVO(postDO));
             }
 
             return new JsonResponse(postListFlatVO);
@@ -94,7 +92,7 @@ public class PostController extends BaseController {
                         List<PostDO> multiPostDOList = postService.listMultiPosts(weixinAppid, postDO.getMediaId(), false);
                         if (multiPostDOList != null) {
                             for (PostDO multiPostDo : multiPostDOList) {
-                                PostVO multiPostVO = pojoSwitcher.postDOToVO(multiPostDo);
+                                PostVO multiPostVO = PojoSwitcher.postDOToVO(multiPostDo);
                                 multiPostVOList.add(multiPostVO);
                             }
                             postListVO.getPosts().add(multiPostVOList);
@@ -104,7 +102,7 @@ public class PostController extends BaseController {
                         }
                     // 单图文
                     } else {
-                        PostVO postVO = pojoSwitcher.postDOToVO(postDO);
+                        PostVO postVO = PojoSwitcher.postDOToVO(postDO);
 
                         multiPostVOList.add(postVO);
                         postListVO.getPosts().add(multiPostVOList);
@@ -124,7 +122,7 @@ public class PostController extends BaseController {
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.GET)
     public JsonResponse getPost(@PathVariable long pageId) {
         PostDO postDO = postService.getPostByPageId(pageId);
-        PostVO postVO = pojoSwitcher.postDOToVO(postDO);
+        PostVO postVO = PojoSwitcher.postDOToVO(postDO);
         return new JsonResponse(postVO);
     }
 
@@ -143,10 +141,10 @@ public class PostController extends BaseController {
             if (postDO.getType() == 3) {
                 List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getWeixinAppid(), postDO.getMediaId(), true);
                 for (PostDO multiPostDO : multiPostDOList) {
-                    multiPostVOList.add(pojoSwitcher.postDOToVO(multiPostDO));
+                    multiPostVOList.add(PojoSwitcher.postDOToVO(multiPostDO));
                 }
             } else {
-                multiPostVOList.add(pojoSwitcher.postDOToVO(postDO));
+                multiPostVOList.add(PojoSwitcher.postDOToVO(postDO));
             }
         }
         return new JsonResponse(multiPostVOList);
