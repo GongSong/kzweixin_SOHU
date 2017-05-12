@@ -1,12 +1,12 @@
 package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.constant.ErrorCodes;
 import com.kuaizhan.dao.mapper.AccountDao;
 import com.kuaizhan.dao.mapper.UnbindDao;
 import com.kuaizhan.dao.redis.RedisAccountDao;
-import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
+import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.DaoException;
-import com.kuaizhan.exception.deprecated.system.JsonParseException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
@@ -79,16 +79,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String getAccessToken(long weixinAppId) throws AccountNotExistException {
+    public String getAccessToken(long weixinAppId) {
         //存在高并发场景下access_token失效的问题
         String accessToken = redisAccountDao.getAccessToken(weixinAppId);
         // TODO: 在这里实现分布式锁，否则在消息队列和web同时调用的情况下，有一定几率相互覆盖
         if (accessToken == null) {
-            //从数据库拿refresh key刷新
-            AccountDO accountDO  = accountDao.getAccountByWeixinAppId(weixinAppId);
-            if (accountDO == null) {
-                throw new AccountNotExistException();
-            }
+            AccountDO accountDO = getAccountByWeixinAppId(weixinAppId);
             //刷新
             AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(
                     weixinAuthService.getComponentAccessToken(),
@@ -109,30 +105,21 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
-        AccountDO accountDO;
-        try {
-            accountDO = accountDao.getAccountBySiteId(siteId);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
+    public AccountDO getAccountBySiteId(long siteId) {
+        AccountDO accountDO = accountDao.getAccountBySiteId(siteId);
         if (accountDO == null) {
-            throw new AccountNotExistException();
+            throw new BusinessException(ErrorCodes.SITE_ID_NOT_EXIST);
         }
         return accountDO;
     }
 
     @Override
-    public AccountDO getAccountByAppId(String appId) throws DaoException {
-        try {
-            return accountDao.getAccountByAppId(appId);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
+    public AccountDO getAccountByAppId(String appId) {
+        return accountDao.getAccountByAppId(appId);
     }
 
     @Override
-    public AccountDO getAccountByWeixinAppId(long weinxinAppid) throws AccountNotExistException {
+    public AccountDO getAccountByWeixinAppId(long weinxinAppid) {
         // 从缓存拿
         AccountDO accountDO = redisAccountDao.getAccountInfoByWeixinAppId(weinxinAppid);
 
@@ -140,7 +127,7 @@ public class AccountServiceImpl implements AccountService {
             //从数据库拿
             accountDO = accountDao.getAccountByWeixinAppId(weinxinAppid);
             if (accountDO == null) {
-                throw new AccountNotExistException();
+                throw new BusinessException(ErrorCodes.ACCOUNT_NOT_EXIST);
             }
 
             //存缓存

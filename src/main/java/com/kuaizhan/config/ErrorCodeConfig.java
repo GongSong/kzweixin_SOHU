@@ -22,9 +22,6 @@ public enum ErrorCodeConfig {
     //公共(01)
     PARAM_ERROR(101001, "请求参数错误"),
 
-    //账号(02)
-    ACCOUNT_NULL_ERROR(102002, "公众号不存在或未绑定公众号"),
-
     //消息(03)
     SEND_CUSTOM_MSG_ERROR(103001, "发送客服消息失败"),
 

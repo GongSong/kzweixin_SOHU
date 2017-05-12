@@ -1,10 +1,7 @@
 package com.kuaizhan.service;
 
-import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
-import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.deprecated.system.EncryptException;
-import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.common.XMLParseException;
 import org.json.JSONObject;
 
@@ -19,7 +16,7 @@ public interface WeixinMsgService {
      *
      * @return
      */
-    String handleWeixinPushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException, DaoException, AccountNotExistException, RedisException;
+    String handleWeixinPushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException;
 
     /**
      * 给用户发送客服消息

@@ -1,8 +1,6 @@
 package com.kuaizhan.service;
 
-import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
 import com.kuaizhan.exception.common.DaoException;
-import com.kuaizhan.exception.deprecated.system.JsonParseException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
@@ -26,7 +24,7 @@ public interface AccountService {
      * @param weixinAppId
      * @return
      */
-    String getAccessToken(long weixinAppId) throws AccountNotExistException;
+    String getAccessToken(long weixinAppId);
 
     /**
      * 根据siteId获取账号信息
@@ -34,7 +32,7 @@ public interface AccountService {
      * @param siteId 站点id
      * @return
      */
-    AccountDO getAccountBySiteId(long siteId) throws RedisException, DaoException, AccountNotExistException, JsonParseException;
+    AccountDO getAccountBySiteId(long siteId);
 
     /**
      * 根据appId获取账号信息
@@ -42,14 +40,14 @@ public interface AccountService {
      * @param appId
      * @return
      */
-    AccountDO getAccountByAppId(String appId) throws DaoException;
+    AccountDO getAccountByAppId(String appId);
 
     /**
      * 根据long型Id获取账号信息
      *
      * @return
      */
-    AccountDO getAccountByWeixinAppId(long weixinAppid) throws AccountNotExistException;
+    AccountDO getAccountByWeixinAppId(long weixinAppid);
 
     /**
      * 解绑账号

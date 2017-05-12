@@ -2,12 +2,8 @@ package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
-import com.kuaizhan.dao.redis.RedisMsgDao;
-import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
-import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.deprecated.system.EncryptException;
-import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.common.XMLParseException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.MsgDO;
@@ -17,6 +13,7 @@ import com.kuaizhan.service.WeixinFanService;
 import com.kuaizhan.service.WeixinMsgService;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -37,15 +34,14 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
     AccountService accountService;
     @Resource
     MsgService msgService;
-    @Resource
-    RedisMsgDao redisMsgDao;
+
+    private static final Logger logger = Logger.getLogger(WeixinMsgServiceImpl.class);
 
     @Override
-    public String handleWeixinPushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException, DaoException, AccountNotExistException, RedisException {
-        //TODO:使用MQ进行处理
+    public String handleWeixinPushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException {
         AccountDO accountDO = accountService.getAccountByAppId(appId);
         if (accountDO == null) {
-            throw new AccountNotExistException();
+            logger.error("[WeixinPush] get unknown appId");
         }
         //解密消息
         String msg;

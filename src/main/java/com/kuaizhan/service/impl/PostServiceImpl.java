@@ -186,7 +186,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public String getPostWxUrl(long weixinAppid, long pageId) throws AccountNotExistException {
+    public String getPostWxUrl(long weixinAppid, long pageId) {
         PostDO postDO = getPostByPageId(pageId);
         if (postDO != null) {
             String wxUrl = postDO.getPostUrl();
@@ -681,7 +681,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void calSyncWeixinPosts(long weixinAppid, long userId) throws AccountNotExistException {
+    public void calSyncWeixinPosts(long weixinAppid, long userId) {
         int fetchCount = 20;
         String accessToken = accountService.getAccessToken(weixinAppid);
 

@@ -113,7 +113,7 @@ public interface PostService {
      * 获取post在微信的url
      * @return
      */
-    String getPostWxUrl(long weixinAppid, long pageId) throws AccountNotExistException;
+    String getPostWxUrl(long weixinAppid, long pageId);
 
     /**
      * 同步微信消息(异步)
@@ -126,7 +126,7 @@ public interface PostService {
     /**
      * 计算应该同步的微信图文
      */
-    void calSyncWeixinPosts(long weixinAppid, long userId) throws AccountNotExistException;
+    void calSyncWeixinPosts(long weixinAppid, long userId);
 
     /**
      * 由微信导入图文

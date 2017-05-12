@@ -3,7 +3,6 @@ package com.kuaizhan.controller;
 
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
 import com.kuaizhan.exception.deprecated.business.ParamException;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.deprecated.system.JsonParseException;
@@ -33,28 +32,10 @@ public class AccountController extends BaseController {
     AccountService accountService;
 
     /**
-     * 获取账户信息
-     *
-     * @return
+     * 根据siteId获取绑定的微信公众号信息
      */
-    @RequestMapping(value = "/account", method = RequestMethod.GET)
-    public JsonResponse getAccountInfo(@RequestParam long weixinAppid) throws RedisException, DaoException, AccountNotExistException, IOException, JsonParseException {
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        AccountVO accountVO = new AccountVO();
-        accountVO.setWeixinAppid(accountDO.getWeixinAppId());
-        accountVO.setAppSecret(accountDO.getAppSecret());
-        accountVO.setHeadImg(accountDO.getHeadImg());
-        List<String> list = JsonUtil.string2List(accountDO.getInterestJson(), String.class);
-        accountVO.setInterest(list);
-        accountVO.setName(accountDO.getNickName());
-        accountVO.setQrcode(accountDO.getQrcodeUrl());
-        accountVO.setServiceType(accountDO.getServiceType());
-        accountVO.setVerifyType(accountDO.getVerifyType());
-        return new JsonResponse(accountVO);
-    }
-
-    @RequestMapping(value = "/account/site_id", method = RequestMethod.GET)
-    public JsonResponse getAccountInfoBySiteId(@RequestParam long siteId) throws RedisException, DaoException, AccountNotExistException, IOException, JsonParseException {
+    @RequestMapping(value = "/accounts/site/{siteId}", method = RequestMethod.GET)
+    public JsonResponse getAccountInfoBySiteId(@PathVariable long siteId) throws RedisException, DaoException, IOException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         AccountVO accountVO = new AccountVO();
         accountVO.setWeixinAppid(accountDO.getWeixinAppId());
@@ -70,13 +51,42 @@ public class AccountController extends BaseController {
     }
 
     /**
+     * 根据weixinAppid获取账号信息
+     */
+    @RequestMapping(value = "/accounts/{weixinAppid}", method = RequestMethod.GET)
+    public JsonResponse getAccountInfo(@RequestParam long weixinAppid) throws RedisException, DaoException, IOException, JsonParseException {
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
+        AccountVO accountVO = new AccountVO();
+        accountVO.setWeixinAppid(accountDO.getWeixinAppId());
+        accountVO.setAppSecret(accountDO.getAppSecret());
+        accountVO.setHeadImg(accountDO.getHeadImg());
+        List<String> list = JsonUtil.string2List(accountDO.getInterestJson(), String.class);
+        accountVO.setInterest(list);
+        accountVO.setName(accountDO.getNickName());
+        accountVO.setQrcode(accountDO.getQrcodeUrl());
+        accountVO.setServiceType(accountDO.getServiceType());
+        accountVO.setVerifyType(accountDO.getVerifyType());
+        return new JsonResponse(accountVO);
+    }
+
+    /**
+     * 因为接口设计风格而废弃的接口
+     * 公众号独立后可以删除
+     */
+    @Deprecated
+    @RequestMapping(value = "/account/site_id", method = RequestMethod.GET)
+    public JsonResponse getAccountInfoBySiteIdDeprecated(@RequestParam long siteId) throws RedisException, DaoException, IOException, JsonParseException {
+        return getAccountInfoBySiteId(siteId);
+    }
+
+    /**
      * 解绑账户
      *
      * @param siteId 站点id
      * @return
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId, @Validate(key = "postData", path = "json-schema/account/unbind-postdata-schema.json") @RequestBody String postData) throws ParamException, RedisException, DaoException, AccountNotExistException, JsonParseException {
+    public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId, @Validate(key = "postData", path = "json-schema/account/unbind-postdata-schema.json") @RequestBody String postData) {
         AccountDO account = accountService.getAccountBySiteId(siteId);
         JSONObject jsonObject = new JSONObject(postData);
         int type = jsonObject.getInt("type");

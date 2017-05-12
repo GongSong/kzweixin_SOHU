@@ -2,7 +2,6 @@ package com.kuaizhan.controller;
 
 
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
 import com.kuaizhan.exception.deprecated.business.ParamException;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.common.DaoException;
@@ -49,7 +48,7 @@ public class MsgController extends BaseController {
      * @throws IOException
      */
     @RequestMapping(value = "/msgs", method = RequestMethod.GET)
-    public JsonResponse listMsgs(@RequestParam long siteId, @RequestParam int page, @RequestParam int isHide, @RequestParam(required = false) String keyword) throws RedisException, DaoException, AccountNotExistException, JsonParseException {
+    public JsonResponse listMsgs(@RequestParam long siteId, @RequestParam int page, @RequestParam int isHide, @RequestParam(required = false) String keyword) throws RedisException, DaoException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         Page<MsgDO> pagingResult = msgService.listMsgsByPagination(siteId, accountDO.getAppId(), page, keyword, isHide);
         return new JsonResponse(handleData(pagingResult));
@@ -62,7 +61,7 @@ public class MsgController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/msgs/new/count", method = RequestMethod.GET)
-    public JsonResponse getNewMsgsNum(@RequestParam long siteId) throws DaoException, AccountNotExistException, RedisException, JsonParseException {
+    public JsonResponse getNewMsgsNum(@RequestParam long siteId) throws DaoException, RedisException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         long num = msgService.countMsg(accountDO.getAppId(), 1, 0, null, 0);
         Map<String, Object> data = new HashMap<>();
@@ -77,7 +76,7 @@ public class MsgController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/msgs/new", method = RequestMethod.GET)
-    public JsonResponse listNewMsgs(@RequestParam long siteId) throws IOException, DaoException, AccountNotExistException, RedisException, JsonParseException {
+    public JsonResponse listNewMsgs(@RequestParam long siteId) throws IOException, DaoException, RedisException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         List<MsgDO> msgs = msgService.listNewMsgs(accountDO.getAppId());
         if (msgs.size() > 0) {
@@ -96,7 +95,7 @@ public class MsgController extends BaseController {
      * @throws IOException
      */
     @RequestMapping(value = "/msgs/{openId}", method = RequestMethod.GET)
-    public JsonResponse listMsgsByOpenId(@RequestParam long siteId, @RequestParam int page, @PathVariable String openId) throws DaoException, AccountNotExistException, RedisException, JsonParseException {
+    public JsonResponse listMsgsByOpenId(@RequestParam long siteId, @RequestParam int page, @PathVariable String openId) throws DaoException, RedisException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         Page<MsgDO> msgs = msgService.listMsgsByOpenId(siteId, accountDO.getAppId(), openId, page);
         if (msgs.getResult() != null) {
@@ -128,7 +127,7 @@ public class MsgController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/msgs/{openId}", method = RequestMethod.POST)
-    public JsonResponse insertCustomMsg(@RequestParam long siteId, @PathVariable String openId, @RequestBody String postData) throws ParamException, DaoException, AccountNotExistException, RedisException, SendCustomMsgException, JsonParseException {
+    public JsonResponse insertCustomMsg(@RequestParam long siteId, @PathVariable String openId, @RequestBody String postData) throws ParamException, DaoException, RedisException, SendCustomMsgException, JsonParseException {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
 
         int msgType;

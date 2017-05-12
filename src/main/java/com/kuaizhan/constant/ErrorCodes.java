@@ -8,10 +8,17 @@ import com.kuaizhan.common.ErrorCode;
  */
 public class ErrorCodes {
 
+    //六位错误码，首位定位输出端（1为web端），中间两位定义模块，后三位定位具体错误类型
+    //成功统一定义为200，系统(00)公共(01)账号(02)消息(03)粉丝(04)菜单(05)自动回复(06)图文(07)
+
     // 系统级
     // 用户操作导致的未知错误, 使用此业务异常，需要打印错误日志.
     public static final ErrorCode OPERATION_FAILED = new ErrorCode(100010, "操作失败");
     // TODO: 依赖第三方的未知错误定义
+
+    // 账号(02)
+    public static final ErrorCode SITE_ID_NOT_EXIST = new ErrorCode(102002, "站点没有绑定公众号或siteId不存在");
+    public static final ErrorCode ACCOUNT_NOT_EXIST = new ErrorCode(102003, "账号不存在");
 
     // 图文(07)
     public static final ErrorCode POST_USED_BY_OTHER_ERROR = new ErrorCode(107001, "自定义菜单或自动回复中包含该图文，无法删除");

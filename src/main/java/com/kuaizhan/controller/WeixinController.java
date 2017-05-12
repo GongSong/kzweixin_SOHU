@@ -7,7 +7,6 @@ import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.common.XMLParseException;
-import com.kuaizhan.exception.deprecated.business.AccountNotExistException;
 import com.kuaizhan.exception.deprecated.system.*;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
@@ -68,7 +67,7 @@ public class WeixinController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/msgs/{appId}/callback", method = RequestMethod.POST, produces = "application/xml;charset=UTF-8")
-    public String weixinPush(@PathVariable String appId, @RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody(required = false) String postData) throws EncryptException, DaoException, AccountNotExistException, XMLParseException, RedisException {
+    public String weixinPush(@PathVariable String appId, @RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody(required = false) String postData) throws EncryptException, DaoException, XMLParseException, RedisException {
         //检查消息是否来自微信
         return weixinMsgService.handleWeixinPushMsg(appId, signature, timestamp, nonce, postData);
     }

@@ -178,7 +178,7 @@ public class PostController extends BaseController {
      * @param pageId
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
-    public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) throws AccountNotExistException {
+    public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) {
         postService.deletePost(weixinAppid, pageId, accountService.getAccessToken(weixinAppid));
         return new JsonResponse(null);
     }
@@ -201,13 +201,14 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/posts/kzweixin_syncs", method = RequestMethod.POST)
-    public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws  IOException, AccountNotExistException {
+    public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws  IOException {
         JSONObject jsonObject = new JSONObject(postData);
         Long weixinAppid = jsonObject.optLong("weixinAppid");
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
         Long categoryId = jsonObject.optLong("categoryId");
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         for (Long pageId: pageIds){
+            // TODO: 未绑定站点错误
             postService.export2KzArticle(pageId, categoryId, accountDO.getSiteId());
         }
         return new JsonResponse(null);
@@ -235,14 +236,14 @@ public class PostController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
-    public JsonResponse uploadWeixinThumb(@Valid @RequestBody UploadPicParam uploadPicParam) throws AccountNotExistException, DownloadFileFailedException {
+    public JsonResponse uploadWeixinThumb(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
         Map result = weixinPostService.uploadImage(accountService.getAccessToken(uploadPicParam.getWeixinAppid()), uploadPicParam.getImgUrl());
 
         return new JsonResponse(result);
     }
 
     @RequestMapping(value = "weixin_pics", method = RequestMethod.POST)
-    public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws AccountNotExistException, DownloadFileFailedException {
+    public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
         String url = weixinPostService.uploadImgForPost(accountService.getAccessToken(uploadPicParam.getWeixinAppid()), uploadPicParam.getImgUrl());
         Map<String ,String> result = new HashMap<>();
         result.put("url", url);
@@ -250,7 +251,7 @@ public class PostController extends BaseController {
     }
 
     @RequestMapping(value = "/posts/{pageId}/wx_url", method = RequestMethod.GET)
-    public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) throws AccountNotExistException {
+    public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) {
         Map<String ,String> result = new HashMap<>();
         result.put("wxUrl", postService.getPostWxUrl(weixinAppid, pageId));
         return new JsonResponse(result);
