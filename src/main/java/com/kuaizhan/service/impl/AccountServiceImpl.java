@@ -137,7 +137,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void unbindAccount(AccountDO account, UnbindDO unbindDO) throws RedisException, DaoException {
+    public void unbindAccount(AccountDO account, UnbindDO unbindDO) {
         UnbindDO unbind;
         //删缓存
         try {
@@ -162,15 +162,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateAppSecret(long siteId, String appSecret) throws DaoException {
+    public void updateAppSecret(long siteId, String appSecret) {
         AccountDO account = new AccountDO();
         account.setSiteId(siteId);
         account.setAppSecret(appSecret);
-        try {
-            accountDao.updateAccountBySiteId(account);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-
+        accountDao.updateAccountBySiteId(account);
     }
 }

@@ -4,9 +4,6 @@ package com.kuaizhan.controller;
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.deprecated.business.ParamException;
-import com.kuaizhan.exception.common.DaoException;
-import com.kuaizhan.exception.deprecated.system.JsonParseException;
-import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.pojo.DO.UnbindDO;
 import com.kuaizhan.pojo.VO.AccountVO;
@@ -18,7 +15,6 @@ import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -35,7 +31,7 @@ public class AccountController extends BaseController {
      * 根据siteId获取绑定的微信公众号信息
      */
     @RequestMapping(value = "/accounts/site/{siteId}", method = RequestMethod.GET)
-    public JsonResponse getAccountInfoBySiteId(@PathVariable long siteId) throws RedisException, DaoException, IOException, JsonParseException {
+    public JsonResponse getAccountInfoBySiteId(@PathVariable long siteId) {
         AccountDO accountDO = accountService.getAccountBySiteId(siteId);
         AccountVO accountVO = new AccountVO();
         accountVO.setWeixinAppid(accountDO.getWeixinAppId());
@@ -54,7 +50,7 @@ public class AccountController extends BaseController {
      * 根据weixinAppid获取账号信息
      */
     @RequestMapping(value = "/accounts/{weixinAppid}", method = RequestMethod.GET)
-    public JsonResponse getAccountInfo(@RequestParam long weixinAppid) throws RedisException, DaoException, IOException, JsonParseException {
+    public JsonResponse getAccountInfo(@RequestParam long weixinAppid) {
         AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
         AccountVO accountVO = new AccountVO();
         accountVO.setWeixinAppid(accountDO.getWeixinAppId());
@@ -75,7 +71,7 @@ public class AccountController extends BaseController {
      */
     @Deprecated
     @RequestMapping(value = "/account/site_id", method = RequestMethod.GET)
-    public JsonResponse getAccountInfoBySiteIdDeprecated(@RequestParam long siteId) throws RedisException, DaoException, IOException, JsonParseException {
+    public JsonResponse getAccountInfoBySiteIdDeprecated(@RequestParam long siteId) {
         return getAccountInfoBySiteId(siteId);
     }
 
@@ -86,7 +82,9 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId, @Validate(key = "postData", path = "json-schema/account/unbind-postdata-schema.json") @RequestBody String postData) {
+    public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId,
+                               @Validate(key = "postData", path = "json-schema/account/unbind-postdata-schema.json")
+                               @RequestBody String postData) {
         AccountDO account = accountService.getAccountBySiteId(siteId);
         JSONObject jsonObject = new JSONObject(postData);
         int type = jsonObject.getInt("type");
@@ -104,7 +102,7 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/account", method = RequestMethod.PUT)
-    public JsonResponse modifyAppSecret(@RequestParam long siteId, @RequestBody String postData) throws ParamException, DaoException {
+    public JsonResponse modifyAppSecret(@RequestParam long siteId, @RequestBody String postData) throws ParamException {
         String appSecret;
         try {
             JSONObject jsonObject = new JSONObject(postData);

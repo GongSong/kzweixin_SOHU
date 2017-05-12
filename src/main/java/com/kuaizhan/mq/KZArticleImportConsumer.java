@@ -1,8 +1,6 @@
 package com.kuaizhan.mq;
 
 import com.kuaizhan.config.KzApiConfig;
-import com.kuaizhan.exception.common.GetKzArticleException;
-import com.kuaizhan.exception.common.String2BeanFailedException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.ArticleDTO;
 import com.kuaizhan.service.PostService;
