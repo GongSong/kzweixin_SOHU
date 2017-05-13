@@ -46,6 +46,8 @@ public class KZArticleImportConsumer extends BaseMqConsumer {
                 postDO.setWeixinAppid(weixinAppid);
                 postDO.setTitle(articleDTO.getTitle());
                 postDO.setDigest("");
+                // 这些字段都不应该为空
+                postDO.setAuthor("");
                 StringBuilder stringBuilder = new StringBuilder();
                 for (String str : articleDTO.getContent()) {
                     stringBuilder.append(str);
