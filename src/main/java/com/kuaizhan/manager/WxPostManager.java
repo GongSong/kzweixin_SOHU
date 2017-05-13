@@ -1,46 +1,43 @@
-package com.kuaizhan.service.impl;
+package com.kuaizhan.manager;
 
 
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.constant.ErrorCodes;
-import com.kuaizhan.dao.redis.RedisImageDao;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.*;
+import com.kuaizhan.exception.weixin.WxMediaIdNotExistException;
+import com.kuaizhan.exception.weixin.WxPostListGetException;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.pojo.DTO.WxPostDTO;
-import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 
 /**
+ * 微信图文模块接口封装
  * Created by liangjiateng on 2017/3/28.
  */
-@Service("weixinPostService")
-public class WeixinPostServiceImpl implements WeixinPostService {
+public class WxPostManager {
 
-    @Resource
-    RedisImageDao redisImageDao;
+    private static Logger logger = Logger.getLogger(WxPostManager.class);
 
-    private static Logger logger = Logger.getLogger(WeixinPostServiceImpl.class);
-
-    @Override
-    public void deletePost(String mediaId, String accessToken) {
+    /**
+     * 微信删除图文
+     */
+    public static void deletePost(String mediaId, String accessToken) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("media_id", mediaId);
 
         String result = HttpClientUtil.postJson(WxApiConfig.deleteMaterialUrl(accessToken), jsonObject.toString());
         if (result == null) {
-            logger.error("[WeixinPostServiceImpl.deletePost] 删除图文返回为null, mediaId: " + mediaId);
+            logger.error("[WxPostManager.deletePost] 删除图文返回为null, mediaId: " + mediaId);
             throw new BusinessException(ErrorCodes.OPERATION_FAILED, "删除图文失败, 请稍后重试");
         }
 
@@ -55,14 +52,16 @@ public class WeixinPostServiceImpl implements WeixinPostService {
             else if (errCode == 40007) return;
             else {
                 // 未知错误
-                logger.error("[WeixinPostServiceImpl.deletePost] 删除多图文失败, mediaId:" + mediaId + " result: " + returnJson);
+                logger.error("[WxPostManager.deletePost] 删除多图文失败, mediaId:" + mediaId + " result: " + returnJson);
                 throw new BusinessException(ErrorCodes.OPERATION_FAILED, "删除图文失败, 请稍后重试");
             }
         }
     }
 
-    @Override
-    public HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws DownloadFileFailedException {
+    /**
+     * 上传图片到微信永久素材
+     */
+    public static HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws DownloadFileFailedException {
         // 处理没有http头的问题
 
         imgUrl = UrlUtil.fixQuote(imgUrl);
@@ -90,21 +89,10 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         return map;
     }
 
-    @Override
-    public String uploadImgForPost(String accessToken, String imgUrl) throws DownloadFileFailedException {
-        imgUrl = UrlUtil.fixQuote(imgUrl);
-        imgUrl = UrlUtil.fixProtocol(imgUrl);
-
-        // 本来就是微信url的不再上传
-        if (imgUrl.indexOf("https://mmbiz") == 0 || imgUrl.indexOf("http://mmbiz") == 0) {
-            return imgUrl;
-        }
-
-        // 先从redis中取
-        String wxUrl = redisImageDao.getImageUrl(imgUrl);
-        if (wxUrl != null) {
-            return wxUrl;
-        }
+    /**
+     * 上传图文中的图片到微信服务器
+     */
+    public static String uploadImgForPost(String accessToken, String imgUrl) throws DownloadFileFailedException {
 
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
@@ -115,15 +103,16 @@ public class WeixinPostServiceImpl implements WeixinPostService {
             logger.error("[微信] 上传图文中图片失败: result: " + returnJson + " imgUrl: " + imgUrl);
             throw new BusinessException(ErrorCodes.OPERATION_FAILED, "上传内容中图片失败，请重试");
         }
-        wxUrl = returnJson.getString("url");
+        return returnJson.getString("url");
 
-        // 缓存到redis
-        redisImageDao.setImageUrl(imgUrl, wxUrl);
-        return wxUrl;
     }
 
-    @Override
-    public String uploadPosts(String accessToken, List<PostDO> posts) {
+    /**
+     * 上传多图文到微信
+     * @param posts 多图文对象
+     * @return 图文mediaId
+     */
+    public static String uploadPosts(String accessToken, List<PostDO> posts) {
 
         // 组装articles
         JSONArray jsonArray = new JSONArray();
@@ -172,8 +161,10 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         return returnJson.getString("media_id");
     }
 
-    @Override
-    public void updatePost(String accessToken, String mediaId, PostDO postDO) throws MediaIdNotExistException {
+    /**
+     * 更新微信图文的某一篇
+     */
+    public static void updatePost(String accessToken, String mediaId, PostDO postDO) throws WxMediaIdNotExistException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("media_id", mediaId);
         jsonObject.put("index", postDO.getIndex());
@@ -207,7 +198,7 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         int errCode = returnJson.optInt("errcode");
         if (errCode != 0) {
             if (errCode == 40007) {
-                throw new MediaIdNotExistException();
+                throw new WxMediaIdNotExistException();
             }
             // 多图文数目不一致，修改了不存在的index
             if (errCode == 40114) {
@@ -219,8 +210,10 @@ public class WeixinPostServiceImpl implements WeixinPostService {
 
     }
 
-    @Override
-    public WxPostListDTO getWxPostList(String accessToken, int offset, int count) {
+    /**
+     * 根据偏移获取微信图文列表
+     */
+    public static WxPostListDTO getWxPostList(String accessToken, int offset, int count) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "news");
         jsonObject.put("offset", offset);
@@ -243,8 +236,10 @@ public class WeixinPostServiceImpl implements WeixinPostService {
         }
     }
 
-    @Override
-    public List<WxPostDTO> getWxPost(String mediaId, String accessToken) {
+    /**
+     * 根据mediaId获取微信图文
+     */
+    public static List<WxPostDTO> getWxPost(String mediaId, String accessToken) {
         List<WxPostDTO> wxPostDTOS = new ArrayList<>();
 
         JSONObject params = new JSONObject();

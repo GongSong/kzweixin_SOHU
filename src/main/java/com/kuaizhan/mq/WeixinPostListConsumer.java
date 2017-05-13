@@ -1,15 +1,6 @@
 package com.kuaizhan.mq;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kuaizhan.constant.MqConstant;
-import com.kuaizhan.exception.BaseException;
-import com.kuaizhan.pojo.DTO.WxPostListDTO;
-import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
-import com.kuaizhan.service.WeixinPostService;
-import com.kuaizhan.utils.JsonUtil;
-import com.kuaizhan.utils.LogUtil;
-import com.kuaizhan.utils.MqUtil;
 import org.apache.log4j.Logger;
 
 import java.util.*;

@@ -10,7 +10,6 @@ import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,13 +18,12 @@ import java.util.Map;
  * 对主站Api的封装和异常转换
  * Created by zixiong on 2017/5/10.
  */
-@Component("kzManager")
 public class KzManager {
 
     /**
      * 获取根据pageId获取快文
      */
-    public ArticleDTO getKzArticle(long pageId) throws GetKzArticleException{
+    public static ArticleDTO getKzArticle(long pageId) throws GetKzArticleException{
         String result = HttpClientUtil.get(KzApiConfig.getKzArticleUrl(pageId));
 
         if (result == null) {
@@ -47,7 +45,7 @@ public class KzManager {
     /**
      * 把外部图片上传到主站，转换为快站链接
      */
-    public String uploadPicToKz(String url, long userId) throws KZPicUploadException {
+    public static String uploadPicToKz(String url, long userId) throws KZPicUploadException {
         Map<String, Object> params = new HashMap<>();
         params.put("img_url", url);
         params.put("uid", userId);

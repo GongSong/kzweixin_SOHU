@@ -15,7 +15,6 @@ import com.kuaizhan.pojo.VO.PostListVO;
 import com.kuaizhan.pojo.VO.PostVO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
-import com.kuaizhan.service.WeixinPostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
 import org.apache.log4j.Logger;
@@ -42,8 +41,6 @@ public class PostController extends BaseController {
     PostService postService;
     @Resource
     AccountService accountService;
-    @Resource
-    WeixinPostService weixinPostService;
 
     private static final Logger logger = Logger.getLogger(PostController.class);
 
@@ -235,14 +232,13 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
     public JsonResponse uploadWeixinThumb(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
-        Map result = weixinPostService.uploadImage(accountService.getAccessToken(uploadPicParam.getWeixinAppid()), uploadPicParam.getImgUrl());
-
+        Map result = postService.uploadWxMaterial(uploadPicParam.getWeixinAppid(), uploadPicParam.getImgUrl());
         return new JsonResponse(result);
     }
 
     @RequestMapping(value = "weixin_pics", method = RequestMethod.POST)
     public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
-        String url = weixinPostService.uploadImgForPost(accountService.getAccessToken(uploadPicParam.getWeixinAppid()), uploadPicParam.getImgUrl());
+        String url = postService.uploadImageForPost(uploadPicParam.getWeixinAppid(), uploadPicParam.getImgUrl());
         Map<String ,String> result = new HashMap<>();
         result.put("url", url);
         return new JsonResponse(result);
