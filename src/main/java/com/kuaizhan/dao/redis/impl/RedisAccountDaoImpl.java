@@ -35,7 +35,8 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
     public void setAccountInfo(AccountDO account) {
         String key = RedisConstant.KEY_ACCOUNT_INFO + account.getWeixinAppId();
         String str = JsonUtil.bean2String(account);
-        setData(key, str, 7000);
+        // TODO: 因为修改账号信息还在php代码那边，缓存时间设置得很短，账号模块完全重构后修改
+        setData(key, str, 60);
     }
 
     @Override

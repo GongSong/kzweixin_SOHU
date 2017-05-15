@@ -38,7 +38,18 @@ public class PojoSwitcher {
         }
         AccountVO accountVO = new AccountVO();
         accountVO.setWeixinAppid(accountDO.getWeixinAppId());
-        accountVO.setAppSecret(accountDO.getAppSecret());
+        // 对appSecret进行打码处理
+        String appSecret = accountDO.getAppSecret();
+        if (appSecret != null && !"".equals(appSecret)) {
+            int length = appSecret.length();
+            int firstIdx = length > 5? 5: length;
+            int lastIdx = length > 5? length - 5: length;
+            accountVO.setAppSecret(
+                    appSecret.substring(0, firstIdx)
+                    + "************************"
+                    + appSecret.substring(lastIdx, length)
+            );
+        }
         accountVO.setHeadImg(accountDO.getHeadImg());
         accountVO.setInterest(JsonUtil.string2List(accountDO.getInterestJson(), String.class));
         accountVO.setName(accountDO.getNickName());

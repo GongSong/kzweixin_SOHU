@@ -12,7 +12,7 @@
         ```
         {
             "weixinAppid": 601145633,
-            "appSecret": "",
+            "appSecret": "1323fda2dfa************24332423", // 打码后的appSecret
             "headImg": "http://wx.qlogo.cn/mmopen/l0fmnePhf2dtiaEmpOZmeMrUMYBLbcQHOSYOPjFWCNdOoWUO53oawfQJA5k1DvdfK4sbX3Dn60rYI2AbOUU10thWiasCH8Q4re/0",
             "interest": ["0", "0", "0", "0", "0", "0"]
             "qrcode": "http://mmbiz.qpic.cn/mmbiz/UqZMrMwVpn1ulvkiaTJ2P6TRsljBSnjm9XEOZlVw08lrIYGHHe8oicoxttaNm48Kribps5ib18GPamib9GnWt92BmOg/0",
@@ -37,7 +37,7 @@
         ```
         {
             "weixinAppid": 601145633,
-            "appSecret": "",
+            "appSecret": "1323fda2dfa************24332423", // 打码后的appSecret
             "headImg": "http://wx.qlogo.cn/mmopen/l0fmnePhf2dtiaEmpOZmeMrUMYBLbcQHOSYOPjFWCNdOoWUO53oawfQJA5k1DvdfK4sbX3Dn60rYI2AbOUU10thWiasCH8Q4re/0",
             "interest": ["0", "0", "0", "0", "0", "0"]
             "qrcode": "http://mmbiz.qpic.cn/mmbiz/UqZMrMwVpn1ulvkiaTJ2P6TRsljBSnjm9XEOZlVw08lrIYGHHe8oicoxttaNm48Kribps5ib18GPamib9GnWt92BmOg/0",
