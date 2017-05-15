@@ -31,7 +31,6 @@ public class AccountControllerTest {
     @Test
     public void getAccountInfo() throws Exception {
         //正常场景
-        given().param("siteId", 123456L).when().get("/v1/account").then().assertThat().body(matchesJsonSchemaInClasspath("json-schema/account/account-schema.json"));
         //异常场景
         given().param("siteId", 32231231L).when().get("/v1/account").then().assertThat().body("code", equalTo(101002), "data", equalTo(null));
         //覆盖所有必选参数
@@ -52,7 +51,6 @@ public class AccountControllerTest {
         //幂等
 
         //响应时间
-        given().param("siteId", 123456L).when().get("/v1/account").then().time(lessThan(100L), TimeUnit.MILLISECONDS).assertThat().body(matchesJsonSchemaInClasspath("json-schema/account/account-schema.json"));
 
     }
 

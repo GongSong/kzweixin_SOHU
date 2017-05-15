@@ -10,13 +10,11 @@ import com.kuaizhan.pojo.VO.AccountVO;
 import com.kuaizhan.pojo.VO.JsonResponse;
 import com.kuaizhan.service.AccountService;
 
-import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * 账号controller
@@ -66,7 +64,7 @@ public class AccountController extends BaseController {
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
     public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId,
-                               @Validate(key = "postData", path = "json-schema/account/unbind-postdata-schema.json")
+                               @Validate(key = "postData", path = "json/unbind-postdata-schema.json")
                                @RequestBody String postData) {
         AccountDO account = accountService.getAccountBySiteId(siteId);
         JSONObject jsonObject = new JSONObject(postData);

@@ -55,6 +55,8 @@ public class WxApiConfig {
     private static final String WEIXIN_SEND_BY_OPENID = "/cgi-bin/message/custom/send?access_token=";
     // 发送模板消息
     private static final String WEIXIN_SEND_TPL_MSG = "/cgi-bin/message/template/send?access_token=";
+    // 添加模板id
+    private static final String WEIXIN_ADD_TEMPLATE = "/cgi-bin/template/api_add_template?access_token=";
 
 
     //素材
@@ -202,6 +204,13 @@ public class WxApiConfig {
      */
     public static String getSendTplMsgUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_SEND_TPL_MSG + accessToken;
+    }
+
+    /**
+     * 新增模板id
+     */
+    public static String getAddTemplateUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_ADD_TEMPLATE + accessToken;
     }
 
     /**

@@ -3,13 +3,14 @@ package com.kuaizhan.dao.mapper;
 import com.kuaizhan.pojo.DO.PostDO;
 import com.kuaizhan.pojo.DTO.Page;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Created by zixiong on 2017/3/20.
  */
-
+@Repository
 public interface PostDao {
 
     /**

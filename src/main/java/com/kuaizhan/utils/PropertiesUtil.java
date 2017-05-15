@@ -1,5 +1,7 @@
 package com.kuaizhan.utils;
 
+import org.apache.log4j.Logger;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,11 +13,10 @@ import java.util.Properties;
  */
 public final class PropertiesUtil {
 
+    private static final Logger logger = Logger.getLogger(PropertiesUtil.class);
+
     /**
      * 加载属性文件
-     *
-     * @param fileName
-     * @return
      */
     public static Properties loadProps(String fileName) {
 
@@ -24,12 +25,12 @@ public final class PropertiesUtil {
         try {
             is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
             if (is == null) {
-                throw new FileNotFoundException(fileName + " file is not found");
+                throw new FileNotFoundException("[PropertiesUtil] file is not found, fileName:" + fileName);
             }
             props = new Properties();
             props.load(is);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("[PropertiesUtil] loadProps failed, fileName" + fileName, e);
         } finally {
             if (is != null) {
                 try {
@@ -44,9 +45,6 @@ public final class PropertiesUtil {
 
     /**
      * 获取字符型属性(默认值为空)
-     * @param props
-     * @param key
-     * @return
      */
     public static String getString(Properties props, String key) {
         return getString(props, key, "");
@@ -54,44 +52,51 @@ public final class PropertiesUtil {
 
     /**
      * 获取字符型属性(可指定默认值)
-     * @param props
-     * @param key
-     * @param defaultVaule
-     * @return
      */
     public static String getString(Properties props, String key, String defaultVaule) {
-        String value = defaultVaule;
         if (props.containsKey(key)) {
-            value = props.getProperty(key);
+            return props.getProperty(key);
+        } else {
+            return defaultVaule;
         }
-        return value;
     }
 
     /**
-     * 获取数值型属性(默认值为0)
-     * @param props
-     * @param key
-     * @return
+     * 获取int型属性(默认值为0)
      */
-    public static int getInt(Properties props,String key){
-        return getInt(props,key,0);
+    public static int getInt(Properties props, String key){
+        return getInt(props, key,0);
 
     }
 
     /**
-     * 获取数值型属性(可指定默认值)
-     * @param props
-     * @param key
-     * @param defaultValue
-     * @return
+     * 获取int型属性(可指定默认值)
      */
 
     public static int getInt(Properties props, String key, int defaultValue) {
-        int value=defaultValue;
-        if(props.containsKey(key)){
-            value=Integer.parseInt(props.getProperty(key));
+        if (props.containsKey(key)) {
+            return Integer.parseInt(props.getProperty(key));
+        } else {
+            return defaultValue;
         }
-        return value;
+    }
+
+    /**
+     * 获取long型属性(默认值0)
+     */
+    public static long getLong(Properties props, String key) {
+        return getLong(props, key, 0);
+    }
+
+    /**
+     * 获取long型属性（可指定默认值）
+     */
+    public static long getLong(Properties props, String key, long defaultValue) {
+        if (props.containsKey(key)) {
+            return Long.parseLong(props.getProperty(key));
+        } else {
+            return defaultValue;
+        }
     }
 
 }

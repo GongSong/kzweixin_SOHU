@@ -12,6 +12,8 @@ public class AppConstant {
 
     //版本号
     public static final String VERSION = "v1";
+    // controller接受的类型
+    public static final String PRODUCES = "application/json; charset=UTF-8";
     //PHP项目版本号
     public static final String PHP_APP_VERSION = "5.0";
 }

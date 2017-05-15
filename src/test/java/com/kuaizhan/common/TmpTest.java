@@ -1,7 +1,11 @@
 package com.kuaizhan.common;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
 import org.junit.Test;
+
+import java.io.InputStream;
+import java.util.Map;
 
 
 /**
@@ -25,5 +29,21 @@ public class TmpTest {
         );
 
         System.out.println("---->" + content);
+    }
+
+    @Test
+    public void testInt() throws Exception {
+        System.out.println("---->" + Integer.parseInt("811177"));
+    }
+
+    @Test
+    public void testJson() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        InputStream is = TmpTest.class.getResourceAsStream("/json/wx-sys-templates.json");
+        Map map = objectMapper.readValue(is, Map.class);
+        System.out.println("---->" + map);
+        System.out.println("---->" + map.containsKey("OPENTM213512088"));
+        System.out.println("---->" + map.get("title"));
+        System.out.println("---->" + map.get("keywords"));
     }
 }

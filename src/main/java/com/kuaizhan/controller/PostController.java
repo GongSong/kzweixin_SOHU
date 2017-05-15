@@ -34,13 +34,13 @@ import java.util.Map;
  * Created by zixiong on 2017/3/20.
  */
 @RestController
-@RequestMapping(value = AppConstant.VERSION, produces = "application/json")
+@RequestMapping(value = AppConstant.VERSION, produces = AppConstant.PRODUCES)
 public class PostController extends BaseController {
 
     @Resource
-    PostService postService;
+    private PostService postService;
     @Resource
-    AccountService accountService;
+    private AccountService accountService;
 
     private static final Logger logger = Logger.getLogger(PostController.class);
 
@@ -48,7 +48,6 @@ public class PostController extends BaseController {
     /**
      * 获取多图文列表
      */
-
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
     public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam(required = false) String title, @RequestParam(defaultValue = "0") Boolean flat) {
 

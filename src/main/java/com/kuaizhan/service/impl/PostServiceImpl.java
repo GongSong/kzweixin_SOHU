@@ -46,17 +46,17 @@ public class PostServiceImpl implements PostService {
     private static final int TITLE_MAX = 640;
 
     @Resource
-    PostDao postDao;
+    private PostDao postDao;
     @Resource
-    RedisImageDao redisImageDao;
+    private RedisImageDao redisImageDao;
     @Resource
-    RedisPostDao redisPostDao;
+    private RedisPostDao redisPostDao;
     @Resource
-    MqUtil mqUtil;
+    private MqUtil mqUtil;
     @Resource
-    MongoPostDao mongoPostDao;
+    private MongoPostDao mongoPostDao;
     @Resource
-    AccountService accountService;
+    private AccountService accountService;
 
     @Override
     public long genPageId() {

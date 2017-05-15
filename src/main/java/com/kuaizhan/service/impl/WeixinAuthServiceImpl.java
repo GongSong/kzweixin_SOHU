@@ -187,6 +187,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         jsonObject.put("authorizer_appid", authorizerAppId);
         jsonObject.put("authorizer_refresh_token", authorizerRefreshToken);
         String result = HttpClientUtil.postJson(WxApiConfig.getRefreshAuthUrl(componentAccessToken), jsonObject.toString());
+        // TODO: 这种写法，完全没有对返回数据做校验
         authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
         return authorizationInfoDTO;
     }

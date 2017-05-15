@@ -6,6 +6,8 @@ package com.kuaizhan.constant;
 public class WxErrCode {
     // 无效模板id
     public static int INVALID_TEMPLATE_ID = 40037;
+    // 模板消息数量达到上限
+    public static int TEMPLATE_NUM_EXCEEDS_LIMIT = 45026;
     // 数据格式不符合要求
     public static int DATA_FORMAT_ERROR = 47001;
 }

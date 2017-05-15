@@ -39,4 +39,5 @@ public class ApplicationConfig {
     public static final String WEIXIN_APPID_THIRD = PropertiesUtil.getString(PROP, "weixin.third.appid");
     public static final String WEIXIN_APP_SECRET_THIRD = PropertiesUtil.getString(PROP, "weixin.third.appSecret");
     public static final String WEIXIN_AES_KEY = PropertiesUtil.getString(PROP, "weixin.third.aesKey");
+    public static final long WEIXIN_TEST_WEIXIN_APPID = PropertiesUtil.getLong(PROP, "weixin.testWeixinAppid");
 }
