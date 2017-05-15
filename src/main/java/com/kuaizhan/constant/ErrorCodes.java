@@ -19,6 +19,7 @@ public class ErrorCodes {
     // 账号(02)
     public static final ErrorCode SITE_ID_NOT_EXIST = new ErrorCode(102002, "站点没有绑定公众号或siteId不存在");
     public static final ErrorCode ACCOUNT_NOT_EXIST = new ErrorCode(102003, "账号不存在");
+    public static final ErrorCode ACCOUNT_NOT_VERIFIED_SERVICE_TYPE = new ErrorCode(102004, "账号不是认证的服务号");
 
     // 图文(07)
     public static final ErrorCode POST_USED_BY_OTHER_ERROR = new ErrorCode(107001, "自定义菜单或自动回复中包含该图文，无法删除");
@@ -34,4 +35,5 @@ public class ErrorCodes {
     public static final ErrorCode INVALID_SYS_TEMPLATE_ID_ERROR = new ErrorCode(108002, "非法的系统模板消息id");
     public static final ErrorCode HAS_NOT_ADD_TEMPLATE_ERROR = new ErrorCode(108003, "公众号没有添加此模板消息id或已经被删除");
     public static final ErrorCode TEMPLATE_NUM_EXCEED_ERROR = new ErrorCode(108004, "公众号的模板消息数量已达上限");
+    public static final ErrorCode TEMPLATE_INDUSTRY_CONFLICT_ERROR = new ErrorCode(108005, "公众号行业设置错误");
 }

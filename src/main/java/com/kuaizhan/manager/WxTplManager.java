@@ -2,10 +2,7 @@ package com.kuaizhan.manager;
 
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.constant.WxErrCode;
-import com.kuaizhan.exception.weixin.WxApiException;
-import com.kuaizhan.exception.weixin.WxDataFormatException;
-import com.kuaizhan.exception.weixin.WxInvalidTemplateException;
-import com.kuaizhan.exception.weixin.WxTemplateNumExceedException;
+import com.kuaizhan.exception.weixin.*;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import org.json.JSONObject;
@@ -65,6 +62,7 @@ public class WxTplManager {
      * @return 用户的版版消息id
      * @throws WxApiException 未知错误
      * @throws WxTemplateNumExceedException 公众号的模板数已经达到上限
+     * @throws WxTemplateIndustryConflictException 微信的行业设置与模板id冲突
      */
     public static String addTplId(String accessToken, String tplIdShort) throws WxTemplateNumExceedException, WxApiException {
         JSONObject paramJson = new JSONObject();
@@ -82,6 +80,8 @@ public class WxTplManager {
         // TODO: 加上行业不对的报错
         if (errCode == WxErrCode.TEMPLATE_NUM_EXCEEDS_LIMIT) {
             throw new WxTemplateNumExceedException();
+        } else if (errCode == WxErrCode.TEMPLATE_INDUSTRY_CONFLICT) {
+            throw new WxTemplateIndustryConflictException();
         } else if (errCode != 0 || tplId == null) {
             throw new WxApiException("[Weixin:addTplId] not expected result:" + resultJson + " tplIdShort:" + tplIdShort);
         }

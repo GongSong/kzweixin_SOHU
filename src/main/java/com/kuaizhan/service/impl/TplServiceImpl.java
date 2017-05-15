@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.constant.ErrorCodes;
 import com.kuaizhan.dao.mapper.TplDao;
 import com.kuaizhan.exception.BusinessException;
+import com.kuaizhan.exception.weixin.WxTemplateIndustryConflictException;
 import com.kuaizhan.exception.weixin.WxTemplateNumExceedException;
 import com.kuaizhan.manager.WxTplManager;
+import com.kuaizhan.pojo.DO.AccountDO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.TplService;
 import org.apache.log4j.Logger;
@@ -48,6 +50,12 @@ public class TplServiceImpl implements TplService {
 
     @Override
     public void addTpl(long weixinAppid, String tplIdShort) {
+        // 检查公众号是否是认证服务号
+        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
+        if (accountDO.getServiceType() != 2 || accountDO.getVerifyType() == -1) {
+            throw new BusinessException(ErrorCodes.ACCOUNT_NOT_VERIFIED_SERVICE_TYPE);
+        }
+
         // 数据库配置中已经添加
         String tplId = tplDao.getTplId(weixinAppid, tplIdShort);
         if (tplId != null && !"".equals(tplId.trim())) {
@@ -59,6 +67,8 @@ public class TplServiceImpl implements TplService {
             tplId = WxTplManager.addTplId(accessToken, tplIdShort);
         } catch (WxTemplateNumExceedException e) {
             throw new BusinessException(ErrorCodes.TEMPLATE_NUM_EXCEED_ERROR);
+        } catch (WxTemplateIndustryConflictException e) {
+            throw new BusinessException(ErrorCodes.TEMPLATE_INDUSTRY_CONFLICT_ERROR);
         }
         tplDao.addTplId(weixinAppid, tplIdShort, tplId);
     }
