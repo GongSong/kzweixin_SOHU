@@ -4,9 +4,9 @@ package com.kuaizhan.service;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.MsgDO;
-import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.MsgPO;
+import com.kuaizhan.pojo.dto.Page;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ public interface MsgService {
      * @return
      * @throws IOException
      */
-    Page<MsgDO> listMsgsByPagination(long siteId, String appId, int page, String keyword, int isHide) throws DaoException, RedisException;
+    Page<MsgPO> listMsgsByPagination(long siteId, String appId, int page, String keyword, int isHide) throws DaoException, RedisException;
 
 
     /**
@@ -48,7 +48,7 @@ public interface MsgService {
      * @param appId 公众号appId
      * @return
      */
-    List<MsgDO> listNewMsgs(String appId) throws DaoException;
+    List<MsgPO> listNewMsgs(String appId) throws DaoException;
 
 
     /**
@@ -58,7 +58,7 @@ public interface MsgService {
      * @param openId 用户openId
      * @return
      */
-    Page<MsgDO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException;
+    Page<MsgPO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException;
 
     /**
      * 批量更新消息状态
@@ -66,22 +66,22 @@ public interface MsgService {
      * @param appId 公众号appid
      * @param msgs  消息列表
      */
-    void updateMsgsStatus(long siteId, String appId, List<MsgDO> msgs) throws DaoException, RedisException;
+    void updateMsgsStatus(long siteId, String appId, List<MsgPO> msgs) throws DaoException, RedisException;
 
     /**
      * 插入消息
      *
      * @param siteId
      * @param appId
-     * @param msgDO
+     * @param msgPO
      */
-    void insertMsg(long siteId, String appId, MsgDO msgDO) throws DaoException, RedisException;
+    void insertMsg(long siteId, String appId, MsgPO msgPO) throws DaoException, RedisException;
 
 
     /**
      * 插入客服消息
      *
      */
-    void insertCustomMsg(AccountDO accountDO, String openId, int msgType, JSONObject content) throws SendCustomMsgException, DaoException, RedisException;
+    void insertCustomMsg(AccountPO accountPO, String openId, int msgType, JSONObject content) throws SendCustomMsgException, DaoException, RedisException;
 
 }

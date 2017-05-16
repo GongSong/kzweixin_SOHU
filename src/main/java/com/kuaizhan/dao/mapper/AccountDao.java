@@ -1,6 +1,6 @@
 package com.kuaizhan.dao.mapper;
 
-import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.po.AccountPO;
 
 /**
  * 账号dao
@@ -14,7 +14,7 @@ public interface AccountDao {
      * @param siteId 站点id
      * @return
      */
-    AccountDO getAccountBySiteId(long siteId);
+    AccountPO getAccountBySiteId(long siteId);
 
     /**
      * 根据appId获取账号信息
@@ -22,7 +22,7 @@ public interface AccountDao {
      * @param appId 公众号appId
      * @return
      */
-    AccountDO getAccountByAppId(String appId);
+    AccountPO getAccountByAppId(String appId);
 
     /**
      * 根据weixinAppId获取账号信息
@@ -30,7 +30,7 @@ public interface AccountDao {
      * @param weixinAppId
      * @return
      */
-    AccountDO getAccountByWeixinAppId(long weixinAppId);
+    AccountPO getAccountByWeixinAppId(long weixinAppId);
 
     /**
      * 查询已经删除的账户信息
@@ -38,7 +38,7 @@ public interface AccountDao {
      * @param siteId 站点id
      * @return
      */
-    AccountDO getDeleteAccountBySiteId(long siteId);
+    AccountPO getDeleteAccountBySiteId(long siteId);
 
     /**
      * 添加一个账户
@@ -46,7 +46,7 @@ public interface AccountDao {
      * @param account
      * @return
      */
-    int insertAccount(AccountDO account);
+    int insertAccount(AccountPO account);
 
     /**
      * 更新账户信息
@@ -54,14 +54,14 @@ public interface AccountDao {
      * @param account
      * @return
      */
-    int updateAccountBySiteId(AccountDO account);
+    int updateAccountBySiteId(AccountPO account);
 
     /**
      * 根据weixinAppId更新账户信息
      * @param account
      * @return
      */
-    int updateAccountByWeixinAppId(AccountDO account);
+    int updateAccountByWeixinAppId(AccountPO account);
 
     /**
      * 删除账户

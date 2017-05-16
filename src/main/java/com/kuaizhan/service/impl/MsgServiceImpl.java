@@ -8,10 +8,10 @@ import com.kuaizhan.dao.redis.RedisMsgDao;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.FanDO;
-import com.kuaizhan.pojo.DO.MsgDO;
-import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.FanPO;
+import com.kuaizhan.pojo.po.MsgPO;
+import com.kuaizhan.pojo.dto.Page;
 import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.WeixinMsgService;
 import com.kuaizhan.utils.DBTableUtil;
@@ -56,18 +56,18 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public Page<MsgDO> listMsgsByPagination(long siteId, String appId, int page, String keyword, int isHide) throws DaoException, RedisException {
+    public Page<MsgPO> listMsgsByPagination(long siteId, String appId, int page, String keyword, int isHide) throws DaoException, RedisException {
         if (keyword == null)
             keyword = "";
         String field = "page:" + page + "keyword:" + keyword + "isHide:" + isHide;
-        Page<MsgDO> pagingResult = new Page<>(page, AppConstant.PAGE_SIZE_LARGE);
+        Page<MsgPO> pagingResult = new Page<>(page, AppConstant.PAGE_SIZE_LARGE);
         pagingResult.setTotalCount(countMsg(appId, 2, 1, keyword, isHide));
 
         //从redis拿数据
         try {
-            List<MsgDO> msgDOList = redisMsgDao.listMsgsByPagination(siteId, field);
-            if (msgDOList != null) {
-                pagingResult.setResult(msgDOList);
+            List<MsgPO> msgPOList = redisMsgDao.listMsgsByPagination(siteId, field);
+            if (msgPOList != null) {
+                pagingResult.setResult(msgPOList);
                 return pagingResult;
             }
         } catch (Exception e) {
@@ -85,33 +85,33 @@ public class MsgServiceImpl implements MsgService {
 
         List<String> msgTableNames = DBTableUtil.getMsgTableNames();
         List<String> openIds = new ArrayList<>();
-        List<MsgDO> msgs;
+        List<MsgPO> msgs;
         try {
             msgs = msgDao.listMsgsByPagination(msgTableNames, pagingResult);
         } catch (Exception e) {
             throw new DaoException(e);
         }
-        for (MsgDO msgDO : msgs) {
-            openIds.add(msgDO.getOpenId());
+        for (MsgPO msgPO : msgs) {
+            openIds.add(msgPO.getOpenId());
         }
 
         List<String> fansTableNames = DBTableUtil.getFanTableNames();
 
         if (openIds.size() > 0) {
 
-            List<FanDO> fanDOList;
+            List<FanPO> fanPOList;
             try {
-                fanDOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
+                fanPOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
             } catch (Exception e) {
                 throw new DaoException(e);
             }
 
-            for (MsgDO msgDO : msgs) {
-                for (FanDO fanDO : fanDOList) {
-                    if (msgDO.getOpenId().equals(fanDO.getOpenId())) {
-                        msgDO.setNickName(fanDO.getNickName());
-                        msgDO.setHeadImgUrl(fanDO.getHeadImgUrl());
-                        msgDO.setIsFocus(fanDO.getStatus());
+            for (MsgPO msgPO : msgs) {
+                for (FanPO fanPO : fanPOList) {
+                    if (msgPO.getOpenId().equals(fanPO.getOpenId())) {
+                        msgPO.setNickName(fanPO.getNickName());
+                        msgPO.setHeadImgUrl(fanPO.getHeadImgUrl());
+                        msgPO.setIsFocus(fanPO.getStatus());
                     }
                 }
             }
@@ -136,10 +136,10 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public List<MsgDO> listNewMsgs(String appId) throws DaoException {
+    public List<MsgPO> listNewMsgs(String appId) throws DaoException {
 
         List<String> msgTableNames = DBTableUtil.getMsgTableNames();
-        List<MsgDO> msgs;
+        List<MsgPO> msgs;
         try {
             msgs = msgDao.listNewMsgs(appId, msgTableNames);
         } catch (Exception e) {
@@ -147,19 +147,19 @@ public class MsgServiceImpl implements MsgService {
         }
 
         List<String> openIds = new ArrayList<>();
-        for (MsgDO msg : msgs) {
+        for (MsgPO msg : msgs) {
             openIds.add(msg.getOpenId());
         }
         List<String> fansTableNames = DBTableUtil.getFanTableNames();
 
         if (openIds.size() > 0) {
             try {
-                List<FanDO> fanDOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
-                for (MsgDO msgDO : msgs) {
-                    for (FanDO fanDO : fanDOList) {
-                        if (msgDO.getOpenId().equals(fanDO.getOpenId())) {
-                            msgDO.setNickName(fanDO.getNickName());
-                            msgDO.setHeadImgUrl(fanDO.getHeadImgUrl());
+                List<FanPO> fanPOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
+                for (MsgPO msgPO : msgs) {
+                    for (FanPO fanPO : fanPOList) {
+                        if (msgPO.getOpenId().equals(fanPO.getOpenId())) {
+                            msgPO.setNickName(fanPO.getNickName());
+                            msgPO.setHeadImgUrl(fanPO.getHeadImgUrl());
                         }
                     }
                 }
@@ -172,12 +172,12 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public Page<MsgDO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException {
-        Page<MsgDO> pageEntity = new Page<>(page, AppConstant.PAGE_SIZE_MIDDLE);
+    public Page<MsgPO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException {
+        Page<MsgPO> pageEntity = new Page<>(page, AppConstant.PAGE_SIZE_MIDDLE);
         try {
-            List<MsgDO> msgDOList = redisMsgDao.listMsgsByOpenId(siteId, openId, page);
-            if (msgDOList != null) {
-                pageEntity.setResult(msgDOList);
+            List<MsgPO> msgPOList = redisMsgDao.listMsgsByOpenId(siteId, openId, page);
+            if (msgPOList != null) {
+                pageEntity.setResult(msgPOList);
                 return pageEntity;
             }
         } catch (Exception e) {
@@ -190,7 +190,7 @@ public class MsgServiceImpl implements MsgService {
         param.put("appId", appId);
         param.put("openId", openId);
         pageEntity.setParams(param);
-        List<MsgDO> msgs;
+        List<MsgPO> msgs;
         try {
             msgs = msgDao.listMsgsByOpenId(pageEntity, msgTableNames);
         } catch (Exception e) {
@@ -214,8 +214,8 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public void updateMsgsStatus(long siteId, String appId, List<MsgDO> msgs) throws DaoException, RedisException {
-        for (MsgDO msg : msgs) {
+    public void updateMsgsStatus(long siteId, String appId, List<MsgPO> msgs) throws DaoException, RedisException {
+        for (MsgPO msg : msgs) {
             msg.setStatus(2);
         }
         List<String> msgTableNames = DBTableUtil.getMsgTableNames();
@@ -234,17 +234,17 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public void insertMsg(long siteId, String appId, MsgDO msgDO) throws DaoException, RedisException {
+    public void insertMsg(long siteId, String appId, MsgPO msgPO) throws DaoException, RedisException {
         String tableName = DBTableUtil.chooseMsgTable(System.currentTimeMillis());
         try {
-            msgDao.insertMsg(tableName, msgDO);
+            msgDao.insertMsg(tableName, msgPO);
         } catch (Exception e) {
             throw new DaoException(e);
         }
         //删除缓存
         try {
             redisMsgDao.deleteMsgsByPagination(siteId);
-            redisMsgDao.deleteMsgsByOpenId(siteId, msgDO.getOpenId());
+            redisMsgDao.deleteMsgsByOpenId(siteId, msgPO.getOpenId());
         } catch (Exception e) {
             throw new RedisException(e);
         }
@@ -252,10 +252,10 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public void insertCustomMsg(AccountDO accountDO, String openId, int msgType, JSONObject content) throws SendCustomMsgException, DaoException, RedisException {
-        weixinMsgService.sendCustomMsg(accountDO.getAppId(), accountDO.getAccessToken(), openId, msgType, content);
-        MsgDO msg = new MsgDO();
-        msg.setAppId(accountDO.getAppId());
+    public void insertCustomMsg(AccountPO accountPO, String openId, int msgType, JSONObject content) throws SendCustomMsgException, DaoException, RedisException {
+        weixinMsgService.sendCustomMsg(accountPO.getAppId(), accountPO.getAccessToken(), openId, msgType, content);
+        MsgPO msg = new MsgPO();
+        msg.setAppId(accountPO.getAppId());
         msg.setContent(content.toString());
         msg.setOpenId(openId);
         msg.setType(msgType);
@@ -268,7 +268,7 @@ public class MsgServiceImpl implements MsgService {
         }
         try {
             //清除redis
-            redisMsgDao.deleteMsgsByOpenId(accountDO.getSiteId(), openId);
+            redisMsgDao.deleteMsgsByOpenId(accountPO.getSiteId(), openId);
         } catch (Exception e) {
             throw new RedisException(e);
         }

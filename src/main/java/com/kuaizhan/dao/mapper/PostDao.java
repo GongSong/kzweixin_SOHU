@@ -1,7 +1,7 @@
 package com.kuaizhan.dao.mapper;
 
-import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.po.PostPO;
+import com.kuaizhan.pojo.dto.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +28,7 @@ public interface PostDao {
      * @param page
      * @return
      */
-    List<PostDO> listPostsByPagination(@Param("weixinAppid") long weixinAppid, @Param("title") String title, @Param("pageEntity") Page page, @Param("flat") Boolean flat);
+    List<PostPO> listPostsByPagination(@Param("weixinAppid") long weixinAppid, @Param("title") String title, @Param("pageEntity") Page page, @Param("flat") Boolean flat);
 
     /**
      * 获取图文消息的多图文
@@ -36,7 +36,7 @@ public interface PostDao {
      * @param mediaId 图文消息的mediaId
      * @return
      */
-    List<PostDO> listMultiPosts(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
+    List<PostPO> listMultiPosts(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
 
 
     /**
@@ -62,23 +62,23 @@ public interface PostDao {
      * @param pageId
      * @return
      */
-    PostDO getPost(long pageId);
+    PostPO getPost(long pageId);
 
 
     /**
      * 根据mediaId, 获取单图文或图文总记录
      */
-    PostDO getPostByMediaId(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
+    PostPO getPostByMediaId(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**
      * 新增单个图文
      */
-    void insertPost(@Param("post") PostDO post);
+    void insertPost(@Param("post") PostPO post);
 
     /**
      * 修改单个图文
      */
-    void updatePost(@Param("post") PostDO post, @Param("pageId") long pageId);
+    void updatePost(@Param("post") PostPO post, @Param("pageId") long pageId);
 
     /**
      * 检测某个pageId是否存在

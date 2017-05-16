@@ -1,6 +1,6 @@
 package com.kuaizhan.param;
 
-import com.kuaizhan.pojo.DO.PostDO;
+import com.kuaizhan.pojo.po.PostPO;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -38,20 +38,20 @@ public class PostsParamItem {
     private String mediaId;
 
 
-    public PostDO toPostDO() {
-        PostDO postDO = new PostDO();
+    public PostPO toPostDO() {
+        PostPO postPO = new PostPO();
 
-        postDO.setTitle(title);
-        postDO.setAuthor(author);
-        postDO.setDigest(digest);
-        postDO.setContent(content);
-        postDO.setThumbMediaId(thumbMediaId);
-        postDO.setThumbUrl(thumbUrl);
-        postDO.setContentSourceUrl(contentSourceUrl);
-        postDO.setShowCoverPic(showCoverPic);
-        postDO.setPageId(pageId);
-        postDO.setMediaId(mediaId);
+        postPO.setTitle(title);
+        postPO.setAuthor(author);
+        postPO.setDigest(digest);
+        postPO.setContent(content);
+        postPO.setThumbMediaId(thumbMediaId);
+        postPO.setThumbUrl(thumbUrl);
+        postPO.setContentSourceUrl(contentSourceUrl);
+        postPO.setShowCoverPic(showCoverPic);
+        postPO.setPageId(pageId);
+        postPO.setMediaId(mediaId);
 
-        return postDO;
+        return postPO;
     }
 }

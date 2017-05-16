@@ -1,7 +1,7 @@
 package com.kuaizhan.dao.mapper;
 
 
-import com.kuaizhan.pojo.DO.UnbindDO;
+import com.kuaizhan.pojo.po.UnbindPO;
 
 
 /**
@@ -15,7 +15,7 @@ public interface UnbindDao {
      * @param unbind
      * @return
      */
-    int insertUnbind(UnbindDO unbind);
+    int insertUnbind(UnbindPO unbind);
 
     /**
      * 通过long型appid获取解绑信息
@@ -23,7 +23,7 @@ public interface UnbindDao {
      * @param appId
      * @return
      */
-    UnbindDO getUnbindByWeixinAppId(Long appId);
+    UnbindPO getUnbindByWeixinAppId(Long appId);
 
     /**
      * 通过long型appid更新
@@ -31,5 +31,5 @@ public interface UnbindDao {
      * @param unbind
      * @return
      */
-    int updateUnbindByWeixinAppId(UnbindDO unbind);
+    int updateUnbindByWeixinAppId(UnbindPO unbind);
 }

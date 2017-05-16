@@ -20,7 +20,7 @@
         <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
         <property name="dataSource" ref="dataSource"/>
         <property name="mapperLocations" value="classpath:mapper/*.xml"/>
-        <property name="typeAliasesPackage" value="com.kuaizhan.pojo.DO"/>
+        <property name="typeAliasesPackage" value="com.kuaizhan.pojo.po"/>
     </bean>
 
     <!-- 配置扫描包，加载mapper代理对象 -->

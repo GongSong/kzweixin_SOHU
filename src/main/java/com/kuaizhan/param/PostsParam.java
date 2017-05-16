@@ -1,6 +1,6 @@
 package com.kuaizhan.param;
 
-import com.kuaizhan.pojo.DO.PostDO;
+import com.kuaizhan.pojo.po.PostPO;
 import lombok.Data;
 
 import javax.validation.Valid;
@@ -23,11 +23,11 @@ public class PostsParam {
     @Size(min = 1, max = 8, message = "最少1条多图文，最多8条多图文")
     private List<PostsParamItem> posts;
 
-    public List<PostDO> getPostDOs() {
-        List<PostDO> postDOs = new ArrayList<>();
+    public List<PostPO> getPostDOs() {
+        List<PostPO> postPOS = new ArrayList<>();
         for (PostsParamItem postsParamItem : posts) {
-            postDOs.add(postsParamItem.toPostDO());
+            postPOS.add(postsParamItem.toPostDO());
         }
-        return postDOs;
+        return postPOS;
     }
 }

@@ -1,4 +1,4 @@
-package com.kuaizhan.pojo.DO;
+package com.kuaizhan.pojo.po;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * Created by Mr.Jadyn on 2017/1/25.
  */
 @Data
-public class UnbindDO {
+public class UnbindPO {
 
     private Long weixinAppId;
     private Integer unbindType;

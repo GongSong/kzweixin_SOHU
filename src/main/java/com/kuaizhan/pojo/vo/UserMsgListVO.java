@@ -1,4 +1,4 @@
-package com.kuaizhan.pojo.VO;
+package com.kuaizhan.pojo.vo;
 
 import lombok.Data;
 

@@ -7,9 +7,9 @@ import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.*;
 import com.kuaizhan.exception.weixin.WxMediaIdNotExistException;
 import com.kuaizhan.exception.weixin.WxPostListGetException;
-import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.WxPostListDTO;
-import com.kuaizhan.pojo.DTO.WxPostDTO;
+import com.kuaizhan.pojo.po.PostPO;
+import com.kuaizhan.pojo.dto.WxPostListDTO;
+import com.kuaizhan.pojo.dto.WxPostDTO;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;
@@ -112,19 +112,19 @@ public class WxPostManager {
      * @param posts 多图文对象
      * @return 图文mediaId
      */
-    public static String uploadPosts(String accessToken, List<PostDO> posts) {
+    public static String uploadPosts(String accessToken, List<PostPO> posts) {
 
         // 组装articles
         JSONArray jsonArray = new JSONArray();
-        for (PostDO postDO : posts) {
+        for (PostPO postPO : posts) {
             JSONObject postJson = new JSONObject();
-            postJson.put("title", postDO.getTitle());
-            postJson.put("thumb_media_id", postDO.getThumbMediaId());
-            postJson.put("author", postDO.getAuthor());
-            postJson.put("digest", postDO.getDigest());
-            postJson.put("show_cover_pic", postDO.getShowCoverPic());
-            postJson.put("content", postDO.getContent());
-            postJson.put("content_source_url", postDO.getContentSourceUrl());
+            postJson.put("title", postPO.getTitle());
+            postJson.put("thumb_media_id", postPO.getThumbMediaId());
+            postJson.put("author", postPO.getAuthor());
+            postJson.put("digest", postPO.getDigest());
+            postJson.put("show_cover_pic", postPO.getShowCoverPic());
+            postJson.put("content", postPO.getContent());
+            postJson.put("content_source_url", postPO.getContentSourceUrl());
 
             jsonArray.put(postJson);
         }
@@ -164,20 +164,20 @@ public class WxPostManager {
     /**
      * 更新微信图文的某一篇
      */
-    public static void updatePost(String accessToken, String mediaId, PostDO postDO) throws WxMediaIdNotExistException {
+    public static void updatePost(String accessToken, String mediaId, PostPO postPO) throws WxMediaIdNotExistException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("media_id", mediaId);
-        jsonObject.put("index", postDO.getIndex());
+        jsonObject.put("index", postPO.getIndex());
 
         // 组装articles
         JSONObject postJson = new JSONObject();
-        postJson.put("title", postDO.getTitle());
-        postJson.put("thumb_media_id", postDO.getThumbMediaId());
-        postJson.put("author", postDO.getAuthor());
-        postJson.put("digest", postDO.getDigest());
-        postJson.put("show_cover_pic", postDO.getShowCoverPic());
-        postJson.put("content", postDO.getContent());
-        postJson.put("content_source_url", postDO.getContentSourceUrl());
+        postJson.put("title", postPO.getTitle());
+        postJson.put("thumb_media_id", postPO.getThumbMediaId());
+        postJson.put("author", postPO.getAuthor());
+        postJson.put("digest", postPO.getDigest());
+        postJson.put("show_cover_pic", postPO.getShowCoverPic());
+        postJson.put("content", postPO.getContent());
+        postJson.put("content_source_url", postPO.getContentSourceUrl());
 
         jsonObject.put("articles", postJson);
 

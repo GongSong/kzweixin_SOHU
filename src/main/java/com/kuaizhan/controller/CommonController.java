@@ -4,7 +4,7 @@
 package com.kuaizhan.controller;
 
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.pojo.VO.JsonResponse;
+import com.kuaizhan.pojo.vo.JsonResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;

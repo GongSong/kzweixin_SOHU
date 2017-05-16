@@ -1,9 +1,9 @@
 package com.kuaizhan.utils;
 
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.VO.AccountVO;
-import com.kuaizhan.pojo.VO.PostVO;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.PostPO;
+import com.kuaizhan.pojo.vo.AccountVO;
+import com.kuaizhan.pojo.vo.PostVO;
 
 /**
  * pojo的转换组件
@@ -11,35 +11,35 @@ import com.kuaizhan.pojo.VO.PostVO;
  */
 public class PojoSwitcher {
 
-    public static PostVO postDOToVO(PostDO postDO) {
+    public static PostVO postPOToVO(PostPO postPO) {
 
-        if (postDO == null) {
+        if (postPO == null) {
             return null;
         }
         PostVO postVO = new PostVO();
 
-        postVO.setPageId(postDO.getPageId());
-        postVO.setMediaId(postDO.getMediaId());
-        postVO.setTitle(postDO.getTitle());
-        postVO.setAuthor(postDO.getAuthor());
-        postVO.setDigest(postDO.getDigest());
-        postVO.setContent(postDO.getContent());
-        postVO.setThumbUrl(postDO.getThumbUrl());
-        postVO.setThumbMediaId(postDO.getThumbMediaId());
-        postVO.setContentSourceUrl(postDO.getContentSourceUrl());
-        postVO.setShowCoverPic(postDO.getShowCoverPic());
-        postVO.setUpdateTime(postDO.getUpdateTime());
+        postVO.setPageId(postPO.getPageId());
+        postVO.setMediaId(postPO.getMediaId());
+        postVO.setTitle(postPO.getTitle());
+        postVO.setAuthor(postPO.getAuthor());
+        postVO.setDigest(postPO.getDigest());
+        postVO.setContent(postPO.getContent());
+        postVO.setThumbUrl(postPO.getThumbUrl());
+        postVO.setThumbMediaId(postPO.getThumbMediaId());
+        postVO.setContentSourceUrl(postPO.getContentSourceUrl());
+        postVO.setShowCoverPic(postPO.getShowCoverPic());
+        postVO.setUpdateTime(postPO.getUpdateTime());
         return postVO;
     }
 
-    public static AccountVO accountDOToVO(AccountDO accountDO) {
-        if (accountDO == null) {
+    public static AccountVO accountPOToVO(AccountPO accountPO) {
+        if (accountPO == null) {
             return null;
         }
         AccountVO accountVO = new AccountVO();
-        accountVO.setWeixinAppid(accountDO.getWeixinAppId());
+        accountVO.setWeixinAppid(accountPO.getWeixinAppId());
         // 对appSecret进行打码处理
-        String appSecret = accountDO.getAppSecret();
+        String appSecret = accountPO.getAppSecret();
         if (appSecret != null && !"".equals(appSecret)) {
             int length = appSecret.length();
             int firstIdx = length > 5? 5: length;
@@ -50,12 +50,12 @@ public class PojoSwitcher {
                     + appSecret.substring(lastIdx, length)
             );
         }
-        accountVO.setHeadImg(accountDO.getHeadImg());
-        accountVO.setInterest(JsonUtil.string2List(accountDO.getInterestJson(), String.class));
-        accountVO.setName(accountDO.getNickName());
-        accountVO.setQrcode(accountDO.getQrcodeUrl());
-        accountVO.setServiceType(accountDO.getServiceType());
-        accountVO.setVerifyType(accountDO.getVerifyType());
+        accountVO.setHeadImg(accountPO.getHeadImg());
+        accountVO.setInterest(JsonUtil.string2List(accountPO.getInterestJson(), String.class));
+        accountVO.setName(accountPO.getNickName());
+        accountVO.setQrcode(accountPO.getQrcodeUrl());
+        accountVO.setServiceType(accountPO.getServiceType());
+        accountVO.setVerifyType(accountPO.getVerifyType());
         return accountVO;
     }
 }

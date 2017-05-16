@@ -1,10 +1,7 @@
 package com.kuaizhan.service;
 
 
-import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.WxPostListDTO;
-import org.junit.After;
-import org.junit.Before;
+import com.kuaizhan.pojo.po.PostPO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -47,18 +44,18 @@ public class PostServiceTest {
     @Test
     public void insertMultiPosts() throws Exception {
         long weixinAppid = 1789089804L;
-        List<PostDO> posts = new ArrayList<>();
+        List<PostPO> posts = new ArrayList<>();
 
         String content = "<img onclick=\"clickcallback\" something />前面<script href=\"haha\"> fdaefdada </script>中间<script href=\"haha\"> fdaefdada </script>后面<img onclick=\"clickcallback\" something />";
-        PostDO postDO = new PostDO();
-        postDO.setContent(content);
-        postDO.setTitle("新建图文单元测试");
-        postDO.setDigest("我是摘要");
-        postDO.setContentSourceUrl("www.baidu.com");
-        postDO.setShowCoverPic((short) 1);
-        postDO.setThumbUrl("http://mmbiz.qpic.cn/mmbiz_jpg/UqZMrMwVpn3NhPSO38HJticpDwBv0du7Hpkia5icBVpNr8mwlzX01Y8hZUccYxmEHGRZBRA0XSIwj1ggJka8K6Jeg/0?wx_fmt=jpeg");
+        PostPO postPO = new PostPO();
+        postPO.setContent(content);
+        postPO.setTitle("新建图文单元测试");
+        postPO.setDigest("我是摘要");
+        postPO.setContentSourceUrl("www.baidu.com");
+        postPO.setShowCoverPic((short) 1);
+        postPO.setThumbUrl("http://mmbiz.qpic.cn/mmbiz_jpg/UqZMrMwVpn3NhPSO38HJticpDwBv0du7Hpkia5icBVpNr8mwlzX01Y8hZUccYxmEHGRZBRA0XSIwj1ggJka8K6Jeg/0?wx_fmt=jpeg");
 
-        posts.add(postDO);
+        posts.add(postPO);
         postService.insertMultiPosts(weixinAppid, posts);
     }
 

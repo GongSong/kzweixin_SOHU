@@ -2,19 +2,16 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.redis.RedisAuthDao;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by liangjiateng on 2017/3/16.
@@ -67,8 +64,8 @@ public class WeixinAuthServiceTest {
 
     @Test
     public void refreshAuthorizationInfo() throws Exception {
-        AccountDO accountDO = accountService.getAccountBySiteId(123456L);
-        System.out.println("----->" + weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(), accountDO.getRefreshToken()));
+        AccountPO accountPO = accountService.getAccountBySiteId(123456L);
+        System.out.println("----->" + weixinAuthService.refreshAuthorizationInfo(weixinAuthService.getComponentAccessToken(), ApplicationConfig.WEIXIN_APPID_THIRD, accountPO.getAppId(), accountPO.getRefreshToken()));
     }
 
     @Test

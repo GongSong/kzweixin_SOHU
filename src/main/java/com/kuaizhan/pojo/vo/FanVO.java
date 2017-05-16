@@ -1,6 +1,5 @@
-package com.kuaizhan.pojo.VO;
+package com.kuaizhan.pojo.vo;
 
-import com.kuaizhan.pojo.DTO.TagDTO;
 import lombok.Data;
 
 import java.util.List;

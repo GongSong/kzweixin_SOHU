@@ -4,10 +4,10 @@ package com.kuaizhan.controller;
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.deprecated.business.ParamException;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.UnbindDO;
-import com.kuaizhan.pojo.VO.AccountVO;
-import com.kuaizhan.pojo.VO.JsonResponse;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.UnbindPO;
+import com.kuaizhan.pojo.vo.AccountVO;
+import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
 
 import com.kuaizhan.utils.PojoSwitcher;
@@ -31,8 +31,8 @@ public class AccountController extends BaseController {
      */
     @RequestMapping(value = "/accounts/site/{siteId}", method = RequestMethod.GET)
     public JsonResponse getAccountInfoBySiteId(@PathVariable long siteId) {
-        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
-        AccountVO accountVO = PojoSwitcher.accountDOToVO(accountDO);
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        AccountVO accountVO = PojoSwitcher.accountPOToVO(accountPO);
         return new JsonResponse(accountVO);
     }
 
@@ -41,8 +41,8 @@ public class AccountController extends BaseController {
      */
     @RequestMapping(value = "/accounts/{weixinAppid}", method = RequestMethod.GET)
     public JsonResponse getAccountInfo(@RequestParam long weixinAppid) {
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        AccountVO accountVO = PojoSwitcher.accountDOToVO(accountDO);
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        AccountVO accountVO = PojoSwitcher.accountPOToVO(accountPO);
         return new JsonResponse(accountVO);
     }
 
@@ -66,11 +66,11 @@ public class AccountController extends BaseController {
     public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId,
                                @Validate(key = "postData", path = "json/unbind-postdata-schema.json")
                                @RequestBody String postData) {
-        AccountDO account = accountService.getAccountBySiteId(siteId);
+        AccountPO account = accountService.getAccountBySiteId(siteId);
         JSONObject jsonObject = new JSONObject(postData);
         int type = jsonObject.getInt("type");
         String text = jsonObject.getString("text");
-        UnbindDO unbind = new UnbindDO();
+        UnbindPO unbind = new UnbindPO();
         unbind.setUnbindText(text);
         unbind.setUnbindType(type);
         accountService.unbindAccount(account, unbind);

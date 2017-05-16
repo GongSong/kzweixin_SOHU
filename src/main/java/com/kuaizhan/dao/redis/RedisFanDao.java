@@ -1,8 +1,8 @@
 package com.kuaizhan.dao.redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kuaizhan.pojo.DO.FanDO;
-import com.kuaizhan.pojo.DTO.TagDTO;
+import com.kuaizhan.pojo.po.FanPO;
+import com.kuaizhan.pojo.dto.TagDTO;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +17,7 @@ public interface RedisFanDao {
      *
      * @return
      */
-    List<FanDO> listFanByPagination(long siteId, String field) throws IOException;
+    List<FanPO> listFanByPagination(long siteId, String field) throws IOException;
 
     /**
      * 缓存分页查询数据
@@ -26,7 +26,7 @@ public interface RedisFanDao {
      * @param field
      * @param fanses
      */
-    void setFanByPagination(long siteId, String field, List<FanDO> fanses) throws JsonProcessingException;
+    void setFanByPagination(long siteId, String field, List<FanPO> fanses) throws JsonProcessingException;
 
     /**
      * 删除分页缓存

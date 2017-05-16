@@ -2,7 +2,7 @@ package com.kuaizhan.dao.mongo.impl;
 
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mongo.MongoPostDao;
-import com.kuaizhan.pojo.DO.MongoPostDo;
+import com.kuaizhan.pojo.po.MongoPostPO;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  * Created by liangjiateng on 2017/3/23.
  */
 @Repository("mongoPostDao")
-public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostDo> implements MongoPostDao {
+public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostPO> implements MongoPostDao {
 
     public static final Logger logger = Logger.getLogger(MongoPostDaoImpl.class);
 
@@ -26,12 +26,12 @@ public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostDo> implements M
     public String getContentById(long pageId) {
         Map<String, Object> param = new HashMap<>();
         param.put("id", pageId);
-        Object obj = get(param, MongoPostDo.class);
+        Object obj = get(param, MongoPostPO.class);
         if (obj == null) {
             return null;
         }
-        MongoPostDo mongoPostDo = (MongoPostDo) obj;
-        return mongoPostDo.getContent();
+        MongoPostPO mongoPostPO = (MongoPostPO) obj;
+        return mongoPostPO.getContent();
     }
 
     @Override
@@ -39,13 +39,13 @@ public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostDo> implements M
         Map<String, Object> param = new HashMap<>();
         param.put("id", pageId);
         param.put("content", content);
-        upsert(param, MongoPostDo.class);
+        upsert(param, MongoPostPO.class);
     }
 
     @Override
     public void deletePost(long pageId) {
         Map<String, Object> param = new HashMap<>();
         param.put("id", pageId);
-        delete(param, MongoPostDo.class);
+        delete(param, MongoPostPO.class);
     }
 }

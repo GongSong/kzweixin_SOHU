@@ -7,9 +7,9 @@ import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.deprecated.system.ServerException;
-import com.kuaizhan.pojo.DO.FanDO;
-import com.kuaizhan.pojo.DTO.Page;
-import com.kuaizhan.pojo.DTO.TagDTO;
+import com.kuaizhan.pojo.po.FanPO;
+import com.kuaizhan.pojo.dto.Page;
+import com.kuaizhan.pojo.dto.TagDTO;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.WeixinFanService;
 import com.kuaizhan.utils.DBTableUtil;
@@ -51,7 +51,7 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public FanDO getFanByOpenId(String appId, String openId) throws DaoException {
+    public FanPO getFanByOpenId(String appId, String openId) throws DaoException {
         try {
             return fanDao.getFanByOpenId(openId, appId, DBTableUtil.getFanTableNames());
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public Page<FanDO> listFanByPagination(long siteId, String appId, Integer page, Integer isBlack, List<Integer> tagIds, String keyword) throws DaoException, RedisException {
+    public Page<FanPO> listFanByPagination(long siteId, String appId, Integer page, Integer isBlack, List<Integer> tagIds, String keyword) throws DaoException, RedisException {
         if (tagIds == null) {
             tagIds = new ArrayList<>();
         }
@@ -70,11 +70,11 @@ public class FanServiceImpl implements FanService {
         }
         String field = "tags:" + tagIds.toString() + "isBlack:" + isBlack + "page:" + page + "keyword:" + keyword;
         long totalNum = countFan(appId, isBlack, tagIds, keyword);
-        Page<FanDO> fanDOPage = new Page<>(page, AppConstant.PAGE_SIZE_LARGE);
+        Page<FanPO> fanDOPage = new Page<>(page, AppConstant.PAGE_SIZE_LARGE);
         fanDOPage.setTotalCount(totalNum);
         //从redis拿数据
         try {
-            List<FanDO> fanses = redisFanDao.listFanByPagination(siteId, field);
+            List<FanPO> fanses = redisFanDao.listFanByPagination(siteId, field);
             if (fanses != null) {
                 fanDOPage.setResult(fanses);
                 return fanDOPage;
@@ -93,7 +93,7 @@ public class FanServiceImpl implements FanService {
         fanDOPage.setParams(map);
 
         List<String> tables = DBTableUtil.getFanTableNames();
-        List<FanDO> fanses;
+        List<FanPO> fanses;
         try {
             fanses = fanDao.listFansByPagination(fanDOPage, tables);
         } catch (Exception e) {
@@ -196,13 +196,13 @@ public class FanServiceImpl implements FanService {
         List<String> tables = DBTableUtil.getFanTableNames();
         //更新数据库
         try {
-            List<FanDO> fanses = fanDao.listFansByOpenIds(appId, openIds, tables);
+            List<FanPO> fanses = fanDao.listFansByOpenIds(appId, openIds, tables);
             JSONArray jsonArray = new JSONArray();
             //json_tag里添加数据
             for (Integer tagId : tagIds) {
                 jsonArray.put(tagId);
             }
-            for (FanDO fans : fanses) {
+            for (FanPO fans : fanses) {
                 fans.setTagIdsJson(jsonArray.toString());
             }
             //设置mysql数据
@@ -236,18 +236,18 @@ public class FanServiceImpl implements FanService {
                 map.put("tagId", tagId);
                 //获取粉丝数据
                 try {
-                    List<FanDO> fanses = fanDao.listFansByParam(map, tables);
+                    List<FanPO> fanses = fanDao.listFansByParam(map, tables);
                     if (fanses != null) {
                         //更新用户数据
-                        for (FanDO fanDO : fanses) {
-                            JSONArray jsonArray = new JSONArray(fanDO.getTagIdsJson());
+                        for (FanPO fanPO : fanses) {
+                            JSONArray jsonArray = new JSONArray(fanPO.getTagIdsJson());
                             //遍历jsonarray找tagId 删除
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 if (tagId == jsonArray.getInt(i)) {
                                     jsonArray.remove(i);
                                 }
                             }
-                            fanDO.setTagIdsJson(jsonArray.toString());
+                            fanPO.setTagIdsJson(jsonArray.toString());
                             //设置mysql数据
                             fanDao.updateFansBatch(fanses, tables);
                         }
@@ -287,11 +287,11 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void insertBlack(long siteId, String accessToken, List<FanDO> fanDOList) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException {
+    public void insertBlack(long siteId, String accessToken, List<FanPO> fanPOList) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException {
 
         //注意需要保持fansId与openId的一致性
         //微信后台加入黑名单
-        int result = weixinFanService.insertBlack(accessToken, fanDOList);
+        int result = weixinFanService.insertBlack(accessToken, fanPOList);
         switch (result) {
             case -1:
                 throw new ServerException();
@@ -302,14 +302,14 @@ public class FanServiceImpl implements FanService {
             case 40032:
                 throw new BlackAddNumberException();
         }
-        for (FanDO fans : fanDOList) {
+        for (FanPO fans : fanPOList) {
             fans.setInBlackList(1);
         }
         List<String> tables = DBTableUtil.getFanTableNames();
 
         //更新mysql
         try {
-            fanDao.updateFansBatch(fanDOList, tables);
+            fanDao.updateFansBatch(fanPOList, tables);
         } catch (Exception e) {
             throw new DaoException(e);
         }
@@ -321,10 +321,10 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void deleteBlack(long siteId, List<FanDO> fanDOList, String accessToken) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException {
+    public void deleteBlack(long siteId, List<FanPO> fanPOList, String accessToken) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException {
         //注意需要保持fansId与openId的一致性
         //微信后台加入黑名单
-        int result = weixinFanService.removeBlack(accessToken, fanDOList);
+        int result = weixinFanService.removeBlack(accessToken, fanPOList);
         switch (result) {
             case -1:
                 throw new ServerException();
@@ -337,14 +337,14 @@ public class FanServiceImpl implements FanService {
 
         }
         //更新mysql
-        for (FanDO fan : fanDOList) {
+        for (FanPO fan : fanPOList) {
             fan.setInBlackList(0);
         }
 
         List<String> tables = DBTableUtil.getFanTableNames();
 
         try {
-            fanDao.updateFansBatch(fanDOList, tables);
+            fanDao.updateFansBatch(fanPOList, tables);
         } catch (Exception e) {
             throw new DaoException(e);
         }

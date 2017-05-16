@@ -1,4 +1,4 @@
-package com.kuaizhan.pojo.VO;
+package com.kuaizhan.pojo.vo;
 
 import lombok.Data;
 
@@ -6,14 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 粉丝列表展示对象
- * Created by liangjiateng on 2017/3/16.
+ * Created by liangjiateng on 2017/3/18.
  */
 @Data
-public class FanListVO {
-
+public class MsgListVO {
     private Long totalNum;
     private Integer currentPage;
     private Integer totalPage;
-    private List<FanVO> fans = new ArrayList<>();
+    private List<MsgVO> msgs = new ArrayList<>();
 }

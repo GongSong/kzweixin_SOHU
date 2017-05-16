@@ -2,8 +2,7 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.dao.mapper.MsgDao;
 import com.kuaizhan.dao.redis.RedisMsgDao;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.MsgDO;
+import com.kuaizhan.pojo.po.AccountPO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +11,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by liangjiateng on 2017/3/17.
@@ -43,8 +40,8 @@ public class MsgServiceTest {
 
     @Test
     public void countMsg() throws Exception {
-        AccountDO accountDO = accountService.getAccountBySiteId(123456L);
-        System.out.println("----->"+msgService.countMsg(accountDO.getAppId(),2,1,null,0));
+        AccountPO accountPO = accountService.getAccountBySiteId(123456L);
+        System.out.println("----->"+msgService.countMsg(accountPO.getAppId(),2,1,null,0));
     }
 
     @Test

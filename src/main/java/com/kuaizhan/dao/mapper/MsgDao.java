@@ -1,7 +1,7 @@
 package com.kuaizhan.dao.mapper;
 
-import com.kuaizhan.pojo.DO.MsgDO;
-import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.po.MsgPO;
+import com.kuaizhan.pojo.dto.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public interface MsgDao {
      * @param pageEntity 分页实体
      * @return
      */
-    List<MsgDO> listMsgsByPagination(@Param("tables") List<String> tables, @Param("pageEntity") Page pageEntity);
+    List<MsgPO> listMsgsByPagination(@Param("tables") List<String> tables, @Param("pageEntity") Page pageEntity);
 
     /**
      * 获取新的消息
@@ -41,7 +41,7 @@ public interface MsgDao {
      * @param tables 表列表
      * @return
      */
-    List<MsgDO> listNewMsgs(@Param("appId") String appId, @Param("tables") List<String> tables);
+    List<MsgPO> listNewMsgs(@Param("appId") String appId, @Param("tables") List<String> tables);
 
     /**
      * 获取用户已发消息列表
@@ -49,7 +49,7 @@ public interface MsgDao {
      * @param tables 表列表
      * @return
      */
-    List<MsgDO> listMsgsByOpenId(@Param("pageEntity") Page pageEntity, @Param("tables") List<String> tables);
+    List<MsgPO> listMsgsByOpenId(@Param("pageEntity") Page pageEntity, @Param("tables") List<String> tables);
 
     /**
      * 对消息进行批量更新
@@ -58,7 +58,7 @@ public interface MsgDao {
      * @param msgs   消息列表
      * @return
      */
-    int updateMsgBatch(@Param("tables") List<String> tables, @Param("msgs") List<MsgDO> msgs);
+    int updateMsgBatch(@Param("tables") List<String> tables, @Param("msgs") List<MsgPO> msgs);
 
     /**
      * 添加一条消息
@@ -67,7 +67,7 @@ public interface MsgDao {
      * @param msg       消息
      * @return
      */
-    int insertMsg(@Param("tableName") String tableName, @Param("msg") MsgDO msg);
+    int insertMsg(@Param("tableName") String tableName, @Param("msg") MsgPO msg);
 
 
 }

@@ -1,4 +1,4 @@
-package com.kuaizhan.pojo.DO;
+package com.kuaizhan.pojo.po;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * Created by liangjiateng on 2017/3/15.
  */
 @Data
-public class AccountDO {
+public class AccountPO {
 
     private Long weixinAppId;
     private Long siteId;

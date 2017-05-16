@@ -1,9 +1,6 @@
 package com.kuaizhan.dao.redis;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
-
-import java.io.IOException;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
 
 /**
  * 账号缓存
@@ -12,9 +9,9 @@ import java.io.IOException;
 public interface RedisAccountDao {
 
 
-    AccountDO getAccountInfoByWeixinAppId(long weixinAppId);
+    AccountPO getAccountInfoByWeixinAppId(long weixinAppId);
 
-    void setAccountInfo(AccountDO account);
+    void setAccountInfo(AccountPO account);
 
     void deleteAccountInfo(long weixinAppId);
 

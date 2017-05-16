@@ -4,9 +4,9 @@ import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.XMLParseException;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.FanDO;
-import com.kuaizhan.pojo.DTO.TagDTO;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.FanPO;
+import com.kuaizhan.pojo.dto.TagDTO;
 import com.kuaizhan.service.WeixinFanService;
 import com.kuaizhan.utils.DBTableUtil;
 import com.kuaizhan.utils.HttpClientUtil;
@@ -100,9 +100,9 @@ public class WeixinFanServiceImpl implements WeixinFanService {
     }
 
     @Override
-    public int insertBlack(String accessToken, List<FanDO> fanDOList) {
+    public int insertBlack(String accessToken, List<FanPO> fanPOList) {
         List<String> openIdList = new ArrayList<>();
-        for (FanDO fan : fanDOList) {
+        for (FanPO fan : fanPOList) {
             openIdList.add(fan.getOpenId());
         }
         JSONObject jsonObject = new JSONObject();
@@ -116,9 +116,9 @@ public class WeixinFanServiceImpl implements WeixinFanService {
     }
 
     @Override
-    public int removeBlack(String accessToken, List<FanDO> fanDOList) {
+    public int removeBlack(String accessToken, List<FanPO> fanPOList) {
         List<String> openIdList = new ArrayList<>();
-        for (FanDO fans : fanDOList) {
+        for (FanPO fans : fanPOList) {
             openIdList.add(fans.getOpenId());
         }
         JSONObject jsonObject = new JSONObject();
@@ -132,13 +132,13 @@ public class WeixinFanServiceImpl implements WeixinFanService {
     }
 
     @Override
-    public FanDO getFan(String appId, String accessToken, String openId) {
+    public FanPO getFan(String appId, String accessToken, String openId) {
         String returnJson = HttpClientUtil.get(WxApiConfig.getFanInfoUrl(accessToken, openId));
         JSONObject jsonObject = new JSONObject(returnJson);
         if (jsonObject.has("errcode")) {
             return null;
         } else {
-            FanDO fans = new FanDO();
+            FanPO fans = new FanPO();
             fans.setOpenId(jsonObject.getString("openid"));
             fans.setNickName(jsonObject.getString("nickname"));
             fans.setSex(jsonObject.getInt("sex"));
@@ -161,7 +161,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
     }
 
     @Override
-    public void subscribe(AccountDO accountDO, String msg) throws DaoException, XMLParseException {
+    public void subscribe(AccountPO accountPO, String msg) throws DaoException, XMLParseException {
         Document document;
         try {
             document = DocumentHelper.parseText(msg);
@@ -171,9 +171,9 @@ public class WeixinFanServiceImpl implements WeixinFanService {
         Element root = document.getRootElement();
         Element openId = root.element("FromUserName");
         List<String> tables = DBTableUtil.getFanTableNames();
-        FanDO fan;
+        FanPO fan;
         try {
-            fan = fanDao.getDeleteFanByOpenId(openId.getText(), accountDO.getAppId(), tables);
+            fan = fanDao.getDeleteFanByOpenId(openId.getText(), accountPO.getAppId(), tables);
         } catch (Exception e) {
             throw new DaoException(e);
         }
@@ -189,7 +189,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
         //不存在则创建新数据
         if (fan == null) {
             String tableName = DBTableUtil.chooseFanTable(System.currentTimeMillis());
-            FanDO newFans = getFan(accountDO.getAppId(), accountDO.getAccessToken(), openId.getText());
+            FanPO newFans = getFan(accountPO.getAppId(), accountPO.getAccessToken(), openId.getText());
             try {
                 fanDao.insertFan(newFans, tableName);
             } catch (Exception e) {
@@ -199,7 +199,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
     }
 
     @Override
-    public void unSubscribe(AccountDO accountDO, String msg) throws XMLParseException, DaoException {
+    public void unSubscribe(AccountPO accountPO, String msg) throws XMLParseException, DaoException {
         Document document;
         try {
             document = DocumentHelper.parseText(msg);
@@ -210,10 +210,10 @@ public class WeixinFanServiceImpl implements WeixinFanService {
         Element openId = root.element("FromUserName");
         List<String> tables = DBTableUtil.getFanTableNames();
         try {
-            FanDO fanDO = fanDao.getFanByOpenId(openId.getText(), accountDO.getAppId(), tables);
-            if (fanDO != null) {
-                fanDO.setStatus(2);
-                fanDao.updateFan(fanDO, tables);
+            FanPO fanPO = fanDao.getFanByOpenId(openId.getText(), accountPO.getAppId(), tables);
+            if (fanPO != null) {
+                fanPO.setStatus(2);
+                fanDao.updateFan(fanPO, tables);
             }
         } catch (Exception e) {
             throw new DaoException(e);

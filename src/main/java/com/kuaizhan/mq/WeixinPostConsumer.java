@@ -1,16 +1,11 @@
 package com.kuaizhan.mq;
 
-import com.kuaizhan.pojo.DTO.WxPostDTO;
-import com.kuaizhan.pojo.DTO.WxPostListDTO;
+import com.kuaizhan.pojo.dto.WxPostDTO;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
-import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

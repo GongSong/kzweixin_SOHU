@@ -1,16 +1,13 @@
 package com.kuaizhan.dao.redis.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.constant.RedisConstant;
 import com.kuaizhan.dao.redis.RedisAccountDao;
 
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
 import com.kuaizhan.utils.JsonUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
-
-import java.io.IOException;
 
 
 /**
@@ -21,18 +18,18 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
 
 
     @Override
-    public AccountDO getAccountInfoByWeixinAppId(long weixinAppId) {
+    public AccountPO getAccountInfoByWeixinAppId(long weixinAppId) {
         String key = RedisConstant.KEY_ACCOUNT_INFO + weixinAppId;
         String result = getData(key);
         if (result == null) {
             return null;
         }
-        return JsonUtil.string2Bean(result, AccountDO.class);
+        return JsonUtil.string2Bean(result, AccountPO.class);
     }
 
 
     @Override
-    public void setAccountInfo(AccountDO account) {
+    public void setAccountInfo(AccountPO account) {
         String key = RedisConstant.KEY_ACCOUNT_INFO + account.getWeixinAppId();
         String str = JsonUtil.bean2String(account);
         // TODO: 因为修改账号信息还在php代码那边，缓存时间设置得很短，账号模块完全重构后修改

@@ -5,8 +5,8 @@ import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.deprecated.system.EncryptException;
 import com.kuaizhan.exception.common.XMLParseException;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.MsgDO;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.MsgPO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.WeixinFanService;
@@ -39,8 +39,8 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
 
     @Override
     public String handleWeixinPushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException {
-        AccountDO accountDO = accountService.getAccountByAppId(appId);
-        if (accountDO == null) {
+        AccountPO accountPO = accountService.getAccountByAppId(appId);
+        if (accountPO == null) {
             logger.error("[WeixinPush] get unknown appId");
         }
         //解密消息
@@ -65,11 +65,11 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
             switch (event.getText()) {
                 //关注
                 case "subscribe":
-                    weixinFanService.subscribe(accountDO, msg);
+                    weixinFanService.subscribe(accountPO, msg);
                     break;
                 //取关
                 case "unsubscribe":
-                    weixinFanService.unSubscribe(accountDO, msg);
+                    weixinFanService.unSubscribe(accountPO, msg);
                     break;
                 //群发
                 case "MASSSENDJOBFINISH":
@@ -79,7 +79,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
         } else if (msgType != null) {
             Element openId = root.element("FromUserName");
             JSONObject jsonObject = new JSONObject();
-            MsgDO msgDO = new MsgDO();
+            MsgPO msgPO = new MsgPO();
 
             switch (msgType.getText()) {
                 case "text":
@@ -88,13 +88,13 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     //TODO: emoji表情不能存入数据库的问题
 
                     jsonObject.put("content", content.getText().replaceAll("[\\ud800\\udc00-\\udbff\\udfff\\ud800-\\udfff]", "【表情】"));
-                    msgDO.setAppId(appId);
-                    msgDO.setContent(jsonObject.toString());
-                    msgDO.setOpenId(openId.getText());
-                    msgDO.setStatus(1);
-                    msgDO.setType(1);
-                    msgDO.setSendType(1);
-                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    msgPO.setAppId(appId);
+                    msgPO.setContent(jsonObject.toString());
+                    msgPO.setOpenId(openId.getText());
+                    msgPO.setStatus(1);
+                    msgPO.setType(1);
+                    msgPO.setSendType(1);
+                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
                 case "image":
                     Element mediaId = root.element("MediaId");
@@ -103,13 +103,13 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     jsonObject.put("media_id", mediaId.getText());
                     jsonObject.put("pic_url", picUrl.getText());
                     //存到mysql
-                    msgDO.setAppId(appId);
-                    msgDO.setContent(jsonObject.toString());
-                    msgDO.setOpenId(openId.getText());
-                    msgDO.setType(2);
-                    msgDO.setStatus(1);
-                    msgDO.setSendType(1);
-                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    msgPO.setAppId(appId);
+                    msgPO.setContent(jsonObject.toString());
+                    msgPO.setOpenId(openId.getText());
+                    msgPO.setType(2);
+                    msgPO.setStatus(1);
+                    msgPO.setSendType(1);
+                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
                 case "location":
                     Element x = root.element("Location_X");
@@ -122,13 +122,13 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     jsonObject.put("scale", scale.getText());
                     jsonObject.put("label", label.getText());
                     //存到mysql
-                    msgDO.setAppId(appId);
-                    msgDO.setContent(jsonObject.toString());
-                    msgDO.setOpenId(openId.getText());
-                    msgDO.setType(6);
-                    msgDO.setStatus(1);
-                    msgDO.setSendType(1);
-                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    msgPO.setAppId(appId);
+                    msgPO.setContent(jsonObject.toString());
+                    msgPO.setOpenId(openId.getText());
+                    msgPO.setType(6);
+                    msgPO.setStatus(1);
+                    msgPO.setSendType(1);
+                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
                 case "link":
                     Element title = root.element("Title");
@@ -139,24 +139,24 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     jsonObject.put("description", description.getText());
                     jsonObject.put("url", url.getText());
                     //存到mysql
-                    msgDO.setAppId(appId);
-                    msgDO.setContent(jsonObject.toString());
-                    msgDO.setOpenId(openId.getText());
-                    msgDO.setType(7);
-                    msgDO.setStatus(1);
-                    msgDO.setSendType(1);
-                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    msgPO.setAppId(appId);
+                    msgPO.setContent(jsonObject.toString());
+                    msgPO.setOpenId(openId.getText());
+                    msgPO.setType(7);
+                    msgPO.setStatus(1);
+                    msgPO.setSendType(1);
+                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
                 default:
                     //做一层json封装
                     jsonObject.put("content", "【收到不支持的消息类型，暂无法显示】");
-                    msgDO.setAppId(appId);
-                    msgDO.setContent(jsonObject.toString());
-                    msgDO.setOpenId(openId.getText());
-                    msgDO.setStatus(1);
-                    msgDO.setType(1);
-                    msgDO.setSendType(1);
-                    msgService.insertMsg(accountDO.getSiteId(), accountDO.getAppId(), msgDO);
+                    msgPO.setAppId(appId);
+                    msgPO.setContent(jsonObject.toString());
+                    msgPO.setOpenId(openId.getText());
+                    msgPO.setStatus(1);
+                    msgPO.setType(1);
+                    msgPO.setSendType(1);
+                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
 
             }

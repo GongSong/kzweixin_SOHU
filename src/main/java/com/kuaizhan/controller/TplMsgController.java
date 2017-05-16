@@ -3,8 +3,8 @@ package com.kuaizhan.controller;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.param.AddSysTplParam;
 import com.kuaizhan.param.SendTplMsgParam;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.VO.JsonResponse;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.TplService;
 import org.apache.log4j.Logger;
@@ -32,16 +32,16 @@ public class TplMsgController extends BaseController {
 
     @RequestMapping(value = "/sys_tpl_msgs", method = RequestMethod.POST)
     public JsonResponse sendSysTplMsgs(@Valid @RequestBody SendTplMsgParam param) {
-        AccountDO accountDO = accountService.getAccountBySiteId(param.getSiteId());
-        tplService.sendSysTplMsg(accountDO.getWeixinAppId(), param.getTemplateId(), param.getOpenId(),
+        AccountPO accountPO = accountService.getAccountBySiteId(param.getSiteId());
+        tplService.sendSysTplMsg(accountPO.getWeixinAppId(), param.getTemplateId(), param.getOpenId(),
                 param.getUrl(), param.getData());
         return new JsonResponse(null);
     }
 
     @RequestMapping(value = "/sys_tpls", method = RequestMethod.POST)
     public JsonResponse addSysTpl(@Valid @RequestBody AddSysTplParam param) {
-        AccountDO accountDO = accountService.getAccountBySiteId(param.getSiteId());
-        tplService.addTpl(accountDO.getWeixinAppId(), param.getTemplateId());
+        AccountPO accountPO = accountService.getAccountBySiteId(param.getSiteId());
+        tplService.addTpl(accountPO.getWeixinAppId(), param.getTemplateId());
         return new JsonResponse(null);
     }
 }

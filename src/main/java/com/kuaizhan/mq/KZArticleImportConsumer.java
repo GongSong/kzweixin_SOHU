@@ -1,8 +1,8 @@
 package com.kuaizhan.mq;
 
 import com.kuaizhan.config.KzApiConfig;
-import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.ArticleDTO;
+import com.kuaizhan.pojo.po.PostPO;
+import com.kuaizhan.pojo.dto.ArticleDTO;
 import com.kuaizhan.service.PostService;
 import org.apache.log4j.Logger;
 
@@ -42,12 +42,12 @@ public class KZArticleImportConsumer extends BaseMqConsumer {
             }
             if (articleDTO != null) {
 
-                PostDO postDO = new PostDO();
-                postDO.setWeixinAppid(weixinAppid);
-                postDO.setTitle(articleDTO.getTitle());
-                postDO.setDigest("");
+                PostPO postPO = new PostPO();
+                postPO.setWeixinAppid(weixinAppid);
+                postPO.setTitle(articleDTO.getTitle());
+                postPO.setDigest("");
                 // 这些字段都不应该为空
-                postDO.setAuthor("");
+                postPO.setAuthor("");
                 StringBuilder stringBuilder = new StringBuilder();
                 for (String str : articleDTO.getContent()) {
                     stringBuilder.append(str);
@@ -57,19 +57,19 @@ public class KZArticleImportConsumer extends BaseMqConsumer {
                     logger.info("快站文章内容为空, 忽略新增, pageId:" + pageId);
                     return ;
                 }
-                postDO.setContent(content);
+                postPO.setContent(content);
 
                 if (articleDTO.getCoverUrl() != null && ! "".equals(articleDTO.getCoverUrl())) {
-                    postDO.setThumbUrl(articleDTO.getCoverUrl());
+                    postPO.setThumbUrl(articleDTO.getCoverUrl());
                 } else {
                     String picUrl = getFirstPostDefaultThumbUrl();
-                    postDO.setThumbUrl(picUrl);
+                    postPO.setThumbUrl(picUrl);
                 }
 
 
-                List<PostDO> postDOList = new ArrayList<>();
-                postDOList.add(postDO);
-                postService.insertMultiPosts(weixinAppid, postDOList);
+                List<PostPO> postPOList = new ArrayList<>();
+                postPOList.add(postPO);
+                postService.insertMultiPosts(weixinAppid, postPOList);
             }
             // 新增文章
         }

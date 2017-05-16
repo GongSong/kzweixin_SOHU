@@ -6,13 +6,13 @@ import com.kuaizhan.exception.common.DownloadFileFailedException;
 import com.kuaizhan.param.PostsParam;
 import com.kuaizhan.param.UploadPicParam;
 import com.kuaizhan.param.WxSyncsPostParam;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.Page;
-import com.kuaizhan.pojo.VO.JsonResponse;
-import com.kuaizhan.pojo.VO.PostListFlatVO;
-import com.kuaizhan.pojo.VO.PostListVO;
-import com.kuaizhan.pojo.VO.PostVO;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.PostPO;
+import com.kuaizhan.pojo.dto.Page;
+import com.kuaizhan.pojo.vo.JsonResponse;
+import com.kuaizhan.pojo.vo.PostListFlatVO;
+import com.kuaizhan.pojo.vo.PostListVO;
+import com.kuaizhan.pojo.vo.PostVO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
@@ -51,8 +51,8 @@ public class PostController extends BaseController {
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
     public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam(required = false) String title, @RequestParam(defaultValue = "0") Boolean flat) {
 
-        Page<PostDO> postDOPage = postService.listPostsByPagination(weixinAppid, title, page, flat);
-        List<PostDO> postDOList = postDOPage.getResult();
+        Page<PostPO> postDOPage = postService.listPostsByPagination(weixinAppid, title, page, flat);
+        List<PostPO> postPOList = postDOPage.getResult();
 
         // 展开多图文
         if (flat) {
@@ -62,8 +62,8 @@ public class PostController extends BaseController {
             postListFlatVO.setCurrentPage(postDOPage.getPageNo());
             postListFlatVO.setTotalPage(postDOPage.getTotalPages());
 
-            for (PostDO postDO: postDOList) {
-                postListFlatVO.getPosts().add(PojoSwitcher.postDOToVO(postDO));
+            for (PostPO postPO : postPOList) {
+                postListFlatVO.getPosts().add(PojoSwitcher.postPOToVO(postPO));
             }
 
             return new JsonResponse(postListFlatVO);
@@ -76,29 +76,29 @@ public class PostController extends BaseController {
             postListVO.setCurrentPage(postDOPage.getPageNo());
             postListVO.setTotalPage(postDOPage.getTotalPages());
 
-            if (postDOList != null) {
+            if (postPOList != null) {
 
-                for (PostDO postDO : postDOList) {
+                for (PostPO postPO : postPOList) {
 
                     // 多图文实体是一个list
                     List<PostVO> multiPostVOList = new ArrayList<>();
 
                     // 获取图文总记录下面的多图文
-                    if (postDO.getType() == 2) {
-                        List<PostDO> multiPostDOList = postService.listMultiPosts(weixinAppid, postDO.getMediaId(), false);
-                        if (multiPostDOList != null) {
-                            for (PostDO multiPostDo : multiPostDOList) {
-                                PostVO multiPostVO = PojoSwitcher.postDOToVO(multiPostDo);
+                    if (postPO.getType() == 2) {
+                        List<PostPO> multiPostPOList = postService.listMultiPosts(weixinAppid, postPO.getMediaId(), false);
+                        if (multiPostPOList != null) {
+                            for (PostPO multiPostPO : multiPostPOList) {
+                                PostVO multiPostVO = PojoSwitcher.postPOToVO(multiPostPO);
                                 multiPostVOList.add(multiPostVO);
                             }
                             postListVO.getPosts().add(multiPostVOList);
                         } else {
                             // 发现垃圾数据
-                            logger.error("【图文垃圾数据】总记录下没有多图文, pageId:" + postDO.getPageId());
+                            logger.error("【图文垃圾数据】总记录下没有多图文, pageId:" + postPO.getPageId());
                         }
                     // 单图文
                     } else {
-                        PostVO postVO = PojoSwitcher.postDOToVO(postDO);
+                        PostVO postVO = PojoSwitcher.postPOToVO(postPO);
 
                         multiPostVOList.add(postVO);
                         postListVO.getPosts().add(multiPostVOList);
@@ -117,8 +117,8 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.GET)
     public JsonResponse getPost(@PathVariable long pageId) {
-        PostDO postDO = postService.getPostByPageId(pageId);
-        PostVO postVO = PojoSwitcher.postDOToVO(postDO);
+        PostPO postPO = postService.getPostByPageId(pageId);
+        PostVO postVO = PojoSwitcher.postPOToVO(postPO);
         return new JsonResponse(postVO);
     }
 
@@ -129,18 +129,18 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
     public JsonResponse getMultiPost(@PathVariable long pageId) {
-        PostDO postDO = postService.getPostByPageId(pageId);
+        PostPO postPO = postService.getPostByPageId(pageId);
 
         List<PostVO> multiPostVOList = new ArrayList<>();
-        if (postDO != null) {
+        if (postPO != null) {
             // 如果图文type为3（多图文中的一条），根据mediaId找出多图文
-            if (postDO.getType() == 3) {
-                List<PostDO> multiPostDOList = postService.listMultiPosts(postDO.getWeixinAppid(), postDO.getMediaId(), true);
-                for (PostDO multiPostDO : multiPostDOList) {
-                    multiPostVOList.add(PojoSwitcher.postDOToVO(multiPostDO));
+            if (postPO.getType() == 3) {
+                List<PostPO> multiPostPOList = postService.listMultiPosts(postPO.getWeixinAppid(), postPO.getMediaId(), true);
+                for (PostPO multiPostPO : multiPostPOList) {
+                    multiPostVOList.add(PojoSwitcher.postPOToVO(multiPostPO));
                 }
             } else {
-                multiPostVOList.add(PojoSwitcher.postDOToVO(postDO));
+                multiPostVOList.add(PojoSwitcher.postPOToVO(postPO));
             }
         }
         return new JsonResponse(multiPostVOList);
@@ -198,12 +198,12 @@ public class PostController extends BaseController {
     public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws  IOException {
         JSONObject jsonObject = new JSONObject(postData);
         Long weixinAppid = jsonObject.optLong("weixinAppid");
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         Long categoryId = jsonObject.optLong("categoryId");
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         for (Long pageId: pageIds){
             // TODO: 未绑定站点错误
-            postService.export2KzArticle(pageId, categoryId, accountDO.getSiteId());
+            postService.export2KzArticle(pageId, categoryId, accountPO.getSiteId());
         }
         return new JsonResponse(null);
     }

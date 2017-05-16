@@ -8,10 +8,10 @@ import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.common.XMLParseException;
 import com.kuaizhan.exception.deprecated.system.*;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
-import com.kuaizhan.pojo.DTO.AuthorizerInfoDTO;
-import com.kuaizhan.pojo.VO.JsonResponse;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
+import com.kuaizhan.pojo.dto.AuthorizerInfoDTO;
+import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.WeixinAuthService;
 import com.kuaizhan.service.WeixinMsgService;
@@ -86,7 +86,7 @@ public class WeixinController extends BaseController {
         if (authorizationInfoDTO != null) {
             AuthorizerInfoDTO authorizerInfoDTO = weixinAuthService.getAuthorizerInfo(componentAccessToken, ApplicationConfig.WEIXIN_APPID_THIRD, authorizationInfoDTO.getAppId());
             //装配数据
-            AccountDO account = new AccountDO();
+            AccountPO account = new AccountPO();
             account.setSiteId(siteId);
             account.setAppId(authorizationInfoDTO.getAppId());
             account.setAppSecret("");

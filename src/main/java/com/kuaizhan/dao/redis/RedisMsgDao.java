@@ -1,7 +1,7 @@
 package com.kuaizhan.dao.redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kuaizhan.pojo.DO.MsgDO;
+import com.kuaizhan.pojo.po.MsgPO;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +17,7 @@ public interface RedisMsgDao {
      * @param field
      * @return
      */
-    List<MsgDO> listMsgsByPagination(long siteId, String field) throws IOException;
+    List<MsgPO> listMsgsByPagination(long siteId, String field) throws IOException;
 
 
     /**
@@ -26,7 +26,7 @@ public interface RedisMsgDao {
      * @param siteId
      * @param field
      */
-    void setMsgsByPagination(long siteId, String field, List<MsgDO> msgs) throws JsonProcessingException;
+    void setMsgsByPagination(long siteId, String field, List<MsgPO> msgs) throws JsonProcessingException;
 
     /**
      * 删除消息列表缓存
@@ -35,9 +35,9 @@ public interface RedisMsgDao {
      */
     void deleteMsgsByPagination(long siteId);
 
-    List<MsgDO> listMsgsByOpenId(long siteId, String openId, int page) throws IOException;
+    List<MsgPO> listMsgsByOpenId(long siteId, String openId, int page) throws IOException;
 
-    void setMsgsByOpenId(long siteId, String openId, int page, List<MsgDO> msgs) throws JsonProcessingException;
+    void setMsgsByOpenId(long siteId, String openId, int page, List<MsgPO> msgs) throws JsonProcessingException;
 
     void deleteMsgsByOpenId(long siteId, String openId);
 

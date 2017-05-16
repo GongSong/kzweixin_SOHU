@@ -1,6 +1,5 @@
 package com.kuaizhan.mq;
 
-import com.kuaizhan.pojo.DTO.WxPostListDTO;
 import com.kuaizhan.service.PostService;
 import org.junit.After;
 import org.junit.Before;
@@ -10,7 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * Created by lorin on 17-4-1.

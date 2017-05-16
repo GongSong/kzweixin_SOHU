@@ -1,8 +1,8 @@
 package com.kuaizhan.dao.mapper;
 
 
-import com.kuaizhan.pojo.DO.FanDO;
-import com.kuaizhan.pojo.DTO.Page;
+import com.kuaizhan.pojo.po.FanPO;
+import com.kuaizhan.pojo.dto.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public interface FanDao {
      * @param tables     表列表
      * @return
      */
-    List<FanDO> listFansByPagination(@Param("pageEntity") Page page, @Param("tables") List<String> tables);
+    List<FanPO> listFansByPagination(@Param("pageEntity") Page page, @Param("tables") List<String> tables);
 
     /**
      * 批量更新粉丝信息
@@ -42,7 +42,7 @@ public interface FanDao {
      * @param tables 表列表
      * @return
      */
-    int updateFansBatch(@Param("fanses") List<FanDO> fanses, @Param("tables") List<String> tables);
+    int updateFansBatch(@Param("fanses") List<FanPO> fanses, @Param("tables") List<String> tables);
 
     /**
      * 根据openId获取粉丝列表
@@ -52,7 +52,7 @@ public interface FanDao {
      * @param tables  表列表
      * @return
      */
-    List<FanDO> listFansByOpenIds(@Param("appId") String appId, @Param("openIds") List<String> openIds, @Param("tables") List<String> tables);
+    List<FanPO> listFansByOpenIds(@Param("appId") String appId, @Param("openIds") List<String> openIds, @Param("tables") List<String> tables);
 
     /**
      * 根据参数查找
@@ -61,7 +61,7 @@ public interface FanDao {
      * @param tables 表列表
      * @return
      */
-    List<FanDO> listFansByParam(@Param("param") Map param, @Param("tables") List<String> tables);
+    List<FanPO> listFansByParam(@Param("param") Map param, @Param("tables") List<String> tables);
 
     /**
      * 获取粉丝
@@ -70,7 +70,7 @@ public interface FanDao {
      * @param tables
      * @return
      */
-    FanDO getFanByOpenId(@Param("openId") String openId, @Param("appId") String appId, @Param("tables") List<String> tables);
+    FanPO getFanByOpenId(@Param("openId") String openId, @Param("appId") String appId, @Param("tables") List<String> tables);
 
     /**
      * 获取被删除的粉丝
@@ -79,7 +79,7 @@ public interface FanDao {
      * @param tables
      * @return
      */
-    FanDO getDeleteFanByOpenId(@Param("openId") String openId, @Param("appId") String appId, @Param("tables") List<String> tables);
+    FanPO getDeleteFanByOpenId(@Param("openId") String openId, @Param("appId") String appId, @Param("tables") List<String> tables);
 
     /**
      * 插入新粉丝
@@ -88,7 +88,7 @@ public interface FanDao {
      * @param tableName 表列表
      * @return
      */
-    int insertFan(@Param("fans") FanDO fan, @Param("tableName") String tableName);
+    int insertFan(@Param("fans") FanPO fan, @Param("tableName") String tableName);
 
     /**
      * 更新粉丝
@@ -97,6 +97,6 @@ public interface FanDao {
      * @param tables 表列表
      * @return
      */
-    int updateFan(@Param("fans") FanDO fan, @Param("tables") List<String> tables);
+    int updateFan(@Param("fans") FanPO fan, @Param("tables") List<String> tables);
 
 }

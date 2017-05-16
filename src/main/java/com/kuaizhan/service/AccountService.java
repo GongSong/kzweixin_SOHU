@@ -2,8 +2,8 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.UnbindDO;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.UnbindPO;
 
 /**
  * 账号服务
@@ -16,7 +16,7 @@ public interface AccountService {
      * @param account 账号
      * @return
      */
-    void bindAccount(AccountDO account) throws RedisException, DaoException;
+    void bindAccount(AccountPO account) throws RedisException, DaoException;
 
     /**
      * 获取accessToken
@@ -32,7 +32,7 @@ public interface AccountService {
      * @param siteId 站点id
      * @return
      */
-    AccountDO getAccountBySiteId(long siteId);
+    AccountPO getAccountBySiteId(long siteId);
 
     /**
      * 根据appId获取账号信息
@@ -40,21 +40,21 @@ public interface AccountService {
      * @param appId
      * @return
      */
-    AccountDO getAccountByAppId(String appId);
+    AccountPO getAccountByAppId(String appId);
 
     /**
      * 根据long型Id获取账号信息
      *
      * @return
      */
-    AccountDO getAccountByWeixinAppId(long weixinAppid);
+    AccountPO getAccountByWeixinAppId(long weixinAppid);
 
     /**
      * 解绑账号
      *
      * @param account 账号
      */
-    void unbindAccount(AccountDO account, UnbindDO unbindDO) throws RedisException, DaoException;
+    void unbindAccount(AccountPO account, UnbindPO unbindPO) throws RedisException, DaoException;
 
     /**
      * 修改appSecret

@@ -1,11 +1,10 @@
 package com.kuaizhan.service;
 
 
-import com.kuaizhan.exception.common.DecryptException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.deprecated.system.*;
-import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
-import com.kuaizhan.pojo.DTO.AuthorizerInfoDTO;
+import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
+import com.kuaizhan.pojo.dto.AuthorizerInfoDTO;
 
 /**
  * Created by Mr.Jadyn on 2017/1/19.

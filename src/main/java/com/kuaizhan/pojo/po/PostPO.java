@@ -1,4 +1,4 @@
-package com.kuaizhan.pojo.DO;
+package com.kuaizhan.pojo.po;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * 有1标注的表示可为空
  */
 @Data
-public class PostDO {
+public class PostPO {
 
     private Long pageId;
     private Long weixinAppid;

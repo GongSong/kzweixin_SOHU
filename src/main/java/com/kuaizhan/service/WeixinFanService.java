@@ -3,9 +3,9 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.XMLParseException;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.FanDO;
-import com.kuaizhan.pojo.DTO.TagDTO;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.FanPO;
+import com.kuaizhan.pojo.dto.TagDTO;
 
 import java.util.List;
 
@@ -61,7 +61,7 @@ public interface WeixinFanService {
      *
      * @return
      */
-    int insertBlack(String accessToken, List<FanDO> fanDOList);
+    int insertBlack(String accessToken, List<FanPO> fanPOList);
 
     /**
      * 将粉丝移除黑名单
@@ -69,22 +69,22 @@ public interface WeixinFanService {
      * @param accessToken
      * @return
      */
-    int removeBlack(String accessToken, List<FanDO> fanDOList);
+    int removeBlack(String accessToken, List<FanPO> fanPOList);
 
     /**
      * 获取用户信息
      *
      * @return
      */
-    FanDO getFan(String appId, String accessToken, String openId);
+    FanPO getFan(String appId, String accessToken, String openId);
 
     /**
      * 用户关注
      */
-    void subscribe(AccountDO accountDO, String msg) throws DaoException, XMLParseException;
+    void subscribe(AccountPO accountPO, String msg) throws DaoException, XMLParseException;
 
     /**
      * 用户取消关注
      */
-    void unSubscribe(AccountDO accountDO, String msg) throws XMLParseException, DaoException;
+    void unSubscribe(AccountPO accountPO, String msg) throws XMLParseException, DaoException;
 }

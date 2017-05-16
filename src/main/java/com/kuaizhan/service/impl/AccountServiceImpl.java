@@ -8,9 +8,9 @@ import com.kuaizhan.dao.redis.RedisAccountDao;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
-import com.kuaizhan.pojo.DO.AccountDO;
-import com.kuaizhan.pojo.DO.UnbindDO;
-import com.kuaizhan.pojo.DTO.AuthorizationInfoDTO;
+import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.UnbindPO;
+import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.WeixinAuthService;
 import com.kuaizhan.utils.IdGeneratorUtil;
@@ -34,24 +34,24 @@ public class AccountServiceImpl implements AccountService {
     WeixinAuthService weixinAuthService;
 
     @Override
-    public void bindAccount(AccountDO account) throws RedisException, DaoException {
+    public void bindAccount(AccountPO account) throws RedisException, DaoException {
         try {
             //删缓存
             redisAccountDao.deleteAccountInfo(account.getSiteId());
         } catch (Exception e) {
             throw new RedisException(e);
         }
-        AccountDO accountDO;
+        AccountPO accountPO;
         try {
             //将其他公众号删除
             accountDao.deleteAccountByAppId(account.getAppId());
             //先查数据库存不存在
-            accountDO = accountDao.getDeleteAccountBySiteId(account.getSiteId());
+            accountPO = accountDao.getDeleteAccountBySiteId(account.getSiteId());
         } catch (Exception e) {
             throw new DaoException(e);
         }
         //存在记录 恢复记录 更新数据库
-        if (accountDO != null) {
+        if (accountPO != null) {
             account.setIsDel(0);
             account.setUnbindTime(0L);
             try {
@@ -61,7 +61,7 @@ public class AccountServiceImpl implements AccountService {
             }
             //刷新缓存
             try {
-                redisAccountDao.setAccountInfo(accountDO);
+                redisAccountDao.setAccountInfo(accountPO);
             } catch (Exception e) {
                 throw new RedisException(e);
             }
@@ -84,20 +84,20 @@ public class AccountServiceImpl implements AccountService {
         String accessToken = redisAccountDao.getAccessToken(weixinAppId);
         // TODO: 在这里实现分布式锁，否则在消息队列和web同时调用的情况下，有一定几率相互覆盖
         if (accessToken == null) {
-            AccountDO accountDO = getAccountByWeixinAppId(weixinAppId);
+            AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
             //刷新
             AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(
                     weixinAuthService.getComponentAccessToken(),
-                    ApplicationConfig.WEIXIN_APPID_THIRD, accountDO.getAppId(),
-                    accountDO.getRefreshToken());
+                    ApplicationConfig.WEIXIN_APPID_THIRD, accountPO.getAppId(),
+                    accountPO.getRefreshToken());
             accessToken = authorizationInfoDTO.getAccessToken();
 
             // 更新数据库
-            AccountDO updateAccountDo = new AccountDO();
-            updateAccountDo.setWeixinAppId(accountDO.getWeixinAppId());
-            updateAccountDo.setAccessToken(authorizationInfoDTO.getAccessToken());
-            updateAccountDo.setRefreshToken(authorizationInfoDTO.getRefreshToken());
-            accountDao.updateAccountByWeixinAppId(updateAccountDo);
+            AccountPO updateAccountPO = new AccountPO();
+            updateAccountPO.setWeixinAppId(accountPO.getWeixinAppId());
+            updateAccountPO.setAccessToken(authorizationInfoDTO.getAccessToken());
+            updateAccountPO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
+            accountDao.updateAccountByWeixinAppId(updateAccountPO);
             //设置缓存
             redisAccountDao.setAccessToken(weixinAppId, authorizationInfoDTO);
         }
@@ -105,40 +105,40 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDO getAccountBySiteId(long siteId) {
-        AccountDO accountDO = accountDao.getAccountBySiteId(siteId);
-        if (accountDO == null) {
+    public AccountPO getAccountBySiteId(long siteId) {
+        AccountPO accountPO = accountDao.getAccountBySiteId(siteId);
+        if (accountPO == null) {
             throw new BusinessException(ErrorCodes.SITE_ID_NOT_EXIST);
         }
-        return accountDO;
+        return accountPO;
     }
 
     @Override
-    public AccountDO getAccountByAppId(String appId) {
+    public AccountPO getAccountByAppId(String appId) {
         return accountDao.getAccountByAppId(appId);
     }
 
     @Override
-    public AccountDO getAccountByWeixinAppId(long weinxinAppid) {
+    public AccountPO getAccountByWeixinAppId(long weinxinAppid) {
         // 从缓存拿
-        AccountDO accountDO = redisAccountDao.getAccountInfoByWeixinAppId(weinxinAppid);
+        AccountPO accountPO = redisAccountDao.getAccountInfoByWeixinAppId(weinxinAppid);
 
-        if (accountDO == null) {
+        if (accountPO == null) {
             //从数据库拿
-            accountDO = accountDao.getAccountByWeixinAppId(weinxinAppid);
-            if (accountDO == null) {
+            accountPO = accountDao.getAccountByWeixinAppId(weinxinAppid);
+            if (accountPO == null) {
                 throw new BusinessException(ErrorCodes.ACCOUNT_NOT_EXIST);
             }
 
             //存缓存
-            redisAccountDao.setAccountInfo(accountDO);
+            redisAccountDao.setAccountInfo(accountPO);
         }
-        return accountDO;
+        return accountPO;
     }
 
     @Override
-    public void unbindAccount(AccountDO account, UnbindDO unbindDO) {
-        UnbindDO unbind;
+    public void unbindAccount(AccountPO account, UnbindPO unbindPO) {
+        UnbindPO unbind;
         //删缓存
         try {
             redisAccountDao.deleteAccountInfo(account.getSiteId());
@@ -147,11 +147,11 @@ public class AccountServiceImpl implements AccountService {
         }
         try {
             unbind = unbindDao.getUnbindByWeixinAppId(account.getWeixinAppId());
-            unbindDO.setWeixinAppId(account.getWeixinAppId());
+            unbindPO.setWeixinAppId(account.getWeixinAppId());
             if (unbind == null) {
-                unbindDao.insertUnbind(unbindDO);
+                unbindDao.insertUnbind(unbindPO);
             } else {
-                unbindDao.updateUnbindByWeixinAppId(unbindDO);
+                unbindDao.updateUnbindByWeixinAppId(unbindPO);
             }
             account.setUnbindTime(System.currentTimeMillis() / 1000);
             account.setIsDel(1);
@@ -163,7 +163,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateAppSecret(long siteId, String appSecret) {
-        AccountDO account = new AccountDO();
+        AccountPO account = new AccountPO();
         account.setSiteId(siteId);
         account.setAppSecret(appSecret);
         accountDao.updateAccountBySiteId(account);

@@ -7,7 +7,7 @@ import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.weixin.WxTemplateIndustryConflictException;
 import com.kuaizhan.exception.weixin.WxTemplateNumExceedException;
 import com.kuaizhan.manager.WxTplManager;
-import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.TplService;
 import org.apache.log4j.Logger;
@@ -51,8 +51,8 @@ public class TplServiceImpl implements TplService {
     @Override
     public void addTpl(long weixinAppid, String tplIdShort) {
         // 检查公众号是否是认证服务号
-        AccountDO accountDO = accountService.getAccountByWeixinAppId(weixinAppid);
-        if (accountDO.getServiceType() != 2 || accountDO.getVerifyType() == -1) {
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        if (accountPO.getServiceType() != 2 || accountPO.getVerifyType() == -1) {
             throw new BusinessException(ErrorCodes.ACCOUNT_NOT_VERIFIED_SERVICE_TYPE);
         }
 

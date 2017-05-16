@@ -1,4 +1,4 @@
-package com.kuaizhan.pojo.DO;
+package com.kuaizhan.pojo.po;
 
 
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.Data;
  * Created by Mr.Jadyn on 2017/1/10.
  */
 @Data
-public class MsgDO {
+public class MsgPO {
 
     private Long msgId;
     private String appId;

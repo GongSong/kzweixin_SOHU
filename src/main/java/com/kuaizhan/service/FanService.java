@@ -4,9 +4,9 @@ import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.deprecated.system.ServerException;
-import com.kuaizhan.pojo.DO.FanDO;
-import com.kuaizhan.pojo.DTO.Page;
-import com.kuaizhan.pojo.DTO.TagDTO;
+import com.kuaizhan.pojo.po.FanPO;
+import com.kuaizhan.pojo.dto.Page;
+import com.kuaizhan.pojo.dto.TagDTO;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,7 +27,7 @@ public interface FanService {
      */
     long countFan(String appId, int isBlack, List<Integer> tagIds, String keyword) throws DaoException;
 
-    FanDO getFanByOpenId(String appId, String openId) throws DaoException;
+    FanPO getFanByOpenId(String appId, String openId) throws DaoException;
 
     /**
      * 分页查询粉丝列表
@@ -41,7 +41,7 @@ public interface FanService {
      * @throws IOException
      */
 
-    Page<FanDO> listFanByPagination(long siteId, String appId, Integer page, Integer isBlack, List<Integer> tagIds, String keyword) throws DaoException, RedisException;
+    Page<FanPO> listFanByPagination(long siteId, String appId, Integer page, Integer isBlack, List<Integer> tagIds, String keyword) throws DaoException, RedisException;
 
     /**
      * 获取所有标签
@@ -100,19 +100,19 @@ public interface FanService {
      * 将用户移入黑名单
      *
      * @param accessToken 公众号accessToken
-     * @param fanDOList   粉丝列表
+     * @param fanPOList   粉丝列表
      * @return -1传参错误 40003 传入非法的openid 49003传入的openid不属于此AppID -2一次只能拉黑20个用户 40001无效accessToken
      */
-    void insertBlack(long siteId, String accessToken, List<FanDO> fanDOList) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException;
+    void insertBlack(long siteId, String accessToken, List<FanPO> fanPOList) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException;
 
     /**
      * 移除黑名单
      *
      * @param siteId      公众号appId
-     * @param fanDOList   粉丝列表
+     * @param fanPOList   粉丝列表
      * @param accessToken 公众号accessToken
      * @return 40003    传入非法的openid 49003传入的openid不属于此AppID 	-2一次只能拉黑20个用户
      */
-    void deleteBlack(long siteId, List<FanDO> fanDOList, String accessToken) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException;
+    void deleteBlack(long siteId, List<FanPO> fanPOList, String accessToken) throws ServerException, OpenIdException, BlackAddNumberException, DaoException, RedisException;
 
 }

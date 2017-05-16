@@ -7,12 +7,12 @@ import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.deprecated.system.JsonParseException;
 import com.kuaizhan.exception.common.RedisException;
-import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.po.AccountPO;
 
-import com.kuaizhan.pojo.DO.FanDO;
-import com.kuaizhan.pojo.DO.MsgDO;
-import com.kuaizhan.pojo.DTO.Page;
-import com.kuaizhan.pojo.VO.*;
+import com.kuaizhan.pojo.po.FanPO;
+import com.kuaizhan.pojo.po.MsgPO;
+import com.kuaizhan.pojo.dto.Page;
+import com.kuaizhan.pojo.vo.*;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.MsgService;
@@ -49,8 +49,8 @@ public class MsgController extends BaseController {
      */
     @RequestMapping(value = "/msgs", method = RequestMethod.GET)
     public JsonResponse listMsgs(@RequestParam long siteId, @RequestParam int page, @RequestParam int isHide, @RequestParam(required = false) String keyword) throws RedisException, DaoException, JsonParseException {
-        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
-        Page<MsgDO> pagingResult = msgService.listMsgsByPagination(siteId, accountDO.getAppId(), page, keyword, isHide);
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        Page<MsgPO> pagingResult = msgService.listMsgsByPagination(siteId, accountPO.getAppId(), page, keyword, isHide);
         return new JsonResponse(handleData(pagingResult));
     }
 
@@ -62,8 +62,8 @@ public class MsgController extends BaseController {
      */
     @RequestMapping(value = "/msgs/new/count", method = RequestMethod.GET)
     public JsonResponse getNewMsgsNum(@RequestParam long siteId) throws DaoException, RedisException, JsonParseException {
-        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
-        long num = msgService.countMsg(accountDO.getAppId(), 1, 0, null, 0);
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        long num = msgService.countMsg(accountPO.getAppId(), 1, 0, null, 0);
         Map<String, Object> data = new HashMap<>();
         data.put("num", num);
         return new JsonResponse(data);
@@ -77,12 +77,12 @@ public class MsgController extends BaseController {
      */
     @RequestMapping(value = "/msgs/new", method = RequestMethod.GET)
     public JsonResponse listNewMsgs(@RequestParam long siteId) throws IOException, DaoException, RedisException, JsonParseException {
-        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
-        List<MsgDO> msgs = msgService.listNewMsgs(accountDO.getAppId());
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        List<MsgPO> msgs = msgService.listNewMsgs(accountPO.getAppId());
         if (msgs.size() > 0) {
-            msgService.updateMsgsStatus(siteId, accountDO.getAppId(), msgs);
+            msgService.updateMsgsStatus(siteId, accountPO.getAppId(), msgs);
         }
-        Page<MsgDO> pagingResult = msgService.listMsgsByPagination(siteId, accountDO.getAppId(), 1, null, 0);
+        Page<MsgPO> pagingResult = msgService.listMsgsByPagination(siteId, accountPO.getAppId(), 1, null, 0);
         return new JsonResponse(handleData(pagingResult));
     }
 
@@ -96,21 +96,21 @@ public class MsgController extends BaseController {
      */
     @RequestMapping(value = "/msgs/{openId}", method = RequestMethod.GET)
     public JsonResponse listMsgsByOpenId(@RequestParam long siteId, @RequestParam int page, @PathVariable String openId) throws DaoException, RedisException, JsonParseException {
-        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
-        Page<MsgDO> msgs = msgService.listMsgsByOpenId(siteId, accountDO.getAppId(), openId, page);
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        Page<MsgPO> msgs = msgService.listMsgsByOpenId(siteId, accountPO.getAppId(), openId, page);
         if (msgs.getResult() != null) {
             UserMsgListVO userMsgListVO = new UserMsgListVO();
 
-            for (MsgDO msgDO : msgs.getResult()) {
+            for (MsgPO msgPO : msgs.getResult()) {
                 UserMsgVO userMsgVO = new UserMsgVO();
-                userMsgVO.setId(msgDO.getMsgId());
-                userMsgVO.setSendType(msgDO.getSendType());
-                userMsgVO.setContent(msgDO.getContent());
-                userMsgVO.setTime(msgDO.getCreateTime());
+                userMsgVO.setId(msgPO.getMsgId());
+                userMsgVO.setSendType(msgPO.getSendType());
+                userMsgVO.setContent(msgPO.getContent());
+                userMsgVO.setTime(msgPO.getCreateTime());
                 userMsgListVO.getMsgs().add(userMsgVO);
             }
-            FanDO fanDO = fanService.getFanByOpenId(accountDO.getAppId(), openId);
-            if ((System.currentTimeMillis() / 1000 - fanDO.getLastInteractTime()) > 48 * 3600)
+            FanPO fanPO = fanService.getFanByOpenId(accountPO.getAppId(), openId);
+            if ((System.currentTimeMillis() / 1000 - fanPO.getLastInteractTime()) > 48 * 3600)
                 userMsgListVO.setIsExpire(1);
             else
                 userMsgListVO.setIsExpire(0);
@@ -128,7 +128,7 @@ public class MsgController extends BaseController {
      */
     @RequestMapping(value = "/msgs/{openId}", method = RequestMethod.POST)
     public JsonResponse insertCustomMsg(@RequestParam long siteId, @PathVariable String openId, @RequestBody String postData) throws ParamException, DaoException, RedisException, SendCustomMsgException, JsonParseException {
-        AccountDO accountDO = accountService.getAccountBySiteId(siteId);
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
 
         int msgType;
         JSONObject afterValidation = new JSONObject();
@@ -145,26 +145,26 @@ public class MsgController extends BaseController {
         } else {
             throw new ParamException();
         }
-        msgService.insertCustomMsg(accountDO, openId, msgType, afterValidation);
+        msgService.insertCustomMsg(accountPO, openId, msgType, afterValidation);
         return new JsonResponse(null);
     }
 
 
-    private MsgListVO handleData(Page<MsgDO> pagingResult) {
+    private MsgListVO handleData(Page<MsgPO> pagingResult) {
         if (pagingResult.getResult() != null) {
             MsgListVO msgListVO = new MsgListVO();
             msgListVO.setTotalNum(pagingResult.getTotalCount());
             msgListVO.setTotalPage(pagingResult.getTotalPages());
             msgListVO.setCurrentPage(pagingResult.getPageNo());
-            for (MsgDO msgDO : pagingResult.getResult()) {
+            for (MsgPO msgPO : pagingResult.getResult()) {
                 MsgVO msgVO = new MsgVO();
-                msgVO.setId(msgDO.getMsgId());
-                msgVO.setOpenId(msgDO.getOpenId());
-                msgVO.setContent(msgDO.getContent());
-                msgVO.setHeadImgUrl(msgDO.getHeadImgUrl());
-                msgVO.setIsFocus(msgDO.getIsFocus());
-                msgVO.setName(msgDO.getNickName());
-                msgVO.setTime(msgDO.getCreateTime());
+                msgVO.setId(msgPO.getMsgId());
+                msgVO.setOpenId(msgPO.getOpenId());
+                msgVO.setContent(msgPO.getContent());
+                msgVO.setHeadImgUrl(msgPO.getHeadImgUrl());
+                msgVO.setIsFocus(msgPO.getIsFocus());
+                msgVO.setName(msgPO.getNickName());
+                msgVO.setTime(msgPO.getCreateTime());
                 msgListVO.getMsgs().add(msgVO);
             }
             return msgListVO;

@@ -2,13 +2,11 @@ package com.kuaizhan.service;
 
 
 import com.kuaizhan.exception.common.GetKzArticleException;
-import com.kuaizhan.exception.deprecated.business.*;
-import com.kuaizhan.pojo.DO.PostDO;
-import com.kuaizhan.pojo.DTO.ArticleDTO;
-import com.kuaizhan.pojo.DTO.Page;
-import com.kuaizhan.pojo.DTO.WxPostDTO;
+import com.kuaizhan.pojo.po.PostPO;
+import com.kuaizhan.pojo.dto.ArticleDTO;
+import com.kuaizhan.pojo.dto.Page;
+import com.kuaizhan.pojo.dto.WxPostDTO;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,13 +26,13 @@ public interface PostService {
      * 获取图文消息列表
      * @param page  页码
      */
-    Page<PostDO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat);
+    Page<PostPO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat);
 
     /**
      * 根据mediaId获取所有的多图文
      * @param withContent 是否获取content字段
      */
-    List<PostDO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent);
+    List<PostPO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent);
 
     /**
      * 删除图文
@@ -51,12 +49,12 @@ public interface PostService {
     /**
      * 获取图文
      */
-    PostDO getPostByPageId(long pageId);
+    PostPO getPostByPageId(long pageId);
 
     /**
      * 根据mediaId获取单篇图文(单图文，或者多图文的第一篇)
      */
-    PostDO getPostByMediaId(long weixinAppid, String mediaId);
+    PostPO getPostByMediaId(long weixinAppid, String mediaId);
 
     /**
      * 临时接口，根据pageId, 获取图文内容
@@ -82,12 +80,12 @@ public interface PostService {
      * 新增一条多图文消息，并同步到微信服务器
      * @param posts 新增的post数据列表
      */
-    void insertMultiPosts(long weixinAppid, List<PostDO> posts) throws Exception;
+    void insertMultiPosts(long weixinAppid, List<PostPO> posts) throws Exception;
 
     /**
      * 更新一条多图文消息，并同步到微信服务器
      */
-    void updateMultiPosts(long weixinAppid, long pageId, List<PostDO> posts) throws Exception;
+    void updateMultiPosts(long weixinAppid, long pageId, List<PostPO> posts) throws Exception;
 
 
     /**

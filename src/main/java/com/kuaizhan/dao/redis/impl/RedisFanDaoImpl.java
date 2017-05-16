@@ -3,8 +3,8 @@ package com.kuaizhan.dao.redis.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.constant.RedisConstant;
 import com.kuaizhan.dao.redis.RedisFanDao;
-import com.kuaizhan.pojo.DO.FanDO;
-import com.kuaizhan.pojo.DTO.TagDTO;
+import com.kuaizhan.pojo.po.FanPO;
+import com.kuaizhan.pojo.dto.TagDTO;
 import com.kuaizhan.utils.JsonUtil;
 import org.springframework.stereotype.Repository;
 
@@ -19,18 +19,18 @@ public class RedisFanDaoImpl extends RedisBaseDaoImpl implements RedisFanDao {
 
 
     @Override
-    public List<FanDO> listFanByPagination(long siteId, String field) throws IOException {
+    public List<FanPO> listFanByPagination(long siteId, String field) throws IOException {
         String key = RedisConstant.KEY_FAN_LIST + siteId;
         String result = getData(key, field);
         if (result != null) {
-            List<FanDO> fanses = JsonUtil.string2List(result, FanDO.class);
+            List<FanPO> fanses = JsonUtil.string2List(result, FanPO.class);
             return fanses;
         }
         return null;
     }
 
     @Override
-    public void setFanByPagination(long siteId, String field, List<FanDO> fanses) throws JsonProcessingException {
+    public void setFanByPagination(long siteId, String field, List<FanPO> fanses) throws JsonProcessingException {
         String key = RedisConstant.KEY_FAN_LIST + siteId;
         String json = JsonUtil.bean2String(fanses);
         setData(key, field, json, 2 * 60 * 60);

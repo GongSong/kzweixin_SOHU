@@ -4,7 +4,7 @@ import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.KzApiConfig;
 import com.kuaizhan.exception.common.GetKzArticleException;
 import com.kuaizhan.exception.common.KZPicUploadException;
-import com.kuaizhan.pojo.DTO.ArticleDTO;
+import com.kuaizhan.pojo.dto.ArticleDTO;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;

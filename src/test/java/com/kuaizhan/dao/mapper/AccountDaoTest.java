@@ -1,7 +1,6 @@
 package com.kuaizhan.dao.mapper;
 
-import com.kuaizhan.dao.mapper.AccountDao;
-import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.po.AccountPO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,17 +52,17 @@ public class AccountDaoTest {
 
     @Test
     public void insertAccount() throws Exception {
-        AccountDO accountDO = accountDao.getAccountBySiteId(123456L);
-        accountDO.setWeixinAppId(8888888888L);
-        accountDO.setSiteId(1234567L);
-        accountDao.insertAccount(accountDO);
+        AccountPO accountPO = accountDao.getAccountBySiteId(123456L);
+        accountPO.setWeixinAppId(8888888888L);
+        accountPO.setSiteId(1234567L);
+        accountDao.insertAccount(accountPO);
     }
 
     @Test
     public void updateAccountBySiteId() throws Exception {
-        AccountDO accountDO = accountDao.getAccountBySiteId(1234567L);
-        accountDO.setNickName("fuck you");
-        accountDao.updateAccountBySiteId(accountDO);
+        AccountPO accountPO = accountDao.getAccountBySiteId(1234567L);
+        accountPO.setNickName("fuck you");
+        accountDao.updateAccountBySiteId(accountPO);
     }
 
     @Test

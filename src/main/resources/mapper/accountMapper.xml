@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.kuaizhan.dao.mapper.AccountDao">
     <!--根据siteId查账户-->
-    <select id="getAccountBySiteId" resultType="com.kuaizhan.pojo.DO.AccountDO">
+    <select id="getAccountBySiteId" resultType="com.kuaizhan.pojo.po.AccountPO">
         select *
         from site_weixin
         where
@@ -10,7 +10,7 @@
         and is_del=0
     </select>
     <!--根据appId查账户-->
-    <select id="getAccountByAppId" resultType="com.kuaizhan.pojo.DO.AccountDO">
+    <select id="getAccountByAppId" resultType="com.kuaizhan.pojo.po.AccountPO">
         select *
         from site_weixin
         where
@@ -19,7 +19,7 @@
     </select>
 
     <!--根据weixinAppId查账户-->
-    <select id="getAccountByWeixinAppId" resultType="com.kuaizhan.pojo.DO.AccountDO">
+    <select id="getAccountByWeixinAppId" resultType="com.kuaizhan.pojo.po.AccountPO">
         select *
         from site_weixin
         where
@@ -27,7 +27,7 @@
         and is_del=0
     </select>
     <!--根据siteId获取已经删除的记录-->
-    <select id="getDeleteAccountBySiteId" resultType="com.kuaizhan.pojo.DO.AccountDO">
+    <select id="getDeleteAccountBySiteId" resultType="com.kuaizhan.pojo.po.AccountPO">
         select *
         from site_weixin
         where
@@ -35,7 +35,7 @@
         and is_del=1
     </select>
     <!--添加一个账号-->
-    <insert id="insertAccount" parameterType="com.kuaizhan.pojo.DO.AccountDO">
+    <insert id="insertAccount" parameterType="com.kuaizhan.pojo.po.AccountPO">
         insert into site_weixin
         set
         weixin_appid=#{weixinAppId},

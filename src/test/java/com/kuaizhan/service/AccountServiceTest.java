@@ -1,7 +1,7 @@
 package com.kuaizhan.service;
 
 import com.kuaizhan.dao.mapper.AccountDao;
-import com.kuaizhan.pojo.DO.AccountDO;
+import com.kuaizhan.pojo.po.AccountPO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,8 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by liangjiateng on 2017/3/16.
@@ -45,8 +43,8 @@ public class AccountServiceTest {
 
     @Test
     public void bindAccount() throws Exception {
-        AccountDO accountDO = accountDao.getAccountBySiteId(123456L);
-        accountService.bindAccount(accountDO);
+        AccountPO accountPO = accountDao.getAccountBySiteId(123456L);
+        accountService.bindAccount(accountPO);
     }
 
     @Test
