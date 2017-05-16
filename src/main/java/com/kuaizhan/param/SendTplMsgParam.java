@@ -11,8 +11,8 @@ import java.util.Map;
  */
 @Data
 public class SendTplMsgParam {
-    @NotNull(message = "siteId不能为空")
-    private Long siteId;
+    @NotNull(message = "appId不能为空")
+    private String appId;
     @NotNull(message = "模板编号不能为空")
     private String templateId;
     @NotNull(message = "openId不能为空")

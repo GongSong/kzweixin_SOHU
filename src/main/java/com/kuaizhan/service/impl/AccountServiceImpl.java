@@ -25,13 +25,13 @@ import javax.annotation.Resource;
 public class AccountServiceImpl implements AccountService {
 
     @Resource
-    RedisAccountDao redisAccountDao;
+    private RedisAccountDao redisAccountDao;
     @Resource
-    AccountDao accountDao;
+    private AccountDao accountDao;
     @Resource
-    UnbindDao unbindDao;
+    private UnbindDao unbindDao;
     @Resource
-    WeixinAuthService weixinAuthService;
+    private WeixinAuthService weixinAuthService;
 
     @Override
     public void bindAccount(AccountPO account) throws RedisException, DaoException {
@@ -115,6 +115,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountPO getAccountByAppId(String appId) {
+        AccountPO accountPO = accountDao.getAccountByAppId(appId);
+        if (accountPO == null) {
+            throw new BusinessException(ErrorCodes.APP_ID_NOT_EXIST);
+        }
         return accountDao.getAccountByAppId(appId);
     }
 

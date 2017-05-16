@@ -32,7 +32,7 @@ public class TplMsgController extends BaseController {
 
     @RequestMapping(value = "/sys_tpl_msgs", method = RequestMethod.POST)
     public JsonResponse sendSysTplMsgs(@Valid @RequestBody SendTplMsgParam param) {
-        AccountPO accountPO = accountService.getAccountBySiteId(param.getSiteId());
+        AccountPO accountPO = accountService.getAccountByAppId(param.getAppId());
         tplService.sendSysTplMsg(accountPO.getWeixinAppId(), param.getTemplateId(), param.getOpenId(),
                 param.getUrl(), param.getData());
         return new JsonResponse(null);

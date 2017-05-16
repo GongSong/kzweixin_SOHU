@@ -20,6 +20,7 @@ public class ErrorCodes {
     public static final ErrorCode SITE_ID_NOT_EXIST = new ErrorCode(102002, "站点没有绑定公众号或siteId不存在");
     public static final ErrorCode ACCOUNT_NOT_EXIST = new ErrorCode(102003, "账号不存在");
     public static final ErrorCode ACCOUNT_NOT_VERIFIED_SERVICE_TYPE = new ErrorCode(102004, "账号不是认证的服务号");
+    public static final ErrorCode APP_ID_NOT_EXIST = new ErrorCode(102005, "公众号不存在");
 
     // 图文(07)
     public static final ErrorCode POST_USED_BY_OTHER_ERROR = new ErrorCode(107001, "自定义菜单或自动回复中包含该图文，无法删除");
