@@ -2,6 +2,7 @@ package com.kuaizhan.controller;
 
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.deprecated.business.ParamException;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
@@ -9,6 +10,7 @@ import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.deprecated.system.JsonParseException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.param.common.WeixinAppidParam;
+import com.kuaizhan.param.msg.UpdateQuickRepliesParam;
 import com.kuaizhan.pojo.po.AccountPO;
 
 import com.kuaizhan.pojo.po.FanPO;
@@ -108,37 +110,19 @@ public class MsgController extends BaseController {
 
     }
 
-    /**
-     * 获取单个用户的消息
-     *
-     * @param siteId 站点id
-     * @param openId 用户的openId
-     * @return
-     * @throws IOException
-     */
-    @RequestMapping(value = "/msgs/{openId}", method = RequestMethod.GET)
-    public JsonResponse listMsgsByOpenId(@RequestParam long siteId, @RequestParam int page, @PathVariable String openId) throws DaoException, RedisException, JsonParseException {
-//        Page<MsgPO> msgs = msgService.listMsgsByOpenId(siteId, accountPO.getAppId(), openId, page);
-//        if (msgs.getResult() != null) {
-//            UserMsgListVO userMsgListVO = new UserMsgListVO();
-//
-//            for (MsgPO msgPO : msgs.getResult()) {
-//                UserMsgVO userMsgVO = new UserMsgVO();
-//                userMsgVO.setId(msgPO.getMsgId());
-//                userMsgVO.setSendType(msgPO.getSendType());
-//                userMsgVO.setContent(msgPO.getContent());
-//                userMsgVO.setTime(msgPO.getCreateTime());
-//                userMsgListVO.getMsgs().add(userMsgVO);
-//            }
-//            FanPO fanPO = fanService.getFanByOpenId(accountPO.getAppId(), openId);
-//            if ((System.currentTimeMillis() / 1000 - fanPO.getLastInteractTime()) > 48 * 3600)
-//                userMsgListVO.setIsExpire(1);
-//            else
-//                userMsgListVO.setIsExpire(0);
-//            return new JsonResponse(userMsgListVO);
-//        }
-        return new JsonResponse(null);
+    @RequestMapping(value = "/quick_replies", method = RequestMethod.GET)
+    public JsonResponse getQuickReplies(@RequestParam long weixinAppid) {
+        List<String> quickReplies = msgService.getQuickReplies(weixinAppid);
+        return new JsonResponse(ImmutableMap.of("quickReplies", quickReplies));
     }
+
+    @RequestMapping(value = "/quick_replies", method = RequestMethod.PUT)
+    public JsonResponse updateQuickReplies(@Valid @RequestBody UpdateQuickRepliesParam param) {
+        msgService.updateQuickReplies(param.getWeixinAppid(), param.getQuickReplies());
+        return new JsonResponse(ImmutableMap.of());
+    }
+
+
 
     /**
      * 给用户发送客服消息

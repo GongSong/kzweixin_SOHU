@@ -46,6 +46,16 @@ public interface MsgService {
     Page<MsgPO> listMsgsByOpenId(long weixinAppid, String openId, int pageNum);
 
     /**
+     * 获取用户的快速回复设置
+     */
+    List<String> getQuickReplies(long weixinAppid);
+
+    /**
+     * 更新快速回复设置, 全覆盖更新
+     */
+    void updateQuickReplies(long weixinAppid, List<String> replies);
+
+    /**
      * 插入消息
      *
      * @param siteId

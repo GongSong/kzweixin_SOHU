@@ -136,7 +136,7 @@ public class WxPostManager {
         String jsonStr;
         try {
             jsonStr = JsonUtil.bean2String(jsonObject.toMap());
-        } catch (Bean2StringException e) {
+        } catch (JsonConvertException e) {
             logger.error("[WeiXin:uploadPosts] bean to string failed" + jsonObject, e);
             throw new BusinessException(ErrorCodes.OPERATION_FAILED, "上传图文到微信失败，请稍后再试");
         }
@@ -184,7 +184,7 @@ public class WxPostManager {
         String jsonStr;
         try {
             jsonStr = JsonUtil.bean2String(jsonObject.toMap());
-        } catch (Bean2StringException e) {
+        } catch (JsonConvertException e) {
             logger.error("[WeiXin:updatePost] bean to string failed" + jsonObject, e);
             throw new BusinessException(ErrorCodes.OPERATION_FAILED, "修改微信图文失败，请稍后再试");
         }
@@ -230,7 +230,7 @@ public class WxPostManager {
         }
         try {
             return JsonUtil.string2Bean(result, WxPostListDTO.class);
-        } catch (String2BeanException e) {
+        } catch (JsonConvertException e) {
             String msg = "[WeiXin:getWxPostList] serializing failed , param: " + jsonObject + " result: " +returnJson;
             throw new WxPostListGetException(msg, e);
         }
@@ -257,7 +257,7 @@ public class WxPostManager {
             WxPostDTO wxPostDTO;
             try {
                 wxPostDTO = JsonUtil.string2Bean(jsonObject.toString(), WxPostDTO.class);
-            } catch (String2BeanException e) {
+            } catch (JsonConvertException e) {
                 throw new RuntimeException("序列化wxPostDTO失败", e);
             }
             wxPostDTOS.add(wxPostDTO);

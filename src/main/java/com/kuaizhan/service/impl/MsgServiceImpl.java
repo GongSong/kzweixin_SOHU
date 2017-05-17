@@ -18,6 +18,7 @@ import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.WeixinMsgService;
 import com.kuaizhan.utils.DBTableUtil;
+import com.kuaizhan.utils.JsonUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -168,6 +169,19 @@ public class MsgServiceImpl implements MsgService {
         return page;
     }
 
+    @Override
+    public List<String> getQuickReplies(long weixinAppid) {
+        WeixinMsgConfig config = msgConfigMapper.selectByPrimaryKey(weixinAppid);
+        return JsonUtil.string2List(config.getQuickReplyJson(), String.class);
+    }
+
+    @Override
+    public void updateQuickReplies(long weixinAppid, List<String> replies) {
+        WeixinMsgConfig config = new WeixinMsgConfig();
+        config.setWeixinAppid(weixinAppid);
+        config.setQuickReplyJson(JsonUtil.list2Str(replies));
+        msgConfigMapper.updateByPrimaryKeySelective(config);
+    }
 
     @Override
     public void insertMsg(long siteId, String appId, MsgPO msgPO) throws DaoException, RedisException {
