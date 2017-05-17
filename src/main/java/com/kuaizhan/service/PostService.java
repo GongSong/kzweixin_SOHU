@@ -24,7 +24,7 @@ public interface PostService {
 
     /**
      * 获取图文消息列表
-     * @param pageNum  页码
+     * @param pageNum 页码
      */
     Page<PostPO> listPostsByPagination(long weixinAppid, String title, Integer pageNum, Boolean flat);
 

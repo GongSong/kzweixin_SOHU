@@ -30,18 +30,9 @@ public interface MsgService {
     void markMsgRead(long weixinAppid);
 
     /**
-     * 分页查询
+     * 分页查询公众号消息列表
      */
     Page<MsgPO> listMsgsByPagination(long weixinAppid, String queryStr, boolean filterKeywords, int pageNum);
-
-
-    /**
-     * 获取新消息列表
-     *
-     * @param appId 公众号appId
-     * @return
-     */
-    List<MsgPO> listNewMsgs(String appId) throws DaoException;
 
 
     /**
@@ -49,17 +40,8 @@ public interface MsgService {
      *
      * @param appId  公众号appId
      * @param openId 用户openId
-     * @return
      */
     Page<MsgPO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException;
-
-    /**
-     * 批量更新消息状态
-     *
-     * @param appId 公众号appid
-     * @param msgs  消息列表
-     */
-    void updateMsgsStatus(long siteId, String appId, List<MsgPO> msgs) throws DaoException, RedisException;
 
     /**
      * 插入消息

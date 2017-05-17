@@ -84,39 +84,6 @@ public class MsgController extends BaseController {
 
     }
 
-
-    /**
-     * 获取新发消息数量
-     *
-     * @param siteId 站点id
-     * @return
-     */
-    @RequestMapping(value = "/msgs/new/count", method = RequestMethod.GET)
-    public JsonResponse getNewMsgsNum(@RequestParam long siteId) throws DaoException, RedisException, JsonParseException {
-        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-//        long num = msgService.countMsg(accountPO.getAppId(), 1, 0, null, 0);
-        Map<String, Object> data = new HashMap<>();
-        data.put("num", 0);
-        return new JsonResponse(data);
-    }
-
-    /**
-     * 点击查看新消息
-     *
-     * @param siteId 站点id
-     * @return
-     */
-    @RequestMapping(value = "/msgs/new", method = RequestMethod.GET)
-    public JsonResponse listNewMsgs(@RequestParam long siteId) throws IOException, DaoException, RedisException, JsonParseException {
-        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-        List<MsgPO> msgs = msgService.listNewMsgs(accountPO.getAppId());
-        if (msgs.size() > 0) {
-            msgService.updateMsgsStatus(siteId, accountPO.getAppId(), msgs);
-        }
-//        Page<MsgPO> pagingResult = msgService.listMsgsByPagination(siteId, accountPO.getAppId(), 1, null, 0);
-        return new JsonResponse(null);
-    }
-
     /**
      * 获取单个用户的消息
      *
@@ -179,16 +146,4 @@ public class MsgController extends BaseController {
         msgService.insertCustomMsg(accountPO, openId, msgType, afterValidation);
         return new JsonResponse(null);
     }
-
-
-    private MsgListVO handleData(Page<MsgPO> pagingResult) {
-        if (pagingResult.getResult() != null) {
-            MsgListVO msgListVO = new MsgListVO();
-            msgListVO.setTotalNum(pagingResult.getTotalCount());
-            msgListVO.setTotalPage(pagingResult.getTotalPages());
-            msgListVO.setCurrentPage(pagingResult.getPageNo());
-        }
-        return null;
-    }
-
 }

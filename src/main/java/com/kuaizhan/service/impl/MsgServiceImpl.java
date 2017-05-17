@@ -6,7 +6,6 @@ import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.dao.mapper.MsgDao;
 import com.kuaizhan.dao.mapper.auto.WeixinMsgConfigMapper;
-import com.kuaizhan.dao.redis.RedisMsgDao;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
@@ -18,7 +17,6 @@ import com.kuaizhan.pojo.po.auto.WeixinMsgConfig;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.WeixinMsgService;
-import com.kuaizhan.utils.Crc32Util;
 import com.kuaizhan.utils.DBTableUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -39,8 +37,6 @@ public class MsgServiceImpl implements MsgService {
     private WeixinMsgConfigMapper msgConfigMapper;
     @Resource
     private AccountService accountService;
-    @Resource
-    private RedisMsgDao redisMsgDao;
     @Resource
     private FanDao fanDao;
     @Resource
@@ -131,53 +127,8 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public List<MsgPO> listNewMsgs(String appId) throws DaoException {
-
-        List<String> msgTableNames = DBTableUtil.getMsgTableNames();
-        List<MsgPO> msgs;
-        try {
-            msgs = msgDao.listNewMsgs(appId, msgTableNames);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-
-        List<String> openIds = new ArrayList<>();
-        for (MsgPO msg : msgs) {
-            openIds.add(msg.getOpenId());
-        }
-        List<String> fansTableNames = DBTableUtil.getFanTableNames();
-
-//        if (openIds.size() > 0) {
-//            try {
-//                List<FanPO> fanPOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
-//                for (MsgPO msgPO : msgs) {
-//                    for (FanPO fanPO : fanPOList) {
-//                        if (msgPO.getOpenId().equals(fanPO.getOpenId())) {
-//                            msgPO.setNickName(fanPO.getNickName());
-//                            msgPO.setHeadImgUrl(fanPO.getHeadImgUrl());
-//                        }
-//                    }
-//                }
-//            } catch (Exception e) {
-//                throw new DaoException(e);
-//            }
-//        }
-
-        return msgs;
-    }
-
-    @Override
     public Page<MsgPO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException {
         Page<MsgPO> pageEntity = new Page<>(page, AppConstant.PAGE_SIZE_MIDDLE);
-        try {
-            List<MsgPO> msgPOList = redisMsgDao.listMsgsByOpenId(siteId, openId, page);
-            if (msgPOList != null) {
-                pageEntity.setResult(msgPOList);
-                return pageEntity;
-            }
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
 
         List<String> msgTableNames = DBTableUtil.getMsgTableNames();
 
@@ -194,38 +145,16 @@ public class MsgServiceImpl implements MsgService {
         try {
             if (msgs.size() > 20) {
                 //缓存2个小时
-                redisMsgDao.setMsgsByOpenId(siteId, openId, page, msgs.subList(0, 20));
                 pageEntity.setResult(msgs.subList(0, 20));
                 return pageEntity;
             } else {
                 //缓存2个小时
-                redisMsgDao.setMsgsByOpenId(siteId, openId, page, msgs);
                 pageEntity.setResult(msgs);
                 return pageEntity;
             }
         } catch (Exception e) {
             throw new RedisException(e);
         }
-    }
-
-    @Override
-    public void updateMsgsStatus(long siteId, String appId, List<MsgPO> msgs) throws DaoException, RedisException {
-//        for (MsgDO msg : msgs) {
-//            msg.setStatus(2);
-//        }
-        List<String> msgTableNames = DBTableUtil.getMsgTableNames();
-        try {
-            msgDao.updateMsgBatch(msgTableNames, msgs);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-        try {
-            //删除redis
-            redisMsgDao.deleteMsgsByPagination(siteId);
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
-
     }
 
     @Override
@@ -236,14 +165,6 @@ public class MsgServiceImpl implements MsgService {
         } catch (Exception e) {
             throw new DaoException(e);
         }
-        //删除缓存
-        try {
-            redisMsgDao.deleteMsgsByPagination(siteId);
-            redisMsgDao.deleteMsgsByOpenId(siteId, msgPO.getOpenId());
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
-
     }
 
     @Override
@@ -261,13 +182,6 @@ public class MsgServiceImpl implements MsgService {
         } catch (Exception e) {
             throw new DaoException(e);
         }
-        try {
-            //清除redis
-            redisMsgDao.deleteMsgsByOpenId(accountPO.getSiteId(), openId);
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
-
     }
 
 }
