@@ -66,13 +66,9 @@ public interface FanDao {
     List<FanPO> listFansByParam(@Param("param") Map param, @Param("tables") List<String> tables);
 
     /**
-     * 获取粉丝
-     * @param openId
-     * @param appId
-     * @param tables
-     * @return
+     * 获取单个粉丝信息
      */
-    FanPO getFanByOpenId(@Param("openId") String openId, @Param("appId") String appId, @Param("tables") List<String> tables);
+    FanPO getFanByOpenId(@Param("openId") String openId, @Param("appId") String appId, @Param("tableName") String tableName);
 
     /**
      * 获取被删除的粉丝

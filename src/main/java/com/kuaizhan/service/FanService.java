@@ -23,11 +23,14 @@ public interface FanService {
      * @param isBlack 0白1黑
      * @param tagIds  标签ids
      * @param keyword 搜索关键词
-     * @return
      */
     long countFan(String appId, int isBlack, List<Integer> tagIds, String keyword) throws DaoException;
 
-    FanPO getFanByOpenId(String appId, String openId) throws DaoException;
+
+    /**
+     * 根据openId获取粉丝信息
+     */
+    FanPO getFanByOpenId(long weixinAppid, String openId);
 
     /**
      * 分页查询粉丝列表

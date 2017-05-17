@@ -66,6 +66,30 @@ public class MsgController extends BaseController {
     }
 
     /**
+     * 获取和用户的聊天列表
+     */
+    @RequestMapping(value = "/chat_list", method = RequestMethod.GET)
+    public JsonResponse getChatList(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam String openId) {
+        Page<MsgPO> msgPOPage = msgService.listMsgsByOpenId(weixinAppid, openId, page);
+        List<MsgPO> msgPOS = msgPOPage.getResult();
+
+        MsgListVO msgListVO = new MsgListVO();
+        msgListVO.setTotalNum(msgPOPage.getTotalCount());
+        msgListVO.setTotalPage(msgPOPage.getTotalPages());
+        msgListVO.setCurrentPage(msgPOPage.getPageNo());
+
+        for(MsgPO msgPO: msgPOS) {
+            msgListVO.getMsgs().add(PojoSwitcher.msgPOToVO(msgPO));
+        }
+
+        // 获取粉丝的最后交互时间
+        FanPO fanPO = fanService.getFanByOpenId(weixinAppid, openId);
+        msgListVO.setLastInteractTime(fanPO.getLastInteractTime());
+
+        return new JsonResponse(msgListVO);
+    }
+
+    /**
      * 获取未读消息数
      */
     @RequestMapping(value = "/unread_msg_count", method = RequestMethod.GET)
@@ -94,26 +118,25 @@ public class MsgController extends BaseController {
      */
     @RequestMapping(value = "/msgs/{openId}", method = RequestMethod.GET)
     public JsonResponse listMsgsByOpenId(@RequestParam long siteId, @RequestParam int page, @PathVariable String openId) throws DaoException, RedisException, JsonParseException {
-        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-        Page<MsgPO> msgs = msgService.listMsgsByOpenId(siteId, accountPO.getAppId(), openId, page);
-        if (msgs.getResult() != null) {
-            UserMsgListVO userMsgListVO = new UserMsgListVO();
-
-            for (MsgPO msgPO : msgs.getResult()) {
-                UserMsgVO userMsgVO = new UserMsgVO();
-                userMsgVO.setId(msgPO.getMsgId());
-                userMsgVO.setSendType(msgPO.getSendType());
-                userMsgVO.setContent(msgPO.getContent());
-                userMsgVO.setTime(msgPO.getCreateTime());
-                userMsgListVO.getMsgs().add(userMsgVO);
-            }
-            FanPO fanPO = fanService.getFanByOpenId(accountPO.getAppId(), openId);
-            if ((System.currentTimeMillis() / 1000 - fanPO.getLastInteractTime()) > 48 * 3600)
-                userMsgListVO.setIsExpire(1);
-            else
-                userMsgListVO.setIsExpire(0);
-            return new JsonResponse(userMsgListVO);
-        }
+//        Page<MsgPO> msgs = msgService.listMsgsByOpenId(siteId, accountPO.getAppId(), openId, page);
+//        if (msgs.getResult() != null) {
+//            UserMsgListVO userMsgListVO = new UserMsgListVO();
+//
+//            for (MsgPO msgPO : msgs.getResult()) {
+//                UserMsgVO userMsgVO = new UserMsgVO();
+//                userMsgVO.setId(msgPO.getMsgId());
+//                userMsgVO.setSendType(msgPO.getSendType());
+//                userMsgVO.setContent(msgPO.getContent());
+//                userMsgVO.setTime(msgPO.getCreateTime());
+//                userMsgListVO.getMsgs().add(userMsgVO);
+//            }
+//            FanPO fanPO = fanService.getFanByOpenId(accountPO.getAppId(), openId);
+//            if ((System.currentTimeMillis() / 1000 - fanPO.getLastInteractTime()) > 48 * 3600)
+//                userMsgListVO.setIsExpire(1);
+//            else
+//                userMsgListVO.setIsExpire(0);
+//            return new JsonResponse(userMsgListVO);
+//        }
         return new JsonResponse(null);
     }
 

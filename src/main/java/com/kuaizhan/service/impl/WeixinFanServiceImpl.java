@@ -209,8 +209,9 @@ public class WeixinFanServiceImpl implements WeixinFanService {
         Element root = document.getRootElement();
         Element openId = root.element("FromUserName");
         List<String> tables = DBTableUtil.getFanTableNames();
+        String tableName = DBTableUtil.getFanTableName(accountPO.getAppId());
         try {
-            FanPO fanPO = fanDao.getFanByOpenId(openId.getText(), accountPO.getAppId(), tables);
+            FanPO fanPO = fanDao.getFanByOpenId(openId.getText(), accountPO.getAppId(), tableName);
             if (fanPO != null) {
                 fanPO.setStatus(2);
                 fanDao.updateFan(fanPO, tables);

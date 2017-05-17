@@ -8,6 +8,13 @@
         FROM ${tableName}
         WHERE
         app_id = #{appId}
+        AND `status` in (1, 2, 3)
+        <if test="openId != null">
+            AND `open_id` = #{openId}
+        </if>
+        <if test="sendType != null">
+            AND `send_type` = #{sendType}
+        </if>
         <if test="queryStr != null">
             AND `content` LIKE concat('%', #{queryStr}, '%')
             AND `type` IN (1, 12)
@@ -15,7 +22,6 @@
         <if test="filterKeywords">
             AND `type` != 12
         </if>
-        AND `status` in (1, 2, 3) AND `send_type` = 1
         <if test="startTime != null">
             AND `create_time` &gt; #{startTime}
         </if>
@@ -23,12 +29,20 @@
             AND `create_time` &lt; #{endTime}
         </if>
     </select>
+
     <!--分页查询消息列表-->
     <select id="listMsgsByPagination" resultType="com.kuaizhan.pojo.po.MsgPO">
         SELECT *
         FROM ${tableName}
         WHERE
         app_id = #{appId}
+        AND `status` in (1, 2, 3)
+        <if test="openId != null">
+            AND `open_id` = #{openId}
+        </if>
+        <if test="sendType != null">
+            AND `send_type` = #{sendType}
+        </if>
         <if test="queryStr != null">
             AND `content` LIKE concat('%', #{queryStr}, '%')
             AND `type` IN (1, 12)
@@ -36,50 +50,12 @@
         <if test="filterKeywords">
             AND `type` != 12
         </if>
-        AND `status` in (1, 2, 3) AND `send_type` = 1
-        AND `create_time` &lt; #{endTime}
+        <if test="endTime != null">
+            AND `create_time` &lt; #{endTime}
+        </if>
         order by create_time desc
         limit #{offset} , #{limit}
     </select>
-    <!--获取新消息列表-->
-    <select id="listNewMsgs" resultType="com.kuaizhan.pojo.po.MsgPO">
-        <foreach collection="tables" item="tableName" index="index" separator="union all">
-            (select *
-            from ${tableName}
-            where app_id=#{appId}
-            and status=1)
-        </foreach>
-        order by create_time desc
-    </select>
-    <!--根据openid获取消息-->
-    <select id="listMsgsByOpenId" resultType="com.kuaizhan.pojo.po.MsgPO">
-        <foreach collection="tables" item="tableName" index="index" separator="union all">
-            (select *
-            from ${tableName}
-            where app_id=#{pageEntity.params.appId}
-            and open_id=#{pageEntity.params.openId})
-        </foreach>
-        order by create_time desc
-        limit #{pageEntity.offset},#{pageEntity.limit}
-    </select>
-    <!--批量更新-->
-    <update id="updateMsgBatch">
-        <foreach collection="tables" item="tableName" index="index" separator=";">
-            <foreach collection="msgs" item="msg" index="index" separator=";">
-                update ${tableName}
-                set
-                <if test="msg.type!= null">
-                    type=#{msg.type},
-                </if>
-                <if test="msg.status!= null">
-                    status=#{msg.status},
-                </if>
-                update_time=unix_timestamp(now())
-                where
-                msg_id = #{msg.msgId}
-            </foreach>
-        </foreach>
-    </update>
 
     <!--添加一条消息-->
     <insert id="insertMsg">

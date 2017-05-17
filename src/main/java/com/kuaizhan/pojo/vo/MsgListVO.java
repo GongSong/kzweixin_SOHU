@@ -14,4 +14,5 @@ public class MsgListVO {
     private Integer currentPage;
     private Integer totalPage;
     private List<MsgVO> msgs = new ArrayList<>();
+    private Long lastInteractTime;
 }

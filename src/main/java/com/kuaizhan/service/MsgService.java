@@ -31,17 +31,19 @@ public interface MsgService {
 
     /**
      * 分页查询公众号消息列表
+     * @param queryStr 内容筛选条件
+     * @param filterKeywords 是否过滤关键词回复
+     * @param pageNum 页码
+     * @return
      */
     Page<MsgPO> listMsgsByPagination(long weixinAppid, String queryStr, boolean filterKeywords, int pageNum);
 
-
     /**
-     * 获取单个用户的消息列表
+     * 获取和单个用户的聊天列表
      *
-     * @param appId  公众号appId
      * @param openId 用户openId
      */
-    Page<MsgPO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException;
+    Page<MsgPO> listMsgsByOpenId(long weixinAppid, String openId, int pageNum);
 
     /**
      * 插入消息

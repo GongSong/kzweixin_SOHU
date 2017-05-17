@@ -66,7 +66,7 @@ public class MsgServiceImpl implements MsgService {
         long lastReadTime = getLastReadTime(weixinAppid);
 
         String msgTableName = DBTableUtil.getMsgTableName(appId);
-        return msgDao.countMsgs(appId, msgTableName, null, false, lastReadTime, null);
+        return msgDao.countMsgs(appId, msgTableName, null, 1,null, false, lastReadTime, null);
     }
 
     @Override
@@ -77,23 +77,12 @@ public class MsgServiceImpl implements MsgService {
         msgConfigMapper.updateByPrimaryKeySelective(config);
     }
 
-    @Override
-    public Page<MsgPO> listMsgsByPagination(long weixinAppid, String queryStr, boolean filterKeywords, int pageNum) {
+    /**
+     * 封装消息列表的用户信息
+     */
+    private void setMsgUserInfo(String appId, List<MsgPO> msgPOS, AccountPO accountPO) {
 
-        Page<MsgPO> page = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
-        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
-
-        long lastReadTime = getLastReadTime(weixinAppid);
-        String appId = accountPO.getAppId();
-        String msgTableName = DBTableUtil.getMsgTableName(appId);
         String fanTableName = DBTableUtil.getFanTableName(appId);
-
-        // 查询消息列表
-        List<MsgPO> msgPOS = msgDao.listMsgsByPagination(appId, msgTableName, queryStr, filterKeywords,
-                lastReadTime, page.getOffset(), page.getLimit());
-        // 查询消息总数
-        long count = msgDao.countMsgs(appId, msgTableName, queryStr, filterKeywords, null, lastReadTime);
-        page.setTotalCount(count);
 
         Map<String, FanPO> openIdMap = new HashMap<>();
         List<String> openIds = new ArrayList<>();
@@ -109,53 +98,76 @@ public class MsgServiceImpl implements MsgService {
             }
         }
 
-        // 封装粉丝信息
+        // 封装消息的头像和昵称信息
         for (MsgPO msgPO: msgPOS) {
             FanPO fanPO = openIdMap.getOrDefault(msgPO.getOpenId(), null);
-            if (fanPO != null) {
+            // 公众号发送
+            if (msgPO.getSendType() == 2) {
+                msgPO.setNickName(accountPO.getNickName());
+                msgPO.setHeadImgUrl(accountPO.getHeadImg());
+
+            } else if (fanPO != null) {
                 msgPO.setNickName(fanPO.getNickName());
                 msgPO.setHeadImgUrl(fanPO.getHeadImgUrl());
+
             } else {
                 String openId = msgPO.getOpenId();
                 msgPO.setNickName("粉丝" + openId.substring(openId.length() - 4, openId.length()));
                 msgPO.setHeadImgUrl(KzApiConfig.getResUrl("/res/weixin/images/kuaizhan-logo.png"));
             }
         }
+    }
+
+    @Override
+    public Page<MsgPO> listMsgsByPagination(long weixinAppid, String queryStr, boolean filterKeywords, int pageNum) {
+
+        Page<MsgPO> page = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+
+        long lastReadTime = getLastReadTime(weixinAppid);
+        String appId = accountPO.getAppId();
+        String msgTableName = DBTableUtil.getMsgTableName(appId);
+
+        // 查询消息列表
+        List<MsgPO> msgPOS = msgDao.listMsgsByPagination(appId, msgTableName, null, 1,
+                queryStr, filterKeywords,
+                lastReadTime, page.getOffset(), page.getLimit());
+        // 查询消息总数
+        long count = msgDao.countMsgs(appId, msgTableName, null, 1,
+                queryStr, filterKeywords, null, lastReadTime);
+        page.setTotalCount(count);
+
+        // 封装粉丝信息
+        setMsgUserInfo(appId, msgPOS, accountPO);
 
         page.setResult(msgPOS);
         return page;
     }
 
     @Override
-    public Page<MsgPO> listMsgsByOpenId(long siteId, String appId, String openId, int page) throws RedisException, DaoException {
-        Page<MsgPO> pageEntity = new Page<>(page, AppConstant.PAGE_SIZE_MIDDLE);
+    public Page<MsgPO> listMsgsByOpenId(long weixinAppid, String openId, int pageNum) {
+        Page<MsgPO> page = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
 
-        List<String> msgTableNames = DBTableUtil.getMsgTableNames();
+        String appId = accountPO.getAppId();
+        String msgTableName = DBTableUtil.getMsgTableName(appId);
 
-        Map<String, Object> param = new HashMap<>();
-        param.put("appId", appId);
-        param.put("openId", openId);
-        pageEntity.setParams(param);
-        List<MsgPO> msgs;
-        try {
-            msgs = msgDao.listMsgsByOpenId(pageEntity, msgTableNames);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-        try {
-            if (msgs.size() > 20) {
-                //缓存2个小时
-                pageEntity.setResult(msgs.subList(0, 20));
-                return pageEntity;
-            } else {
-                //缓存2个小时
-                pageEntity.setResult(msgs);
-                return pageEntity;
-            }
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
+        // 查询消息列表
+        List<MsgPO> msgPOS = msgDao.listMsgsByPagination(appId, msgTableName, openId,
+                null, null, null, null,
+                page.getOffset(), page.getLimit());
+        // 查询消息总数
+        long count = msgDao.countMsgs(appId, msgTableName, openId, 1,
+                null, null, null, null);
+        page.setTotalCount(count);
+
+        // 封装粉丝信息
+        setMsgUserInfo(appId, msgPOS, accountPO);
+
+        page.setResult(msgPOS);
+        return page;
     }
+
 
     @Override
     public void insertMsg(long siteId, String appId, MsgPO msgPO) throws DaoException, RedisException {

@@ -11,6 +11,7 @@ import java.util.Map;
 @Data
 public class MsgVO {
     private int msgType;
+    private int sendType;
     private String nickname;
     private String headImgUrl;
     private String openId;

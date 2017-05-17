@@ -78,6 +78,7 @@ public class PojoSwitcher {
         }
         MsgVO msgVO = new MsgVO();
         msgVO.setMsgType(msgPO.getType());
+        msgVO.setSendType(msgPO.getSendType());
         msgVO.setOpenId(msgPO.getOpenId());
         msgVO.setHeadImgUrl(msgPO.getHeadImgUrl());
         msgVO.setNickname(msgPO.getNickName());

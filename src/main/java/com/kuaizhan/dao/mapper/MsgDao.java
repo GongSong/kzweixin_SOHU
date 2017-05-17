@@ -3,6 +3,7 @@ package com.kuaizhan.dao.mapper;
 import com.kuaizhan.pojo.po.MsgPO;
 import com.kuaizhan.pojo.dto.Page;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,36 +20,37 @@ public interface MsgDao {
      * 查询消息数目
      *
      * @param tableName 分表的表名
+     * @param openId 如果指定openId，则只筛选相关openId
+     * @param sendType 如果指定sendType, 则只筛选相关sendType
      * @param queryStr 内容查询条件，有此参数，则限定了文字消息
      * @param filterKeywords 是否过滤关键词消息
      * @param endTime createTime的最大时间
      */
-    long countMsgs(@Param("appId") String appId, @Param("tableName") String tableName,
+    long countMsgs(@Param("appId") String appId,
+                   @Param("tableName") String tableName,
+                   @Param("openId") String openId,
+                   @Param("sendType") Integer sendType,
                    @Param("queryStr") String queryStr,
-                   @Param("filterKeywords") boolean filterKeywords,
+                   @Param("filterKeywords") Boolean filterKeywords,
                    @Param("startTime") Long startTime,
                    @Param("endTime") Long endTime);
 
     /**
      * 分页查询消息列表
      * @param tableName 分表的表名
+     * @param openId 如果指定openId，则只筛选相关openId
+     * @param sendType 如果指定sendType, 则只筛选相关sendType
      * @param queryStr 内容查询条件，有此参数，则限定了文字消息
      * @param filterKeywords 是否过滤关键词消息
      * @param endTime createTime的最大时间
      */
-    List<MsgPO> listMsgsByPagination(@Param("appId") String appId, @Param("tableName") String tableName,
+    List<MsgPO> listMsgsByPagination(@Param("appId") String appId,
+                                     @Param("tableName") String tableName,
+                                     @Param("openId") String openId,
+                                     @Param("sendType") Integer sendType,
                                      @Param("queryStr") String queryStr,
-                                     @Param("filterKeywords") boolean filterKeywords, @Param("endTime") long endTime,
-                                     @Param("offset") int offset, @Param("limit") int limit);
-
-    /**
-     * 获取新的消息
-     *
-     * @param appId  公众号appId
-     * @param tables 表列表
-     * @return
-     */
-    List<MsgPO> listNewMsgs(@Param("appId") String appId, @Param("tables") List<String> tables);
+                                     @Param("filterKeywords") Boolean filterKeywords, @Param("endTime") Long endTime,
+                                     @Param("offset") Integer offset, @Param("limit") Integer limit);
 
     /**
      * 获取用户已发消息列表
@@ -57,15 +59,6 @@ public interface MsgDao {
      * @return
      */
     List<MsgPO> listMsgsByOpenId(@Param("pageEntity") Page pageEntity, @Param("tables") List<String> tables);
-
-    /**
-     * 对消息进行批量更新
-     *
-     * @param tables 表列表
-     * @param msgs   消息列表
-     * @return
-     */
-    int updateMsgBatch(@Param("tables") List<String> tables, @Param("msgs") List<MsgPO> msgs);
 
     /**
      * 添加一条消息

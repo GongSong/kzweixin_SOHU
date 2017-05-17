@@ -7,9 +7,11 @@ import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.deprecated.system.ServerException;
+import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.FanPO;
 import com.kuaizhan.pojo.dto.Page;
 import com.kuaizhan.pojo.dto.TagDTO;
+import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.WeixinFanService;
 import com.kuaizhan.utils.DBTableUtil;
@@ -29,11 +31,13 @@ import java.util.Map;
 public class FanServiceImpl implements FanService {
 
     @Resource
-    FanDao fanDao;
+    private FanDao fanDao;
     @Resource
-    RedisFanDao redisFanDao;
+    private RedisFanDao redisFanDao;
     @Resource
-    WeixinFanService weixinFanService;
+    private WeixinFanService weixinFanService;
+    @Resource
+    private AccountService accountService;
 
     @Override
     public long countFan(String appId, int isBlack, List<Integer> tagIds, String keyword) throws DaoException {
@@ -51,13 +55,11 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public FanPO getFanByOpenId(String appId, String openId) throws DaoException {
-        try {
-            return fanDao.getFanByOpenId(openId, appId, DBTableUtil.getFanTableNames());
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-
+    public FanPO getFanByOpenId(long weixinAppid, String openId) {
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        String appId = accountPO.getAppId();
+        String tableName = DBTableUtil.getFanTableName(appId);
+        return fanDao.getFanByOpenId(openId, appId, tableName);
     }
 
     @Override
