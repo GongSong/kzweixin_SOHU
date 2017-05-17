@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+        <classPathEntry location="/Users/zixiong/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar" />
+        <context id="mysql" targetRuntime="MyBatis3">
+            <!--定义这些配置还得注意顺序-->
+
+            <commentGenerator>
+                    <property name="suppressDate" value="false" />
+                    <property name="suppressAllComments" value="false" />
+            </commentGenerator>
+
+            <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                            connectionURL="jdbc:mysql://10.11.172.135:3306/kuaizhan_weixin_1"
+                            userId="kuaizhandev" password="kkkzzz" />
+
+            <javaTypeResolver>
+                <property name="forceBigDecimals" value="false" />
+            </javaTypeResolver>
+
+            <!-- 生成PO对象 -->
+            <javaModelGenerator targetPackage="com.kuaizhan.pojo.po.auto" targetProject="src/main/java">
+                    <property name="enableSubPackages" value="false" />
+            </javaModelGenerator>
+
+            <!-- 生成mapper xml -->
+            <sqlMapGenerator targetPackage="mapper.auto" targetProject="src/main/resources">
+                    <property name="enableSubPackages" value="true" />
+            </sqlMapGenerator>
+
+            <!-- 生成DAO的类文件 -->
+            <javaClientGenerator type="XMLMAPPER" targetPackage="com.kuaizhan.dao.mapper.auto"
+                                 targetProject="src/main/java">
+                    <property name="enableSubPackages" value="true" />
+            </javaClientGenerator>
+
+            <table tableName="weixin_msg_config">
+                <!--status没被使用-->
+                <ignoreColumn column="status" />
+            </table>
+        </context>
+</generatorConfiguration>

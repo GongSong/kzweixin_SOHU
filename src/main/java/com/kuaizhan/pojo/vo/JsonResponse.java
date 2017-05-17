@@ -1,6 +1,6 @@
 package com.kuaizhan.pojo.vo;
 
-import com.kuaizhan.config.ErrorCodeConfig;
+import com.kuaizhan.constant.ErrorCodes;
 import lombok.Data;
 
 
@@ -16,8 +16,8 @@ public class JsonResponse {
     private Object data;
 
     public JsonResponse(Object data) {
-        this.code = ErrorCodeConfig.SUCCESS.getCode();
-        this.msg = ErrorCodeConfig.SUCCESS.getMsg();
+        this.code = ErrorCodes.SUCCESS.getCode();
+        this.msg = ErrorCodes.SUCCESS.getMessage();
         this.data=data;
     }
 

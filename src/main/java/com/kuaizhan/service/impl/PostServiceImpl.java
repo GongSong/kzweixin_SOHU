@@ -78,18 +78,18 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public Page<PostPO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat) {
+    public Page<PostPO> listPostsByPagination(long weixinAppid, String title, Integer pageNum, Boolean flat) {
 
-        Page<PostPO> postDOPage = new Page<>(page, AppConstant.PAGE_SIZE_MIDDLE);
+        Page<PostPO> page = new Page<>(pageNum, AppConstant.PAGE_SIZE_MIDDLE);
 
         List<PostPO> posts;
-        posts = postDao.listPostsByPagination(weixinAppid, title, postDOPage, flat);
+        posts = postDao.listPostsByPagination(weixinAppid, title, page, flat);
 
         long totalCount = postDao.count(weixinAppid, title, flat);
-        postDOPage.setTotalCount(totalCount);
-        postDOPage.setResult(posts);
+        page.setTotalCount(totalCount);
+        page.setResult(posts);
 
-        return postDOPage;
+        return page;
     }
 
     @Override

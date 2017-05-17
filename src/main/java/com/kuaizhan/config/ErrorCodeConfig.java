@@ -14,7 +14,6 @@ public enum ErrorCodeConfig {
     //成功统一定义为200，系统(00)公共(01)账号(02)消息(03)粉丝(04)菜单(05)自动回复(06)图文(07)
 
     //系统级(00)
-    SUCCESS(200, "ok"),
     SERVER_ERROR(100000, "服务器未知错误"),
     JSON_PARSE_ERROR(100003, "JSON解析错误"),
     ENCRYPT_ERROR(100005, "加密错误"),

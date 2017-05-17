@@ -10,6 +10,16 @@ import java.util.List;
  */
 public class DBTableUtil {
 
+    public static String getMsgTableName(String appId) {
+        int tableNum = (int) (Crc32Util.getValue(appId) % ApplicationConfig.MSG_TABLE_NUM);
+        return "weixin_msg_" + tableNum;
+    }
+
+    public static String getFanTableName(String appId) {
+        int tableNum = (int) (Crc32Util.getValue(appId) % ApplicationConfig.FAN_TABLE_NUM);
+        return "weixin_fans_" + tableNum;
+    }
+
     public static List<String> getMsgTableNames() {
         List<String> tables = new ArrayList<>();
         for (int i = 0; i < ApplicationConfig.MSG_TABLE_NUM; i++) {

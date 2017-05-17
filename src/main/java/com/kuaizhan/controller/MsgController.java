@@ -1,12 +1,14 @@
 package com.kuaizhan.controller;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.deprecated.business.ParamException;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.deprecated.system.JsonParseException;
 import com.kuaizhan.exception.common.RedisException;
+import com.kuaizhan.param.common.WeixinAppidParam;
 import com.kuaizhan.pojo.po.AccountPO;
 
 import com.kuaizhan.pojo.po.FanPO;
@@ -17,10 +19,12 @@ import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.MsgService;
 
+import com.kuaizhan.utils.PojoSwitcher;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 import java.io.IOException;
 import java.util.*;
@@ -30,29 +34,56 @@ import java.util.*;
  * Created by Mr.Jadyn on 2016/12/29.
  */
 @RestController
-@RequestMapping(value = AppConstant.VERSION, produces = "application/json")
+@RequestMapping(value = AppConstant.VERSION + "/msg", produces = "application/json")
 public class MsgController extends BaseController {
 
     @Resource
-    MsgService msgService;
+    private MsgService msgService;
     @Resource
-    AccountService accountService;
+    private AccountService accountService;
     @Resource
-    FanService fanService;
+    private FanService fanService;
 
     /**
      * 获取消息列表
-     *
-     * @param siteId 站点id
-     * @return
-     * @throws IOException
      */
     @RequestMapping(value = "/msgs", method = RequestMethod.GET)
-    public JsonResponse listMsgs(@RequestParam long siteId, @RequestParam int page, @RequestParam int isHide, @RequestParam(required = false) String keyword) throws RedisException, DaoException, JsonParseException {
-        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-        Page<MsgPO> pagingResult = msgService.listMsgsByPagination(siteId, accountPO.getAppId(), page, keyword, isHide);
-        return new JsonResponse(handleData(pagingResult));
+    public JsonResponse getMsgs(@RequestParam long weixinAppid, @RequestParam int page,
+                                 @RequestParam(required = false) String queryStr,
+                                 @RequestParam(required = false, defaultValue = "0") boolean filterKeywords) {
+        Page<MsgPO> msgPOPage = msgService.listMsgsByPagination(weixinAppid, queryStr, filterKeywords, page);
+        List<MsgPO> msgPOS = msgPOPage.getResult();
+
+        MsgListVO msgListVO = new MsgListVO();
+        msgListVO.setTotalNum(msgPOPage.getTotalCount());
+        msgListVO.setTotalPage(msgPOPage.getTotalPages());
+        msgListVO.setCurrentPage(msgPOPage.getPageNo());
+
+        for(MsgPO msgPO: msgPOS) {
+            msgListVO.getMsgs().add(PojoSwitcher.msgPOToVO(msgPO));
+        }
+        return new JsonResponse(msgListVO);
     }
+
+    /**
+     * 获取未读消息数
+     */
+    @RequestMapping(value = "/unread_msg_count", method = RequestMethod.GET)
+    public JsonResponse getUnreadCount(@RequestParam long weixinAppid) {
+        long count = msgService.getUnreadMsgCount(weixinAppid);
+        return new JsonResponse(ImmutableMap.of("count", count));
+    }
+
+    /**
+     * 标记消息已读(更新last_read_time)
+     */
+    @RequestMapping(value = "/msg_reads", method = RequestMethod.POST)
+    public JsonResponse markMsgsRead(@Valid @RequestBody WeixinAppidParam param) {
+        msgService.markMsgRead(param.getWeixinAppid());
+        return new JsonResponse(ImmutableMap.of());
+
+    }
+
 
     /**
      * 获取新发消息数量
@@ -63,9 +94,9 @@ public class MsgController extends BaseController {
     @RequestMapping(value = "/msgs/new/count", method = RequestMethod.GET)
     public JsonResponse getNewMsgsNum(@RequestParam long siteId) throws DaoException, RedisException, JsonParseException {
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-        long num = msgService.countMsg(accountPO.getAppId(), 1, 0, null, 0);
+//        long num = msgService.countMsg(accountPO.getAppId(), 1, 0, null, 0);
         Map<String, Object> data = new HashMap<>();
-        data.put("num", num);
+        data.put("num", 0);
         return new JsonResponse(data);
     }
 
@@ -82,8 +113,8 @@ public class MsgController extends BaseController {
         if (msgs.size() > 0) {
             msgService.updateMsgsStatus(siteId, accountPO.getAppId(), msgs);
         }
-        Page<MsgPO> pagingResult = msgService.listMsgsByPagination(siteId, accountPO.getAppId(), 1, null, 0);
-        return new JsonResponse(handleData(pagingResult));
+//        Page<MsgPO> pagingResult = msgService.listMsgsByPagination(siteId, accountPO.getAppId(), 1, null, 0);
+        return new JsonResponse(null);
     }
 
     /**
@@ -156,18 +187,6 @@ public class MsgController extends BaseController {
             msgListVO.setTotalNum(pagingResult.getTotalCount());
             msgListVO.setTotalPage(pagingResult.getTotalPages());
             msgListVO.setCurrentPage(pagingResult.getPageNo());
-            for (MsgPO msgPO : pagingResult.getResult()) {
-                MsgVO msgVO = new MsgVO();
-                msgVO.setId(msgPO.getMsgId());
-                msgVO.setOpenId(msgPO.getOpenId());
-                msgVO.setContent(msgPO.getContent());
-                msgVO.setHeadImgUrl(msgPO.getHeadImgUrl());
-                msgVO.setIsFocus(msgPO.getIsFocus());
-                msgVO.setName(msgPO.getNickName());
-                msgVO.setTime(msgPO.getCreateTime());
-                msgListVO.getMsgs().add(msgVO);
-            }
-            return msgListVO;
         }
         return null;
     }

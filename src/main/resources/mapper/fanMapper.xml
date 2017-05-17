@@ -41,17 +41,14 @@
     </select>
     <!--根据openId批量查找-->
     <select id="listFansByOpenIds" resultType="com.kuaizhan.pojo.po.FanPO">
-        <foreach collection="tables" item="tableName" separator="union all">
-            (select *
-            from ${tableName}
-            where
-            app_id=#{appId}
-            and
-            <foreach collection="openIds" item="openId" index="index" separator="or">
-                open_id=#{openId}
-            </foreach>)
+        SELECT *
+        FROM ${tableName}
+        WHERE
+        app_id=#{appId}
+        AND open_id IN
+        <foreach collection="openIds" item="openId" index="index" open="(" separator="," close=")">
+            #{openId}
         </foreach>
-
     </select>
     <!--批量更新-->
     <update id="updateFansBatch">

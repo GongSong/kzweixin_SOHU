@@ -3,51 +3,43 @@
 <mapper namespace="com.kuaizhan.dao.mapper.MsgDao">
 
     <!--查询数目-->
-    <select id="count" resultType="long">
-        <foreach collection="tables" item="tableName" index="index" separator="union all">
-            select count(*)
-            from ${tableName}
-            where
-            app_id=#{appId}
-            and status=#{status}
-            <if test="sendType!=0">
-                and send_type=#{sendType}
-            </if>
-            <if test="isHide==0">
-                <if test="keyword!= ''">
-                    and content like concat('%','content','%',#{keyword},'%')
-                </if>
-            </if>
-            <if test="isHide==1">
-                and content not like concat('%','content','%',#{keyword},'%')
-            </if>
-        </foreach>
+    <select id="countMsgs" resultType="long">
+        SELECT COUNT(*)
+        FROM ${tableName}
+        WHERE
+        app_id = #{appId}
+        <if test="queryStr != null">
+            AND `content` LIKE concat('%', #{queryStr}, '%')
+            AND `type` IN (1, 12)
+        </if>
+        <if test="filterKeywords">
+            AND `type` != 12
+        </if>
+        AND `status` in (1, 2, 3) AND `send_type` = 1
+        <if test="startTime != null">
+            AND `create_time` &gt; #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND `create_time` &lt; #{endTime}
+        </if>
     </select>
-    <!--分页查询-->
+    <!--分页查询消息列表-->
     <select id="listMsgsByPagination" resultType="com.kuaizhan.pojo.po.MsgPO">
-        <foreach collection="tables" item="tableName" index="index" separator="union all">
-            (select *
-            from ${tableName}
-            where
-            app_id=#{pageEntity.params.appId}
-            <if test="pageEntity.params.status!= null">
-                and status=#{pageEntity.params.status}
-            </if>
-            <if test="pageEntity.params.sendType != null">
-                and send_type=#{pageEntity.params.sendType}
-            </if>
-            <if test="pageEntity.params.isHide==1">
-                and content not like concat('%','content','%',#{pageEntity.params.keyword},'%')
-            </if>
-            <if test="pageEntity.params.isHide==0">
-                <if test="pageEntity.params.keyword!= ''">
-                    and content like concat('%','content','%',#{pageEntity.params.keyword},'%')
-                </if>
-            </if>
-            )
-        </foreach>
+        SELECT *
+        FROM ${tableName}
+        WHERE
+        app_id = #{appId}
+        <if test="queryStr != null">
+            AND `content` LIKE concat('%', #{queryStr}, '%')
+            AND `type` IN (1, 12)
+        </if>
+        <if test="filterKeywords">
+            AND `type` != 12
+        </if>
+        AND `status` in (1, 2, 3) AND `send_type` = 1
+        AND `create_time` &lt; #{endTime}
         order by create_time desc
-        limit #{pageEntity.offset} , #{pageEntity.limit}
+        limit #{offset} , #{limit}
     </select>
     <!--获取新消息列表-->
     <select id="listNewMsgs" resultType="com.kuaizhan.pojo.po.MsgPO">

@@ -28,46 +28,6 @@ public class MsgServiceTest {
     @Resource
     MsgDao msgDao;
 
-    @Before
-    public void setUp() throws Exception {
 
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
-    @Test
-    public void countMsg() throws Exception {
-        AccountPO accountPO = accountService.getAccountBySiteId(123456L);
-        System.out.println("----->"+msgService.countMsg(accountPO.getAppId(),2,1,null,0));
-    }
-
-    @Test
-    public void listMsgsByPagination() throws Exception {
-
-        System.out.println("------>"+msgService.listMsgsByPagination(123456L,"wx1a4ff9ec0e369bd1",1,null,0));
-    }
-
-    @Test
-    public void listNewMsgs() throws Exception {
-        msgService.listNewMsgs("wx1a4ff9ec0e369bd1");
-    }
-
-    @Test
-    public void listMsgsByOpenId() throws Exception {
-
-    }
-
-    @Test
-    public void updateMsgsStatus() throws Exception {
-
-    }
-
-    @Test
-    public void sendMsgByOpenId() throws Exception {
-
-    }
 
 }

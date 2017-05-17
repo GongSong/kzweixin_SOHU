@@ -1,9 +1,14 @@
 package com.kuaizhan.utils;
 
 import com.kuaizhan.pojo.po.AccountPO;
+import com.kuaizhan.pojo.po.MsgPO;
 import com.kuaizhan.pojo.po.PostPO;
 import com.kuaizhan.pojo.vo.AccountVO;
+import com.kuaizhan.pojo.vo.MsgVO;
 import com.kuaizhan.pojo.vo.PostVO;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * pojo的转换组件
@@ -11,6 +16,11 @@ import com.kuaizhan.pojo.vo.PostVO;
  */
 public class PojoSwitcher {
 
+    private static final Logger logger = Logger.getLogger(PojoSwitcher.class);
+
+    /**
+     * 图文
+     */
     public static PostVO postPOToVO(PostPO postPO) {
 
         if (postPO == null) {
@@ -32,6 +42,9 @@ public class PojoSwitcher {
         return postVO;
     }
 
+    /**
+     * 账号
+     */
     public static AccountVO accountPOToVO(AccountPO accountPO) {
         if (accountPO == null) {
             return null;
@@ -57,5 +70,37 @@ public class PojoSwitcher {
         accountVO.setServiceType(accountPO.getServiceType());
         accountVO.setVerifyType(accountPO.getVerifyType());
         return accountVO;
+    }
+
+    public static MsgVO msgPOToVO(MsgPO msgPO) {
+        if (msgPO == null) {
+            return null;
+        }
+        MsgVO msgVO = new MsgVO();
+        msgVO.setMsgType(msgPO.getType());
+        msgVO.setOpenId(msgPO.getOpenId());
+        msgVO.setHeadImgUrl(msgPO.getHeadImgUrl());
+        msgVO.setNickname(msgPO.getNickName());
+        msgVO.setCreateTime(msgPO.getCreateTime());
+
+        int msgType = msgPO.getType();
+        // 文本消息、关键词消息、外链消息、图文消息都直接返回
+        if (msgType == 1 || msgType == 12 || msgType == 2 || msgType == 10) {
+            JSONObject contentJson;
+            try {
+               contentJson = new JSONObject(msgPO.getContent());
+            } catch (JSONException e) {
+                contentJson = new JSONObject();
+                contentJson.put("content", "*************");
+                logger.warn("[msgPOToVo] 垃圾数据, msgType:" + msgType + " content:" + msgPO.getContent(), e);
+            }
+            msgVO.setContent(contentJson.toMap());
+        } else {
+            // 不支持的消息
+            JSONObject contentJson = new JSONObject();
+            contentJson.put("content", "[收到暂不支持的消息类型，请在微信公众平台上查看]");
+            msgVO.setContent(contentJson.toMap());
+        }
+        return msgVO;
     }
 }

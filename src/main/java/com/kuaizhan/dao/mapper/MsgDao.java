@@ -3,6 +3,7 @@ package com.kuaizhan.dao.mapper;
 import com.kuaizhan.pojo.po.MsgPO;
 import com.kuaizhan.pojo.dto.Page;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -10,29 +11,35 @@ import java.util.List;
  * 消息数据接口 mysql数据源
  * Created by Mr.Jadyn on 2017/1/10.
  */
+@Repository
 public interface MsgDao {
 
 
     /**
      * 查询消息数目
      *
-     * @param appId   公众号appId
-     * @param status  0删除1未读2已读3已回复
-     * @param keyword 关键词
-     * @param isHide  是否隐藏关键词查询
-     * @param tables  表集合
-     * @return
+     * @param tableName 分表的表名
+     * @param queryStr 内容查询条件，有此参数，则限定了文字消息
+     * @param filterKeywords 是否过滤关键词消息
+     * @param endTime createTime的最大时间
      */
-    List<Long> count(@Param("appId") String appId, @Param("sendType") int sendType, @Param("status") int status, @Param("keyword") String keyword, @Param("isHide") Integer isHide, @Param("tables") List<String> tables);
+    long countMsgs(@Param("appId") String appId, @Param("tableName") String tableName,
+                   @Param("queryStr") String queryStr,
+                   @Param("filterKeywords") boolean filterKeywords,
+                   @Param("startTime") Long startTime,
+                   @Param("endTime") Long endTime);
 
     /**
-     * 分页查询
-     *
-     * @param tables     表集合
-     * @param pageEntity 分页实体
-     * @return
+     * 分页查询消息列表
+     * @param tableName 分表的表名
+     * @param queryStr 内容查询条件，有此参数，则限定了文字消息
+     * @param filterKeywords 是否过滤关键词消息
+     * @param endTime createTime的最大时间
      */
-    List<MsgPO> listMsgsByPagination(@Param("tables") List<String> tables, @Param("pageEntity") Page pageEntity);
+    List<MsgPO> listMsgsByPagination(@Param("appId") String appId, @Param("tableName") String tableName,
+                                     @Param("queryStr") String queryStr,
+                                     @Param("filterKeywords") boolean filterKeywords, @Param("endTime") long endTime,
+                                     @Param("offset") int offset, @Param("limit") int limit);
 
     /**
      * 获取新的消息

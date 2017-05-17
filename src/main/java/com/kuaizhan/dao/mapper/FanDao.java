@@ -4,6 +4,7 @@ package com.kuaizhan.dao.mapper;
 import com.kuaizhan.pojo.po.FanPO;
 import com.kuaizhan.pojo.dto.Page;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
  * 粉丝数据接口
  * Created by Mr.Jadyn on 2017/1/4.
  */
+@Repository
 public interface FanDao {
     /**
      * 查询数量
@@ -48,11 +50,11 @@ public interface FanDao {
      * 根据openId获取粉丝列表
      *
      * @param appId   公众号appId
-     * @param openIds 用户openId
-     * @param tables  表列表
+     * @param openIds openId列表
+     * @param tableName 分表表名
      * @return
      */
-    List<FanPO> listFansByOpenIds(@Param("appId") String appId, @Param("openIds") List<String> openIds, @Param("tables") List<String> tables);
+    List<FanPO> listFansByOpenIds(@Param("appId") String appId, @Param("openIds") List<String> openIds, @Param("tableName") String tableName);
 
     /**
      * 根据参数查找

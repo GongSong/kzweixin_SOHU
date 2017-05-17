@@ -91,7 +91,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     msgPO.setAppId(appId);
                     msgPO.setContent(jsonObject.toString());
                     msgPO.setOpenId(openId.getText());
-                    msgPO.setStatus(1);
+//                    msgPO.setStatus(1);
                     msgPO.setType(1);
                     msgPO.setSendType(1);
                     msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
@@ -107,7 +107,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     msgPO.setContent(jsonObject.toString());
                     msgPO.setOpenId(openId.getText());
                     msgPO.setType(2);
-                    msgPO.setStatus(1);
+//                    msgPO.setStatus(1);
                     msgPO.setSendType(1);
                     msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
@@ -126,7 +126,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     msgPO.setContent(jsonObject.toString());
                     msgPO.setOpenId(openId.getText());
                     msgPO.setType(6);
-                    msgPO.setStatus(1);
+//                    msgPO.setStatus(1);
                     msgPO.setSendType(1);
                     msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
@@ -143,7 +143,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     msgPO.setContent(jsonObject.toString());
                     msgPO.setOpenId(openId.getText());
                     msgPO.setType(7);
-                    msgPO.setStatus(1);
+//                    msgPO.setStatus(1);
                     msgPO.setSendType(1);
                     msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
@@ -153,7 +153,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     msgPO.setAppId(appId);
                     msgPO.setContent(jsonObject.toString());
                     msgPO.setOpenId(openId.getText());
-                    msgPO.setStatus(1);
+//                    msgPO.setStatus(1);
                     msgPO.setType(1);
                     msgPO.setSendType(1);
                     msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);

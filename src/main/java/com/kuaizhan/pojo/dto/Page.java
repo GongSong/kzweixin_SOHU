@@ -53,9 +53,6 @@ public class Page<T> {
      */
     public Map params;
 
-    public Map getParams() {
-        return params;
-    }
 
     public void setParams(Map params) {
         this.params = params;

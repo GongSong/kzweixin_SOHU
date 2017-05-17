@@ -11,6 +11,8 @@ public class ErrorCodes {
     //六位错误码，首位定位输出端（1为web端），中间两位定义模块，后三位定位具体错误类型
     //成功统一定义为200，系统(00)公共(01)账号(02)消息(03)粉丝(04)菜单(05)自动回复(06)图文(07)模板消息(08)
 
+    public static final ErrorCode SUCCESS = new ErrorCode(200, "ok");
+
     // 系统级
     // 用户操作导致的未知错误, 使用此业务异常，需要打印错误日志.
     public static final ErrorCode OPERATION_FAILED = new ErrorCode(100010, "操作失败");

@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.zip.CRC32;
 
 
 /**
@@ -33,7 +34,12 @@ public class TmpTest {
 
     @Test
     public void testInt() throws Exception {
-        System.out.println("---->" + Integer.parseInt("811177"));
+        long longValue = 1234567890123462323L;
+        int intValue = (int) longValue;
+
+        System.out.println("---->" + intValue);
+        System.out.println("---->" + intValue % 128);
+        System.out.println("---->" + (int) (longValue % 128));
     }
 
     @Test

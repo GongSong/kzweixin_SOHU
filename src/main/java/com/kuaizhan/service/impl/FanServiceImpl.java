@@ -195,27 +195,27 @@ public class FanServiceImpl implements FanService {
         }
         List<String> tables = DBTableUtil.getFanTableNames();
         //更新数据库
-        try {
-            List<FanPO> fanses = fanDao.listFansByOpenIds(appId, openIds, tables);
-            JSONArray jsonArray = new JSONArray();
-            //json_tag里添加数据
-            for (Integer tagId : tagIds) {
-                jsonArray.put(tagId);
-            }
-            for (FanPO fans : fanses) {
-                fans.setTagIdsJson(jsonArray.toString());
-            }
-            //设置mysql数据
-            fanDao.updateFansBatch(fanses, tables);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-        try {
-            //清空redis缓存
-            redisFanDao.deleteFanByPagination(siteId);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
+//        try {
+//            List<FanPO> fanses = fanDao.listFansByOpenIds(appId, openIds, tables);
+//            JSONArray jsonArray = new JSONArray();
+//            //json_tag里添加数据
+//            for (Integer tagId : tagIds) {
+//                jsonArray.put(tagId);
+//            }
+//            for (FanPO fans : fanses) {
+//                fans.setTagIdsJson(jsonArray.toString());
+//            }
+//            //设置mysql数据
+//            fanDao.updateFansBatch(fanses, tables);
+//        } catch (Exception e) {
+//            throw new DaoException(e);
+//        }
+//        try {
+//            //清空redis缓存
+//            redisFanDao.deleteFanByPagination(siteId);
+//        } catch (Exception e) {
+//            throw new DaoException(e);
+//        }
     }
 
     @Override

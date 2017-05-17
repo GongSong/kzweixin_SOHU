@@ -2,17 +2,18 @@ package com.kuaizhan.pojo.vo;
 
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * 消息展示对象
  * Created by liangjiateng on 2017/3/18.
  */
 @Data
 public class MsgVO {
-    private Long id;
-    private String name;
+    private int msgType;
+    private String nickname;
     private String headImgUrl;
     private String openId;
-    private Integer isFocus;
-    private String content;
-    private Long time;
+    private Map content;
+    private Long createTime;
 }

@@ -24,9 +24,9 @@ public interface PostService {
 
     /**
      * 获取图文消息列表
-     * @param page  页码
+     * @param pageNum  页码
      */
-    Page<PostPO> listPostsByPagination(long weixinAppid, String title, Integer page, Boolean flat);
+    Page<PostPO> listPostsByPagination(long weixinAppid, String title, Integer pageNum, Boolean flat);
 
     /**
      * 根据mediaId获取所有的多图文

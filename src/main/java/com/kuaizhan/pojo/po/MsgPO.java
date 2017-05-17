@@ -17,8 +17,6 @@ public class MsgPO {
     private String content;
     private Integer sendType;
     private Integer isCollect;
-    private Integer status;
-    private Integer isFocus;
     private Long createTime;
     private Long updateTime;
     private String headImgUrl;

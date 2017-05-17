@@ -18,28 +18,21 @@ import java.util.List;
  * Created by Mr.Jadyn on 2017/1/19.
  */
 public interface MsgService {
+
     /**
-     * 获取数量
-     *
-     * @param appId   公众号appid
-     * @param status  0删除1未读2已读3已回复
-     * @param keyword 关键词
-     * @param isHide  是否隐藏关键词查询
-     * @return
+     * 获取未读消息数目
      */
-    long countMsg(String appId, int status, int sendType, String keyword, int isHide) throws DaoException;
+    long getUnreadMsgCount(long weixinAppid);
+
+    /**
+     * 更新消息的最新阅读时间
+     */
+    void markMsgRead(long weixinAppid);
 
     /**
      * 分页查询
-     *
-     * @param appId   公众号appId
-     * @param page    页码
-     * @param keyword 搜索关键词
-     * @param isHide  是否为隐藏关键词查询
-     * @return
-     * @throws IOException
      */
-    Page<MsgPO> listMsgsByPagination(long siteId, String appId, int page, String keyword, int isHide) throws DaoException, RedisException;
+    Page<MsgPO> listMsgsByPagination(long weixinAppid, String queryStr, boolean filterKeywords, int pageNum);
 
 
     /**

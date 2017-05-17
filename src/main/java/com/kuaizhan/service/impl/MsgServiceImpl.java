@@ -1,9 +1,11 @@
 package com.kuaizhan.service.impl;
 
 
+import com.kuaizhan.config.KzApiConfig;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.dao.mapper.FanDao;
 import com.kuaizhan.dao.mapper.MsgDao;
+import com.kuaizhan.dao.mapper.auto.WeixinMsgConfigMapper;
 import com.kuaizhan.dao.redis.RedisMsgDao;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.common.DaoException;
@@ -12,8 +14,11 @@ import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.FanPO;
 import com.kuaizhan.pojo.po.MsgPO;
 import com.kuaizhan.pojo.dto.Page;
+import com.kuaizhan.pojo.po.auto.WeixinMsgConfig;
+import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.WeixinMsgService;
+import com.kuaizhan.utils.Crc32Util;
 import com.kuaizhan.utils.DBTableUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -29,110 +34,100 @@ import java.util.*;
 public class MsgServiceImpl implements MsgService {
 
     @Resource
-    MsgDao msgDao;
+    private MsgDao msgDao;
     @Resource
-    RedisMsgDao redisMsgDao;
+    private WeixinMsgConfigMapper msgConfigMapper;
     @Resource
-    FanDao fanDao;
+    private AccountService accountService;
     @Resource
-    WeixinMsgService weixinMsgService;
+    private RedisMsgDao redisMsgDao;
+    @Resource
+    private FanDao fanDao;
+    @Resource
+    private WeixinMsgService weixinMsgService;
 
-    @Override
-    public long countMsg(String appId, int status, int sendType, String keyword, int isHide) throws DaoException {
-        if (keyword == null) {
-            keyword = "";
+    /** 获取消息的最后阅读时间，不存在则新建 **/
+    private int getLastReadTime(long weixinAppid) {
+        WeixinMsgConfig config = msgConfigMapper.selectByPrimaryKey(weixinAppid);
+        // 不存在则新建
+        if (config == null) {
+            config = new WeixinMsgConfig();
+            config.setWeixinAppid(weixinAppid);
+            config.setQuickReplyJson("[]");
+            int now = (int) (System.currentTimeMillis() / 1000);
+            config.setLastReadTime(now);
+            config.setCreateTime(now);
+            config.setCreateTime(now);
+            msgConfigMapper.insert(config);
         }
-        List<String> tableNames = DBTableUtil.getMsgTableNames();
-        long total = 0;
-        try {
-            List<Long> counts = msgDao.count(appId, sendType, status, keyword, isHide, tableNames);
-            for (Long count : counts) {
-                total += count;
-            }
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-        return total;
+        return config.getLastReadTime();
     }
 
     @Override
-    public Page<MsgPO> listMsgsByPagination(long siteId, String appId, int page, String keyword, int isHide) throws DaoException, RedisException {
-        if (keyword == null)
-            keyword = "";
-        String field = "page:" + page + "keyword:" + keyword + "isHide:" + isHide;
-        Page<MsgPO> pagingResult = new Page<>(page, AppConstant.PAGE_SIZE_LARGE);
-        pagingResult.setTotalCount(countMsg(appId, 2, 1, keyword, isHide));
+    public long getUnreadMsgCount(long weixinAppid) {
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        String appId = accountPO.getAppId();
+        long lastReadTime = getLastReadTime(weixinAppid);
 
-        //从redis拿数据
-        try {
-            List<MsgPO> msgPOList = redisMsgDao.listMsgsByPagination(siteId, field);
-            if (msgPOList != null) {
-                pagingResult.setResult(msgPOList);
-                return pagingResult;
-            }
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
+        String msgTableName = DBTableUtil.getMsgTableName(appId);
+        return msgDao.countMsgs(appId, msgTableName, null, false, lastReadTime, null);
+    }
 
-        //未命中,从数据库拿数据,并且缓存到redis,缓存两个小时
-        Map<String, Object> map = new HashMap<>();
-        map.put("appId", appId);
-        map.put("status", 2);
-        map.put("sendType", 1);
-        map.put("keyword", keyword);
-        map.put("isHide", isHide);
-        pagingResult.setParams(map);
+    @Override
+    public void markMsgRead(long weixinAppid) {
+        WeixinMsgConfig config = new WeixinMsgConfig();
+        config.setWeixinAppid(weixinAppid);
+        config.setLastReadTime((int) (System.currentTimeMillis() / 1000));
+        msgConfigMapper.updateByPrimaryKeySelective(config);
+    }
 
-        List<String> msgTableNames = DBTableUtil.getMsgTableNames();
+    @Override
+    public Page<MsgPO> listMsgsByPagination(long weixinAppid, String queryStr, boolean filterKeywords, int pageNum) {
+
+        Page<MsgPO> page = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+
+        long lastReadTime = getLastReadTime(weixinAppid);
+        String appId = accountPO.getAppId();
+        String msgTableName = DBTableUtil.getMsgTableName(appId);
+        String fanTableName = DBTableUtil.getFanTableName(appId);
+
+        // 查询消息列表
+        List<MsgPO> msgPOS = msgDao.listMsgsByPagination(appId, msgTableName, queryStr, filterKeywords,
+                lastReadTime, page.getOffset(), page.getLimit());
+        // 查询消息总数
+        long count = msgDao.countMsgs(appId, msgTableName, queryStr, filterKeywords, null, lastReadTime);
+        page.setTotalCount(count);
+
+        Map<String, FanPO> openIdMap = new HashMap<>();
         List<String> openIds = new ArrayList<>();
-        List<MsgPO> msgs;
-        try {
-            msgs = msgDao.listMsgsByPagination(msgTableNames, pagingResult);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-        for (MsgPO msgPO : msgs) {
+        for(MsgPO msgPO: msgPOS) {
             openIds.add(msgPO.getOpenId());
         }
 
-        List<String> fansTableNames = DBTableUtil.getFanTableNames();
-
-        if (openIds.size() > 0) {
-
-            List<FanPO> fanPOList;
-            try {
-                fanPOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
-            } catch (Exception e) {
-                throw new DaoException(e);
-            }
-
-            for (MsgPO msgPO : msgs) {
-                for (FanPO fanPO : fanPOList) {
-                    if (msgPO.getOpenId().equals(fanPO.getOpenId())) {
-                        msgPO.setNickName(fanPO.getNickName());
-                        msgPO.setHeadImgUrl(fanPO.getHeadImgUrl());
-                        msgPO.setIsFocus(fanPO.getStatus());
-                    }
-                }
-            }
-
-            if (msgs.size() > 20) {
-                try {
-                    redisMsgDao.setMsgsByPagination(siteId, field, msgs.subList(0, 20));
-                    pagingResult.setResult(msgs.subList(0, 20));
-                } catch (Exception e) {
-                    throw new RedisException(e);
-                }
-            } else {
-                try {
-                    redisMsgDao.setMsgsByPagination(siteId, field, msgs.subList(0, msgs.size()));
-                    pagingResult.setResult(msgs.subList(0, msgs.size()));
-                } catch (Exception e) {
-                    throw new RedisException(e);
-                }
+        // 查询粉丝信息
+        if (accountPO.getServiceType() == 2 && openIds.size() > 0) {
+            List<FanPO> fanPOS = fanDao.listFansByOpenIds(appId, openIds, fanTableName);
+            for (FanPO fanPO: fanPOS) {
+                openIdMap.put(fanPO.getOpenId(), fanPO);
             }
         }
-        return pagingResult;
+
+        // 封装粉丝信息
+        for (MsgPO msgPO: msgPOS) {
+            FanPO fanPO = openIdMap.getOrDefault(msgPO.getOpenId(), null);
+            if (fanPO != null) {
+                msgPO.setNickName(fanPO.getNickName());
+                msgPO.setHeadImgUrl(fanPO.getHeadImgUrl());
+            } else {
+                String openId = msgPO.getOpenId();
+                msgPO.setNickName("粉丝" + openId.substring(openId.length() - 4, openId.length()));
+                msgPO.setHeadImgUrl(KzApiConfig.getResUrl("/res/weixin/images/kuaizhan-logo.png"));
+            }
+        }
+
+        page.setResult(msgPOS);
+        return page;
     }
 
     @Override
@@ -152,21 +147,21 @@ public class MsgServiceImpl implements MsgService {
         }
         List<String> fansTableNames = DBTableUtil.getFanTableNames();
 
-        if (openIds.size() > 0) {
-            try {
-                List<FanPO> fanPOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
-                for (MsgPO msgPO : msgs) {
-                    for (FanPO fanPO : fanPOList) {
-                        if (msgPO.getOpenId().equals(fanPO.getOpenId())) {
-                            msgPO.setNickName(fanPO.getNickName());
-                            msgPO.setHeadImgUrl(fanPO.getHeadImgUrl());
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                throw new DaoException(e);
-            }
-        }
+//        if (openIds.size() > 0) {
+//            try {
+//                List<FanPO> fanPOList = fanDao.listFansByOpenIds(appId, openIds, fansTableNames);
+//                for (MsgPO msgPO : msgs) {
+//                    for (FanPO fanPO : fanPOList) {
+//                        if (msgPO.getOpenId().equals(fanPO.getOpenId())) {
+//                            msgPO.setNickName(fanPO.getNickName());
+//                            msgPO.setHeadImgUrl(fanPO.getHeadImgUrl());
+//                        }
+//                    }
+//                }
+//            } catch (Exception e) {
+//                throw new DaoException(e);
+//            }
+//        }
 
         return msgs;
     }
@@ -215,9 +210,9 @@ public class MsgServiceImpl implements MsgService {
 
     @Override
     public void updateMsgsStatus(long siteId, String appId, List<MsgPO> msgs) throws DaoException, RedisException {
-        for (MsgPO msg : msgs) {
-            msg.setStatus(2);
-        }
+//        for (MsgDO msg : msgs) {
+//            msg.setStatus(2);
+//        }
         List<String> msgTableNames = DBTableUtil.getMsgTableNames();
         try {
             msgDao.updateMsgBatch(msgTableNames, msgs);
@@ -260,7 +255,7 @@ public class MsgServiceImpl implements MsgService {
         msg.setOpenId(openId);
         msg.setType(msgType);
         msg.setSendType(2);
-        msg.setStatus(2);
+//        msg.setStatus(2);
         try {
             msgDao.insertMsg(DBTableUtil.chooseMsgTable(System.currentTimeMillis()), msg);
         } catch (Exception e) {
