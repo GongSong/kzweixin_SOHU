@@ -1,7 +1,7 @@
 package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.ApplicationConfig;
-import com.kuaizhan.constant.ErrorCodes;
+import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.dao.mapper.AccountDao;
 import com.kuaizhan.dao.mapper.UnbindDao;
 import com.kuaizhan.dao.redis.RedisAccountDao;
@@ -108,7 +108,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountPO getAccountBySiteId(long siteId) {
         AccountPO accountPO = accountDao.getAccountBySiteId(siteId);
         if (accountPO == null) {
-            throw new BusinessException(ErrorCodes.SITE_ID_NOT_EXIST);
+            throw new BusinessException(ErrorCode.SITE_ID_NOT_EXIST);
         }
         return accountPO;
     }
@@ -117,7 +117,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountPO getAccountByAppId(String appId) {
         AccountPO accountPO = accountDao.getAccountByAppId(appId);
         if (accountPO == null) {
-            throw new BusinessException(ErrorCodes.APP_ID_NOT_EXIST);
+            throw new BusinessException(ErrorCode.APP_ID_NOT_EXIST);
         }
         return accountDao.getAccountByAppId(appId);
     }
@@ -131,7 +131,7 @@ public class AccountServiceImpl implements AccountService {
             //从数据库拿
             accountPO = accountDao.getAccountByWeixinAppId(weinxinAppid);
             if (accountPO == null) {
-                throw new BusinessException(ErrorCodes.ACCOUNT_NOT_EXIST);
+                throw new BusinessException(ErrorCode.ACCOUNT_NOT_EXIST);
             }
 
             //存缓存

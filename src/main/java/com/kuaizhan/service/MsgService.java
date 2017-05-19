@@ -1,6 +1,7 @@
 package com.kuaizhan.service;
 
 
+import com.kuaizhan.constant.MsgType;
 import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -56,19 +58,11 @@ public interface MsgService {
     void updateQuickReplies(long weixinAppid, List<String> replies);
 
     /**
-     * 插入消息
-     *
-     * @param siteId
-     * @param appId
-     * @param msgPO
+     * 发送客服消息
+     * @param weixinAppid 微信appId
+     * @param openId 用户openId
+     * @param msgType 发送消息类型
+     * @param dataMap 消息data
      */
-    void insertMsg(long siteId, String appId, MsgPO msgPO) throws DaoException, RedisException;
-
-
-    /**
-     * 插入客服消息
-     *
-     */
-    void insertCustomMsg(AccountPO accountPO, String openId, int msgType, JSONObject content) throws SendCustomMsgException, DaoException, RedisException;
-
+    void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, Map<String, Object> dataMap);
 }

@@ -2,7 +2,7 @@ package com.kuaizhan.service.impl;
 
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.KzApiConfig;
-import com.kuaizhan.constant.ErrorCodes;
+import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.constant.MqConstant;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.dao.mapper.PostDao;
@@ -197,7 +197,7 @@ public class PostServiceImpl implements PostService {
                 // 单图文
                 if (postPO.getType() == 1) {
                     if (urls.size() != 1) {
-                        throw new BusinessException(ErrorCodes.DIFFERENT_POSTS_NUM_ERROR);
+                        throw new BusinessException(ErrorCode.DIFFERENT_POSTS_NUM_ERROR);
                     }
                     PostPO updatePostPO = new PostPO();
                     updatePostPO.setPostUrl(urls.get(0));
@@ -207,7 +207,7 @@ public class PostServiceImpl implements PostService {
                 } else {
                     List<PostPO> multiPosts = listMultiPosts(weixinAppid, postPO.getMediaId(), false);
                     if (urls.size() != multiPosts.size()) {
-                        throw new BusinessException(ErrorCodes.DIFFERENT_POSTS_NUM_ERROR);
+                        throw new BusinessException(ErrorCode.DIFFERENT_POSTS_NUM_ERROR);
                     }
                     for (int i = 0; i < urls.size(); i++ ) {
                         PostPO updatePostPO = new PostPO();
@@ -237,7 +237,7 @@ public class PostServiceImpl implements PostService {
             JSONObject returnJson = new JSONObject(ret);
             if (returnJson.getInt("ret") != 0) {
                 logger.error("[同步到快站文章失败] pageId: " + pageId + "return: " + returnJson + " param:" + param);
-                throw new BusinessException(ErrorCodes.OPERATION_FAILED);
+                throw new BusinessException(ErrorCode.OPERATION_FAILED);
             }
         }
     }
@@ -268,7 +268,7 @@ public class PostServiceImpl implements PostService {
         List<PostPO> oldPosts;
         PostPO oldPost = getPostByPageId(pageId);
         if (oldPost == null || oldPost.getType() == 2) {
-            throw new BusinessException(ErrorCodes.POST_NOT_EXIST_ERROR);
+            throw new BusinessException(ErrorCode.POST_NOT_EXIST_ERROR);
         }
         if (oldPost.getType() == 1) {
             oldPosts = new ArrayList<>();
@@ -313,7 +313,7 @@ public class PostServiceImpl implements PostService {
                 }
             } else {
                 String message = "第" + (curIndex + 1) + "篇图文的封面图在微信后台被删除，请重新上传";
-                throw new BusinessException(ErrorCodes.THUMB_MEDIA_ID_NOT_EXIST_ERROR, message);
+                throw new BusinessException(ErrorCode.THUMB_MEDIA_ID_NOT_EXIST_ERROR, message);
             }
         }
 
@@ -666,7 +666,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void syncWeixinPosts(long weixinAppid, long userId) {
         if (! redisPostDao.couldSyncWxPost(weixinAppid)) {
-            throw new BusinessException(ErrorCodes.SYNC_WX_POST_TOO_OFTEN_ERROR);
+            throw new BusinessException(ErrorCode.SYNC_WX_POST_TOO_OFTEN_ERROR);
         }
         Map<String, Object> map = new HashMap<>();
         map.put("weixinAppid", weixinAppid);
@@ -801,7 +801,7 @@ public class PostServiceImpl implements PostService {
             return WxPostManager.uploadImage(accountService.getAccessToken(weixinAppid), imgUrl);
         } catch (DownloadFileFailedException e) {
             logger.warn("[Post:uploadWxMaterial] download file failed, imgUrl:" + imgUrl, e);
-            throw new BusinessException(ErrorCodes.OPERATION_FAILED, "下载图片失败，请稍后重试");
+            throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载图片失败，请稍后重试");
         }
     }
 
@@ -833,7 +833,7 @@ public class PostServiceImpl implements PostService {
             wxUrl = WxPostManager.uploadImgForPost(accessToken, imgUrl);
         } catch (DownloadFileFailedException e) {
             logger.warn("[Post:uploadImageForPost] download file failed, imgUrl:" + imgUrl, e);
-            throw new BusinessException(ErrorCodes.OPERATION_FAILED, "下载图片失败，请稍后重试");
+            throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载图片失败，请稍后重试");
         }
 
         redisImageDao.setImageUrl(imgUrl, wxUrl);

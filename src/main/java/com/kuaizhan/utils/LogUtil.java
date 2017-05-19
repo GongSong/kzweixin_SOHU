@@ -17,7 +17,7 @@ public class LogUtil {
     private static Logger logger = Logger.getLogger(LogUtil.class);
 
 
-    public static void logMsg(Exception e) {
+    public static void logMsg(Throwable e) {
 
         if (e instanceof SystemException) {
             logger.fatal(output(((SystemException) e).getDate(), ((SystemException) e).getMsg(), ((SystemException) e).getErrorStack()), e);

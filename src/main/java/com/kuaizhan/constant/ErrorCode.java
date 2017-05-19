@@ -1,12 +1,14 @@
 package com.kuaizhan.constant;
 
-import com.kuaizhan.common.ErrorCode;
+
+import lombok.Data;
 
 /**
  * 业务错误码
  * Created by zixiong on 2017/5/2.
  */
-public class ErrorCodes {
+@Data
+public class ErrorCode {
 
     //六位错误码，首位定位输出端（1为web端），中间两位定义模块，后三位定位具体错误类型
     //成功统一定义为200，系统(00)公共(01)账号(02)消息(03)粉丝(04)菜单(05)自动回复(06)图文(07)模板消息(08)
@@ -14,9 +16,14 @@ public class ErrorCodes {
     public static final ErrorCode SUCCESS = new ErrorCode(200, "ok");
 
     // 系统级
+    // 服务器未能捕捉到的异常, 异常抛到最外层被catch时，返回此错误码
+    public static final ErrorCode SERVER_ERROR = new ErrorCode(100000, "服务器未知错误");
     // 用户操作导致的未知错误, 使用此业务异常，需要打印错误日志.
     public static final ErrorCode OPERATION_FAILED = new ErrorCode(100010, "操作失败");
     // TODO: 依赖第三方的未知错误定义
+
+    // 通用(01)
+    public static final ErrorCode PARAM_ERROR = new ErrorCode(101001, "请求参数错误");
 
     // 账号(02)
     public static final ErrorCode SITE_ID_NOT_EXIST = new ErrorCode(102002, "站点没有绑定公众号或siteId不存在");
@@ -39,4 +46,12 @@ public class ErrorCodes {
     public static final ErrorCode HAS_NOT_ADD_TEMPLATE_ERROR = new ErrorCode(108003, "公众号没有添加此模板消息id或已经被删除");
     public static final ErrorCode TEMPLATE_NUM_EXCEED_ERROR = new ErrorCode(108004, "公众号的模板消息数量已达上限");
     public static final ErrorCode TEMPLATE_INDUSTRY_CONFLICT_ERROR = new ErrorCode(108005, "公众号行业设置错误");
+
+
+    private final int code;
+    private final String message;
+    private ErrorCode(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 }

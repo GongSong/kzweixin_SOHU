@@ -52,7 +52,7 @@ public class WxApiConfig {
     //消息
 
     //客服消息发送
-    private static final String WEIXIN_SEND_BY_OPENID = "/cgi-bin/message/custom/send?access_token=";
+    private static final String WEIXIN_SEND_CUSTOM_MSG = "/cgi-bin/message/custom/send?access_token=";
     // 发送模板消息
     private static final String WEIXIN_SEND_TPL_MSG = "/cgi-bin/message/template/send?access_token=";
     // 添加模板id
@@ -195,8 +195,8 @@ public class WxApiConfig {
     /**
      * 根据openid发送客服消息
      */
-    public static String sendByOpenIdUrl(String accessToken) {
-        return DOMAIN_WEIXIN_API + WEIXIN_SEND_BY_OPENID + accessToken;
+    public static String sendCustomMsgUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_SEND_CUSTOM_MSG + accessToken;
     }
 
     /**

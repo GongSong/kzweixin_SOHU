@@ -1,6 +1,6 @@
 package com.kuaizhan.exception;
 
-import com.kuaizhan.common.ErrorCode;
+import com.kuaizhan.constant.ErrorCode;
 import lombok.Data;
 
 /**

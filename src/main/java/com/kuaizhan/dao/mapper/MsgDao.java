@@ -68,6 +68,4 @@ public interface MsgDao {
      * @return
      */
     int insertMsg(@Param("tableName") String tableName, @Param("msg") MsgPO msg);
-
-
 }

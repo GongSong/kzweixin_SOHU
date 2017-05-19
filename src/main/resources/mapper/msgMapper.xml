@@ -59,8 +59,22 @@
 
     <!--添加一条消息-->
     <insert id="insertMsg">
-        insert ${tableName}(app_id,open_id,type,content,send_type,create_time,update_time,status)
-        values (#{msg.appId},#{msg.openId},#{msg.type},#{msg.content},#{msg.sendType},unix_timestamp(now()),unix_timestamp(now()),#{msg.status});
+        INSERT INTO ${tableName}
+        (`app_id`,
+        `open_id`,
+        `type`,
+        `content`,
+        `send_type`,
+        `create_time`,
+        `update_time`)
+        VALUES
+        (#{msg.appId},
+        #{msg.openId},
+        #{msg.type},
+        #{msg.content},
+        #{msg.sendType},
+        unix_timestamp(now()),
+        unix_timestamp(now()));
     </insert>
 
 </mapper>

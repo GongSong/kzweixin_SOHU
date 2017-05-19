@@ -1,6 +1,8 @@
 package com.kuaizhan.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kuaizhan.config.ApplicationConfig;
+import com.kuaizhan.utils.Crc32Util;
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
 import org.junit.Test;
 
@@ -34,12 +36,8 @@ public class TmpTest {
 
     @Test
     public void testInt() throws Exception {
-        long longValue = 1234567890123462323L;
-        int intValue = (int) longValue;
-
-        System.out.println("---->" + intValue);
-        System.out.println("---->" + intValue % 128);
-        System.out.println("---->" + (int) (longValue % 128));
+    int tableNum = (int) (Crc32Util.getValue("wx6b4c894f8ddbb51f") % 128);
+    System.out.println("---->" + tableNum);
     }
 
     @Test

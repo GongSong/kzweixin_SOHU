@@ -82,6 +82,6 @@ public class ControllerAspect {
      */
     @AfterThrowing(value = "controllerMethod()", throwing = "e")
     public void afterThrowing(Throwable e) {
-        LogUtil.logMsg((Exception) e);
+        LogUtil.logMsg((Throwable) e);
     }
 }

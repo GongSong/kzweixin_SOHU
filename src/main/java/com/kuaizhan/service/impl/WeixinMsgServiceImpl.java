@@ -94,7 +94,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
 //                    msgPO.setStatus(1);
                     msgPO.setType(1);
                     msgPO.setSendType(1);
-                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
+//                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
                 case "image":
                     Element mediaId = root.element("MediaId");
@@ -109,7 +109,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     msgPO.setType(2);
 //                    msgPO.setStatus(1);
                     msgPO.setSendType(1);
-                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
+//                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
                 case "location":
                     Element x = root.element("Location_X");
@@ -128,7 +128,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     msgPO.setType(6);
 //                    msgPO.setStatus(1);
                     msgPO.setSendType(1);
-                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
+//                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
                 case "link":
                     Element title = root.element("Title");
@@ -145,7 +145,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                     msgPO.setType(7);
 //                    msgPO.setStatus(1);
                     msgPO.setSendType(1);
-                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
+//                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
                 default:
                     //做一层json封装
@@ -156,7 +156,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
 //                    msgPO.setStatus(1);
                     msgPO.setType(1);
                     msgPO.setSendType(1);
-                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
+//                    msgService.insertMsg(accountPO.getSiteId(), accountPO.getAppId(), msgPO);
                     break;
 
             }
@@ -182,7 +182,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
                 jsonObject.put("news", content);
                 break;
         }
-        String result = HttpClientUtil.postJson(WxApiConfig.sendByOpenIdUrl(accessToken), jsonObject.toString());
+        String result = HttpClientUtil.postJson(WxApiConfig.sendCustomMsgUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.getInt("errcode") != 0) {
             throw new SendCustomMsgException();

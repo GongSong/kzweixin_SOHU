@@ -77,7 +77,6 @@ public class WxTplManager {
         JSONObject resultJson = new JSONObject(result);
         int errCode = resultJson.optInt("errcode");
         String tplId = resultJson.optString("template_id", null);
-        // TODO: 加上行业不对的报错
         if (errCode == WxErrCode.TEMPLATE_NUM_EXCEEDS_LIMIT) {
             throw new WxTemplateNumExceedException();
         } else if (errCode == WxErrCode.TEMPLATE_INDUSTRY_CONFLICT) {

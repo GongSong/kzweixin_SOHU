@@ -1,13 +1,14 @@
 package com.kuaizhan.controller;
 
+import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.exception.BaseException;
 
 import com.kuaizhan.exception.BusinessException;
-import com.kuaizhan.exception.deprecated.business.ParamException;
-import com.kuaizhan.exception.deprecated.system.ServerException;
 import com.kuaizhan.pojo.vo.JsonResponse;
 
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,11 +28,10 @@ public abstract class BaseController {
         }
         //自定义spring @RequestParam 异常
         else if (ex instanceof ServletRequestBindingException) {
-            ParamException paramException = new ParamException();
-            return new JsonResponse(paramException.getCode(), paramException.getMsg(), null);
+            return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), ErrorCode.PARAM_ERROR.getMessage(), null);
         } else {
-            ServerException serverException = new ServerException(ex);
-            return new JsonResponse(serverException.getCode(), serverException.getMsg(), null);
+            ex.printStackTrace();
+            return new JsonResponse(ErrorCode.SERVER_ERROR.getCode(), ErrorCode.SERVER_ERROR.getMessage(), null);
         }
     }
 
@@ -52,9 +52,17 @@ public abstract class BaseController {
         for (ObjectError er : e.getBindingResult().getAllErrors()) {
             msg = er.getDefaultMessage();
         }
-        ParamException paramException = new ParamException();
-        return new JsonResponse(paramException.getCode(), msg, null);
+        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), msg, null);
 
+    }
+
+    /**
+     * Json body 不符合要求
+     */
+    @ExceptionHandler({HttpMessageNotReadableException.class, HttpMediaTypeNotSupportedException.class})
+    @ResponseBody
+    public JsonResponse handleMessageBodyMissing(Exception e) {
+        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), "request body can not be null and only accept application/json", null);
     }
 
 }

@@ -2,27 +2,20 @@ package com.kuaizhan.controller;
 
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.exception.deprecated.business.ParamException;
-import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
-import com.kuaizhan.exception.common.DaoException;
-import com.kuaizhan.exception.deprecated.system.JsonParseException;
-import com.kuaizhan.exception.common.RedisException;
+import com.kuaizhan.constant.MsgType;
 import com.kuaizhan.param.common.WeixinAppidParam;
+import com.kuaizhan.param.msg.SendCustomMsgParam;
 import com.kuaizhan.param.msg.UpdateQuickRepliesParam;
-import com.kuaizhan.pojo.po.AccountPO;
 
 import com.kuaizhan.pojo.po.FanPO;
 import com.kuaizhan.pojo.po.MsgPO;
 import com.kuaizhan.pojo.dto.Page;
 import com.kuaizhan.pojo.vo.*;
-import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.MsgService;
 
 import com.kuaizhan.utils.PojoSwitcher;
-import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -40,8 +33,6 @@ public class MsgController extends BaseController {
 
     @Resource
     private MsgService msgService;
-    @Resource
-    private AccountService accountService;
     @Resource
     private FanService fanService;
 
@@ -109,47 +100,31 @@ public class MsgController extends BaseController {
 
     }
 
+    /**
+     * 获取快速回复配置的接口
+     */
     @RequestMapping(value = "/quick_replies", method = RequestMethod.GET)
     public JsonResponse getQuickReplies(@RequestParam long weixinAppid) {
         List<String> quickReplies = msgService.getQuickReplies(weixinAppid);
         return new JsonResponse(ImmutableMap.of("quickReplies", quickReplies));
     }
 
+    /**
+     * 修改快速回复配置
+     */
     @RequestMapping(value = "/quick_replies", method = RequestMethod.PUT)
     public JsonResponse updateQuickReplies(@Valid @RequestBody UpdateQuickRepliesParam param) {
         msgService.updateQuickReplies(param.getWeixinAppid(), param.getQuickReplies());
         return new JsonResponse(ImmutableMap.of());
     }
 
-
-
     /**
-     * 给用户发送客服消息
-     *
-     * @param siteId 站点id
-     * @param openId 用户openId
-     * @return
+     * 发送客服消息
      */
-    @RequestMapping(value = "/msgs/{openId}", method = RequestMethod.POST)
-    public JsonResponse insertCustomMsg(@RequestParam long siteId, @PathVariable String openId, @RequestBody String postData) throws ParamException, DaoException, RedisException, SendCustomMsgException, JsonParseException {
-        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-
-        int msgType;
-        JSONObject afterValidation = new JSONObject();
-        JSONObject jsonObject = new JSONObject(postData);
-        if (jsonObject.has("content")) {
-            msgType = 1;
-            afterValidation.put("content", jsonObject.getString("content"));
-        } else if (jsonObject.has("media_id")) {
-            msgType = 2;
-            afterValidation.put("media_id", jsonObject.getString("media_id"));
-        } else if (jsonObject.has("articles")) {
-            msgType = 10;
-            afterValidation.put("articles", jsonObject.getJSONArray("articles"));
-        } else {
-            throw new ParamException();
-        }
-        msgService.insertCustomMsg(accountPO, openId, msgType, afterValidation);
+    @RequestMapping(value = "/custom_msgs", method = RequestMethod.POST)
+    public JsonResponse insertCustomMsg(@Valid @RequestBody SendCustomMsgParam param) {
+        MsgType msgType = MsgType.fromValue(param.getMsgType());
+        msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), msgType, param.getData());
         return new JsonResponse(null);
     }
 }

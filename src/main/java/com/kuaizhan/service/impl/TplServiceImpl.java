@@ -1,7 +1,7 @@
 package com.kuaizhan.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kuaizhan.constant.ErrorCodes;
+import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.dao.mapper.TplDao;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.weixin.WxTemplateIndustryConflictException;
@@ -52,12 +52,12 @@ public class TplServiceImpl implements TplService {
     public void addTpl(long weixinAppid, String tplIdShort) {
         // 检查模板id是否合法
         if (!sysTplMap.containsKey(tplIdShort)) {
-            throw new BusinessException(ErrorCodes.INVALID_SYS_TEMPLATE_ID_ERROR);
+            throw new BusinessException(ErrorCode.INVALID_SYS_TEMPLATE_ID_ERROR);
         }
         // 检查公众号是否是认证服务号
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         if (accountPO.getServiceType() != 2 || accountPO.getVerifyType() == -1) {
-            throw new BusinessException(ErrorCodes.ACCOUNT_NOT_VERIFIED_SERVICE_TYPE);
+            throw new BusinessException(ErrorCode.ACCOUNT_NOT_VERIFIED_SERVICE_TYPE);
         }
 
         // 数据库配置中已经添加
@@ -70,9 +70,9 @@ public class TplServiceImpl implements TplService {
         try {
             tplId = WxTplManager.addTplId(accessToken, tplIdShort);
         } catch (WxTemplateNumExceedException e) {
-            throw new BusinessException(ErrorCodes.TEMPLATE_NUM_EXCEED_ERROR);
+            throw new BusinessException(ErrorCode.TEMPLATE_NUM_EXCEED_ERROR);
         } catch (WxTemplateIndustryConflictException e) {
-            throw new BusinessException(ErrorCodes.TEMPLATE_INDUSTRY_CONFLICT_ERROR);
+            throw new BusinessException(ErrorCode.TEMPLATE_INDUSTRY_CONFLICT_ERROR);
         }
         tplDao.addTplId(weixinAppid, tplIdShort, tplId);
     }
@@ -85,7 +85,7 @@ public class TplServiceImpl implements TplService {
         String tplId = tplDao.getTplId(weixinAppid, tplIdShort);
         if (tplId == null || "".equals(tplId.trim())) {
             // 抛异常
-            throw new BusinessException(ErrorCodes.HAS_NOT_ADD_TEMPLATE_ERROR);
+            throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
         }
 
         sendTplMsg(weixinAppid, tplId, openId, url, dataMap);
@@ -108,13 +108,13 @@ public class TplServiceImpl implements TplService {
      */
     private void isTplDataValid(String tplIdShort, Map dataMap) {
         if (!sysTplMap.containsKey(tplIdShort)) {
-            throw new BusinessException(ErrorCodes.INVALID_SYS_TEMPLATE_ID_ERROR);
+            throw new BusinessException(ErrorCode.INVALID_SYS_TEMPLATE_ID_ERROR);
         }
         Map tplMap = (Map) sysTplMap.get(tplIdShort);
         List<String> keywords = (List) tplMap.get("keywords");
         for(String keyword: keywords) {
             if (!dataMap.containsKey(keyword)){
-                throw new BusinessException(ErrorCodes.TPL_DATA_FORMAT_ERROR);
+                throw new BusinessException(ErrorCode.TPL_DATA_FORMAT_ERROR);
             }
         }
     }
