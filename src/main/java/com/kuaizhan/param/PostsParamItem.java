@@ -30,8 +30,10 @@ public class PostsParamItem {
     @NotBlank(message = "内容不能为空")
     private String content;
 
-    private String thumbMediaId;
+    @Size(max = 512, message = "原文链接太长, 不超过512字符")
     private String contentSourceUrl;
+
+    private String thumbMediaId;
     private Short showCoverPic;
 
     private Long pageId;
