@@ -50,6 +50,10 @@ public class TplServiceImpl implements TplService {
 
     @Override
     public void addTpl(long weixinAppid, String tplIdShort) {
+        // 检查模板id是否合法
+        if (!sysTplMap.containsKey(tplIdShort)) {
+            throw new BusinessException(ErrorCodes.INVALID_SYS_TEMPLATE_ID_ERROR);
+        }
         // 检查公众号是否是认证服务号
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         if (accountPO.getServiceType() != 2 || accountPO.getVerifyType() == -1) {
