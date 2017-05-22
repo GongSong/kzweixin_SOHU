@@ -97,7 +97,7 @@ public class TplServiceImpl implements TplService {
             if (deleted) {
                 logger.info("[deleteTpl] weixinAppid:" + weixinAppid + " tplIdShort:" + tplIdShort);
             }
-            throw e;
+            throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
         }
     }
 
