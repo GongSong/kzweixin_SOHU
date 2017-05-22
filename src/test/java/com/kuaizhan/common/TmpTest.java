@@ -1,14 +1,12 @@
 package com.kuaizhan.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.utils.Crc32Util;
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
 import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.Map;
-import java.util.zip.CRC32;
 
 
 /**

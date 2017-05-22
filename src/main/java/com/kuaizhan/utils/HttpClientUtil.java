@@ -21,10 +21,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * http请求工具类
@@ -87,7 +84,7 @@ public final class HttpClientUtil {
      */
     public static String getFile(String url, Map<String, String> headers) throws DownloadFileFailedException {
 
-        String filename = System.currentTimeMillis() + ".jpg";
+        String filename = UUID.randomUUID().toString() + ".jpg";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
