@@ -11,12 +11,7 @@ import org.springframework.context.event.EventListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -46,27 +41,26 @@ public class ConsulRegister {
         return Stream.of("test", "pre", "production").anyMatch(ApplicationConfig.ENV_ALIAS::equals);
     }
 
+    /*** 从命令"hostname -i"中读取ip ***/
+    private String getAddress() throws IOException {
+        ProcessBuilder pb = new ProcessBuilder("hostname", "-i");
+        Process proc = pb.start();
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
-    /*** 从网卡读取ip ***/
-    private String getAddress() throws SocketException{
-        if (address == null) {
-            NetworkInterface ni = NetworkInterface.getByName("eth0");
-            Enumeration<InetAddress> inetAddresses = ni.getInetAddresses();
+        StringBuilder addressBuilder = new StringBuilder();
+        String s;
+        while((s = stdInput.readLine()) != null) {
+            addressBuilder.append(s);
+        }
 
-            while (inetAddresses.hasMoreElements()) {
-                InetAddress ia = inetAddresses.nextElement();
-                if (!ia.isLinkLocalAddress()) {
-                    address = ia.getHostAddress();
-                    logger.info("[Consul] optional address:" + address);
-                }
-            }
-            logger.info("[Consul] final address:" + address);
-            if (address == null) {
-                throw new SocketException("[Consul] consul is null");
-            }
+        String address = addressBuilder.toString();
+        logger.info("[Consul] get address:" + address);
+        if ("".equals(address)) {
+            throw new IOException("[Consul] address is not initialized");
         }
         return address;
     }
+
 
     /*** 从jetty配置文件读取端口 ***/
     private int getPort() throws IOException {

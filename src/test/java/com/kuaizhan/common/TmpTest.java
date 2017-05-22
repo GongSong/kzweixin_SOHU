@@ -5,7 +5,9 @@ import com.kuaizhan.utils.Crc32Util;
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 
@@ -34,8 +36,17 @@ public class TmpTest {
 
     @Test
     public void testInt() throws Exception {
-    int tableNum = (int) (Crc32Util.getValue("wx6b4c894f8ddbb51f") % 128);
-    System.out.println("---->" + tableNum);
+        ProcessBuilder pb = new ProcessBuilder("hostname");
+        Process proc = pb.start();
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+        StringBuilder address = new StringBuilder();
+        String s;
+        while((s = stdInput.readLine()) != null) {
+            address.append(s);
+        }
+        System.out.println("---->" + address);
+        System.out.println("---->" + address.length());
     }
 
     @Test
