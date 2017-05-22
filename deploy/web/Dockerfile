@@ -9,6 +9,4 @@ COPY ./deploy/web/init.sh /init.sh
 COPY ./deploy/web/jetty-tpl.ini /jetty-tpl.ini
 COPY ./deploy/web/supervisord.conf /supervisord.conf
 
-RUN yum -y install python-setuptools && easy_install supervisor
-
 ENTRYPOINT supervisord -c /supervisord.conf
