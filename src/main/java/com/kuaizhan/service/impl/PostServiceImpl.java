@@ -476,9 +476,25 @@ public class PostServiceImpl implements PostService {
         for (WxPostDTO wxPostDTO : wxPostDTOs) {
 
             PostPO postPO = new PostPO();
-            postPO.setTitle(wxPostDTO.getTitle());
-            postPO.setDigest(wxPostDTO.getDigest());
-            postPO.setAuthor(wxPostDTO.getAuthor());
+
+            String title = wxPostDTO.getTitle();
+            if (title != null) {
+                title = EmojiParser.removeAllEmojis(title);
+            }
+            postPO.setTitle(title);
+
+            String digest = wxPostDTO.getDigest();
+            if (digest != null) {
+                digest = EmojiParser.removeAllEmojis(digest);
+            }
+            postPO.setDigest(digest);
+
+            String author = wxPostDTO.getAuthor();
+            if (author != null) {
+                author = EmojiParser.removeAllEmojis(author);
+            }
+            postPO.setAuthor(author);
+
             postPO.setThumbMediaId(wxPostDTO.getThumbMediaId());
             postPO.setShowCoverPic(wxPostDTO.getShowCoverPic());
             postPO.setPostUrl(wxPostDTO.getUrl().replaceAll("&chksm=[^&]+", ""));
