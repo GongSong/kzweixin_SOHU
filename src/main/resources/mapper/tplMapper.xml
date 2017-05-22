@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.kuaizhan.dao.mapper.TplDao">
+    
     <select id="getTplId" resultType="String">
         SELECT `template_id`
         FROM weixin_tpl_added
         WHERE `weixin_appid` = #{weixinAppid} and `template_id_short` = #{tplIdShort}
     </select>
+    
     <insert id="addTplId">
         INSERT INTO weixin_tpl_added SET
         `weixin_appid` = #{weixinAppid},
@@ -14,5 +16,11 @@
         `create_time`=unix_timestamp(now()),
         `update_time`=unix_timestamp(now());
     </insert>
+    
+    <delete id="deleteTpl">
+        DELETE FROM weixin_tpl_added
+        WHERE
+        `weixin_appid` = #{weixinAppid} AND `template_id_short` = #{tplIdShort}
+    </delete>
 </mapper>
 

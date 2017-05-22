@@ -19,5 +19,10 @@ public interface TplDao {
      * @param tplIdShort 模板的编号
      * @param tplId 微信后台为用户生成的模板唯一id
      */
-    String addTplId(@Param("weixinAppid") long weixinAppid, @Param("tplIdShort") String tplIdShort, @Param("tplId") String tplId);
+    void addTplId(@Param("weixinAppid") long weixinAppid, @Param("tplIdShort") String tplIdShort, @Param("tplId") String tplId);
+
+    /**
+     * 删除用户tplId
+     */
+    boolean deleteTpl(@Param("weixinAppid") long weixinAppid, @Param("tplIdShort") String tplIdShort);
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.dao.mapper.TplDao;
 import com.kuaizhan.exception.BusinessException;
+import com.kuaizhan.exception.weixin.WxInvalidTemplateException;
 import com.kuaizhan.exception.weixin.WxTemplateIndustryConflictException;
 import com.kuaizhan.exception.weixin.WxTemplateNumExceedException;
 import com.kuaizhan.manager.WxTplManager;
@@ -88,7 +89,16 @@ public class TplServiceImpl implements TplService {
             throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
         }
 
-        sendTplMsg(weixinAppid, tplId, openId, url, dataMap);
+        try {
+            sendTplMsg(weixinAppid, tplId, openId, url, dataMap);
+        } catch (WxInvalidTemplateException e) {
+            // 模板id已经不可用，删除之
+            boolean deleted = tplDao.deleteTpl(weixinAppid, tplIdShort);
+            if (deleted) {
+                logger.info("[deleteTpl] weixinAppid:" + weixinAppid + " tplIdShort:" + tplIdShort);
+            }
+            throw e;
+        }
     }
 
     @Override
