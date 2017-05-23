@@ -16,13 +16,14 @@ import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.weixin.AesException;
 import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
-import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,7 +37,7 @@ import java.util.Objects;
 @Service("weixinAuthService")
 public class WeixinAuthServiceImpl implements WeixinAuthService {
 
-    public static final Logger logger = Logger.getLogger(WeixinAuthServiceImpl.class);
+    public static final Logger logger = LoggerFactory.getLogger(WeixinAuthServiceImpl.class);
 
     @Resource
     RedisAuthDao redisAuthDao;
@@ -62,7 +63,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     public void getComponentVerifyTicket(String signature, String timestamp, String nonce, String postData) {
         //对消息进行解密
         String msg;
-        logger.info("[WeiXin:ticket] ticket callback calling.");
+        logger.info("[WeiXin:ticket] ticket callback calling");
         try {
             WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN, ApplicationConfig.WEIXIN_AES_KEY, ApplicationConfig.WEIXIN_APPID_THIRD);
             msg = wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
@@ -78,7 +79,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         }
         Element root = document.getRootElement();
         Element ticket = root.element("ComponentVerifyTicket");
-        logger.info("[WeiXin:ticket] get ticket:" + ticket);
+        logger.info("[WeiXin:ticket] get ticket:{}", ticket);
         //缓存
         if (ticket != null) {
             redisAuthDao.setComponentVerifyTicket(ticket.getText());
@@ -102,7 +103,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
             jsonObject.put("component_verify_ticket", ticket);
 
             String result = HttpClientUtil.postJson(WxApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
-            logger.info("[WeiXin:getComponentAccessToken] get componentAccessToken, params: " + jsonObject + " return: " + result);
+            logger.info("[WeiXin:getComponentAccessToken] get componentAccessToken, params:{} return:{}", jsonObject, result);
 
             if (result == null) {
                 throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] result is null");

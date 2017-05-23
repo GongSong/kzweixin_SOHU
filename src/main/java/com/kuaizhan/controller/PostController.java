@@ -17,8 +17,9 @@ import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
-import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -42,7 +43,7 @@ public class PostController extends BaseController {
     @Resource
     private AccountService accountService;
 
-    private static final Logger logger = Logger.getLogger(PostController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
 
     /**
@@ -94,7 +95,7 @@ public class PostController extends BaseController {
                             postListVO.getPosts().add(multiPostVOList);
                         } else {
                             // 发现垃圾数据
-                            logger.error("【图文垃圾数据】总记录下没有多图文, pageId:" + postPO.getPageId());
+                            logger.error("[图文垃圾数据] 总记录下没有多图文, pageId:{}", postPO.getPageId());
                         }
                     // 单图文
                     } else {

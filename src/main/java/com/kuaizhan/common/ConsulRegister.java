@@ -2,8 +2,9 @@ package com.kuaizhan.common;
 
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.utils.HttpClientUtil;
-import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -21,7 +22,7 @@ import java.util.stream.Stream;
  */
 public class ConsulRegister {
     
-    private static final Logger logger = Logger.getLogger(ConsulRegister.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConsulRegister.class);
 
     // 是否已注册、已注销
     private static Boolean registered = false;
@@ -54,7 +55,7 @@ public class ConsulRegister {
         }
 
         String address = addressBuilder.toString();
-        logger.info("[Consul] get address:" + address);
+        logger.info("[Consul] get address:{}", address);
         if ("".equals(address)) {
             throw new IOException("[Consul] address is not initialized");
         }
@@ -79,9 +80,9 @@ public class ConsulRegister {
                 while((curLine = br.readLine()) != null) {
                     Matcher matcher = pattern.matcher(curLine);
                     if (matcher.find()) {
-                        logger.info("[Consul] match content:" + matcher.group(0));
+                        logger.info("[Consul] match content:{}", matcher.group(0));
                         port = Integer.parseInt(matcher.group(1));
-                        logger.info("[Consul] get port:" + port );
+                        logger.info("[Consul] get port:{}", port );
                         return port;
                     }
                 }
@@ -108,7 +109,7 @@ public class ConsulRegister {
     @EventListener
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (!registered && shouldRegister()) {
-            logger.info("---->" + "start service register");
+            logger.info("[Consul] start service register");
 
             String address;
             int port;
@@ -116,13 +117,13 @@ public class ConsulRegister {
                 address = getAddress();
                 port = getPort();
             } catch (Exception e) {
-                logger.error("[Consul] register failed.", e);
+                logger.error("[Consul] register failed", e);
                 // 也许可以在这里阻止服务启动
                 return;
             }
 
             JSONObject paramJson = new JSONObject();
-            serviceId = serviceName +":" + address + ":" + port;
+            serviceId = serviceName + ":" + address + ":" + port;
             paramJson.put("ID", serviceId);
             paramJson.put("Name", serviceName);
             paramJson.put("Address", address);
@@ -136,7 +137,7 @@ public class ConsulRegister {
 
             paramJson.put("Check", checkJson);
             HttpClientUtil.putJson("http://127.0.0.1:8500/v1/agent/service/register", paramJson.toString());
-            logger.info("---->" + "register succeed:");
+            logger.info("[Consul] register succeed");
 
             registered = true;
         }
@@ -146,9 +147,9 @@ public class ConsulRegister {
     public void onApplicationEvent(ContextClosedEvent event){
         // 确保只执行一次, 有ApplicationContext和DispatcherServlet两个context需要关闭。
         if (!deregister && serviceId != null && shouldRegister()) {
-            logger.info("---->" + "开始注销服务");
+            logger.info("[Consul] start deregister service, serviceId:{}", serviceId);
             HttpClientUtil.putJson("http://127.0.0.1:8500/v1/agent/service/deregister/" + serviceId, null);
-            logger.info("---->" + "deregister succeed");
+            logger.info("[Consul] deregister succeed");
 
             deregister = true;
         }

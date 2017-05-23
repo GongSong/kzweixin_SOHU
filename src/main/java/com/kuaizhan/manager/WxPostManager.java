@@ -13,9 +13,10 @@ import com.kuaizhan.pojo.dto.WxPostDTO;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -26,7 +27,7 @@ import java.util.*;
  */
 public class WxPostManager {
 
-    private static Logger logger = Logger.getLogger(WxPostManager.class);
+    private static Logger logger = LoggerFactory.getLogger(WxPostManager.class);
 
     /**
      * 微信删除图文
@@ -37,7 +38,7 @@ public class WxPostManager {
 
         String result = HttpClientUtil.postJson(WxApiConfig.deleteMaterialUrl(accessToken), jsonObject.toString());
         if (result == null) {
-            logger.error("[WxPostManager.deletePost] 删除图文返回为null, mediaId: " + mediaId);
+            logger.error("[WxPostManager.deletePost] 删除图文返回为null, mediaId:{}", mediaId);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "删除图文失败, 请稍后重试");
         }
 
@@ -52,7 +53,7 @@ public class WxPostManager {
             else if (errCode == 40007) return;
             else {
                 // 未知错误
-                logger.error("[WxPostManager.deletePost] 删除多图文失败, mediaId:" + mediaId + " result: " + returnJson);
+                logger.error("[WxPostManager.deletePost] 删除多图文失败, mediaId:{} result: {}", mediaId, returnJson);
                 throw new BusinessException(ErrorCode.OPERATION_FAILED, "删除图文失败, 请稍后重试");
             }
         }
@@ -70,7 +71,7 @@ public class WxPostManager {
 
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
-        logger.info("[微信] 上传图片素材, address: " + address);
+        logger.info("[微信] 上传图片素材, address: {}", address);
         String result = HttpClientUtil.postFile(WxApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
@@ -80,7 +81,7 @@ public class WxPostManager {
                 // TODO: 被controller直接调用时合理，被其他service调用时不合理
                 throw new BusinessException(ErrorCode.MEDIA_SIZE_OUT_OF_LIMIT);
             }
-            logger.error("[微信] 上传永久图片素材失败: result: " + returnJson + " url:" + imgUrl);
+            logger.error("[微信] 上传永久图片素材失败: result:{} url:{}", returnJson, imgUrl);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传图片失败，请重试");
         }
 
@@ -101,7 +102,7 @@ public class WxPostManager {
 
         JSONObject returnJson = new JSONObject(result);
         if (returnJson.has("errcode")) {
-            logger.error("[微信] 上传图文中图片失败: result: " + returnJson + " imgUrl: " + imgUrl);
+            logger.error("[Weixin:uploadImgForPost] 上传图文中图片失败: result:{} imgUrl:{}", returnJson, imgUrl);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传内容中图片失败，请重试");
         }
         return returnJson.getString("url");
@@ -138,7 +139,7 @@ public class WxPostManager {
         try {
             jsonStr = JsonUtil.bean2String(jsonObject.toMap());
         } catch (JsonConvertException e) {
-            logger.error("[WeiXin:uploadPosts] bean to string failed" + jsonObject, e);
+            logger.error("[WeiXin:uploadPosts] bean to string failed, JsonObject: {}", jsonObject, e);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传图文到微信失败，请稍后再试");
         }
         String result = HttpClientUtil.postJson(WxApiConfig.getCreatePostsUrl(accessToken), jsonStr);
@@ -156,7 +157,7 @@ public class WxPostManager {
                 throw new BusinessException(ErrorCode.THUMB_MEDIA_ID_NOT_EXIST_ERROR);
             }
             // 未知错误
-            logger.error("[WeiXin:uploadPosts] upload posts failed, result:"+ returnJson + " data:" + jsonObject);
+            logger.error("[WeiXin:uploadPosts] upload posts failed, result:{} data:{}", returnJson, jsonObject);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传图文到微信失败，请稍后再试");
         }
         return returnJson.getString("media_id");
@@ -186,7 +187,7 @@ public class WxPostManager {
         try {
             jsonStr = JsonUtil.bean2String(jsonObject.toMap());
         } catch (JsonConvertException e) {
-            logger.error("[WeiXin:updatePost] bean to string failed" + jsonObject, e);
+            logger.error("[WeiXin:updatePost] bean to string failed, JsonObject: {}", jsonObject, e);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "修改微信图文失败，请稍后再试");
         }
         String result = HttpClientUtil.postJson(WxApiConfig.getUpdatePostUrl(accessToken), jsonStr);
@@ -205,7 +206,7 @@ public class WxPostManager {
             if (errCode == 40114) {
                 throw new BusinessException(ErrorCode.DIFFERENT_POSTS_NUM_ERROR);
             }
-            logger.error("[WeiXin:updatePost] update post failed, result:"+ returnJson + " data:" + jsonObject);
+            logger.error("[WeiXin:updatePost] update post failed, result:{} data:{}", returnJson, jsonObject);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "修改微信图文失败，请稍后再试");
         }
 

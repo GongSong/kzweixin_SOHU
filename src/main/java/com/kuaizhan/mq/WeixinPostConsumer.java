@@ -3,7 +3,8 @@ package com.kuaizhan.mq;
 import com.kuaizhan.pojo.dto.WxPostDTO;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.JsonUtil;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class WeixinPostConsumer extends BaseMqConsumer {
 
-    private static final Logger logger = Logger.getLogger(WeixinPostConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(WeixinPostConsumer.class);
 
     @Resource
     PostService postService;
@@ -35,10 +36,10 @@ public class WeixinPostConsumer extends BaseMqConsumer {
         // 新增
         if (isNew) {
             if (!postService.exist(weixinAppid, mediaId)) {
-                logger.info("[mq:从微信导入单条图文], weixinAppid: " + weixinAppid + " mediaId: " + mediaId);
+                logger.info("[mq:从微信导入单条图文], weixinAppid:{} mediaId:{}", weixinAppid, mediaId);
                 postService.importWeixinPost(weixinAppid, mediaId, updateTime, userId, wxPostDTOS);
             } else {
-                logger.info("[mq:图文已存在], weixinAppid: " + weixinAppid + " mediaId: " + mediaId);
+                logger.info("[mq:图文已存在], weixinAppid:{} mediaId:{}", weixinAppid, mediaId);
             }
         // 更新
         } else {

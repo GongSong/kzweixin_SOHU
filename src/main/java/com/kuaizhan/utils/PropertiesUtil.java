@@ -1,6 +1,7 @@
 package com.kuaizhan.utils;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.Properties;
  */
 public final class PropertiesUtil {
 
-    private static final Logger logger = Logger.getLogger(PropertiesUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
 
     /**
      * 加载属性文件
@@ -30,7 +31,7 @@ public final class PropertiesUtil {
             props = new Properties();
             props.load(is);
         } catch (IOException e) {
-            logger.error("[PropertiesUtil] loadProps failed, fileName" + fileName, e);
+            logger.error("[PropertiesUtil] loadProps failed, fileName:{}", fileName, e);
         } finally {
             if (is != null) {
                 try {

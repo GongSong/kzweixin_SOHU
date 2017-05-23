@@ -7,7 +7,6 @@ import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.TplService;
-import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,8 +26,6 @@ public class TplMsgController extends BaseController {
     private TplService tplService;
     @Resource
     private AccountService accountService;
-
-    private static final Logger logger = Logger.getLogger(TplMsgController.class);
 
     @RequestMapping(value = "/sys_tpl_msgs", method = RequestMethod.POST)
     public JsonResponse sendSysTplMsgs(@Valid @RequestBody SendTplMsgParam param) {

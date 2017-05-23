@@ -1,7 +1,8 @@
 package com.kuaizhan.mq;
 
 import com.kuaizhan.service.PostService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -17,11 +18,11 @@ public class WeixinPostListConsumer extends BaseMqConsumer {
     @Resource
     PostService postService;
 
-    private static final Logger logger = Logger.getLogger(WeixinPostListConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(WeixinPostListConsumer.class);
 
     @Override
     public void onMessage(Map msgMap) throws Exception {
-        logger.info("[mq:同步微信图文], map: "+ msgMap);
+        logger.info("[mq:同步微信图文], map:{}", msgMap);
 
         long weixinAppid = (long) msgMap.get("weixinAppid");
         long userId = (long) msgMap.get("uid");

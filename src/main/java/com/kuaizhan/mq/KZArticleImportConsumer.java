@@ -4,7 +4,8 @@ import com.kuaizhan.config.KzApiConfig;
 import com.kuaizhan.pojo.po.PostPO;
 import com.kuaizhan.pojo.dto.ArticleDTO;
 import com.kuaizhan.service.PostService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.Objects;
 
 public class KZArticleImportConsumer extends BaseMqConsumer {
 
-    private static final Logger logger = Logger.getLogger(KZArticleImportConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(KZArticleImportConsumer.class);
 
     @Resource
     PostService postService;
@@ -54,7 +55,7 @@ public class KZArticleImportConsumer extends BaseMqConsumer {
                 }
                 String content = stringBuilder.toString();
                 if (Objects.equals(content, "")){
-                    logger.info("快站文章内容为空, 忽略新增, pageId:" + pageId);
+                    logger.info("[KZArticleImport] 快站文章内容为空, 忽略新增, pageId:{}", pageId);
                     return ;
                 }
                 postPO.setContent(content);

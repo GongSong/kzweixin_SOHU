@@ -3,7 +3,8 @@ package com.kuaizhan.dao.mongo.impl;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.pojo.po.MongoPostPO;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.Map;
 @Repository("mongoPostDao")
 public class MongoPostDaoImpl extends BaseMongoDaoImpl<MongoPostPO> implements MongoPostDao {
 
-    public static final Logger logger = Logger.getLogger(MongoPostDaoImpl.class);
+    public static final Logger logger = LoggerFactory.getLogger(MongoPostDaoImpl.class);
 
     public MongoPostDaoImpl() {
         //表名 wx-dev-是前缀

@@ -26,8 +26,9 @@ import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.*;
 import com.vdurmont.emoji.EmojiParser;
-import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,7 +41,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service("postService")
 public class PostServiceImpl implements PostService {
 
-    private static final Logger logger = Logger.getLogger(PostServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
 
     // 最长的title字符数
     private static final int TITLE_MAX = 640;
@@ -71,7 +72,7 @@ public class PostServiceImpl implements PostService {
         }
         // 随机三次及以上才随机到，报警
         if (count >= 3) {
-            logger.warn("[genPageId] gen times reach " + count);
+            logger.warn("[genPageId] gen times reach {}", count);
         }
         return pageId;
     }
@@ -156,7 +157,7 @@ public class PostServiceImpl implements PostService {
 
                 // 存入本地mongo
                 if (content != null && ! "".equals(content)) {
-                    logger.info("从快站接口获取内容成功, pageId: " + pageId);
+                    logger.info("从快站接口获取内容成功, pageId:{}", pageId);
                     mongoPostDao.upsertPost(pageId, content);
                 }
             }
@@ -236,7 +237,7 @@ public class PostServiceImpl implements PostService {
             String ret = HttpClientUtil.post(KzApiConfig.KZ_POST_ARTICLE_URL, param);
             JSONObject returnJson = new JSONObject(ret);
             if (returnJson.getInt("ret") != 0) {
-                logger.error("[同步到快站文章失败] pageId: " + pageId + "return: " + returnJson + " param:" + param);
+                logger.error("[同步到快站文章失败] pageId:{} returnJson:{} param:{}", pageId, returnJson, param);
                 throw new BusinessException(ErrorCode.OPERATION_FAILED);
             }
         }
@@ -382,7 +383,7 @@ public class PostServiceImpl implements PostService {
         if (posts.size() > 1) {
             PostPO postSum = postDao.getPostByMediaId(weixinAppid, mediaId);
             if (postSum.getType() != 2) {
-                logger.error("【图文垃圾数据】, weixinAppid:" + weixinAppid + " mediaId:" + mediaId);
+                logger.error("[图文垃圾数据], weixinAppid:{} mediaId:{}", weixinAppid, mediaId);
             }
 
             postSum.setUpdateTime(updateTime);
@@ -816,7 +817,7 @@ public class PostServiceImpl implements PostService {
         try {
             return WxPostManager.uploadImage(accountService.getAccessToken(weixinAppid), imgUrl);
         } catch (DownloadFileFailedException e) {
-            logger.warn("[Post:uploadWxMaterial] download file failed, imgUrl:" + imgUrl, e);
+            logger.warn("[Post:uploadWxMaterial] download file failed, imgUrl:{}", imgUrl, e);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载图片失败，请稍后重试");
         }
     }
@@ -848,7 +849,7 @@ public class PostServiceImpl implements PostService {
         try {
             wxUrl = WxPostManager.uploadImgForPost(accessToken, imgUrl);
         } catch (DownloadFileFailedException e) {
-            logger.warn("[Post:uploadImageForPost] download file failed, imgUrl:" + imgUrl, e);
+            logger.warn("[Post:uploadImageForPost] download file failed, imgUrl:{}", imgUrl, e);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载图片失败，请稍后重试");
         }
 

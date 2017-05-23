@@ -11,7 +11,8 @@ import com.kuaizhan.manager.WxTplManager;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.TplService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -33,7 +34,7 @@ public class TplServiceImpl implements TplService {
 
     private Map<String, Object> sysTplMap;
 
-    private static final Logger logger = Logger.getLogger(TplServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TplServiceImpl.class);
 
     /**
      * 初始化系统模板templates
@@ -45,7 +46,7 @@ public class TplServiceImpl implements TplService {
         try {
             sysTplMap = objectMapper.readValue(is, Map.class);
         } catch (IOException e) {
-            logger.error("[TplServiceImpl:init] init sysTplMap failed, inputStream:" + is, e);
+            logger.error("[TplServiceImpl:init] init sysTplMap failed, inputStream: {}", is, e);
         }
     }
 
@@ -95,7 +96,7 @@ public class TplServiceImpl implements TplService {
             // 模板id已经不可用，删除之
             boolean deleted = tplDao.deleteTpl(weixinAppid, tplIdShort);
             if (deleted) {
-                logger.info("[deleteTpl] weixinAppid:" + weixinAppid + " tplIdShort:" + tplIdShort);
+                logger.info("[deleteTpl] weixinAppid:{} tplIdShort:{}", weixinAppid, tplIdShort);
             }
             throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
         }
@@ -105,6 +106,7 @@ public class TplServiceImpl implements TplService {
     public void sendTplMsg(long weixinAppid, String tplId, String openId, String url, Map dataMap) {
         String accessToken = accountService.getAccessToken(weixinAppid);
         WxTplManager.sendTplMsg(accessToken, tplId, openId, url, dataMap);
+        // TODO: 发送过的模板消息有必要存起来吗？
     }
 
     @Override

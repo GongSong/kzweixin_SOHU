@@ -18,7 +18,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
@@ -30,7 +31,7 @@ import java.util.*;
 public final class HttpClientUtil {
 
 
-    private static final Logger logger = Logger.getLogger(HttpClientUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
 
     private static final String CHARSET_UTF_8 = "UTF-8";
     private static final String CONTENT_TYPE_JSON = "application/json";
@@ -68,7 +69,7 @@ public final class HttpClientUtil {
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity, CHARSET_UTF_8);
         } catch (IOException e) {
-            logger.error("[HttpClientUtil.get] get failed, url:" + url + " headers:" + headers , e);
+            logger.error("[HttpClientUtil.get] get failed, url:{} headers:{}", url, headers , e);
         } finally {
             doClose(response);
             doClose(httpClient);
@@ -159,7 +160,7 @@ public final class HttpClientUtil {
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, CHARSET_UTF_8));
             } catch (UnsupportedEncodingException e) {
-                logger.error("[HttpClientUtil.post] post failed, url:" + url + " headers:" + headers , e);
+                logger.error("[HttpClientUtil.post] post failed, url:{} headers:{}", url, headers , e);
             }
 
             if (headers != null) {
@@ -179,7 +180,7 @@ public final class HttpClientUtil {
             return EntityUtils.toString(entity, CHARSET_UTF_8);
 
         }catch (IOException e) {
-            logger.error("[HttpClientUtil.post] post failed, url:" + url + " headers:" + headers , e);
+            logger.error("[HttpClientUtil.post] post failed, url:{} headers:{}", url, headers , e);
         } finally {
             doClose(response);
             doClose(httpClient);
@@ -207,7 +208,7 @@ public final class HttpClientUtil {
                 StringEntity stringEntity = new StringEntity(jsonStr, ContentType.APPLICATION_JSON);
                 httpPost.setEntity(stringEntity);
             } catch (Exception e) {
-                logger.error("[HttpClientUtil.postJson] utf-8解码失败, jsonStr:" + jsonStr, e);
+                logger.error("[HttpClientUtil.postJson] utf-8解码失败, jsonStr:{}", jsonStr, e);
                 return null;
             }
 
@@ -215,7 +216,7 @@ public final class HttpClientUtil {
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity, CHARSET_UTF_8);
         } catch (IOException e) {
-            logger.error("[HttpClientUtil.postJson] post failed, url:" + url + " jsonStr:" + jsonStr , e);
+            logger.error("[HttpClientUtil.postJson] post failed, url:{} jsonStr:{}", url, jsonStr , e);
         } finally {
             doClose(response);
             doClose(httpClient);
@@ -243,7 +244,7 @@ public final class HttpClientUtil {
                     StringEntity stringEntity = new StringEntity(jsonStr, ContentType.APPLICATION_JSON);
                     httpPut.setEntity(stringEntity);
                 } catch (Exception e) {
-                    logger.error("[HttpClientUtil.postJson] utf-8解码失败, jsonStr:" + jsonStr, e);
+                    logger.error("[HttpClientUtil.postJson] utf-8解码失败, jsonStr:{}", jsonStr, e);
                     return null;
                 }
             }
@@ -252,7 +253,7 @@ public final class HttpClientUtil {
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity, CHARSET_UTF_8);
         } catch (IOException e) {
-            logger.error("[HttpClientUtil.postJson] post failed, url:" + url + " jsonStr:" + jsonStr , e);
+            logger.error("[HttpClientUtil.postJson] post failed, url:{} jsonStr:{}", url, jsonStr , e);
         } finally {
             doClose(response);
             doClose(httpClient);
@@ -313,7 +314,7 @@ public final class HttpClientUtil {
             return EntityUtils.toString(response.getEntity(), CHARSET_UTF_8);
 
         } catch (IOException e) {
-            logger.error("[HttpClientUtil.postFile] post file failed, url:" + url, e);
+            logger.error("[HttpClientUtil.postFile] post file failed, url:{}", url, e);
         } finally {
             doClose(response);
             doClose(httpClient);
@@ -329,7 +330,7 @@ public final class HttpClientUtil {
                 closeable.close();
             } 
         } catch (IOException e) {
-            logger.warn("[HttpClientUtil.close] close failed, closeable:" + closeable);
+            logger.warn("[HttpClientUtil.close] close failed, closeable:{}", closeable);
         }
     }
 }

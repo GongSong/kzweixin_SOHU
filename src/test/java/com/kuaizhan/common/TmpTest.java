@@ -1,13 +1,12 @@
 package com.kuaizhan.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kuaizhan.utils.Crc32Util;
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Map;
 
 
@@ -16,6 +15,8 @@ import java.util.Map;
  * Created by zixiong on 2017/4/12.
  */
 public class TmpTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(TmpTest.class);
 
     @Test
     public void test() throws Exception {
@@ -36,17 +37,6 @@ public class TmpTest {
 
     @Test
     public void testInt() throws Exception {
-        ProcessBuilder pb = new ProcessBuilder("hostname");
-        Process proc = pb.start();
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-
-        StringBuilder address = new StringBuilder();
-        String s;
-        while((s = stdInput.readLine()) != null) {
-            address.append(s);
-        }
-        System.out.println("---->" + address);
-        System.out.println("---->" + address.length());
     }
 
     @Test

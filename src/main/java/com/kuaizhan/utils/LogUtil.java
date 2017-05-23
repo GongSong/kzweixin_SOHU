@@ -3,7 +3,8 @@ package com.kuaizhan.utils;
 
 import com.kuaizhan.exception.deprecated.business.BusinessException;
 import com.kuaizhan.exception.deprecated.system.SystemException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -14,13 +15,13 @@ import java.util.Date;
  */
 public class LogUtil {
 
-    private static Logger logger = Logger.getLogger(LogUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(LogUtil.class);
 
 
     public static void logMsg(Throwable e) {
 
         if (e instanceof SystemException) {
-            logger.fatal(output(((SystemException) e).getDate(), ((SystemException) e).getMsg(), ((SystemException) e).getErrorStack()), e);
+            logger.error(output(((SystemException) e).getDate(), ((SystemException) e).getMsg(), ((SystemException) e).getErrorStack()), e);
         } else if (e instanceof BusinessException) {
             logger.warn(output(((BusinessException) e).getDate(), ((BusinessException) e).getMsg(), ((BusinessException) e).getErrorStack()), e);
         } else if (e instanceof com.kuaizhan.exception.BusinessException) {

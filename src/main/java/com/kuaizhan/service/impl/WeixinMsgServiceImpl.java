@@ -13,11 +13,12 @@ import com.kuaizhan.service.WeixinFanService;
 import com.kuaizhan.service.WeixinMsgService;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
-import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,7 +36,7 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
     @Resource
     MsgService msgService;
 
-    private static final Logger logger = Logger.getLogger(WeixinMsgServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(WeixinMsgServiceImpl.class);
 
     @Override
     public String handleWeixinPushMsg(String appId, String signature, String timestamp, String nonce, String postData) throws EncryptException, XMLParseException {

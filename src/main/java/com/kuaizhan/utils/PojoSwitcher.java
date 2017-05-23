@@ -6,9 +6,10 @@ import com.kuaizhan.pojo.po.PostPO;
 import com.kuaizhan.pojo.vo.AccountVO;
 import com.kuaizhan.pojo.vo.MsgVO;
 import com.kuaizhan.pojo.vo.PostVO;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * pojo的转换组件
@@ -16,7 +17,7 @@ import org.json.JSONObject;
  */
 public class PojoSwitcher {
 
-    private static final Logger logger = Logger.getLogger(PojoSwitcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(PojoSwitcher.class);
 
     /**
      * 图文
@@ -93,7 +94,7 @@ public class PojoSwitcher {
             } catch (JSONException e) {
                 contentJson = new JSONObject();
                 contentJson.put("content", "*************");
-                logger.warn("[msgPOToVo] 垃圾数据, msgType:" + msgType + " content:" + msgPO.getContent(), e);
+                logger.warn("[msgPOToVo] 垃圾数据, msgType:{} content:{}", msgType, msgPO.getContent(), e);
             }
             msgVO.setContent(contentJson.toMap());
         } else {
