@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.dao.mapper.TplDao;
 import com.kuaizhan.exception.BusinessException;
-import com.kuaizhan.exception.weixin.WxInvalidTemplateException;
-import com.kuaizhan.exception.weixin.WxTemplateIndustryConflictException;
-import com.kuaizhan.exception.weixin.WxTemplateNumExceedException;
+import com.kuaizhan.exception.weixin.*;
 import com.kuaizhan.manager.WxTplManager;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.service.AccountService;
@@ -81,12 +79,12 @@ public class TplServiceImpl implements TplService {
 
     @Override
     public void sendSysTplMsg(long weixinAppid, String tplIdShort, String openId, String url, Map dataMap) {
-        // 数据校验
+        // 系统模板消息id和data的校验
         isTplDataValid(tplIdShort, dataMap);
 
+        // 公众号是否添加此模板消息校验
         String tplId = tplDao.getTplId(weixinAppid, tplIdShort);
         if (tplId == null || "".equals(tplId.trim())) {
-            // 抛异常
             throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
         }
 
@@ -99,14 +97,18 @@ public class TplServiceImpl implements TplService {
                 logger.info("[deleteTpl] weixinAppid:{} tplIdShort:{}", weixinAppid, tplIdShort);
             }
             throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
+        } catch (WxInvalidOpenIdException e) {
+            // 非法的openID, 通过微信异常的方式，做消极校验
+            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
         }
     }
 
     @Override
-    public void sendTplMsg(long weixinAppid, String tplId, String openId, String url, Map dataMap) {
+    public void sendTplMsg(long weixinAppid, String tplId, String openId, String url, Map dataMap)
+            throws WxInvalidTemplateException, WxInvalidOpenIdException, WxDataFormatException {
         String accessToken = accountService.getAccessToken(weixinAppid);
         WxTplManager.sendTplMsg(accessToken, tplId, openId, url, dataMap);
-        // TODO: 发送过的模板消息有必要存起来吗？
+        // 发送过的模板消息有必要存起来吗？
     }
 
     @Override
@@ -119,9 +121,11 @@ public class TplServiceImpl implements TplService {
      * 发送系统模板消息需要先检查参数格式
      */
     private void isTplDataValid(String tplIdShort, Map dataMap) {
+        // 是否是合法的系统模板
         if (!sysTplMap.containsKey(tplIdShort)) {
             throw new BusinessException(ErrorCode.INVALID_SYS_TEMPLATE_ID_ERROR);
         }
+        // 校验数据格式
         Map tplMap = (Map) sysTplMap.get(tplIdShort);
         List<String> keywords = (List) tplMap.get("keywords");
         for(String keyword: keywords) {

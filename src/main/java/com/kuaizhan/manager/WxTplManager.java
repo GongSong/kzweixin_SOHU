@@ -23,11 +23,12 @@ public class WxTplManager {
      * @param dataMap 模板消息data数据
      * @throws WxApiException: 微信接口返回结果为null, 不能json序列化，或返回未知错误码
      * @throws WxInvalidTemplateException: 无效的模板id或者用户不存在此模板
+     * @throws WxInvalidOpenIdException: 无效的openId
      * @throws WxDataFormatException: dataJson参数和模板定义的不一致
      * @return 微信服务器的消息id
      */
     public static long sendTplMsg(String accessToken, String tplId, String openId, String url, Map dataMap)
-            throws WxInvalidTemplateException, WxDataFormatException, WxApiException {
+            throws WxInvalidTemplateException, WxInvalidOpenIdException, WxDataFormatException, WxApiException {
 
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("touser", openId);
@@ -48,6 +49,8 @@ public class WxTplManager {
 
         if (errCode == WxErrCode.INVALID_TEMPLATE_ID) {
             throw new WxInvalidTemplateException("[Weixin:sendTplMsg] openId:" + openId + " tplId:" + tplId);
+        } else if (errCode == WxErrCode.INVALID_OPEN_ID) {
+            throw new WxInvalidOpenIdException("[Weixin:sendTplMsg] openId:" + openId + " tplId");
         } else if (errCode == WxErrCode.DATA_FORMAT_ERROR) {
             throw new WxDataFormatException("[Weixin:sendTplMsg] openId:" + openId + " tplId:" + tplId + " dataStr:" + paramStr);
         } else if (errCode != 0 || msgId == 0) {

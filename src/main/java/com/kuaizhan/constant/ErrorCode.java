@@ -40,12 +40,13 @@ public class ErrorCode {
     public static final ErrorCode THUMB_MEDIA_ID_NOT_EXIST_ERROR = new ErrorCode(107010, "封面图在微信后台被删除，请重新上传");
     public static final ErrorCode DIFFERENT_POSTS_NUM_ERROR = new ErrorCode(107011, "多图文的条数在微信后台与快站不一致，请前往微信公众平台查看");
 
-    // 模板消息
+    // 消息、模板消息(08)
     public static final ErrorCode TPL_DATA_FORMAT_ERROR = new ErrorCode(108001, "模板消息数据格式错误");
     public static final ErrorCode INVALID_SYS_TEMPLATE_ID_ERROR = new ErrorCode(108002, "非法的系统模板消息id");
     public static final ErrorCode HAS_NOT_ADD_TEMPLATE_ERROR = new ErrorCode(108003, "公众号没有添加此模板消息id或已经被删除");
     public static final ErrorCode TEMPLATE_NUM_EXCEED_ERROR = new ErrorCode(108004, "公众号的模板消息数量已达上限");
     public static final ErrorCode TEMPLATE_INDUSTRY_CONFLICT_ERROR = new ErrorCode(108005, "公众号行业设置错误");
+    public static final ErrorCode INVALID_OPEN_ID_ERROR = new ErrorCode(108006, "非法的openId或用户未关注公众号");
 
 
     private final int code;
