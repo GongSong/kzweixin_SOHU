@@ -13,12 +13,12 @@ import javax.annotation.Resource;
  *
  * Created by lorin on 17-3-29.
  */
-public class WeixinPostListConsumer extends BaseMqConsumer {
+public class WxPostListConsumer extends BaseMqConsumer {
 
     @Resource
     PostService postService;
 
-    private static final Logger logger = LoggerFactory.getLogger(WeixinPostListConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(WxPostListConsumer.class);
 
     @Override
     public void onMessage(Map msgMap) throws Exception {

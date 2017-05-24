@@ -15,9 +15,9 @@ import java.util.Map;
  *
  * Created by lorin on 17-3-29.
  */
-public class WeixinPostConsumer extends BaseMqConsumer {
+public class WxPostConsumer extends BaseMqConsumer {
 
-    private static final Logger logger = LoggerFactory.getLogger(WeixinPostConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(WxPostConsumer.class);
 
     @Resource
     PostService postService;

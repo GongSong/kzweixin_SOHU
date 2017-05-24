@@ -20,13 +20,13 @@
     <!-- 从微信导入文章消费者 -->
     <bean id="weixinPostListListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
         <constructor-arg name="delegate">
-            <bean class="com.kuaizhan.mq.WeixinPostListConsumer"/>
+            <bean class="com.kuaizhan.mq.WxPostListConsumer"/>
         </constructor-arg>
     </bean>
     <!-- 从微信导入单条文章的消费者 -->
     <bean id="weixinPostListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
         <constructor-arg name="delegate">
-            <bean class="com.kuaizhan.mq.WeixinPostConsumer"/>
+            <bean class="com.kuaizhan.mq.WxPostConsumer"/>
         </constructor-arg>
     </bean>
 
