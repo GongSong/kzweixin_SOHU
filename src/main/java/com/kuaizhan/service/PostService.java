@@ -1,7 +1,7 @@
 package com.kuaizhan.service;
 
 
-import com.kuaizhan.exception.common.GetKzArticleException;
+import com.kuaizhan.exception.kuaizhan.GetKzArticleException;
 import com.kuaizhan.pojo.po.PostPO;
 import com.kuaizhan.pojo.dto.ArticleDTO;
 import com.kuaizhan.pojo.dto.Page;

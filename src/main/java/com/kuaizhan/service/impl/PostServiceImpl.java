@@ -10,10 +10,11 @@ import com.kuaizhan.dao.redis.RedisImageDao;
 import com.kuaizhan.dao.redis.RedisPostDao;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.DownloadFileFailedException;
-import com.kuaizhan.exception.common.GetKzArticleException;
+import com.kuaizhan.exception.kuaizhan.Export2KzException;
+import com.kuaizhan.exception.kuaizhan.GetKzArticleException;
 import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.dao.mongo.MongoPostDao;
-import com.kuaizhan.exception.common.KZPicUploadException;
+import com.kuaizhan.exception.kuaizhan.KZPicUploadException;
 import com.kuaizhan.exception.weixin.WxMediaIdNotExistException;
 import com.kuaizhan.manager.KzManager;
 import com.kuaizhan.manager.WxPostManager;
@@ -225,21 +226,17 @@ public class PostServiceImpl implements PostService {
     @Override
     public void export2KzArticle(long pageId, long categoryId, long siteId) {
         PostPO postPO = getPostByPageId(pageId);
-        if (postPO != null) {
-            Map<String,Object> param=new HashMap<>();
-            param.put("site_id", siteId);
-            param.put("post_category_id", categoryId);
-            param.put("post_title", postPO.getTitle());
-            param.put("post_desc", postPO.getDigest());
-            param.put("pic_url", UrlUtil.fixProtocol(postPO.getThumbUrl()));
-            param.put("post_content", getPostContent(pageId));
+        if (postPO == null) {
+            logger.warn("[export2KzArticle] post is null, pageId: {} siteId: {}", pageId, siteId);
+            return;
+        }
 
-            String ret = HttpClientUtil.post(KzApiConfig.KZ_POST_ARTICLE_URL, param);
-            JSONObject returnJson = new JSONObject(ret);
-            if (returnJson.getInt("ret") != 0) {
-                logger.error("[同步到快站文章失败] pageId:{} returnJson:{} param:{}", pageId, returnJson, param);
-                throw new BusinessException(ErrorCode.OPERATION_FAILED);
-            }
+        String content = getPostContent(pageId);
+        try {
+            KzManager.export2KzArticle(siteId, categoryId, postPO, content);
+        } catch (Export2KzException e) {
+            logger.error("[export2KzArticle] export failed", e);
+            throw new BusinessException(ErrorCode.OPERATION_FAILED, "导出图文失败，请稍后重试");
         }
     }
 

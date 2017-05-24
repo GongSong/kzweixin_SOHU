@@ -1,4 +1,4 @@
-package com.kuaizhan.exception.common;
+package com.kuaizhan.exception.kuaizhan;
 
 /**
  * Created by lorin on 17-3-30.
