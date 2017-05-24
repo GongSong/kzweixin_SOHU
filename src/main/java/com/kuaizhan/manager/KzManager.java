@@ -101,7 +101,7 @@ public class KzManager {
         } catch (JSONException e) {
             throw new Export2KzException("[Kz:export2KzArticle] JsonParse error, pageId:" + postPO.getPageId() + " result:" + result, e);
         }
-        if (returnJson.getInt("result") != 0) {
+        if (returnJson.getInt("ret") != 0) {
             throw new Export2KzException("[Kz:export2KzArticle] return code error, pageId:" + postPO.getPageId() + " result:" + result);
         }
 
