@@ -3,6 +3,7 @@ package com.kuaizhan.manager;
 
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.constant.ErrorCode;
+import com.kuaizhan.constant.WxErrCode;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.*;
 import com.kuaizhan.exception.weixin.WxMediaIdNotExistException;
@@ -71,14 +72,14 @@ public class WxPostManager {
 
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
-        logger.info("[微信] 上传图片素材, address: {}", address);
         String result = HttpClientUtil.postFile(WxApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
         int errCode = returnJson.optInt("errcode");
         if (errCode != 0) {
-            if (errCode == 45001) {
+            if (errCode == WxErrCode.MEDIA_SIZE_OUT_OF_LIMIT) {
                 // TODO: 被controller直接调用时合理，被其他service调用时不合理
+                // TODO: 需要给用户压缩图片吗
                 throw new BusinessException(ErrorCode.MEDIA_SIZE_OUT_OF_LIMIT);
             }
             logger.error("[微信] 上传永久图片素材失败: result:{} url:{}", returnJson, imgUrl);
@@ -101,7 +102,11 @@ public class WxPostManager {
         String result = HttpClientUtil.postFile(WxApiConfig.getAddPostImageUrl(accessToken), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
-        if (returnJson.has("errcode")) {
+        int errCode = returnJson.optInt("errcode");
+        if (errCode != 0) {
+            if (errCode == WxErrCode.MEDIA_SIZE_OUT_OF_LIMIT) {
+                throw new BusinessException(ErrorCode.MEDIA_SIZE_OUT_OF_LIMIT);
+            }
             logger.error("[Weixin:uploadImgForPost] 上传图文中图片失败: result:{} imgUrl:{}", returnJson, imgUrl);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传内容中图片失败，请重试");
         }

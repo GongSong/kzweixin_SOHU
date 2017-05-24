@@ -16,4 +16,7 @@ public class WxErrCode {
     public static final int INVALID_OPEN_ID = 40003;
     // 回复次数超出限制
     public static final int OUT_OF_RESPONSE_LIMIT = 45047;
+
+    // 图片太大
+    public static final int MEDIA_SIZE_OUT_OF_LIMIT = 45001;
 }
