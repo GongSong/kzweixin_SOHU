@@ -19,4 +19,6 @@ public class WxErrCode {
 
     // 图片太大
     public static final int MEDIA_SIZE_OUT_OF_LIMIT = 45001;
+    // 永久素材数量超过限制
+    public static final int MEDIA_COUNT_OUT_OF_LIMIT = 45034;
 }

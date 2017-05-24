@@ -82,6 +82,9 @@ public class WxPostManager {
                 // TODO: 需要给用户压缩图片吗
                 throw new BusinessException(ErrorCode.MEDIA_SIZE_OUT_OF_LIMIT);
             }
+            if (errCode ==  WxErrCode.MEDIA_COUNT_OUT_OF_LIMIT) {
+                throw new BusinessException(ErrorCode.MEDIA_COUNT_OUT_OF_LIMIT);
+            }
             logger.error("[微信] 上传永久图片素材失败: result:{} url:{}", returnJson, imgUrl);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传图片失败，请重试");
         }
