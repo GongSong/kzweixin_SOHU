@@ -1,6 +1,8 @@
 package com.kuaizhan.utils;
 
-import java.util.regex.MatchResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +13,8 @@ import java.util.regex.Pattern;
  * Created by zixiong on 2017/3/29.
  */
 public class ReplaceCallbackMatcher {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReplaceCallbackMatcher.class);
 
     /**
      * 回调Callback实现
@@ -38,8 +42,14 @@ public class ReplaceCallbackMatcher {
             // 获取本次匹配的替换内容
             String replacement = callback.getReplacement(matcher);
             // 拼接替换后的字符串
-            // TODO: IllegalArgumentException 被发现
-            matcher.appendReplacement(resultBuffer, replacement);
+            try {
+                matcher.appendReplacement(resultBuffer, replacement);
+            } catch (IllegalArgumentException e) {
+                // TODO: IllegalArgumentException 被发现
+                // 临时记录日志，追踪问题
+                logger.error("[ReplaceCallbackMatcher] IllegalArgumentException found, pattern:{} replacement:{}", pattern, replacement);
+                throw e;
+            }
         }
 
         // 拼接结尾
