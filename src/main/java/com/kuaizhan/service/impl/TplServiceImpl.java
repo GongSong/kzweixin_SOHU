@@ -2,6 +2,7 @@ package com.kuaizhan.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.constant.ErrorCode;
+import com.kuaizhan.constant.MqConstant;
 import com.kuaizhan.dao.mapper.TplDao;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.weixin.*;
@@ -9,6 +10,7 @@ import com.kuaizhan.manager.WxTplManager;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.TplService;
+import com.kuaizhan.utils.MqUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +32,8 @@ public class TplServiceImpl implements TplService {
     private TplDao tplDao;
     @Resource
     private AccountService accountService;
+    @Resource
+    private MqUtil mqUtil;
 
     private Map<String, Object> sysTplMap;
 
@@ -88,19 +93,14 @@ public class TplServiceImpl implements TplService {
             throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
         }
 
-        try {
-            sendTplMsg(weixinAppid, tplId, openId, url, dataMap);
-        } catch (WxInvalidTemplateException e) {
-            // 模板id已经不可用，删除之
-            boolean deleted = tplDao.deleteTpl(weixinAppid, tplIdShort);
-            if (deleted) {
-                logger.info("[deleteTpl] weixinAppid:{} tplIdShort:{}", weixinAppid, tplIdShort);
-            }
-            throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
-        } catch (WxInvalidOpenIdException e) {
-            // 非法的openID, 通过微信异常的方式，做消极校验
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
-        }
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("weixinAppid", weixinAppid);
+        param.put("tplId", tplId);
+        param.put("tplIdShort", tplIdShort);
+        param.put("openId", openId);
+        param.put("url", url);
+        param.put("dataMap", dataMap);
+        mqUtil.publish(MqConstant.SEND_SYS_TPL_MSG, param);
     }
 
     @Override
