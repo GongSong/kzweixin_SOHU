@@ -15,6 +15,7 @@ import com.kuaizhan.exception.kuaizhan.GetKzArticleException;
 import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.dao.mongo.MongoPostDao;
 import com.kuaizhan.exception.kuaizhan.KZPicUploadException;
+import com.kuaizhan.exception.post.CleanPostException;
 import com.kuaizhan.exception.weixin.WxMediaIdNotExistException;
 import com.kuaizhan.manager.KzManager;
 import com.kuaizhan.manager.WxPostManager;
@@ -46,6 +47,10 @@ public class PostServiceImpl implements PostService {
 
     // 最长的title字符数
     private static final int TITLE_MAX = 640;
+    // 最长的digest字符数
+    private static final int DIGEST_MAX = 512;
+    // 最长的content_source_url字符数
+    private static final int CONTENT_SOURCE_URL_MAX = 512;
 
     @Resource
     private PostDao postDao;
@@ -435,18 +440,40 @@ public class PostServiceImpl implements PostService {
             postPO.setIndex(index++);
             // 图文类型
             postPO.setType(type);
-            // 上传图片
-            String replacedContent = uploadContentImg(accessToken, postPO.getContent());
-            // 过滤content中的js事件
-            replacedContent = filterHtml(replacedContent);
-            postPO.setContent(replacedContent);
-            // 删除emoji
-            postPO.setTitle(EmojiParser.removeAllEmojis(postPO.getTitle()));
+
+            /* 清理title */
+            String title = postPO.getTitle();
+            if (title != null) {
+                title = EmojiParser.removeAllEmojis(postPO.getTitle());
+            }
+            postPO.setTitle(title);
+
+            /* 清理digest */
             String digest = postPO.getDigest();
             if (digest != null) {
                 digest = EmojiParser.removeAllEmojis(digest);
+                if (digest.length() > DIGEST_MAX) {
+                    digest = digest.substring(0, DIGEST_MAX);
+                    logger.warn("[cleanPosts] digest too long, length:{} digest:{}", digest.length(), digest);
+                }
             }
             postPO.setDigest(digest);
+
+            /* 检查contentSourceUrl */
+            String contentSourceUrl = postPO.getContentSourceUrl();
+            if (contentSourceUrl != null) {
+                if (contentSourceUrl.length() > CONTENT_SOURCE_URL_MAX) {
+                    throw new CleanPostException("[cleanPosts] contentSourceUrl 过长: " + contentSourceUrl);
+                }
+            }
+
+            /* 清理content */
+            // 上传图片
+            String content = uploadContentImg(accessToken, postPO.getContent());
+            // 过滤content中的js事件
+            content = filterHtml(content);
+            postPO.setContent(content);
+
             // 上传封面图片
             String thumbMediaId = postPO.getThumbMediaId();
             if (thumbMediaId == null || thumbMediaId.equals("")) {
