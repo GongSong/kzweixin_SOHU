@@ -5,6 +5,7 @@ import com.kuaizhan.dao.mapper.TplDao;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.weixin.WxInvalidOpenIdException;
 import com.kuaizhan.exception.weixin.WxInvalidTemplateException;
+import com.kuaizhan.exception.weixin.WxRequireSubscribeException;
 import com.kuaizhan.service.TplService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +41,11 @@ public class SendTplMsgConsumer extends BaseMqConsumer {
             // 模板id已经不可用，删除之
             boolean deleted = tplDao.deleteTpl(weixinAppid, tplIdShort);
             if (deleted) {
-                logger.info("[deleteTpl] weixinAppid:{} tplIdShort:{}", weixinAppid, tplIdShort);
+                logger.warn("[deleteTpl][报错量太多时需要处理] weixinAppid:{} tplIdShort:{}", weixinAppid, tplIdShort);
             }
-            throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
-        } catch (WxInvalidOpenIdException e) {
-            // 非法的openID, 通过微信异常的方式，做消极校验
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
+        } catch (WxRequireSubscribeException e) {
+            // 社区可能给未关注的人发消息，先忽略错误
+            logger.info("[mq:sendTplMsg] send msg to not subscribed openI, e.getMessage: {}", e.getMessage());
         }
-
     }
 }

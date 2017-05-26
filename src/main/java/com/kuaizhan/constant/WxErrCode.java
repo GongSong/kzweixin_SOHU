@@ -21,4 +21,7 @@ public class WxErrCode {
     public static final int MEDIA_SIZE_OUT_OF_LIMIT = 45001;
     // 永久素材数量超过限制
     public static final int MEDIA_COUNT_OUT_OF_LIMIT = 45034;
+
+    // 需要关注
+    public static final int REQUIRE_SUBSCRIBE = 43004;
 }

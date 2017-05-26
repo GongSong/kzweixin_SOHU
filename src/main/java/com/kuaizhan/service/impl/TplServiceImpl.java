@@ -93,6 +93,8 @@ public class TplServiceImpl implements TplService {
             throw new BusinessException(ErrorCode.HAS_NOT_ADD_TEMPLATE_ERROR);
         }
 
+        // TODO: 是否需要校验用户关注了公众号？ 我们能保存用户一定存储在系统吗？ 了解粉丝模块后，更新这里
+
         HashMap<String, Object> param = new HashMap<>();
         param.put("weixinAppid", weixinAppid);
         param.put("tplId", tplId);
@@ -105,7 +107,7 @@ public class TplServiceImpl implements TplService {
 
     @Override
     public void sendTplMsg(long weixinAppid, String tplId, String openId, String url, Map dataMap)
-            throws WxInvalidTemplateException, WxInvalidOpenIdException, WxDataFormatException {
+            throws WxInvalidTemplateException, WxInvalidOpenIdException, WxDataFormatException, WxRequireSubscribeException {
         String accessToken = accountService.getAccessToken(weixinAppid);
         WxTplManager.sendTplMsg(accessToken, tplId, openId, url, dataMap);
         // 发送过的模板消息有必要存起来吗？
