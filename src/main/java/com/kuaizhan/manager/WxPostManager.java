@@ -85,6 +85,9 @@ public class WxPostManager {
             if (errCode ==  WxErrCode.MEDIA_COUNT_OUT_OF_LIMIT) {
                 throw new BusinessException(ErrorCode.MEDIA_COUNT_OUT_OF_LIMIT);
             }
+            if (errCode == WxErrCode.INVALID_IMAGE_FORMAT) {
+                throw new BusinessException(ErrorCode.OPERATION_FAILED, "图片格式不对，上传到微信失败");
+            }
             logger.error("[微信] 上传永久图片素材失败: result:{} url:{}", returnJson, imgUrl);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传图片失败，请重试");
         }
@@ -109,6 +112,9 @@ public class WxPostManager {
         if (errCode != 0) {
             if (errCode == WxErrCode.MEDIA_SIZE_OUT_OF_LIMIT) {
                 throw new BusinessException(ErrorCode.MEDIA_SIZE_OUT_OF_LIMIT);
+            }
+            if (errCode == WxErrCode.INVALID_IMAGE_FORMAT) {
+                throw new BusinessException(ErrorCode.OPERATION_FAILED, "图文中图片格式不对，上传到微信失败");
             }
             logger.error("[Weixin:uploadImgForPost] 上传图文中图片失败: result:{} imgUrl:{}", returnJson, imgUrl);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传内容中图片失败，请重试");
