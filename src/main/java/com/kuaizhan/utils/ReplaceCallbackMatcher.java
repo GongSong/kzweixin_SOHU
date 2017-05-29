@@ -39,17 +39,10 @@ public class ReplaceCallbackMatcher {
         StringBuffer resultBuffer = new StringBuffer();
 
         while (matcher.find()){
-            // 获取本次匹配的替换内容
-            String replacement = callback.getReplacement(matcher);
+            // 获取本次匹配的替换内容, 必须使用quoteReplacement使得'$'和'\'成为literal string。
+            String replacement = Matcher.quoteReplacement(callback.getReplacement(matcher));
             // 拼接替换后的字符串
-            try {
-                matcher.appendReplacement(resultBuffer, replacement);
-            } catch (IllegalArgumentException e) {
-                // TODO: IllegalArgumentException 被发现
-                // 临时记录日志，追踪问题
-                logger.error("[ReplaceCallbackMatcher] IllegalArgumentException found, pattern:{} replacement:{}", pattern, replacement);
-                throw e;
-            }
+            matcher.appendReplacement(resultBuffer, replacement);
         }
 
         // 拼接结尾
