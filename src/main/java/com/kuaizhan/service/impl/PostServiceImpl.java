@@ -608,10 +608,6 @@ public class PostServiceImpl implements PostService {
 
     /**
      * 删除html中的js标签，on_click事件
-     *
-     * @param html
-     * @return
-     * @throws Exception
      */
     private String filterHtml(String html) throws Exception {
         // 删除js标签
@@ -910,22 +906,12 @@ public class PostServiceImpl implements PostService {
         content = content.replaceAll("(<img [^>]*)(data-src)", "$1src");
 
         // img中的微信图片转成快站链接,记录wx_src
-        String regex = "(<img[^>]* src=\")([^\"]+)(\"[^>]*>)";
+        String regex = "(<img[^>]* src=[\"'])([^\"']+?)([\"'][^>]*>)";
         ReplaceCallbackMatcher replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         content = replaceCallbackMatcher.replaceMatches(content,
                 matcher -> matcher.group(1)
                         + getKzImgUrlByWeixinImgUrl(matcher.group(2), userId)
                         + "\" wx_src=\""
-                        + matcher.group(2)
-                        + matcher.group(3)
-        );
-
-        regex = "(<img[^>]* src=')([^']+)('[^>]*>)";
-        replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
-        content = replaceCallbackMatcher.replaceMatches(content,
-                matcher -> matcher.group(1)
-                        + getKzImgUrlByWeixinImgUrl(matcher.group(2), userId)
-                        + "' wx_src='"
                         + matcher.group(2)
                         + matcher.group(3)
         );
