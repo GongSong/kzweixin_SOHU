@@ -6,6 +6,7 @@ import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.constant.WxErrCode;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.*;
+import com.kuaizhan.exception.weixin.WxApiException;
 import com.kuaizhan.exception.weixin.WxMediaIdNotExistException;
 import com.kuaizhan.exception.weixin.WxPostListGetException;
 import com.kuaizhan.pojo.po.PostPO;
@@ -74,6 +75,9 @@ public class WxPostManager {
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
         String result = HttpClientUtil.postFile(WxApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
 
+        if (result == null) {
+            throw new WxApiException("[WeiXin:uploadTmpImage] result is null");
+        }
         JSONObject returnJson = new JSONObject(result);
         int errCode = returnJson.optInt("errcode");
         if (errCode != 0) {

@@ -63,6 +63,8 @@ public class WxApiConfig {
 
     //新增永久素材
     private static final String WEIXIN_ADD_MATERIAL = "/cgi-bin/material/add_material?access_token=";
+    // 新增临时素材
+    private static final String WEIXIN_ADD_TMP_MEDIA = "/cgi-bin/media/upload?access_token=";
     //删除永久素材
     private static final String WEIXIN_DELETE_MATERIAL = "/cgi-bin/material/del_material?access_token=";
     //获取素材总数
@@ -218,6 +220,10 @@ public class WxApiConfig {
      */
     public static String addMaterialUrl(String accessToken, String type) {
         return DOMAIN_WEIXIN_API + WEIXIN_ADD_MATERIAL + accessToken + "&type=" + type;
+    }
+
+    public static String addTmpMedia(String accessToken, String type) {
+        return DOMAIN_WEIXIN_API + WEIXIN_ADD_TMP_MEDIA + accessToken + "&type="  + type;
     }
 
     /**

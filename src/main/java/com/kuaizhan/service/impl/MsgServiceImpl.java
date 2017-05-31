@@ -11,6 +11,7 @@ import com.kuaizhan.dao.mapper.MsgDao;
 import com.kuaizhan.dao.mapper.auto.WeixinMsgConfigMapper;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.DownloadFileFailedException;
+import com.kuaizhan.manager.WxCommonManager;
 import com.kuaizhan.manager.WxMsgManager;
 import com.kuaizhan.manager.WxPostManager;
 import com.kuaizhan.pojo.dto.CustomMsg;
@@ -160,17 +161,15 @@ public class MsgServiceImpl implements MsgService {
                 wxMsgType = WxMsgType.IMAGE;
                 CustomMsg.Image image = JsonUtil.string2Bean(content, CustomMsg.Image.class);
 
-                if (image.getMediaId() == null) {
-                    String picUrl = UrlUtil.fixProtocol(image.getPicUrl());
-                    if (picUrl == null) {
-                        throw new BusinessException(ErrorCode.PARAM_ERROR, "pic_url不能为空");
-                    }
-                    try {
-                        Map<String, String> resultMap = WxPostManager.uploadImage(accessToken, picUrl);
-                        image.setMediaId(resultMap.get("mediaId"));
-                    } catch (DownloadFileFailedException e) {
-                        throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载文件失败，请稍后重试");
-                    }
+                String picUrl = UrlUtil.fixProtocol(image.getPicUrl());
+                if (picUrl == null) {
+                    throw new BusinessException(ErrorCode.PARAM_ERROR, "pic_url不能为空");
+                }
+                try {
+                    String mediaId = WxCommonManager.uploadTmpImage(accessToken, picUrl);
+                    image.setMediaId(mediaId);
+                } catch (DownloadFileFailedException e) {
+                    throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载文件失败，请稍后重试");
                 }
                 contentObj = image;
                 break;
