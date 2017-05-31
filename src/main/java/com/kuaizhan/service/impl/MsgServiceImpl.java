@@ -13,7 +13,6 @@ import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.DownloadFileFailedException;
 import com.kuaizhan.manager.WxCommonManager;
 import com.kuaizhan.manager.WxMsgManager;
-import com.kuaizhan.manager.WxPostManager;
 import com.kuaizhan.pojo.dto.CustomMsg;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.FanPO;
@@ -24,7 +23,6 @@ import com.kuaizhan.pojo.po.auto.WeixinMsgConfig;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.PostService;
-import com.kuaizhan.service.WeixinMsgService;
 import com.kuaizhan.utils.DBTableUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;
@@ -51,8 +49,6 @@ public class MsgServiceImpl implements MsgService {
     private FanDao fanDao;
     @Resource
     private PostService postService;
-    @Resource
-    private WeixinMsgService weixinMsgService;
 
     @Override
     public long getUnreadMsgCount(long weixinAppid) {

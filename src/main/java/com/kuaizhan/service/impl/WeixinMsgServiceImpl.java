@@ -1,8 +1,6 @@
 package com.kuaizhan.service.impl;
 
-import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
-import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
 import com.kuaizhan.exception.deprecated.system.EncryptException;
 import com.kuaizhan.exception.common.XMLParseException;
 import com.kuaizhan.pojo.po.AccountPO;
@@ -11,7 +9,6 @@ import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.WeixinFanService;
 import com.kuaizhan.service.WeixinMsgService;
-import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.weixin.WXBizMsgCrypt;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -164,32 +161,5 @@ public class WeixinMsgServiceImpl implements WeixinMsgService {
         }
         return "success";
     }
-
-    @Override
-    public int sendCustomMsg(String appId, String accessToken, String openId, int msgType, JSONObject content) throws SendCustomMsgException {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("touser", openId);
-        switch (msgType) {
-            case 1:
-                jsonObject.put("msgtype", "text");
-                jsonObject.put("text", content);
-                break;
-            case 2:
-                jsonObject.put("msgtype", "image");
-                jsonObject.put("image", content);
-                break;
-            case 10:
-                jsonObject.put("msgtype", "news");
-                jsonObject.put("news", content);
-                break;
-        }
-        String result = HttpClientUtil.postJson(WxApiConfig.sendCustomMsgUrl(accessToken), jsonObject.toString());
-        JSONObject returnJson = new JSONObject(result);
-        if (returnJson.getInt("errcode") != 0) {
-            throw new SendCustomMsgException();
-        }
-        return 1;
-    }
-
 
 }
