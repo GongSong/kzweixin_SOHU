@@ -11,15 +11,14 @@ import com.kuaizhan.dao.mapper.MsgDao;
 import com.kuaizhan.dao.mapper.auto.WeixinMsgConfigMapper;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.DownloadFileFailedException;
-import com.kuaizhan.exception.deprecated.business.SendCustomMsgException;
-import com.kuaizhan.exception.common.DaoException;
-import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.manager.WxMsgManager;
 import com.kuaizhan.manager.WxPostManager;
+import com.kuaizhan.pojo.dto.CustomMsg;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.FanPO;
 import com.kuaizhan.pojo.po.MsgPO;
 import com.kuaizhan.pojo.dto.Page;
+import com.kuaizhan.pojo.po.PostPO;
 import com.kuaizhan.pojo.po.auto.WeixinMsgConfig;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.MsgService;
@@ -27,8 +26,8 @@ import com.kuaizhan.service.PostService;
 import com.kuaizhan.service.WeixinMsgService;
 import com.kuaizhan.utils.DBTableUtil;
 import com.kuaizhan.utils.JsonUtil;
+import com.kuaizhan.utils.UrlUtil;
 import com.vdurmont.emoji.EmojiParser;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -137,68 +136,90 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, Map<String, Object> dataMap) {
+    public void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, String content) {
         String accessToken = accountService.getAccessToken(weixinAppid);
 
         WxMsgType wxMsgType;
+        Object contentObj;
         // TODO: 用dataMap传输json数据，实在是不是好方法。--- 不方便做数据校验, 经常面临强制转换，数据结构不那么"显而易见"。
         switch (msgType) {
+            // 文本类型
             case TEXT:
                 wxMsgType = WxMsgType.TEXT;
-                String content = (String) dataMap.getOrDefault("content", null);
-                if (content == null) {
+                CustomMsg.Text text = JsonUtil.string2Bean(content, CustomMsg.Text.class);
+                String textContent = text.getContent();
+                if (textContent == null) {
                     throw new BusinessException(ErrorCode.PARAM_ERROR, "content不能为空");
                 }
-                dataMap.put("content", EmojiParser.removeAllEmojis(content));
+                // 去除emoji
+                text.setContent(EmojiParser.removeAllEmojis(textContent));
+                contentObj = text;
                 break;
+            // 图片类型
             case IMAGE:
                 wxMsgType = WxMsgType.IMAGE;
-                String mediaId = (String) dataMap.getOrDefault("media_id", null);
-                String picUrl = (String) dataMap.getOrDefault("pic_url", null);
+                CustomMsg.Image image = JsonUtil.string2Bean(content, CustomMsg.Image.class);
 
-                if (mediaId == null) {
+                if (image.getMediaId() == null) {
+                    String picUrl = UrlUtil.fixProtocol(image.getPicUrl());
                     if (picUrl == null) {
                         throw new BusinessException(ErrorCode.PARAM_ERROR, "pic_url不能为空");
                     }
                     try {
                         Map<String, String> resultMap = WxPostManager.uploadImage(accessToken, picUrl);
-                        dataMap.put("media_id", resultMap.get("mediaId"));
+                        image.setMediaId(resultMap.get("mediaId"));
                     } catch (DownloadFileFailedException e) {
                         throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载文件失败，请稍后重试");
                     }
                 }
+                contentObj = image;
                 break;
+            // 多图文类型
+            case MP_NEWS:
+                // 保存为链接组类型
+                msgType = MsgType.NEWS;
+
+                wxMsgType = WxMsgType.NEWS;
+                CustomMsg.MpNews mpNews = JsonUtil.string2Bean(content, CustomMsg.MpNews.class);
+
+                CustomMsg.News news = new CustomMsg.News();
+
+                for(Long pageId: mpNews.getPosts()) {
+                    PostPO postPO = postService.getPostByPageId(pageId);
+
+                    CustomMsg.Article article = new CustomMsg.Article();
+                    article.setTitle(postPO.getTitle());
+                    article.setDescription(postPO.getDigest());
+                    article.setUrl(postService.getPostWxUrl(weixinAppid, pageId));
+                    article.setPicUrl(postPO.getThumbUrl());
+
+                    news.getArticles().add(article);
+                }
+
+                contentObj = news;
+                break;
+            // 链接组类型
             case NEWS:
                 wxMsgType = WxMsgType.NEWS;
-                List<Map> articles = (List) dataMap.get("articles");
-                for (Map articleMap: articles) {
-                    Long pageId = (Long) articleMap.getOrDefault("pageId", null);
-                    if (pageId == null) {
-                        // TODO: 这样的代码完全看不懂，因为维护者不知道这里的结构
-                        String url = (String) articleMap.getOrDefault("url", null);
-                        if (url == null) {
-                            throw new BusinessException(ErrorCode.PARAM_ERROR, "url不能为空");
-                        }
-                    } else {
-                        String wxUrl = postService.getPostWxUrl(weixinAppid, pageId);
-                        // TODO: 添加字段title, description, picurl数据
-                        articleMap.put("url", wxUrl);
-                    }
-                }
+                // TODO: 校验bean
+                news = JsonUtil.string2Bean(content, CustomMsg.News.class);
+                contentObj = news;
                 break;
+
             default:
                 throw new BusinessException(ErrorCode.OPERATION_FAILED, "不允许的消息类型");
         }
 
         // 发送消息
-        WxMsgManager.sendCustomMsg(accessToken, openId, wxMsgType, dataMap);
+        WxMsgManager.sendCustomMsg(accessToken, openId, wxMsgType, contentObj);
+
         // 存储消息
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String appId = accountPO.getAppId();
 
         MsgPO msgPO = new MsgPO();
         msgPO.setAppId(appId);
-        msgPO.setContent(JsonUtil.bean2String(dataMap));
+        msgPO.setContent(JsonUtil.bean2String(contentObj));
         msgPO.setOpenId(openId);
         msgPO.setSendType(2);
         msgPO.setType((int) msgType.getValue());

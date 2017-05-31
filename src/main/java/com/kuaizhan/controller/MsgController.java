@@ -15,6 +15,7 @@ import com.kuaizhan.pojo.vo.*;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.MsgService;
 
+import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.PojoSwitcher;
 import org.springframework.web.bind.annotation.*;
 
@@ -124,7 +125,7 @@ public class MsgController extends BaseController {
     @RequestMapping(value = "/msgs", method = RequestMethod.POST)
     public JsonResponse insertCustomMsg(@Valid @RequestBody SendCustomMsgParam param) {
         MsgType msgType = MsgType.fromValue(param.getMsgType());
-        msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), msgType, param.getData());
+        msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), msgType, JsonUtil.bean2String(param.getContent()));
         return new JsonResponse(null);
     }
 }

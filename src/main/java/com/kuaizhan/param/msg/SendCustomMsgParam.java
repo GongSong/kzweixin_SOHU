@@ -16,6 +16,6 @@ public class SendCustomMsgParam {
     private String openId;
     @NotNull(message = "msgType can not be null")
     private Short msgType;
-    @NotNull(message = "data can not be null")
-    private Map data;
+    @NotNull(message = "content can not be null")
+    private Map content;
 }

@@ -62,7 +62,7 @@ public interface MsgService {
      * @param weixinAppid 微信appId
      * @param openId 用户openId
      * @param msgType 发送消息类型
-     * @param dataMap 消息data
+     * @param content 消息数据
      */
-    void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, Map<String, Object> dataMap);
+    void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, String content);
 }
