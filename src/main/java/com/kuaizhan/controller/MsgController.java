@@ -121,7 +121,7 @@ public class MsgController extends BaseController {
     /**
      * 发送客服消息
      */
-    @RequestMapping(value = "/custom_msgs", method = RequestMethod.POST)
+    @RequestMapping(value = "/msgs", method = RequestMethod.POST)
     public JsonResponse insertCustomMsg(@Valid @RequestBody SendCustomMsgParam param) {
         MsgType msgType = MsgType.fromValue(param.getMsgType());
         msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), msgType, param.getData());

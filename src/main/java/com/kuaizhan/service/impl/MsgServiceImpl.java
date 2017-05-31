@@ -181,6 +181,7 @@ public class MsgServiceImpl implements MsgService {
                         }
                     } else {
                         String wxUrl = postService.getPostWxUrl(weixinAppid, pageId);
+                        // TODO: 添加字段title, description, picurl数据
                         articleMap.put("url", wxUrl);
                     }
                 }
