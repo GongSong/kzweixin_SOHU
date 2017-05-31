@@ -6,6 +6,8 @@ import com.kuaizhan.constant.AppConstant;
  * Created by zixiong on 2017/4/25.
  */
 public class KzApiConfig {
+    public static final String KZ_APPLY_PUSH_TOKEN = "http://push.kuaizhan.sohuno.com/api/v1/tokens/token";
+
     // 上传图片到快站用户空间
     public static final String KZ_UPLOAD_PIC_URL = "http://" + ApplicationConfig.KZ_SERVICE_IP + "/pic/service-upload-pic-by-url";
     // 新增快文

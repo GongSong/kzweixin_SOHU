@@ -65,4 +65,14 @@ public interface MsgService {
      * @param content 消息数据
      */
     void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, String content);
+
+    /**
+     * 获取快站推送token
+     */
+    String getPushToken(long weixinAppid, String openId);
+
+    /**
+     * 删除推送token
+     */
+    void deletePushToken(long weixinAppid, String openId);
 }

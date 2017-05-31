@@ -36,17 +36,29 @@ public final class EncryptUtil {
      * @param input 输入的字符串
      * @return 输入字符串的MD5值
      */
-    public static String md5(String input) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public static String md5(String input) {
         if (input == null)
             return null;
-        // 拿到一个MD5转换器（如果想要SHA1参数换成”SHA1”）
-        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-        // 输入的字符串转换成字节数组
-        byte[] inputByteArray = input.getBytes("utf-8");
-        // inputByteArray是输入字符串转换得到的字节数组
+
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            // never happen
+            throw new RuntimeException("[md5] no such algorithm", e);
+        }
+
+        byte[] inputByteArray;
+        try {
+            inputByteArray = input.getBytes("utf-8");
+        } catch (UnsupportedEncodingException e) {
+            // never happen
+            throw new RuntimeException("[md5] not support utf-8", e);
+        }
+
         messageDigest.update(inputByteArray);
-        // 转换并返回结果，也是字节数组，包含16个元素
         byte[] resultByteArray = messageDigest.digest();
+
         // 字符数组转换成字符串返回
         return byteArrayToHex(resultByteArray);
 

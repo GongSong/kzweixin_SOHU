@@ -1,6 +1,8 @@
 package com.kuaizhan.service.impl;
 
 
+import com.google.common.collect.ImmutableMap;
+import com.kuaizhan.cache.MsgCache;
 import com.kuaizhan.config.KzApiConfig;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.constant.ErrorCode;
@@ -11,6 +13,7 @@ import com.kuaizhan.dao.mapper.MsgDao;
 import com.kuaizhan.dao.mapper.auto.WeixinMsgConfigMapper;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.DownloadFileFailedException;
+import com.kuaizhan.manager.KzManager;
 import com.kuaizhan.manager.WxCommonManager;
 import com.kuaizhan.manager.WxMsgManager;
 import com.kuaizhan.pojo.dto.CustomMsg;
@@ -27,6 +30,7 @@ import com.kuaizhan.utils.DBTableUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;
 import com.vdurmont.emoji.EmojiParser;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -49,6 +53,8 @@ public class MsgServiceImpl implements MsgService {
     private FanDao fanDao;
     @Resource
     private PostService postService;
+    @Resource
+    private MsgCache msgCache;
 
     @Override
     public long getUnreadMsgCount(long weixinAppid) {
@@ -219,6 +225,32 @@ public class MsgServiceImpl implements MsgService {
         msgPO.setSendType(2);
         msgPO.setType((int) msgType.getValue());
         insertMsg(appId, msgPO);
+    }
+
+    @Override
+    public String getPushToken(long weixinAppid, String openId) {
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        String appId = accountPO.getAppId();
+
+        String cache = msgCache.getPushToken(appId, openId);
+        if (cache != null) {
+            JSONObject jsonObject = new JSONObject(cache);
+            return jsonObject.getString("push_token");
+        }
+
+        Map<String, String> result = KzManager.applyPushToken();
+        String token = result.get("token");
+        String clientId = result.get("clientId");
+        // 存到redis，微信回调时根据是否有token决定是否推送
+        msgCache.setPushToken(appId, openId, JsonUtil.bean2String(ImmutableMap.of("push_client_id", clientId, "push_token", token)));
+
+        return token;
+    }
+
+    @Override
+    public void deletePushToken(long weixinAppid, String openId) {
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        msgCache.deletePushToken(accountPO.getAppId(), openId);
     }
 
 

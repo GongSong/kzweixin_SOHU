@@ -164,3 +164,38 @@
         ```
         {}
         ```
+        
+#### 8 获取快站webSocket推送token 
+* **协议**： HTTPS
+* **方法**： GET
+* **URL**： /v1/msg/push_token
+* **参数**：  
+        * weixinAppid  
+        * openId: 粉丝openId
+        
+        
+* **返回**：
+    * 成功时返回:
+
+        ```
+        {
+          "token": "MTQzMnw5NmNhOTJkNzJkOWU0NjEzODBkNTFjMGQyN2I0NTc1N3wxODAwfDE0OTYyMjQwOTg="
+        }
+        ```
+        
+#### 9 关闭推送token
+* **协议**： HTTPS
+* **方法**： DELETE
+* **URL**： /v1/msg/push_token
+* **参数**：  
+        * weixinAppid  
+        * openId: 粉丝openId
+        
+        
+* **返回**：
+    * 成功时返回:
+
+        ```
+        {}
+        ```
+

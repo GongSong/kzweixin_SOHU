@@ -31,10 +31,9 @@ public class RedisConstant {
 
     //消息
 
-    //缓存消息列表
-    public static final String KEY_MSG_LIST = ApplicationConfig.REDIS_PREFIX + "kzweixin:msg_list:";
-    //缓存单个用户消息
-    public static final String KEY_MSG_USER = ApplicationConfig.REDIS_PREFIX + "kzweixin:msg_user:";
+    // 消息push token
+    public static final String KEY_KZ_PUSH_TOKEN = ApplicationConfig.REDIS_PREFIX + "kz_weixin:msg_app_id:";
+
 
     // 上传过的图片资源
     public static final String KEY_IMAGE_WEIXIN_RUL = ApplicationConfig.REDIS_PREFIX + "kzweixin:origin_url:";

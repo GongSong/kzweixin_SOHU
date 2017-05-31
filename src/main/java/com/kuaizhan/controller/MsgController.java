@@ -128,4 +128,22 @@ public class MsgController extends BaseController {
         msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), msgType, JsonUtil.bean2String(param.getContent()));
         return new JsonResponse(null);
     }
+
+    /**
+     * 获取快站推送token
+     */
+    @RequestMapping(value = "push_token", method = RequestMethod.GET)
+    public JsonResponse getPushToken(@RequestParam long weixinAppid, @RequestParam String openId) {
+        String token = msgService.getPushToken(weixinAppid, openId);
+        return new JsonResponse(ImmutableMap.of("token", token));
+    }
+
+    /**
+     * 关闭推送token
+     */
+    @RequestMapping(value = "push_token", method = RequestMethod.DELETE)
+    public JsonResponse deletePushToken(@RequestParam long weixinAppid, @RequestParam String openId) {
+        msgService.deletePushToken(weixinAppid, openId);
+        return new JsonResponse(ImmutableMap.of());
+    }
 }
