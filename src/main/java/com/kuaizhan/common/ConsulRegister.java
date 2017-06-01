@@ -111,14 +111,14 @@ public class ConsulRegister {
         if (!registered && shouldRegister()) {
             logger.info("[Consul] start service register");
 
-            String address;
-            int port;
             try {
                 address = getAddress();
                 port = getPort();
             } catch (Exception e) {
-                logger.error("[Consul] register failed", e);
-                // 也许可以在这里阻止服务启动
+                // dev环境允许注册失败，其他环境报错
+                if (!"dev".equals(ApplicationConfig.ENV_ALIAS)) {
+                    logger.error("[Consul] register failed", e);
+                }
                 return;
             }
 
