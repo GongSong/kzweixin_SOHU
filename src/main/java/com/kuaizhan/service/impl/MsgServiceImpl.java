@@ -271,7 +271,7 @@ public class MsgServiceImpl implements MsgService {
             int now = (int) (System.currentTimeMillis() / 1000);
             config.setLastReadTime(now);
             config.setCreateTime(now);
-            config.setCreateTime(now);
+            config.setUpdateTime(now);
             msgConfigMapper.insert(config);
         }
         return config.getLastReadTime();

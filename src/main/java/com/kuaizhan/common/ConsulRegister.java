@@ -39,7 +39,7 @@ public class ConsulRegister {
 
     /** 判断是否需要注册 **/
     private Boolean shouldRegister() {
-        return Stream.of("test", "pre", "production").anyMatch(ApplicationConfig.ENV_ALIAS::equals);
+        return Stream.of("dev", "test", "pre", "production").anyMatch(ApplicationConfig.ENV_ALIAS::equals);
     }
 
     /*** 从命令"hostname -i"中读取ip ***/

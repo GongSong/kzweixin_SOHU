@@ -91,6 +91,7 @@
             "totalNum": 370,
             "currentPage": 1,
             "totalPage": 19,
+            "lastInteractTime": 1493005476, // 上次聊天的时间
             "msgs": [
               {
                 "msgType": 1,
