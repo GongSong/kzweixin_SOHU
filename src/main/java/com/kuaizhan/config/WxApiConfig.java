@@ -7,69 +7,76 @@ package com.kuaizhan.config;
  */
 public class WxApiConfig {
 
-    //主域名
+    // 主域名
     private static final String DOMAIN_WEIXIN_API = "https://api.weixin.qq.com";
     private static final String DOMAIN_WEIXIN_MP = "https://mp.weixin.qq.com";
 
-    //账户
+    // 账户
 
-    //获取access_token
+    // 获取access_token
     private static final String WEIXIN_GET_ACCESS_TOKEN = "/cgi-bin/token?grant_type=client_credential&appid=";
-    //获取第三方平台component_access_token
+    // 获取第三方平台component_access_token
     private static final String WEIXIN_GET_COMPONENT_ACCESS_TOKEN = "/cgi-bin/component/api_component_token";
-    //获取预授权码
+    // 获取预授权码
     private static final String WEIXIN_GET_PRE_AUTH_CODE = "/cgi-bin/component/api_create_preauthcode?component_access_token=";
-    //使用授权码换取公众号的接口调用凭据和授权信息
+    // 使用授权码换取公众号的接口调用凭据和授权信息
     private static final String WEIXIN_GET_AUTHORIZATION_INFO = "/cgi-bin/component/api_query_auth?component_access_token=";
-    //授权页入口
+    // 授权页入口
     private static final String WEIXIN_GET_AUTHORIZATION_ENTRANCE = "/cgi-bin/componentloginpage?component_appid=";
-    //使用授权码换取公众号的接口调用凭据和授权信息
+    // 使用授权码换取公众号的接口调用凭据和授权信息
     private static final String WEIXIN_GET_AUTH = "/cgi-bin/component/api_query_auth?component_access_token=";
-    //获取（刷新）授权公众号的接口调用凭据（令牌）
+    // 获取（刷新）授权公众号的接口调用凭据（令牌）
     private static final String WEIXIN_REFRESH_AUTH = "/cgi-bin/component/api_authorizer_token?component_access_token=";
-    //获取授权方的公众号帐号基本信息
+    // 获取授权方的公众号帐号基本信息
     private static final String WEIXIN_GET_AUTHORIZER_INFO = "/cgi-bin/component/api_get_authorizer_info?component_access_token=";
 
-    //粉丝
+    // 粉丝
 
-    //获取公众号已创建的标签
+    // 获取公众号已创建的标签
     private static final String WEIXIN_GET_TAGS = "/cgi-bin/tags/get?access_token=";
-    //创建新的标签
+    // 创建新的标签
     private static final String WEIXIN_CREATE_TAGS = "/cgi-bin/tags/create?access_token=";
-    //批量为用户打标签
+    // 批量为用户打标签
     private static final String WEIXIN_SET_TAGS = "/cgi-bin/tags/members/batchtagging?access_token=";
-    //删除标签
+    // 删除标签
     private static final String WEIXIN_DELETE_TAGS = "/cgi-bin/tags/delete?access_token=";
-    //重命名标签
+    // 重命名标签
     private static final String WEIXIN_UPDATE_TAGS = "/cgi-bin/tags/update?access_token=";
-    //拉黑用户
+    // 拉黑用户
     private static final String WEIXIN_ADD_BALCK = "/cgi-bin/tags/members/batchblacklist?access_token=";
-    //移除黑名单
+    // 移除黑名单
     private static final String WEIXIN_REMOVE_BLACK = "/cgi-bin/tags/members/batchunblacklist?access_token=";
-    //获取用户基本信息
+    // 获取用户基本信息
     private static final String WEIXIN_GET_FAN_INFO = "/cgi-bin/user/info?access_token=";
 
     //消息
 
-    //客服消息发送
+    // 客服消息发送
     private static final String WEIXIN_SEND_CUSTOM_MSG = "/cgi-bin/message/custom/send?access_token=";
     // 发送模板消息
     private static final String WEIXIN_SEND_TPL_MSG = "/cgi-bin/message/template/send?access_token=";
     // 添加模板id
     private static final String WEIXIN_ADD_TEMPLATE = "/cgi-bin/template/api_add_template?access_token=";
 
+    // 参数二维码
 
-    //素材
+    // 新增参数二维码
+    private static final String WEIXIN_ADD_QRCODE = "/cgi-bin/qrcode/create?access_token=";
+    // 参数二维码图片地址
+    private static final String WEIXIN_QRCODE_URL = "/cgi-bin/showqrcode?ticket=";
 
-    //新增永久素材
+
+    // 素材
+
+    // 新增永久素材
     private static final String WEIXIN_ADD_MATERIAL = "/cgi-bin/material/add_material?access_token=";
     // 新增临时素材
     private static final String WEIXIN_ADD_TMP_MEDIA = "/cgi-bin/media/upload?access_token=";
-    //删除永久素材
+    // 删除永久素材
     private static final String WEIXIN_DELETE_MATERIAL = "/cgi-bin/material/del_material?access_token=";
-    //获取素材总数
+    // 获取素材总数
     private static final String WEIXIN_GET_MATERIAL_COUNT = "/cgi-bin/material/get_materialcount?access_token=";
-    //获取素材列表
+    // 获取素材列表
     private static final String WEIXIN_BATCH_GET_MATERIAL = "/cgi-bin/material/batchget_material?access_token=";
     // 获取素材
     private static final String WEIXIN_GET_MATERIAL = "/cgi-bin/material/get_material?access_token=";
@@ -213,6 +220,21 @@ public class WxApiConfig {
      */
     public static String getAddTemplateUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_ADD_TEMPLATE + accessToken;
+    }
+
+    /**
+     * 新增参数二维码url
+     */
+    public static String getAddQrcodeUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_ADD_QRCODE + accessToken;
+    }
+
+    /**
+     * 二维码的图片地址
+     * @param ticket 二维码ticket
+     */
+    public static String qrcodeUrl(String ticket) {
+        return DOMAIN_WEIXIN_MP + WEIXIN_QRCODE_URL + ticket;
     }
 
     /**
