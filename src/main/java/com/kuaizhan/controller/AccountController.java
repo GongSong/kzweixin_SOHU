@@ -40,7 +40,7 @@ public class AccountController extends BaseController {
      * 根据weixinAppid获取账号信息
      */
     @RequestMapping(value = "/accounts/{weixinAppid}", method = RequestMethod.GET)
-    public JsonResponse getAccountInfo(@RequestParam long weixinAppid) {
+    public JsonResponse getAccountInfo(@PathVariable long weixinAppid) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         AccountVO accountVO = PojoSwitcher.accountPOToVO(accountPO);
         return new JsonResponse(accountVO);

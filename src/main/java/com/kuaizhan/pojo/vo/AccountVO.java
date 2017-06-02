@@ -12,6 +12,7 @@ import java.util.List;
 public class AccountVO {
 
     private Long weixinAppid;
+    private String appId;
     private String appSecret;
     private String headImg;
     private List<String> interest;

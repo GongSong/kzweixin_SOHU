@@ -11,7 +11,8 @@
 
         ```
         {
-            "weixinAppid": 601145633,
+            "weixinAppid": 601145633, 
+            "appId": "wx1a4ff9ec0e369bd1", // 微信后台的appid
             "appSecret": "1323fda2dfa************24332423", // 打码后的appSecret
             "headImg": "http://wx.qlogo.cn/mmopen/l0fmnePhf2dtiaEmpOZmeMrUMYBLbcQHOSYOPjFWCNdOoWUO53oawfQJA5k1DvdfK4sbX3Dn60rYI2AbOUU10thWiasCH8Q4re/0",
             "interest": ["0", "0", "0", "0", "0", "0"]
@@ -37,6 +38,7 @@
         ```
         {
             "weixinAppid": 601145633,
+            "appId": "wx1a4ff9ec0e369bd1", // 微信后台的appid
             "appSecret": "1323fda2dfa************24332423", // 打码后的appSecret
             "headImg": "http://wx.qlogo.cn/mmopen/l0fmnePhf2dtiaEmpOZmeMrUMYBLbcQHOSYOPjFWCNdOoWUO53oawfQJA5k1DvdfK4sbX3Dn60rYI2AbOUU10thWiasCH8Q4re/0",
             "interest": ["0", "0", "0", "0", "0", "0"]

@@ -52,6 +52,7 @@ public class PojoSwitcher {
         }
         AccountVO accountVO = new AccountVO();
         accountVO.setWeixinAppid(accountPO.getWeixinAppId());
+        accountVO.setAppId(accountPO.getAppId());
         // 对appSecret进行打码处理
         String appSecret = accountPO.getAppSecret();
         if (appSecret != null && !"".equals(appSecret)) {
