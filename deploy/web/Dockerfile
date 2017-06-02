@@ -4,9 +4,7 @@ MAINTAINER "chengliu" <chengliu@sohu-inc.com>
 ENV PREFIX /opt/kuaizhan
 
 COPY ./target/kzweixin.war $PREFIX/jetty/webapps/
+COPY ./deploy/web/export-tpl.sh /export-tpl.sh
+COPY ./deploy/web/start.sh /start.sh
 
-COPY ./deploy/web/init.sh /init.sh
-COPY ./deploy/web/jetty-tpl.ini /jetty-tpl.ini
-COPY ./deploy/web/supervisord.conf /supervisord.conf
-
-ENTRYPOINT supervisord -c /supervisord.conf
+ENTRYPOINT /bin/bash /start.sh

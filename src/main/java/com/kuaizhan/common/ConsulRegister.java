@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -65,43 +66,12 @@ public class ConsulRegister {
 
     /*** 从jetty配置文件读取端口 ***/
     private int getPort() throws IOException {
+        Map<String, String> envs = System.getenv();
+        int port = Integer.parseInt(envs.getOrDefault("JETTY_PORT", "0"));
         if (port == 0) {
-            final String FILE_NAME = "/opt/kuaizhan/jetty/start.ini";
-            BufferedReader br = null;
-            FileReader fr = null;
-
-            try {
-                fr = new FileReader(FILE_NAME);
-                br = new BufferedReader(fr);
-
-                Pattern pattern = Pattern.compile(".*jetty.http.port=(\\d+).*");
-
-                String curLine;
-                while((curLine = br.readLine()) != null) {
-                    Matcher matcher = pattern.matcher(curLine);
-                    if (matcher.find()) {
-                        logger.info("[Consul] match content:{}", matcher.group(0));
-                        port = Integer.parseInt(matcher.group(1));
-                        logger.info("[Consul] get port:{}", port );
-                        return port;
-                    }
-                }
-            } finally {
-                try {
-                    if (br != null) {
-                        br.close();
-                    }
-                    if (fr != null) {
-                        fr.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            throw new IOException("[Consul] can not get port");
         }
-        if (port == 0) {
-            throw new IOException("[Consul] port is not initialized");
-        }
+        logger.info("[Consul] get port:{}", port);
         return port;
     }
 
@@ -122,8 +92,10 @@ public class ConsulRegister {
                 return;
             }
 
-            JSONObject paramJson = new JSONObject();
             serviceId = serviceName + ":" + address + ":" + port;
+            logger.info("[Consul] serviceId:{}", serviceId);
+
+            JSONObject paramJson = new JSONObject();
             paramJson.put("ID", serviceId);
             paramJson.put("Name", serviceName);
             paramJson.put("Address", address);
