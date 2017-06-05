@@ -2,6 +2,9 @@ package com.kuaizhan.service;
 
 import com.kuaizhan.pojo.dto.MenuDTO;
 import com.kuaizhan.pojo.dto.MenuWrapper;
+import com.kuaizhan.pojo.po.auto.WeixinConditionalMenu;
+
+import java.util.List;
 
 /**
  * Created by zixiong on 2017/5/25.
@@ -34,4 +37,9 @@ public interface MenuService {
      * @return menuDTO 与 publish
      */
     MenuWrapper getMenu(long weixinAppid);
+
+    /**
+     * 获取微信的自定义菜单列表
+     */
+    List<WeixinConditionalMenu> getConditionalMenus(long weixinAppid);
 }

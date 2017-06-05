@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.constant.ResponseType;
 import com.kuaizhan.dao.mapper.AccountDao;
+import com.kuaizhan.dao.mapper.auto.WeixinConditionalMenuMapper;
 import com.kuaizhan.dao.mapper.auto.WeixinMenuItemMapper;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.menu.MenuCheckException;
@@ -14,6 +15,8 @@ import com.kuaizhan.pojo.dto.MenuDTO;
 import com.kuaizhan.pojo.dto.MenuWrapper;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.PostPO;
+import com.kuaizhan.pojo.po.auto.WeixinConditionalMenu;
+import com.kuaizhan.pojo.po.auto.WeixinConditionalMenuExample;
 import com.kuaizhan.pojo.po.auto.WeixinMenuItem;
 import com.kuaizhan.pojo.po.auto.WeixinMenuItemExample;
 import com.kuaizhan.service.AccountService;
@@ -51,6 +54,8 @@ public class MenuServiceImpl implements MenuService {
     private AccountDao accountDao;
     @Resource
     private WeixinMenuItemMapper menuItemMapper;
+    @Resource
+    private WeixinConditionalMenuMapper conditionalMenuMapper;
     @Resource
     private PostService postService;
 
@@ -169,6 +174,16 @@ public class MenuServiceImpl implements MenuService {
             menuJson = "{}";
         }
         return JsonUtil.string2Bean(menuJson, MenuWrapper.class);
+    }
+
+    @Override
+    public List<WeixinConditionalMenu> getConditionalMenus(long weixinAppid) {
+        WeixinConditionalMenuExample example = new WeixinConditionalMenuExample();
+        example.createCriteria()
+                .andWeixinAppidEqualTo(weixinAppid)
+                .andStatusEqualTo(1);
+        example.setOrderByClause("update_time desc");
+        return conditionalMenuMapper.selectByExample(example);
     }
 
     /**

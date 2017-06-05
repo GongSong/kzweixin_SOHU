@@ -5,12 +5,16 @@ import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.constant.ResponseType;
 import com.kuaizhan.param.common.WeixinAppidParam;
 import com.kuaizhan.pojo.dto.MenuWrapper;
+import com.kuaizhan.pojo.po.auto.WeixinConditionalMenu;
+import com.kuaizhan.pojo.vo.ConditionalMenuVO;
 import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.MenuService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by zixiong on 2017/6/1.
@@ -35,5 +39,21 @@ public class MenuController extends BaseController {
             menuWrapper.setPublish(false);
         }
         return new JsonResponse(menuWrapper);
+    }
+
+    @RequestMapping(value = "conditional_menus", method = RequestMethod.GET)
+    public JsonResponse getConditionalMenus(@RequestParam long weixinAppid) {
+        List<WeixinConditionalMenu> menus = menuService.getConditionalMenus(weixinAppid);
+        List<ConditionalMenuVO> menuVOS = new ArrayList<>();
+
+        for (WeixinConditionalMenu menu: menus) {
+            ConditionalMenuVO menuVO = new ConditionalMenuVO();
+            menuVO.setId(menu.getId());
+            menuVO.setMenuId(menu.getMenuId());
+            menuVO.setMenuName(menu.getMenuName());
+            menuVOS.add(menuVO);
+        }
+
+        return new JsonResponse(menuVOS);
     }
 }

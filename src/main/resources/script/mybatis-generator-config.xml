@@ -41,7 +41,10 @@
                 <!--&lt;!&ndash;status没被使用&ndash;&gt;-->
                 <!--<ignoreColumn column="status" />-->
             <!--</table>-->
-            <table tableName="weixin_menu_item">
+            <!--<table tableName="weixin_menu_item">-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
+            <table tableName="weixin_conditional_menu">
                 <columnOverride column="status" javaType="java.lang.Integer"/>
             </table>
         </context>
