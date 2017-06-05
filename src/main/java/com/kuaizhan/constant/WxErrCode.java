@@ -10,6 +10,8 @@ public class WxErrCode {
     public static final int TEMPLATE_NUM_EXCEEDS_LIMIT = 45026;
     // 添加的模板与行业设置冲突
     public static final int TEMPLATE_INDUSTRY_CONFLICT = 45027;
+    // 非法的行业id，（出现的场景还不明确）
+    public static final int INVALID_INDUSTRY_ID = 40102;
     // 数据格式不符合要求
     public static final int DATA_FORMAT_ERROR = 47001;
     // 无效的openId
