@@ -16,6 +16,13 @@ import java.util.Date;
 public class DateUtil {
 
     /**
+     * 获取当前的seconds
+     */
+    public static int curSeconds() {
+        return (int) (System.currentTimeMillis() / 1000);
+    }
+
+    /**
      * 当前时间往后几天的日期，days为负值表示往前数几天
      * @param days
      * @return
