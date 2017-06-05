@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.constant.ResponseType;
 import com.kuaizhan.param.common.WeixinAppidParam;
+import com.kuaizhan.pojo.dto.MenuWrapper;
 import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.MenuService;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,10 @@ public class MenuController extends BaseController {
 
     @RequestMapping(value = "default_menu", method = RequestMethod.GET)
     public JsonResponse getDefaultMenu(@RequestParam long weixinAppid) {
-        return new JsonResponse(menuService.getMenu(weixinAppid));
+        MenuWrapper menuWrapper = menuService.getMenu(weixinAppid);
+        if (menuWrapper.getPublish() == null) {
+            menuWrapper.setPublish(false);
+        }
+        return new JsonResponse(menuWrapper);
     }
 }

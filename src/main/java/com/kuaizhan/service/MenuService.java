@@ -31,7 +31,7 @@ public interface MenuService {
 
     /**
      * 获取默认menu
-     * @return menuDTO 与 isPublished
+     * @return menuDTO 与 publish
      */
     MenuWrapper getMenu(long weixinAppid);
 }

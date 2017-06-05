@@ -2,6 +2,7 @@ package com.kuaizhan.common;
 
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.service.AccountService;
+import com.kuaizhan.service.MenuService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,6 +20,8 @@ public class TmpSpringTest {
 
     @Resource
     private AccountService accountService;
+    @Resource
+    private MenuService menuService;
 
     @Test
     public void getAccessToken() throws Exception {
@@ -30,5 +33,6 @@ public class TmpSpringTest {
 
     @Test
     public void tmp() throws Exception {
+
     }
 }
