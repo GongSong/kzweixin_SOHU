@@ -27,6 +27,7 @@ import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.MsgService;
 import com.kuaizhan.service.PostService;
 import com.kuaizhan.utils.DBTableUtil;
+import com.kuaizhan.utils.DateUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;
 import com.vdurmont.emoji.EmojiParser;
@@ -70,7 +71,7 @@ public class MsgServiceImpl implements MsgService {
     public void markMsgRead(long weixinAppid) {
         WeixinMsgConfig config = new WeixinMsgConfig();
         config.setWeixinAppid(weixinAppid);
-        config.setLastReadTime((int) (System.currentTimeMillis() / 1000));
+        config.setLastReadTime(DateUtil.curSeconds());
         msgConfigMapper.updateByPrimaryKeySelective(config);
     }
 
@@ -268,7 +269,7 @@ public class MsgServiceImpl implements MsgService {
             config = new WeixinMsgConfig();
             config.setWeixinAppid(weixinAppid);
             config.setQuickReplyJson("[]");
-            int now = (int) (System.currentTimeMillis() / 1000);
+            int now = DateUtil.curSeconds();
             config.setLastReadTime(now);
             config.setCreateTime(now);
             config.setUpdateTime(now);

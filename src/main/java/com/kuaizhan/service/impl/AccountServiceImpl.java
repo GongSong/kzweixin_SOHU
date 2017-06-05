@@ -13,6 +13,7 @@ import com.kuaizhan.pojo.po.UnbindPO;
 import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.WeixinAuthService;
+import com.kuaizhan.utils.DateUtil;
 import com.kuaizhan.utils.IdGeneratorUtil;
 import org.springframework.stereotype.Service;
 
@@ -157,7 +158,7 @@ public class AccountServiceImpl implements AccountService {
             } else {
                 unbindDao.updateUnbindByWeixinAppId(unbindPO);
             }
-            account.setUnbindTime(System.currentTimeMillis() / 1000);
+            account.setUnbindTime((long) DateUtil.curSeconds());
             account.setIsDel(1);
             accountDao.updateAccountBySiteId(account);
         } catch (Exception e) {

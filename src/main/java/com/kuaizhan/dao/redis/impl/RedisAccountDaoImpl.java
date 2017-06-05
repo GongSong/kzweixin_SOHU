@@ -5,6 +5,7 @@ import com.kuaizhan.dao.redis.RedisAccountDao;
 
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
+import com.kuaizhan.utils.DateUtil;
 import com.kuaizhan.utils.JsonUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
@@ -63,7 +64,7 @@ public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccoun
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("access_token", authorizationInfoDTO.getAccessToken());
             jsonObject.put("refresh_token", authorizationInfoDTO.getRefreshToken());
-            jsonObject.put("expires_time", System.currentTimeMillis() / 1000 + authorizationInfoDTO.getExpiresIn() - 10 * 60);
+            jsonObject.put("expires_time", DateUtil.curSeconds() + authorizationInfoDTO.getExpiresIn() - 10 * 60);
             setData(RedisConstant.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppId, jsonObject.toString(), 2 * 60 * 60);
         }
     }

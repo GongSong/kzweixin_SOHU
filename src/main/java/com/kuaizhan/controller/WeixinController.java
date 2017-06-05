@@ -15,6 +15,7 @@ import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.WeixinAuthService;
 import com.kuaizhan.service.WeixinMsgService;
+import com.kuaizhan.utils.DateUtil;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -91,7 +92,7 @@ public class WeixinController extends BaseController {
             account.setAppId(authorizationInfoDTO.getAppId());
             account.setAppSecret("");
             account.setAccessToken(authorizationInfoDTO.getAccessToken());
-            account.setExpiresTime(System.currentTimeMillis() / 1000 + authorizationInfoDTO.getExpiresIn());
+            account.setExpiresTime((long) (DateUtil.curSeconds() + authorizationInfoDTO.getExpiresIn()));
             account.setRefreshToken(authorizationInfoDTO.getRefreshToken());
             account.setFuncInfoJson(authorizationInfoDTO.getFuncInfo());
             if (authorizerInfoDTO != null) {

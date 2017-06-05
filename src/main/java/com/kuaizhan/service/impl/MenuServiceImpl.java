@@ -281,7 +281,7 @@ public class MenuServiceImpl implements MenuService {
         WeixinMenuItem menuItem = new WeixinMenuItem();
         menuItem.setMenuKey(menuKey);
         menuItem.setStatus(2);
-        menuItem.setUpdateTime((int) (System.currentTimeMillis() / 1000));
+        menuItem.setUpdateTime(DateUtil.curSeconds());
         menuItemMapper.updateByPrimaryKeySelective(menuItem);
     }
 }

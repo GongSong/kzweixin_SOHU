@@ -113,7 +113,7 @@ public class KzManager {
      * @return clientId和token组成的map
      */
     public static Map<String, String> applyPushToken() {
-        int timestamp = (int) (System.currentTimeMillis() / 1000);
+        int timestamp = DateUtil.curSeconds();
         String sign = EncryptUtil.md5(ApplicationConfig.KZ_PUSH_ACCESS_ID + ApplicationConfig.KZ_PUSH_ACCESS_KEY + timestamp);
 
         Map<String, Object> param = new HashMap<>();

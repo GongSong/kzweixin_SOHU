@@ -11,6 +11,7 @@ import com.kuaizhan.exception.deprecated.system.*;
 import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
 import com.kuaizhan.pojo.dto.AuthorizerInfoDTO;
 import com.kuaizhan.service.WeixinAuthService;
+import com.kuaizhan.utils.DateUtil;
 import com.kuaizhan.utils.EncryptUtil;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
@@ -117,7 +118,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
                 throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] json exception, result:" + result, e);
             }
 
-            resultJson.put("expires_time", System.currentTimeMillis() / 1000 + 7100);
+            resultJson.put("expires_time", DateUtil.curSeconds() + 7100);
             //检查token是否一样
             redisAuthDao.setComponentAccessToken(resultJson.toString());
         }
