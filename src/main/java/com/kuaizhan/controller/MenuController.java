@@ -29,6 +29,6 @@ public class MenuController extends BaseController {
 
     @RequestMapping(value = "default_menu", method = RequestMethod.GET)
     public JsonResponse getDefaultMenu(@RequestParam long weixinAppid) {
-        return new JsonResponse(null);
+        return new JsonResponse(menuService.getMenu(weixinAppid));
     }
 }

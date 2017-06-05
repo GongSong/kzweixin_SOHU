@@ -47,6 +47,7 @@ public class JsonUtil {
      * string 转java bean
      * @throws JsonConvertException
      */
+    // TODO: 研究下，string2Bean并不强制返回class的类型
     public static <T> T string2Bean(String jsonStr, Class<?> cls) throws JsonConvertException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {

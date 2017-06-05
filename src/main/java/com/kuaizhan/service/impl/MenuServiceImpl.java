@@ -11,6 +11,7 @@ import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.menu.MenuCheckException;
 import com.kuaizhan.pojo.dto.LinkList;
 import com.kuaizhan.pojo.dto.MenuDTO;
+import com.kuaizhan.pojo.dto.MenuWrapper;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.PostPO;
 import com.kuaizhan.pojo.po.auto.WeixinMenuItem;
@@ -22,6 +23,8 @@ import com.kuaizhan.utils.DateUtil;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.UrlUtil;
 import com.vdurmont.emoji.EmojiParser;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -29,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,27 +72,31 @@ public class MenuServiceImpl implements MenuService {
         }
 
         // 删除废弃的menu item
-        MenuDTO oldMenuDTO = JsonUtil.string2Bean(menuJson, MenuDTO.class);
-        for (MenuDTO.Button button: oldMenuDTO.getButtons()) {
-            Long key = button.getKey();
-            if (!keys.contains(key)) {
-                deleteMenuItem(key);
-            }
-
-            for (MenuDTO.Button subButton: button.getSubButton()) {
-                key = subButton.getKey();
+        MenuWrapper menuWrapper = JsonUtil.string2Bean(menuJson, MenuWrapper.class);
+        MenuDTO oldMenuDTO = menuWrapper.getMenu();
+        if (oldMenuDTO != null) {
+            for (MenuDTO.Button button: oldMenuDTO.getButtons()) {
+                Long key = button.getKey();
                 if (!keys.contains(key)) {
                     deleteMenuItem(key);
+                }
+
+                for (MenuDTO.Button subButton: button.getSubButton()) {
+                    key = subButton.getKey();
+                    if (!keys.contains(key)) {
+                        deleteMenuItem(key);
+                    }
                 }
             }
         }
 
         // 更新menu json
-        Map<String, MenuDTO> menuMap = new HashMap<>();
-        menuMap.put("menu", menuDTO);
+        MenuWrapper menu = new MenuWrapper();
+        menu.setMenu(menuDTO);
+
         AccountPO account = new AccountPO();
         account.setWeixinAppId(weixinAppid);
-        account.setMenuJson(JsonUtil.bean2String(menuMap));
+        account.setMenuJson(JsonUtil.bean2String(menu));
 
         accountDao.updateAccountByWeixinAppId(accountPO);
     }
@@ -154,8 +162,13 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuDTO getMenu(long weixinAppid) {
-        return null;
+    public MenuWrapper getMenu(long weixinAppid) {
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        String menuJson = accountPO.getMenuJson();
+        if ("".equals(menuJson) || menuJson == null) {
+            menuJson = "{}";
+        }
+        return JsonUtil.string2Bean(menuJson, MenuWrapper.class);
     }
 
     /**

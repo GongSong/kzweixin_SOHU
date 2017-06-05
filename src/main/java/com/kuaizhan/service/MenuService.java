@@ -1,6 +1,7 @@
 package com.kuaizhan.service;
 
 import com.kuaizhan.pojo.dto.MenuDTO;
+import com.kuaizhan.pojo.dto.MenuWrapper;
 
 /**
  * Created by zixiong on 2017/5/25.
@@ -30,6 +31,7 @@ public interface MenuService {
 
     /**
      * 获取默认menu
+     * @return menuDTO 与 isPublished
      */
-    MenuDTO getMenu(long weixinAppid);
+    MenuWrapper getMenu(long weixinAppid);
 }
