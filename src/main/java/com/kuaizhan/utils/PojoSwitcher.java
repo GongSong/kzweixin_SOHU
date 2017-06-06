@@ -53,6 +53,7 @@ public class PojoSwitcher {
         AccountVO accountVO = new AccountVO();
         accountVO.setWeixinAppid(accountPO.getWeixinAppId());
         accountVO.setAppId(accountPO.getAppId());
+
         // 对appSecret进行打码处理
         String appSecret = accountPO.getAppSecret();
         if (appSecret != null && !"".equals(appSecret)) {
@@ -65,10 +66,16 @@ public class PojoSwitcher {
                     + appSecret.substring(lastIdx, length)
             );
         }
+        // 优先选择快站的qrcode链接
+        String qrcode = accountPO.getQrcodeUrlKz();
+        if (qrcode == null || "".equals(qrcode)) {
+            qrcode = accountPO.getQrcodeUrl();
+        }
+        accountVO.setQrcode(qrcode);
+
         accountVO.setHeadImg(accountPO.getHeadImg());
         accountVO.setInterest(JsonUtil.string2List(accountPO.getInterestJson(), String.class));
         accountVO.setName(accountPO.getNickName());
-        accountVO.setQrcode(accountPO.getQrcodeUrl());
         accountVO.setServiceType(accountPO.getServiceType());
         accountVO.setVerifyType(accountPO.getVerifyType());
         return accountVO;
