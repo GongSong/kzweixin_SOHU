@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 /**
- * 模板消息controller
+ * 模板消息模块接口
  * Created by zixiong on 2017/5/13.
  */
 @RestController
@@ -27,6 +27,9 @@ public class TplMsgController extends BaseController {
     @Resource
     private AccountService accountService;
 
+    /**
+     * 发送系统模板消息
+     */
     @RequestMapping(value = "/sys_tpl_msgs", method = RequestMethod.POST)
     public JsonResponse sendSysTplMsgs(@Valid @RequestBody SendTplMsgParam param) {
         AccountPO accountPO = accountService.getAccountByAppId(param.getAppId());
@@ -35,6 +38,9 @@ public class TplMsgController extends BaseController {
         return new JsonResponse(null);
     }
 
+    /**
+     * 新增系统模板
+     */
     @RequestMapping(value = "/sys_tpls", method = RequestMethod.POST)
     public JsonResponse addSysTpl(@Valid @RequestBody AddSysTplParam param) {
         AccountPO accountPO = accountService.getAccountBySiteId(param.getSiteId());

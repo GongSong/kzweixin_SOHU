@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 
 
 /**
- * 微信回调入口
+ * 微信回调接口
  * Created by Mr.Jadyn on 2017/1/11.
  */
 @RestController
@@ -31,16 +31,14 @@ import javax.annotation.Resource;
 public class WeixinController extends BaseController {
 
     @Resource
-    WeixinAuthService weixinAuthService;
+    private WeixinAuthService weixinAuthService;
     @Resource
-    AccountService accountService;
+    private AccountService accountService;
     @Resource
-    WeixinMsgService weixinMsgService;
+    private WeixinMsgService weixinMsgService;
 
     /**
      * 获取微信推送的component_verify_ticket
-     *
-     * @return
      */
     @RequestMapping(value = "/auth/callback", method = RequestMethod.POST)
     public String receiver(@RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody String postData) {
@@ -50,8 +48,6 @@ public class WeixinController extends BaseController {
 
     /**
      * 获取授权页url
-     *
-     * @return
      */
     @RequestMapping(value = "/authpage/{siteId}", method = RequestMethod.GET, produces = "application/json")
     public JsonResponse getAuthPage(@PathVariable long siteId, @RequestParam String redirectUrl) throws RedisException, JsonParseException {
@@ -64,8 +60,6 @@ public class WeixinController extends BaseController {
 
     /**
      * 微信消息推送
-     *
-     * @return
      */
     @RequestMapping(value = "/msgs/{appId}/callback", method = RequestMethod.POST, produces = "application/xml;charset=UTF-8")
     public String weixinPush(@PathVariable String appId, @RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody(required = false) String postData) throws EncryptException, DaoException, XMLParseException, RedisException {
@@ -76,8 +70,6 @@ public class WeixinController extends BaseController {
 
     /**
      * 获取authCode和expires 账号绑定
-     *
-     * @return
      */
     @RequestMapping(value = "/authcode/callback", method = RequestMethod.GET)
     public JsonResponse getAuthCode(@RequestParam("auth_code") String authCode, @RequestParam("expires_in") String expire, @RequestParam long siteId) throws RedisException, JsonParseException, DaoException {

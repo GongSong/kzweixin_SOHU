@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 图文消息controller
+ * 图文模块接口
  * Created by zixiong on 2017/3/20.
  */
 @RestController
@@ -113,8 +113,6 @@ public class PostController extends BaseController {
 
     /**
      * 获取单图文详情
-     *
-     * @return
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.GET)
     public JsonResponse getPost(@PathVariable long pageId) {
@@ -125,8 +123,6 @@ public class PostController extends BaseController {
 
     /**
      * 获取多图文详情
-     *
-     * @return
      */
     @RequestMapping(value = "/multi_posts/{pageId}", method = RequestMethod.GET)
     public JsonResponse getMultiPost(@PathVariable long pageId) {
@@ -168,9 +164,6 @@ public class PostController extends BaseController {
 
     /**
      * 删除图文
-     *
-     * @param weixinAppid
-     * @param pageId
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
     public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) {
@@ -180,8 +173,6 @@ public class PostController extends BaseController {
 
     /**
      * 一键同步微信文章到快站微信
-     *
-     * @return
      */
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
     public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) throws ParamException {
@@ -189,11 +180,8 @@ public class PostController extends BaseController {
         return new JsonResponse(null);
     }
 
-
     /**
      * 快站微信同步到快站文章
-     *
-     * @return
      */
     @RequestMapping(value = "/posts/kzweixin_syncs", method = RequestMethod.POST)
     public JsonResponse kzweixinSyncs2KzPost(@RequestBody String postData) throws  IOException {
@@ -209,11 +197,8 @@ public class PostController extends BaseController {
         return new JsonResponse(null);
     }
 
-
     /**
      * 从快站文章导入到快站微信
-     *
-     * @throws IOException
      */
     @RequestMapping(value = "/posts/kz_imports", method = RequestMethod.POST)
     public JsonResponse kzSyncsPost(@RequestBody String postData) throws IOException {
@@ -228,7 +213,6 @@ public class PostController extends BaseController {
 
     /**
      * 上传素材到微信服务器
-     * @return
      */
     @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
     public JsonResponse uploadWeixinThumb(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
@@ -236,6 +220,9 @@ public class PostController extends BaseController {
         return new JsonResponse(result);
     }
 
+    /**
+     * 上传图文中图片
+     */
     @RequestMapping(value = "weixin_pics", method = RequestMethod.POST)
     public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
         String url = postService.uploadImageForPost(uploadPicParam.getWeixinAppid(), uploadPicParam.getImgUrl());
@@ -244,6 +231,9 @@ public class PostController extends BaseController {
         return new JsonResponse(result);
     }
 
+    /**
+     * 获取某篇图文的微信链接
+     */
     @RequestMapping(value = "/posts/{pageId}/wx_url", method = RequestMethod.GET)
     public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) {
         Map<String ,String> result = new HashMap<>();

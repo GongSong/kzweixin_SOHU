@@ -25,7 +25,7 @@ import javax.validation.Valid;
 import java.util.*;
 
 /**
- * 消息管理controller
+ * 消息模块接口
  * Created by Mr.Jadyn on 2016/12/29.
  */
 @RestController

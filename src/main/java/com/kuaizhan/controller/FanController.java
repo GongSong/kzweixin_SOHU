@@ -26,7 +26,7 @@ import java.util.List;
 
 
 /**
- * 粉丝管理Controller
+ * 粉丝模块接口
  * Created by Mr.Jadyn on 2016/12/29.
  */
 @RestController
@@ -34,14 +34,12 @@ import java.util.List;
 public class FanController extends BaseController {
 
     @Resource
-    FanService fansService;
+    private FanService fansService;
     @Resource
-    AccountService accountService;
+    private AccountService accountService;
 
     /**
      * 获取粉丝列表
-     *
-     * @return
      */
     @RequestMapping(value = "/fans", method = RequestMethod.GET)
     public JsonResponse listFanByPagination(@RequestParam long siteId, @RequestParam int page, @RequestParam(required = false) List<Integer> tagIds, @RequestParam int isBlack, @RequestParam(required = false) String keyword) throws RedisException, DaoException, ParamException, TagGetException, JsonParseException {
@@ -87,9 +85,6 @@ public class FanController extends BaseController {
 
     /**
      * 获取所有标签
-     *
-     * @param siteId 站点Id
-     * @return
      */
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
     public JsonResponse listTags(@RequestParam long siteId) throws RedisException, DaoException, TagGetException, JsonParseException {
@@ -100,9 +95,6 @@ public class FanController extends BaseController {
 
     /**
      * 创建标签
-     *
-     * @param siteId 站点id
-     * @return
      */
     @RequestMapping(value = "/tags", method = RequestMethod.POST)
     public JsonResponse insertTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, ParamException, TagDuplicateNameException, TagNameLengthException, TagNumberException, ServerException, JsonParseException {
@@ -120,10 +112,6 @@ public class FanController extends BaseController {
 
     /**
      * 更新用户标签
-     *
-     * @param siteId
-     * @param postData
-     * @return
      */
     @RequestMapping(value = "/fans/tag", method = RequestMethod.PUT)
     public JsonResponse updateUserTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, ParamException, OpenIdNumberException, OpenIdException, FanTagNumberException, TagException, ServerException, JsonParseException {
@@ -143,10 +131,6 @@ public class FanController extends BaseController {
 
     /**
      * 删除标签
-     *
-     * @param siteId 站点id
-     * @param tagId  标签id
-     * @return
      */
     @RequestMapping(value = "/tags/{tagId}", method = RequestMethod.DELETE)
     public JsonResponse deleteTag(@RequestParam long siteId, @PathVariable int tagId) throws RedisException, DaoException, ServerException, TagDeleteFansNumberException, TagModifyException, JsonParseException {
@@ -158,9 +142,6 @@ public class FanController extends BaseController {
 
     /**
      * 修改标签
-     *
-     * @param siteId 站点id
-     * @return
      */
     @RequestMapping(value = "/tags", method = RequestMethod.PUT)
     public JsonResponse renameTag(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, ParamException, TagDuplicateNameException, TagNameLengthException, TagModifyException, ServerException, JsonParseException {
@@ -184,9 +165,6 @@ public class FanController extends BaseController {
 
     /**
      * 将用户加入黑名单
-     *
-     * @param siteId 站点id
-     * @return
      */
     @RequestMapping(value = "/fans/black", method = RequestMethod.POST)
     public JsonResponse insertBlack(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, ParamException, ServerException, BlackAddNumberException, OpenIdException, JsonParseException {
@@ -214,9 +192,6 @@ public class FanController extends BaseController {
 
     /**
      * 将用户移除黑名单
-     *
-     * @param siteId 站点id
-     * @return
      */
     @RequestMapping(value = "/fans/black", method = RequestMethod.DELETE)
     public JsonResponse deleteBlack(@RequestParam long siteId, @RequestBody String postData) throws RedisException, DaoException, ParamException, ServerException, BlackAddNumberException, OpenIdException, JsonParseException {
@@ -242,5 +217,3 @@ public class FanController extends BaseController {
 
     }
 }
-
-

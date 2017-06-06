@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 /**
- * 账号controller
+ * 账号模块接口
  * Created by Mr.Jadyn on 2017/1/25.
  */
 @RestController
 @RequestMapping(value = AppConstant.VERSION, produces = "application/json")
 public class AccountController extends BaseController {
     @Resource
-    AccountService accountService;
+    private AccountService accountService;
 
     /**
      * 根据siteId获取绑定的微信公众号信息
@@ -58,9 +58,6 @@ public class AccountController extends BaseController {
 
     /**
      * 解绑账户
-     *
-     * @param siteId 站点id
-     * @return
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
     public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId,
@@ -79,8 +76,6 @@ public class AccountController extends BaseController {
 
     /**
      * 修改app_secret
-     *
-     * @return
      */
     @RequestMapping(value = "/account", method = RequestMethod.PUT)
     public JsonResponse modifyAppSecret(@RequestParam long siteId, @RequestBody String postData) throws ParamException {
