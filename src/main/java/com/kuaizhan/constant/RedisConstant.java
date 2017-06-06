@@ -17,8 +17,6 @@ public class RedisConstant {
     //缓存公众号的access_token
     public static final String KEY_WEIXIN_USER_ACCESS_TOKEN = ApplicationConfig.REDIS_PREFIX + "kz_weixin:user_access_token:";
 
-    //缓存预授权码
-    public static final String KEY_WEIXIN_PRE_AUTH_CODE = ApplicationConfig.REDIS_PREFIX + "pre_auth_code:";
     //缓存账户信息
     public static final String KEY_ACCOUNT_INFO = ApplicationConfig.REDIS_PREFIX + "account_info:";
 

@@ -1,7 +1,11 @@
 package com.kuaizhan.utils;
 
 import com.kuaizhan.config.ApplicationConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +13,8 @@ import java.util.Map;
  * Created by lorin on 17-3-31.
  */
 public class UrlUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(UrlUtil.class);
 
     /**
      * 补全网址协议
@@ -91,5 +97,15 @@ public class UrlUtil {
             address.put("host", null);
         }
         return address;
+    }
+
+    public static String encode(String str) {
+        try {
+            return URLEncoder.encode(str, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            // never happen !
+            logger.error("[UrlUtil: encode] unsupport encode utf-8");
+            throw new RuntimeException("[UrlUtil: encode] unsupport encode utf-8");
+        }
     }
 }

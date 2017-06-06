@@ -8,6 +8,7 @@ import com.kuaizhan.exception.common.GetComponentAccessTokenFailed;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.common.XMLParseException;
 import com.kuaizhan.exception.deprecated.system.*;
+import com.kuaizhan.manager.WxAuthManager;
 import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
 import com.kuaizhan.pojo.dto.AuthorizerInfoDTO;
 import com.kuaizhan.service.WeixinAuthService;
@@ -126,38 +127,8 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     }
 
     @Override
-    public String getPreAuthCode(String componentAccessToken) throws RedisException, JsonParseException {
-        //检查缓存
-        try {
-            String preAuthCode = redisAuthDao.getPreAuthCode();
-            if (preAuthCode != null && ! "".equals(preAuthCode)) {
-                return preAuthCode;
-            }
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
-        //从微信调取
-        String preAuthCode;
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("component_appid", ApplicationConfig.WEIXIN_APPID_THIRD);
-            String returnJson = HttpClientUtil.postJson(WxApiConfig.getPreAuthCodeUrl(componentAccessToken), jsonObject.toString());
-            JSONObject result = new JSONObject(returnJson);
-            preAuthCode = result.getString("pre_auth_code");
-        } catch (Exception e) {
-            throw new JsonParseException(e);
-        }
-        //存缓存
-        try {
-            // 不相等则存
-            String oldPreAuthCode = redisAuthDao.getPreAuthCode();
-            if (!Objects.equals(oldPreAuthCode, preAuthCode)){
-                redisAuthDao.setPreAuthCode(preAuthCode);
-            }
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
-        return preAuthCode;
+    public String getPreAuthCode() {
+        return WxAuthManager.getPreAuthCode(getComponentAccessToken());
     }
 
     @Override

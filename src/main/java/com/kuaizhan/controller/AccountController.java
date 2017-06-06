@@ -1,6 +1,7 @@
 package com.kuaizhan.controller;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.deprecated.business.ParamException;
@@ -27,16 +28,6 @@ public class AccountController extends BaseController {
     private AccountService accountService;
 
     /**
-     * 根据siteId获取绑定的微信公众号信息
-     */
-    @RequestMapping(value = "/accounts/site/{siteId}", method = RequestMethod.GET)
-    public JsonResponse getAccountInfoBySiteId(@PathVariable long siteId) {
-        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-        AccountVO accountVO = PojoSwitcher.accountPOToVO(accountPO);
-        return new JsonResponse(accountVO);
-    }
-
-    /**
      * 根据weixinAppid获取账号信息
      */
     @RequestMapping(value = "/accounts/{weixinAppid}", method = RequestMethod.GET)
@@ -47,13 +38,24 @@ public class AccountController extends BaseController {
     }
 
     /**
-     * 因为接口设计风格而废弃的接口
-     * 公众号独立后可以删除
+     * 根据siteId获取绑定的微信公众号信息
      */
-    @Deprecated
-    @RequestMapping(value = "/account/site_id", method = RequestMethod.GET)
-    public JsonResponse getAccountInfoBySiteIdDeprecated(@RequestParam long siteId) {
-        return getAccountInfoBySiteId(siteId);
+    @RequestMapping(value = "/accounts/site/{siteId}", method = RequestMethod.GET)
+    public JsonResponse getAccountInfoBySiteId(@PathVariable long siteId) {
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        AccountVO accountVO = PojoSwitcher.accountPOToVO(accountPO);
+        return new JsonResponse(accountVO);
+    }
+
+    /**
+     * 获取绑定url
+     * @param userId 绑定公众号的userId
+     * @param siteId 是否绑定在某个站点上
+     */
+    @RequestMapping(value = "/account/bind_url", method = RequestMethod.GET)
+    public JsonResponse getBindUrl(@RequestParam long userId, @RequestParam(required = false) Long siteId) {
+        String bindUrl = accountService.getBindUrl(userId, siteId);
+        return new JsonResponse(ImmutableMap.of("url", bindUrl));
     }
 
     /**
@@ -90,4 +92,15 @@ public class AccountController extends BaseController {
         return new JsonResponse(null);
     }
 
+    /* --------------- deprecated ---------------- */
+
+    /**
+     * 因为接口设计风格而废弃的接口
+     * 公众号独立后可以删除
+     */
+    @Deprecated
+    @RequestMapping(value = "/account/site_id", method = RequestMethod.GET)
+    public JsonResponse getAccountInfoBySiteIdDeprecated(@RequestParam long siteId) {
+        return getAccountInfoBySiteId(siteId);
+    }
 }

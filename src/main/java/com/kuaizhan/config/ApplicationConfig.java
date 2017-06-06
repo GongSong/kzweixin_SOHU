@@ -31,6 +31,7 @@ public class ApplicationConfig {
     public static final String KZ_DOMAIN_RES = PropertiesUtil.getString(PROP, "kz.domain.res");
     public static final int KZ_PUSH_ACCESS_ID = PropertiesUtil.getInt(PROP, "kz.push.accessId");
     public static final String KZ_PUSH_ACCESS_KEY = PropertiesUtil.getString(PROP, "kz.push.accessKey");
+    public static final String KZ_DOMAIN_MAIN = PropertiesUtil.getString(PROP, "kz.domain.main");
 
     // 分表
     public static final int MSG_TABLE_NUM = PropertiesUtil.getInt(PROP, "table.num.msg");

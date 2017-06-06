@@ -1,7 +1,6 @@
 package com.kuaizhan.controller;
 
 
-import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.common.DaoException;
@@ -28,7 +27,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping(value = AppConstant.VERSION + "/weixin")
-public class WeixinController extends BaseController {
+public class WxCallbackController extends BaseController {
 
     @Resource
     private WeixinAuthService weixinAuthService;
@@ -46,17 +45,6 @@ public class WeixinController extends BaseController {
         return "success";
     }
 
-    /**
-     * 获取授权页url
-     */
-    @RequestMapping(value = "/authpage/{siteId}", method = RequestMethod.GET, produces = "application/json")
-    public JsonResponse getAuthPage(@PathVariable long siteId, @RequestParam String redirectUrl) throws RedisException, JsonParseException {
-        String componentAccessToken = weixinAuthService.getComponentAccessToken();
-        String preAuthCode = weixinAuthService.getPreAuthCode(componentAccessToken);
-//        String redirectUrl = ApplicationConfig.getApiPrefix() + "/" + ApplicationConfig.VERSION + "/weixin/authcode/callback?siteId=" + siteId;
-        String authPageUrl = WxApiConfig.getAuthEntranceUrl(preAuthCode, redirectUrl);
-        return new JsonResponse(authPageUrl);
-    }
 
     /**
      * 微信消息推送

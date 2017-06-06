@@ -22,7 +22,7 @@ public class WxApiConfig {
     // 使用授权码换取公众号的接口调用凭据和授权信息
     private static final String WEIXIN_GET_AUTHORIZATION_INFO = "/cgi-bin/component/api_query_auth?component_access_token=";
     // 授权页入口
-    private static final String WEIXIN_GET_AUTHORIZATION_ENTRANCE = "/cgi-bin/componentloginpage?component_appid=";
+    private static final String WEIXIN_BIND_URL = "/cgi-bin/componentloginpage?component_appid=";
     // 使用授权码换取公众号的接口调用凭据和授权信息
     private static final String WEIXIN_GET_AUTH = "/cgi-bin/component/api_query_auth?component_access_token=";
     // 获取（刷新）授权公众号的接口调用凭据（令牌）
@@ -134,8 +134,8 @@ public class WxApiConfig {
     /**
      * 获取授权页入口
      */
-    public static String getAuthEntranceUrl(String preAuthCode, String redirectUrl) {
-        return DOMAIN_WEIXIN_MP + WEIXIN_GET_AUTHORIZATION_ENTRANCE + ApplicationConfig.WEIXIN_APPID_THIRD + "&pre_auth_code=" + preAuthCode + "&redirect_uri=" + redirectUrl;
+    public static String getBindUrl(String preAuthCode, String redirectUrl) {
+        return DOMAIN_WEIXIN_MP + WEIXIN_BIND_URL + ApplicationConfig.WEIXIN_APPID_THIRD + "&pre_auth_code=" + preAuthCode + "&redirect_uri=" + redirectUrl;
     }
 
     /**

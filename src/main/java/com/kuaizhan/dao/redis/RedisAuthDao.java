@@ -12,8 +12,4 @@ public interface RedisAuthDao {
     String getComponentAccessToken();
 
     void setComponentAccessToken(String componentAccessToken);
-
-    String getPreAuthCode();
-
-    void setPreAuthCode(String preAuthCode);
 }

@@ -37,14 +37,4 @@ public class RedisAuthDaoImpl extends RedisBaseDaoImpl implements RedisAuthDao {
     public void setComponentAccessToken(String componentAccessToken) {
         setData(RedisConstant.KEY_WEIXIN_COMPONENT_ACCESS_TOKEN, componentAccessToken, 110 * 60);
     }
-
-    @Override
-    public String getPreAuthCode() {
-        return getData(RedisConstant.KEY_WEIXIN_PRE_AUTH_CODE);
-    }
-
-    @Override
-    public void setPreAuthCode(String preAuthCode) {
-        setData(RedisConstant.KEY_WEIXIN_PRE_AUTH_CODE, preAuthCode, 19 * 60);
-    }
 }

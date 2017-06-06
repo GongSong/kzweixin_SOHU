@@ -50,7 +50,7 @@ public class WxMsgManager {
             throw new WxOutOfResponseLimitException();
         }
         if (errCode != 0) {
-            throw new WxApiException("[Weixin:sendCustomMsg] not expected result:" + resultJson + " paramStr:" + paramStr);
+            throw new WxApiException("[Weixin:sendCustomMsg] unexpected result:" + resultJson + " paramStr:" + paramStr);
         }
     }
 }

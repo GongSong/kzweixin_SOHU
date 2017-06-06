@@ -54,7 +54,6 @@ public class WeixinAuthServiceTest {
 
     @Test
     public void getPreAuthCode() throws Exception {
-        System.out.println("----->" + weixinAuthService.getPreAuthCode(weixinAuthService.getComponentAccessToken()));
     }
 
     @Test
