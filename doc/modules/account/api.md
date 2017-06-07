@@ -50,3 +50,22 @@
         ```
     * 异常情况:
         * 账号不存在，返回码 102003 
+        
+  
+#### 3 根据weixinAppid获取accessToken
+* **协议**：HTTPS
+* **方法**：PUT
+* **URL**：/v1/account/<weixinAppid>/app_secret
+* **参数**：
+    * weixinAppid: 主键
+    * appSecret: 用户填写提交的App Secret
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {}
+        ```
+    * 异常情况:
+        * IP未设置白名单，返回码 102006
+        * appSecret不正确，返回码 102007
