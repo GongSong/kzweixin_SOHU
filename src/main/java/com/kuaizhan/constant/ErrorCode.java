@@ -30,6 +30,8 @@ public class ErrorCode {
     public static final ErrorCode ACCOUNT_NOT_EXIST = new ErrorCode(102003, "账号不存在");
     public static final ErrorCode ACCOUNT_NOT_VERIFIED_SERVICE_TYPE = new ErrorCode(102004, "账号不是认证的服务号");
     public static final ErrorCode APP_ID_NOT_EXIST = new ErrorCode(102005, "公众号不存在");
+    public static final ErrorCode IP_NOT_IN_WHITELIST = new ErrorCode(102006, "IP未设置白名单");
+    public static final ErrorCode INVALID_APP_SECRET = new ErrorCode(102007, "App Secret错误或App Secret不属于此公众号");
 
     // 图文(07)
     public static final ErrorCode POST_USED_BY_OTHER_ERROR = new ErrorCode(107001, "自定义菜单或自动回复中包含该图文，无法删除");

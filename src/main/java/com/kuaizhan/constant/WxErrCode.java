@@ -28,4 +28,9 @@ public class WxErrCode {
 
     // 需要关注
     public static final int REQUIRE_SUBSCRIBE = 43004;
+
+    // App Secret错误或App Secret不属于此公众号
+    public static final int INVALID_APP_SECRET = 40001;
+    // 调用接口的IP地址不在白名单中
+    public static final int IP_NOT_IN_WHITELIST = 40164;
 }

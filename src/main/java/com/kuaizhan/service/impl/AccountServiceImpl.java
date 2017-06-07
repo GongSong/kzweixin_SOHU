@@ -9,7 +9,9 @@ import com.kuaizhan.dao.redis.RedisAccountDao;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
-import com.kuaizhan.exception.weixin.WxApiException;
+import com.kuaizhan.exception.weixin.WxIPNotInWhitelistException;
+import com.kuaizhan.exception.weixin.WxInvalidAppSecretException;
+import com.kuaizhan.manager.WxAccountManager;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.UnbindPO;
 import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
@@ -23,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * Created by liangjiateng on 2017/3/15.
@@ -190,10 +190,21 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateAppSecret(long siteId, String appSecret) {
-        AccountPO account = new AccountPO();
-        account.setSiteId(siteId);
-        account.setAppSecret(appSecret);
-        accountDao.updateAccountBySiteId(account);
+    public void updateAppSecret(long weixinAppId, String appSecret) {
+        AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
+
+        //调用WxAccountManager，把用户ID和app_secret发给微信服务器接口，获取access token并验证
+        try {
+            WxAccountManager.getAccessToken(accountPO.getAppId(), appSecret);
+        } catch (WxIPNotInWhitelistException e) {
+            throw new BusinessException(ErrorCode.IP_NOT_IN_WHITELIST);
+        } catch (WxInvalidAppSecretException e) {
+            throw new BusinessException(ErrorCode.INVALID_APP_SECRET);
+        }
+
+        AccountPO updatePO = new AccountPO();
+        updatePO.setWeixinAppId(weixinAppId);
+        updatePO.setAppSecret(appSecret);
+        accountDao.updateAccountByWeixinAppId(updatePO);
     }
 }

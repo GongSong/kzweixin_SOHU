@@ -51,5 +51,5 @@ public interface AccountService {
     /**
      * 修改appSecret
      */
-    void updateAppSecret(long siteId, String appSecret);
+    void updateAppSecret(long weixinAppId, String appSecret);
 }
