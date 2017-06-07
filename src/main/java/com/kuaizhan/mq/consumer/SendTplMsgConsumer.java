@@ -1,12 +1,11 @@
-package com.kuaizhan.mq;
+package com.kuaizhan.mq.consumer;
 
-import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.dao.mapper.TplDao;
-import com.kuaizhan.exception.BusinessException;
-import com.kuaizhan.exception.weixin.WxInvalidOpenIdException;
 import com.kuaizhan.exception.weixin.WxInvalidTemplateException;
 import com.kuaizhan.exception.weixin.WxRequireSubscribeException;
+import com.kuaizhan.mq.dto.SendTplMsgDTO;
 import com.kuaizhan.service.TplService;
+import com.kuaizhan.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,24 +15,26 @@ import java.util.Map;
 /**
  * Created by zixiong on 2017/5/24.
  */
-public class SendTplMsgConsumer extends BaseMqConsumer {
+public class SendTplMsgConsumer extends BaseConsumer {
 
     @Resource
-    TplService tplService;
+    private TplService tplService;
     @Resource
-    TplDao tplDao;
+    private TplDao tplDao;
 
     private static final Logger logger = LoggerFactory.getLogger(SendTplMsgConsumer.class);
 
     @Override
-    protected void onMessage(Map msgMap) throws Exception {
+    public void onMessage(String message) {
 
-        long weixinAppid = (long) msgMap.get("weixinAppid");
-        String tplId = (String) msgMap.get("tplId");
-        String tplIdShort = (String) msgMap.get("tplIdShort");
-        String openId = (String) msgMap.get("openId");
-        String url = (String) msgMap.get("url");
-        Map dataMap = (Map) msgMap.get("dataMap");
+        SendTplMsgDTO dto = JsonUtil.string2Bean(message, SendTplMsgDTO.class);
+
+        long weixinAppid = dto.getWeixinAppid();
+        String tplId = dto.getTplId();
+        String tplIdShort = dto.getTplIdShort();
+        String openId = dto.getOpenId();
+        String url = dto.getUrl();
+        Map dataMap = dto.getDataMap();
 
         try {
             tplService.sendTplMsg(weixinAppid, tplId, openId, url, dataMap);

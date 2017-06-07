@@ -7,11 +7,16 @@
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <!--mq管理bean-->
+    <!--<rabbit:admin id="rabbitAdmin" connection-factory="connectionFactory" />-->
+
     <!-- MQ server 连接配置 -->
     <rabbit:connection-factory id="connectionFactory"
-                               host="${rabbit.host}" port="${rabbit.port}" virtual-host="${rabbit.vhost}"
-                               username="${rabbit.username}" password="${rabbit.password}" />
-    <rabbit:admin connection-factory="connectionFactory" />
+                               host="${rabbit.host}"
+                               port="${rabbit.port}"
+                               virtual-host="${rabbit.vhost}"
+                               username="${rabbit.username}"
+                               password="${rabbit.password}" />
 
     <!-- #################### queue的声明 ###################### -->
     <!--从快站导入文章的queue-->
@@ -34,5 +39,4 @@
     </rabbit:direct-exchange>
 
     <rabbit:template id="rabbitTemplate" connection-factory="connectionFactory" exchange="${rabbit.exchange}"/>
-
 </beans>

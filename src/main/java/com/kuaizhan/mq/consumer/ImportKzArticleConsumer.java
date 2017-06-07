@@ -1,16 +1,17 @@
-package com.kuaizhan.mq;
+package com.kuaizhan.mq.consumer;
 
 import com.kuaizhan.config.KzApiConfig;
+import com.kuaizhan.mq.dto.ArticleImportDTO;
 import com.kuaizhan.pojo.po.PostPO;
 import com.kuaizhan.pojo.dto.ArticleDTO;
 import com.kuaizhan.service.PostService;
+import com.kuaizhan.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -18,21 +19,21 @@ import java.util.Objects;
  * Created by liangjiateng on 2017/3/28.
  */
 
-public class KZArticleImportConsumer extends BaseMqConsumer {
+public class ImportKzArticleConsumer extends BaseConsumer {
 
-    private static final Logger logger = LoggerFactory.getLogger(KZArticleImportConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(ImportKzArticleConsumer.class);
 
     @Resource
-    PostService postService;
+    private PostService postService;
 
     @Override
-    public void onMessage(Map msgMap) throws Exception {
+    public void onMessage(String message) {
 
-        //TODO:畅言
-        long weixinAppid = (long) msgMap.get("weixinAppid");
-        List<Long> pageIds = (List<Long>) msgMap.get("pageIds");
+        ArticleImportDTO dto = JsonUtil.string2Bean(message, ArticleImportDTO.class);
+        long weixinAppid = dto.getWeixinAppid();
+        List<Long> pageIds = dto.getPageIds();
+
         for (Long pageId : pageIds) {
-
             // 调用接口
             ArticleDTO articleDTO;
             try {
@@ -63,27 +64,21 @@ public class KZArticleImportConsumer extends BaseMqConsumer {
                 if (articleDTO.getCoverUrl() != null && ! "".equals(articleDTO.getCoverUrl())) {
                     postPO.setThumbUrl(articleDTO.getCoverUrl());
                 } else {
-                    String picUrl = getFirstPostDefaultThumbUrl();
+                    String picUrl = KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
                     postPO.setThumbUrl(picUrl);
                 }
 
 
                 List<PostPO> postPOList = new ArrayList<>();
                 postPOList.add(postPO);
-                postService.insertMultiPosts(weixinAppid, postPOList);
+                // 新增文章
+                try {
+                    postService.insertMultiPosts(weixinAppid, postPOList);
+                } catch (Exception e) {
+                    throw new RuntimeException("[mq] insertMultiPosts error", e);
+                }
             }
-            // 新增文章
         }
-
-    }
-
-    /**
-     * 多图文第一篇图文的默认封面图
-     *
-     * @return
-     */
-    private String getFirstPostDefaultThumbUrl() {
-        return KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
     }
 }
 

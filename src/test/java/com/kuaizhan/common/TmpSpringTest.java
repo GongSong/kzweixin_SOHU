@@ -1,8 +1,10 @@
 package com.kuaizhan.common;
 
+import com.google.common.collect.ImmutableList;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.MenuService;
+import com.kuaizhan.service.PostService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,6 +24,8 @@ public class TmpSpringTest {
     private AccountService accountService;
     @Resource
     private MenuService menuService;
+    @Resource
+    private PostService postService;
 
     @Test
     public void getAccessToken() throws Exception {
@@ -33,6 +37,8 @@ public class TmpSpringTest {
 
     @Test
     public void tmp() throws Exception {
-
+        postService.importKzArticle(132413434L, ImmutableList.of(1323L, 32342L));
+        postService.importKzArticle(132413434L, ImmutableList.of(1323L, 32342L));
+        postService.importKzArticle(132413434L, ImmutableList.of(1323L, 32342L));
     }
 }

@@ -21,9 +21,14 @@ public class MqUtil {
     /**
      * 发布消息到mq
      * @param routingKey 消息的routing_key, 与queue name一致
-     * @param msgMap  消息的数据，封装到一个HashMap中
+     * @param message  消息的数据，封装到一个HashMap中
      */
+    public void publish(String routingKey, String message) {
+        rabbitTemplate.convertAndSend(routingKey, message);
+    }
+
     public void publish(String routingKey, Map<String, Object> msgMap) {
         rabbitTemplate.convertAndSend(routingKey, msgMap);
     }
 }
+

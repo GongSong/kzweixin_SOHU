@@ -18,6 +18,6 @@ public class Main {
                 "classpath:spring/applicationContext-service.xml",
                 "classpath:spring/applicationContext-util.xml",
                 "classpath:spring/springmvc.xml",
-                "classpath:spring-consumer/applicationContext-mq.xml");
+                "classpath:spring-consumer/applicationContext-consumer.xml");
     }
 }

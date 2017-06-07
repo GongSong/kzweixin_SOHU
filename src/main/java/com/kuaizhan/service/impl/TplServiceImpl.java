@@ -7,9 +7,11 @@ import com.kuaizhan.dao.mapper.TplDao;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.weixin.*;
 import com.kuaizhan.manager.WxTplManager;
+import com.kuaizhan.mq.dto.SendTplMsgDTO;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.TplService;
+import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.MqUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,15 +96,14 @@ public class TplServiceImpl implements TplService {
         }
 
         // TODO: 是否需要校验用户关注了公众号？ 我们能保存用户一定存储在系统吗？ 了解粉丝模块后，更新这里
-
-        HashMap<String, Object> param = new HashMap<>();
-        param.put("weixinAppid", weixinAppid);
-        param.put("tplId", tplId);
-        param.put("tplIdShort", tplIdShort);
-        param.put("openId", openId);
-        param.put("url", url);
-        param.put("dataMap", dataMap);
-        mqUtil.publish(MqConstant.SEND_SYS_TPL_MSG, param);
+        SendTplMsgDTO dto = new SendTplMsgDTO();
+        dto.setWeixinAppid(weixinAppid);
+        dto.setTplId(tplId);
+        dto.setTplIdShort(tplIdShort);
+        dto.setOpenId(openId);
+        dto.setUrl(url);
+        dto.setDataMap(dataMap);
+        mqUtil.publish(MqConstant.SEND_SYS_TPL_MSG, JsonUtil.bean2String(dto));
     }
 
     @Override

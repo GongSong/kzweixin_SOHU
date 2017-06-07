@@ -19,6 +19,9 @@ import com.kuaizhan.exception.post.CleanPostException;
 import com.kuaizhan.exception.weixin.WxMediaIdNotExistException;
 import com.kuaizhan.manager.KzManager;
 import com.kuaizhan.manager.WxPostManager;
+import com.kuaizhan.mq.dto.ArticleImportDTO;
+import com.kuaizhan.mq.dto.SyncWxPostDTO;
+import com.kuaizhan.mq.dto.SyncWxPostListDTO;
 import com.kuaizhan.pojo.po.PostPO;
 import com.kuaizhan.pojo.dto.ArticleDTO;
 import com.kuaizhan.pojo.dto.Page;
@@ -173,17 +176,17 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public ArticleDTO getKzArticle(long pageId) throws GetKzArticleException {
-        // TODO: 这一块，联合mq发布消息一起重构
         return KzManager.getKzArticle(pageId);
     }
 
     @Override
     public void importKzArticle(long weixinAppid, List<Long> pageIds) {
-        HashMap<String, Object> param = new HashMap<>();
-        param.put("weixinAppid", weixinAppid);
-        param.put("pageIds", pageIds);
-
-        mqUtil.publish(MqConstant.IMPORT_KUAIZHAN_POST, param);
+        if (pageIds.size() > 0) {
+            ArticleImportDTO dto = new ArticleImportDTO();
+            dto.setWeixinAppid(weixinAppid);
+            dto.setPageIds(pageIds);
+            mqUtil.publish(MqConstant.IMPORT_KUAIZHAN_POST, JsonUtil.bean2String(dto));
+        }
     }
 
     @Override
@@ -705,10 +708,11 @@ public class PostServiceImpl implements PostService {
         if (! redisPostDao.couldSyncWxPost(weixinAppid)) {
             throw new BusinessException(ErrorCode.SYNC_WX_POST_TOO_OFTEN_ERROR);
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("weixinAppid", weixinAppid);
-        map.put("uid", userId);
-        mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST_LIST, map);
+
+        SyncWxPostListDTO dto = new SyncWxPostListDTO();
+        dto.setWeixinAppid(weixinAppid);
+        dto.setUserId(userId);
+        mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST_LIST, JsonUtil.bean2String(dto));
     }
 
     @Override
@@ -741,14 +745,15 @@ public class PostServiceImpl implements PostService {
         PostPO postPO = getPostByMediaId(weixinAppid, mediaId);
         // 需要新增或者需要更新
         if (postPO == null || updateTime - postPO.getUpdateTime() > 2) {
-            Map<String, Object> message = new HashMap<>();
-            message.put("userId", userId);
-            message.put("weixinAppid", weixinAppid);
-            message.put("mediaId", mediaId);
-            message.put("updateTime", updateTime);
-            message.put("wxPostDTOs", JsonUtil.bean2String(wxPostDTOs));
-            message.put("isNew", postPO == null);
-            mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, message);
+
+            SyncWxPostDTO dto = new SyncWxPostDTO();
+            dto.setWeixinAppid(weixinAppid);
+            dto.setUserId(userId);
+            dto.setMediaId(mediaId);
+            dto.setUpdateTime(updateTime);
+            dto.setWxPostDTOS(wxPostDTOs);
+            dto.setIsNew(postPO == null);
+            mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, JsonUtil.bean2String(dto));
         }
     }
 
