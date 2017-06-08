@@ -21,7 +21,7 @@ case "${ENV}" in
     'pre')
         build_image pre private-registry.sohucs.com/kuaizhan-plf/weixin-web:pre
     ;;
-    'prod')
+    'production')
         build_image production private-registry.sohucs.com/kuaizhan-plf/weixin-web:prod
     ;;
 esac

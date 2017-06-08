@@ -33,7 +33,7 @@ case "${DOCKER_ENV}" in
     'pre')
         JVM_SIZE_ARG=${JVM_SIZE_PROD}
     ;;
-    'prod')
+    'production')
         JVM_SIZE_ARG=${JVM_SIZE_PROD}
     ;;
 esac
