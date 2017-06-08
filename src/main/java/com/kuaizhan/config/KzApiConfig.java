@@ -16,7 +16,7 @@ public class KzApiConfig {
 
     // 获取快文详情
     public static String getKzArticleUrl(long pageId) {
-        return "http://"+ ApplicationConfig.KZ_SERVICE_HOST + "/post/service-get-post?page_id=" + pageId;
+        return "http://"+ ApplicationConfig.KZ_SERVICE_IP + "/post/service-get-post?page_id=" + pageId;
     }
 
     // 获取数据迁移前快文内容, 临时接口

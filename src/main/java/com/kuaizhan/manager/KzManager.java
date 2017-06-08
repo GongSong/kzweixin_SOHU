@@ -28,7 +28,10 @@ public class KzManager {
      * 获取根据pageId获取快文
      */
     public static ArticleDTO getKzArticle(long pageId) throws GetKzArticleException{
-        String result = HttpClientUtil.get(KzApiConfig.getKzArticleUrl(pageId));
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Host", ApplicationConfig.KZ_SERVICE_HOST);
+        String result = HttpClientUtil.get(KzApiConfig.getKzArticleUrl(pageId), headers);
 
         if (result == null) {
             throw new GetKzArticleException("[Kz:getKzArticle] result is null, pageId:" + pageId);
