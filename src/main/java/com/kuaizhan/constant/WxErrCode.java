@@ -30,7 +30,8 @@ public class WxErrCode {
     public static final int REQUIRE_SUBSCRIBE = 43004;
 
     // App Secret错误或App Secret不属于此公众号
-    public static final int INVALID_APP_SECRET = 40001;
+    public static final int INVALID_APP_SECRET_1 = 40001;  // 文档是这个
+    public static final int INVALID_APP_SECRET_2 = 40125;  // 实际是这个
     // 调用接口的IP地址不在白名单中
     public static final int IP_NOT_IN_WHITELIST = 40164;
 }

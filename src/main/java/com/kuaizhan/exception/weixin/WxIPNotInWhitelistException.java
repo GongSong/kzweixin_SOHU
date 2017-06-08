@@ -5,7 +5,4 @@ package com.kuaizhan.exception.weixin;
  * Created by fangtianyu on 6/7/17.
  */
 public class WxIPNotInWhitelistException extends RuntimeException{
-    public WxIPNotInWhitelistException(String msg) {
-        super(msg);
-    }
 }

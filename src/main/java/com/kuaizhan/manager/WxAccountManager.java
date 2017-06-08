@@ -43,13 +43,11 @@ public class WxAccountManager {
         int errCode = resultJson.optInt("errcode");
 
         if (errCode == WxErrCode.IP_NOT_IN_WHITELIST) {
-            throw new WxIPNotInWhitelistException("[Weixin:getAccessToken] errCode: " + errCode + " appId: " + appId
-                    + " appSecret: " + appSecret);
-        } else if (errCode == WxErrCode.INVALID_APP_SECRET) {
-            throw new WxInvalidAppSecretException("[Weixin:getAccessToken] errCode: " + errCode + " appId: " + appId
-                    + " appSecret: " + appSecret);
+            throw new WxIPNotInWhitelistException();
+        } else if (errCode == WxErrCode.INVALID_APP_SECRET_1 || errCode == WxErrCode.INVALID_APP_SECRET_2) {
+            throw new WxInvalidAppSecretException();
         } else {
-            throw new WxApiException("[Weixin:getAccessToken] not expected result:" + resultJson);
+            throw new WxApiException("[Weixin:getAccessToken] unexpected result:" + resultJson);
         }
 
     }
