@@ -302,9 +302,9 @@ public class PostServiceImpl implements PostService {
         int curUpdateTime = 0;
         try {
             for (int index = 0; index < wxPosts.size(); index++) {
+                curIndex = index;
                 if (! wxPostEqual(oldPosts.get(index), posts.get(index))) {
                     WxPostManager.updatePost(accessToken, oldPost.getMediaId(), wxPosts.get(index));
-                    curIndex = index;
                     curUpdateTime++;
                 }
             }
