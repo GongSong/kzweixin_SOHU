@@ -79,7 +79,7 @@ public class AccountController extends BaseController {
     /**
      * 修改app_secret
      */
-    @RequestMapping(value = "/account/{weixinAppid}/app_secret", method = RequestMethod.PUT)
+    @RequestMapping(value = "/accounts/{weixinAppid}/app_secret", method = RequestMethod.PUT)
     public JsonResponse updateAppSecret(@PathVariable("weixinAppid") long weixinAppid, @Valid @RequestBody UpdateAppSecretParam param) {
         accountService.updateAppSecret(weixinAppid, param.getAppSecret());
         return new JsonResponse(ImmutableMap.of());

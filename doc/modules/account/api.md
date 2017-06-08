@@ -55,7 +55,7 @@
 #### 3 根据weixinAppid获取accessToken
 * **协议**：HTTPS
 * **方法**：PUT
-* **URL**：/v1/account/<weixinAppid>/app_secret
+* **URL**：/v1/accounts/<weixinAppid>/app_secret
 * **参数**：
     * weixinAppid: 主键
     * appSecret: 用户填写提交的App Secret
