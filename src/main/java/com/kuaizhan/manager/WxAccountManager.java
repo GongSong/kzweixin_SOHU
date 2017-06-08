@@ -1,10 +1,9 @@
 package com.kuaizhan.manager;
 
+import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.constant.WxErrCode;
-import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.weixin.*;
 import com.kuaizhan.utils.HttpClientUtil;
-import com.kuaizhan.constant.ErrorCode;
 import org.json.JSONObject;
 
 
@@ -25,9 +24,7 @@ public class WxAccountManager {
      * */
     public static String getAccessToken(String appId, String appSecret) throws WxIPNotInWhitelistException,
             WxInvalidAppSecretException, WxApiException {
-        String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret="
-                + appSecret;
-        String result = HttpClientUtil.get(url.toString());
+        String result = HttpClientUtil.get(WxApiConfig.getAccessTokenUrl(appId, appSecret));
 
         if (result == null) {
             throw new WxApiException("[WeiXin:getAccessToken] result is null");
