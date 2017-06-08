@@ -1,5 +1,6 @@
 package com.kuaizhan.aspect;
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.exception.deprecated.business.ParamException;
 import com.kuaizhan.pojo.vo.JsonResponse;
@@ -57,14 +58,14 @@ public class ControllerAspect {
                         try {
                             ParamUtil.validateRequestParam(pjp.getTarget().getClass().toString(), m.getName(), key, arg.toString());
                         } catch (ParamException e) {
-                            return new JsonResponse(e.getCode(), e.getMsg(), null);
+                            return new JsonResponse(e.getCode(), e.getMsg(), ImmutableMap.of());
                         }
                     } else {
                         //post或者put参数校验
                         try {
                             ParamUtil.validatePostParam(arg.toString(), pathToSchema);
                         } catch (ParamException e) {
-                            return new JsonResponse(e.getCode(), e.getMsg(), null);
+                            return new JsonResponse(e.getCode(), e.getMsg(), ImmutableMap.of());
                         }
                     }
 
@@ -77,11 +78,9 @@ public class ControllerAspect {
 
     /**
      * 日志输出
-     *
-     * @param e
      */
     @AfterThrowing(value = "controllerMethod()", throwing = "e")
     public void afterThrowing(Throwable e) {
-        LogUtil.logMsg((Throwable) e);
+        LogUtil.logMsg(e);
     }
 }

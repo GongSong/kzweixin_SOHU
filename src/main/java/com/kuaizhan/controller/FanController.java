@@ -1,6 +1,7 @@
 package com.kuaizhan.controller;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.exception.common.DaoException;
@@ -107,7 +108,7 @@ public class FanController extends BaseController {
             throw new ParamException();
         }
         fansService.insertTag(siteId, tagName, accountPO.getAccessToken());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
@@ -126,7 +127,7 @@ public class FanController extends BaseController {
             throw new ParamException();
         }
         fansService.updateUserTag(siteId, accountPO.getAppId(), openIds, tagIds, accountPO.getAccessToken());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
@@ -136,7 +137,7 @@ public class FanController extends BaseController {
     public JsonResponse deleteTag(@RequestParam long siteId, @PathVariable int tagId) throws RedisException, DaoException, ServerException, TagDeleteFansNumberException, TagModifyException, JsonParseException {
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
         fansService.deleteTag(siteId, accountPO.getAppId(), tagId, accountPO.getAccessToken());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
 
     }
 
@@ -159,7 +160,7 @@ public class FanController extends BaseController {
         tag.setId(tagId);
         tag.setName(newName);
         fansService.renameTag(siteId, tag, accountPO.getAccessToken());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
 
     }
 
@@ -186,7 +187,7 @@ public class FanController extends BaseController {
             fanPOList.add(fan);
         }
         fansService.insertBlack(siteId, accountPO.getAccessToken(), fanPOList);
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
 
     }
 
@@ -213,7 +214,7 @@ public class FanController extends BaseController {
             fanPOList.add(fans);
         }
         fansService.deleteBlack(siteId, fanPOList, accountPO.getAccessToken());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
 
     }
 }

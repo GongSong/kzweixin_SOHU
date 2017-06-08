@@ -3,6 +3,7 @@
  */
 package com.kuaizhan.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.pojo.vo.JsonResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,6 @@ public class CommonController extends BaseController{
      */
     @RequestMapping(value = "/ping", method = RequestMethod.GET)
     public JsonResponse ping(){
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 }

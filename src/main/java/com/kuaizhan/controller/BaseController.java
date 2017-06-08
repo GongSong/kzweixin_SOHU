@@ -1,5 +1,6 @@
 package com.kuaizhan.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.exception.BaseException;
 
@@ -24,14 +25,14 @@ public abstract class BaseController {
     @ResponseBody
     public JsonResponse handleException(Exception ex) {
         if (ex instanceof BaseException) {
-            return new JsonResponse(((BaseException) ex).getCode(), ((BaseException) ex).getMsg(), null);
+            return new JsonResponse(((BaseException) ex).getCode(), ((BaseException) ex).getMsg(), ImmutableMap.of());
         }
         //自定义spring @RequestParam 异常
         else if (ex instanceof ServletRequestBindingException) {
-            return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), ErrorCode.PARAM_ERROR.getMessage(), null);
+            return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), ErrorCode.PARAM_ERROR.getMessage(), ImmutableMap.of());
         } else {
             ex.printStackTrace();
-            return new JsonResponse(ErrorCode.SERVER_ERROR.getCode(), ErrorCode.SERVER_ERROR.getMessage(), null);
+            return new JsonResponse(ErrorCode.SERVER_ERROR.getCode(), ErrorCode.SERVER_ERROR.getMessage(), ImmutableMap.of());
         }
     }
 
@@ -41,7 +42,7 @@ public abstract class BaseController {
     @ExceptionHandler
     @ResponseBody
     public JsonResponse handleBusinessException(BusinessException e){
-        return new JsonResponse(e.getCode(), e.getMessage(), null);
+        return new JsonResponse(e.getCode(), e.getMessage(), ImmutableMap.of());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -52,7 +53,7 @@ public abstract class BaseController {
         for (ObjectError er : e.getBindingResult().getAllErrors()) {
             msg = er.getDefaultMessage();
         }
-        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), msg, null);
+        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), msg, ImmutableMap.of());
 
     }
 
@@ -62,7 +63,7 @@ public abstract class BaseController {
     @ExceptionHandler({HttpMessageNotReadableException.class, HttpMediaTypeNotSupportedException.class})
     @ResponseBody
     public JsonResponse handleMessageBodyMissing(Exception e) {
-        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), "request body can not be null and only accept application/json", null);
+        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), "request body can not be null and only accept application/json", ImmutableMap.of());
     }
 
 }

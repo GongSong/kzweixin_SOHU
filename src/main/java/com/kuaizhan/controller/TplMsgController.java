@@ -1,5 +1,6 @@
 package com.kuaizhan.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.param.AddSysTplParam;
 import com.kuaizhan.param.SendTplMsgParam;
@@ -35,7 +36,7 @@ public class TplMsgController extends BaseController {
         AccountPO accountPO = accountService.getAccountByAppId(param.getAppId());
         tplService.sendSysTplMsg(accountPO.getWeixinAppId(), param.getTemplateId(), param.getOpenId(),
                 param.getUrl(), param.getData());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
@@ -45,6 +46,6 @@ public class TplMsgController extends BaseController {
     public JsonResponse addSysTpl(@Valid @RequestBody AddSysTplParam param) {
         AccountPO accountPO = accountService.getAccountBySiteId(param.getSiteId());
         tplService.addTpl(accountPO.getWeixinAppId(), param.getTemplateId());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 }

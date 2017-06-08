@@ -1,6 +1,7 @@
 package com.kuaizhan.controller;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.common.DaoException;
@@ -95,7 +96,7 @@ public class WxCallbackController extends BaseController {
             }
             accountService.bindAccount(account);
         }
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
 

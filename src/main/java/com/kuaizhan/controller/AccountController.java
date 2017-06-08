@@ -4,7 +4,6 @@ package com.kuaizhan.controller;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.exception.deprecated.business.ParamException;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.UnbindPO;
 import com.kuaizhan.pojo.vo.AccountVO;
@@ -74,7 +73,7 @@ public class AccountController extends BaseController {
         unbind.setUnbindText(text);
         unbind.setUnbindType(type);
         accountService.unbindAccount(account, unbind);
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
@@ -83,7 +82,7 @@ public class AccountController extends BaseController {
     @RequestMapping(value = "/account/{weixinAppid}/app_secret", method = RequestMethod.PUT)
     public JsonResponse updateAppSecret(@PathVariable("weixinAppid") long weixinAppid, @Valid @RequestBody UpdateAppSecretParam param) {
         accountService.updateAppSecret(weixinAppid, param.getAppSecret());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /* --------------- deprecated ---------------- */

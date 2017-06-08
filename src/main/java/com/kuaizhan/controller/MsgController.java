@@ -126,7 +126,7 @@ public class MsgController extends BaseController {
     public JsonResponse insertCustomMsg(@Valid @RequestBody SendCustomMsgParam param) {
         MsgType msgType = MsgType.fromValue(param.getMsgType());
         msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), msgType, JsonUtil.bean2String(param.getContent()));
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**

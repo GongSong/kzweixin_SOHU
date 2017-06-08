@@ -1,5 +1,6 @@
 package com.kuaizhan.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.exception.common.DownloadFileFailedException;
@@ -150,7 +151,7 @@ public class PostController extends BaseController {
     public JsonResponse insertPost(@Valid @RequestBody PostsParam postsParam) throws Exception {
 
         postService.insertMultiPosts(postsParam.getWeixinAppid(), postsParam.getPostDOs());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
@@ -159,7 +160,7 @@ public class PostController extends BaseController {
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.PUT)
     public JsonResponse updatePost(@PathVariable("pageId") long pageId, @Valid @RequestBody PostsParam postsParam) throws Exception {
         postService.updateMultiPosts(postsParam.getWeixinAppid(), pageId, postsParam.getPostDOs());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
@@ -168,7 +169,7 @@ public class PostController extends BaseController {
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
     public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) {
         postService.deletePost(weixinAppid, pageId, accountService.getAccessToken(weixinAppid));
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
@@ -177,7 +178,7 @@ public class PostController extends BaseController {
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
     public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) throws ParamException {
         postService.syncWeixinPosts(wxSyncsPostParam.getWeixinAppid(), wxSyncsPostParam.getUid());
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
@@ -194,7 +195,7 @@ public class PostController extends BaseController {
             // TODO: 未绑定站点错误
             postService.export2KzArticle(pageId, categoryId, accountPO.getSiteId());
         }
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
@@ -208,7 +209,7 @@ public class PostController extends BaseController {
 
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
         postService.importKzArticle(weixinAppid, pageIds);
-        return new JsonResponse(null);
+        return new JsonResponse(ImmutableMap.of());
     }
 
     /**
