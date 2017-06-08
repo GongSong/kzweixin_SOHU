@@ -1,13 +1,11 @@
 #!/bin/bash
 
-
 # generate auto port
 /opt/kuaizhan/bin/domeize -template /export-tpl.sh:/export.sh
 source /export.sh
 
 # add global environments
-echo "export JETTY_PORT="$AUTO_PORT0 >> /root/.bashrc
-echo "export JMX_PORT="$AUTO_PORT1 >> /root/.bashrc
+echo "export JMX_PORT="$AUTO_PORT0 >> /root/.bashrc
 source /root/.bashrc
 
 # register jetty clean
@@ -38,15 +36,13 @@ case "${DOCKER_ENV}" in
     ;;
 esac
 
-# start jetty, with jmx on
-cd $JETTY_HOME
+# start worker, with jmx on
 java -Dcom.sun.management.jmxremote \
      -Dcom.sun.management.jmxremote.port=$JMX_PORT \
      -Dcom.sun.management.jmxremote.authenticate=false \
      -Dcom.sun.management.jmxremote.ssl=false \
-     -Djetty.port=$JETTY_PORT \
      ${JVM_SIZE_ARG} \
-     -jar start.jar &
+     -jar $PREFIX/worker/kzweixin.jar &
 
 child=$!
 wait "$child"

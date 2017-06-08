@@ -2,11 +2,8 @@ build_image() {
     env=$1
     tag=$2
 
-    # compile
     mvn clean package -Dmaven.test.skip=true -P ${env}
-    # build
     docker build --build-arg env=${env} -t ${tag} -f ./deploy/web/Dockerfile .
-    # push
     docker push ${tag}
 }
 
