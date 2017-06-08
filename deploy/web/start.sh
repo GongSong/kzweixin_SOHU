@@ -16,6 +16,27 @@ _term() {
 }
 trap _term SIGTERM
 
+
+# figure out jvm size
+
+JVM_SIZE_DEV="-Xmx1024m -Xms1024m"
+JVM_SIZE_PROD="-Xmx2000m -Xms2000m"
+
+case "${DOCKER_ENV}" in
+    'dev')
+        JVM_SIZE_ARG=${JVM_SIZE_DEV}
+    ;;
+    'test')
+        JVM_SIZE_ARG=${JVM_SIZE_DEV}
+    ;;
+    'pre')
+        JVM_SIZE_ARG=${JVM_SIZE_PROD}
+    ;;
+    'prod')
+        JVM_SIZE_ARG=${JVM_SIZE_PROD}
+    ;;
+esac
+
 # start jetty, with jmx on
 cd $JETTY_HOME
 java -Dcom.sun.management.jmxremote \
@@ -23,6 +44,7 @@ java -Dcom.sun.management.jmxremote \
      -Dcom.sun.management.jmxremote.authenticate=false \
      -Dcom.sun.management.jmxremote.ssl=false \
      -Djetty.port=$JETTY_PORT \
+     ${JVM_SIZE_ARG} \
      -jar start.jar &
 
 child=$!
