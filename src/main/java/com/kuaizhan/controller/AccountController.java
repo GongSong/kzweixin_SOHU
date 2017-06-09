@@ -2,7 +2,6 @@ package com.kuaizhan.controller;
 
 
 import com.google.common.collect.ImmutableMap;
-import com.kuaizhan.annotation.Validate;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.UnbindPO;
@@ -62,8 +61,7 @@ public class AccountController extends BaseController {
      * 解绑账户
      */
     @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public JsonResponse unbind(@Validate(key = "siteId") @RequestParam long siteId,
-                               @Validate(key = "postData", path = "json/unbind-postdata-schema.json")
+    public JsonResponse unbind(@RequestParam long siteId,
                                @RequestBody String postData) {
         AccountPO account = accountService.getAccountBySiteId(siteId);
         JSONObject jsonObject = new JSONObject(postData);
