@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.UnbindPO;
+import com.kuaizhan.pojo.vo.AccountSettingVO;
 import com.kuaizhan.pojo.vo.AccountVO;
 import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
@@ -34,6 +35,16 @@ public class AccountController extends BaseController {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         AccountVO accountVO = PojoSwitcher.accountPOToVO(accountPO);
         return new JsonResponse(accountVO);
+    }
+
+    /**
+     * 根据weixinAppid获取账号设置信息
+     */
+    @RequestMapping(value = "/accounts/{weixinAppid}/settings", method = RequestMethod.GET)
+    public JsonResponse getAccountSettings(@PathVariable long weixinAppid) {
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        AccountSettingVO settingVO = PojoSwitcher.toAccountSettingVO(accountPO);
+        return new JsonResponse(settingVO);
     }
 
     /**

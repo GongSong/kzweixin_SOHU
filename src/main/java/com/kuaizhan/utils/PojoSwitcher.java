@@ -3,6 +3,7 @@ package com.kuaizhan.utils;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.MsgPO;
 import com.kuaizhan.pojo.po.PostPO;
+import com.kuaizhan.pojo.vo.AccountSettingVO;
 import com.kuaizhan.pojo.vo.AccountVO;
 import com.kuaizhan.pojo.vo.MsgVO;
 import com.kuaizhan.pojo.vo.PostVO;
@@ -74,11 +75,34 @@ public class PojoSwitcher {
         accountVO.setQrcode(qrcode);
 
         accountVO.setHeadImg(accountPO.getHeadImg());
-        accountVO.setInterest(JsonUtil.string2List(accountPO.getInterestJson(), String.class));
         accountVO.setName(accountPO.getNickName());
         accountVO.setServiceType(accountPO.getServiceType());
         accountVO.setVerifyType(accountPO.getVerifyType());
         return accountVO;
+    }
+
+    /**
+     * 公众号的部分设置信息
+     */
+    public static AccountSettingVO toAccountSettingVO(AccountPO accountPO) {
+        AccountSettingVO settingVO = new AccountSettingVO();
+
+        String interestJson = accountPO.getInterestJson();
+        // 到处都是这些不稳定的设计
+        if ("".equals(interestJson)) {
+            interestJson = "[]";
+        }
+        settingVO.setInterest(JsonUtil.string2List(interestJson, String.class));
+
+        String advancedFuncJson = accountPO.getAdvancedFuncInfoJson();
+        if ("".equals(advancedFuncJson)) {
+            advancedFuncJson = "{}";
+        }
+        JSONObject jsonObject = new JSONObject(advancedFuncJson);
+        settingVO.setOpenLogin(jsonObject.optInt("open_login") == 1);
+        settingVO.setOpenShare(jsonObject.optInt("open_share") == 1);
+
+        return settingVO;
     }
 
     public static MsgVO msgPOToVO(MsgPO msgPO) {

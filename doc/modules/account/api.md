@@ -15,7 +15,6 @@
             "appId": "wx1a4ff9ec0e369bd1", // 微信后台的appid
             "appSecret": "1323fda2dfa************24332423", // 打码后的appSecret
             "headImg": "http://wx.qlogo.cn/mmopen/l0fmnePhf2dtiaEmpOZmeMrUMYBLbcQHOSYOPjFWCNdOoWUO53oawfQJA5k1DvdfK4sbX3Dn60rYI2AbOUU10thWiasCH8Q4re/0",
-            "interest": ["0", "0", "0", "0", "0", "0"]
             "qrcode": "http://mmbiz.qpic.cn/mmbiz/UqZMrMwVpn1ulvkiaTJ2P6TRsljBSnjm9XEOZlVw08lrIYGHHe8oicoxttaNm48Kribps5ib18GPamib9GnWt92BmOg/0",
             "name": "快站开发测试专用2",
             "serviceType": 2 //0订阅号 1历史老账号升级后的订阅号 2服务号
@@ -41,7 +40,6 @@
             "appId": "wx1a4ff9ec0e369bd1", // 微信后台的appid
             "appSecret": "1323fda2dfa************24332423", // 打码后的appSecret
             "headImg": "http://wx.qlogo.cn/mmopen/l0fmnePhf2dtiaEmpOZmeMrUMYBLbcQHOSYOPjFWCNdOoWUO53oawfQJA5k1DvdfK4sbX3Dn60rYI2AbOUU10thWiasCH8Q4re/0",
-            "interest": ["0", "0", "0", "0", "0", "0"]
             "qrcode": "http://mmbiz.qpic.cn/mmbiz/UqZMrMwVpn1ulvkiaTJ2P6TRsljBSnjm9XEOZlVw08lrIYGHHe8oicoxttaNm48Kribps5ib18GPamib9GnWt92BmOg/0",
             "name": "快站开发测试专用2",
             "serviceType": 2 //0订阅号 1历史老账号升级后的订阅号 2服务号
@@ -52,7 +50,7 @@
         * 账号不存在，返回码 102003 
         
   
-#### 3 根据weixinAppid获取accessToken
+#### 3 修改公众号的app_secret
 * **协议**：HTTPS
 * **方法**：PUT
 * **URL**：/v1/accounts/`<weixinAppid>`/app_secret
@@ -69,3 +67,24 @@
     * 异常情况:
         * IP未设置白名单，返回码 102006
         * appSecret不正确，返回码 102007
+        
+#### 4 根据微信公众号获取账号设置
+
+* **协议**：HTTPS
+* **方法**：GET
+* **URL**：/v1/accounts/`<weixinAppid>`/settings
+* **参数**：
+    * weixinAppid 主键
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {
+          "openLogin": true, // 是否开启授权登录
+          "openShare": false, // 是否开启自定义分享
+          "interest": ["0", "0", "0", "0", "0", "0"], // 智能回复开关，六个值分别代表新闻、笑话、天气、听歌，中英文翻译、股票
+        }
+        ```
+    * 异常情况:
+        * 账号不存在，返回码 102003 

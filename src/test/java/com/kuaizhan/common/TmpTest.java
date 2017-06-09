@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kuaizhan.utils.JsonUtil;
 import com.kuaizhan.utils.ReplaceCallbackMatcher;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,35 +41,8 @@ public class TmpTest {
 
     @Test
     public void testInt() throws Exception {
-//        JSONObject jsonObject = new JSONObject()
-//                .put("test","“")
-//                .put("ttt", new ArrayList<>())
-//                ;
-//        System.out.println("---->" + jsonObject);
-//        String jsonStr = jsonObject.toString();
-//
-//        System.out.println("---->" + jsonStr);
-//        JSONObject restoreJson = new JSONObject(jsonStr);
-//        System.out.println("---->" + restoreJson.getString("test"));
-//
-//        Map<String, String> map = new HashMap<>();
-//        map.put("ttt", "中文");
-//        map.put("test", "“");
-//
-//        String mapStr = JsonUtil.bean2String(map);
-//
-//        System.out.println("---->" + mapStr);
-//        map = JsonUtil.string2Bean(mapStr, HashMap.class);
-//        System.out.println("---->" + map.get("test"));
-
-        ObjectNode node = new ObjectMapper().createObjectNode();
-
-        node.put("ttt", "中文").put("test", "”");
-        ArrayNode aNode = node.putArray("haha");
-
-        aNode.add("111");
-
-        System.out.println("---->" + JsonUtil.bean2String(node));
+        System.out.println("---->" + JsonUtil.string2List("[]", String.class));
+        System.out.println("---->" + new JSONObject("{}"));
     }
 
     @Test
