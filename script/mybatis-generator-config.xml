@@ -48,6 +48,8 @@
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
             <table tableName="site_weixin">
+                <columnOverride column="service_type" javaType="java.lang.Integer"/>
+                <columnOverride column="is_del" javaType="java.lang.Integer"/>
             </table>
         </context>
 </generatorConfiguration>
