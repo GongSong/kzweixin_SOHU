@@ -132,27 +132,6 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     }
 
     @Override
-    public AuthorizationInfoDTO getAuthorizationInfo(String componentAccessToken, String componentAppId, String authCode) throws JsonParseException {
-        AuthorizationInfoDTO authorizationInfoDTO;
-        try {
-            //请求
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("component_appid", componentAppId);
-            jsonObject.put("authorization_code", authCode);
-            String result = HttpClientUtil.postJson(WxApiConfig.getQueryAuthUrl(componentAccessToken), jsonObject.toString());
-            // TODO: 此处有NPE问题
-            JSONObject jsonObject1 = new JSONObject(result);
-            result = jsonObject1.get("authorization_info").toString();
-            //反序列化
-            authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
-            authorizationInfoDTO.setFuncInfo(jsonObject1.getJSONObject("authorization_info").get("func_info").toString());
-        } catch (Exception e) {
-            throw new JsonParseException(e);
-        }
-        return authorizationInfoDTO;
-    }
-
-    @Override
     public AuthorizationInfoDTO refreshAuthorizationInfo(String componentAccessToken, String componentAppId, String authorizerAppId, String authorizerRefreshToken) {
         AuthorizationInfoDTO authorizationInfoDTO;
         JSONObject jsonObject = new JSONObject();
@@ -163,25 +142,5 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         // TODO: 这种写法，完全没有对返回数据做校验
         authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
         return authorizationInfoDTO;
-    }
-
-    @Override
-    public AuthorizerInfoDTO getAuthorizerInfo(String componentAccessToken, String componentAppId, String authorizerAppId) throws JsonParseException {
-        AuthorizerInfoDTO authorizerInfoDTO;
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("component_appid", componentAppId);
-            jsonObject.put("authorizer_appid", authorizerAppId);
-            String result = HttpClientUtil.postJson(WxApiConfig.getAuthorizerInfoUrl(componentAccessToken), jsonObject.toString());
-            JSONObject jsonObject1 = new JSONObject(result);
-            result = jsonObject1.get("authorizer_info").toString();
-            authorizerInfoDTO = JsonUtil.string2Bean(result, AuthorizerInfoDTO.class);
-            authorizerInfoDTO.setBusinessInfo(jsonObject1.getJSONObject("authorizer_info").get("business_info").toString());
-            authorizerInfoDTO.setServiceTypeInfo(jsonObject1.getJSONObject("authorizer_info").get("service_type_info").toString());
-            authorizerInfoDTO.setVerifyTypeInfo(jsonObject1.getJSONObject("authorizer_info").get("verify_type_info").toString());
-        } catch (Exception e) {
-            throw new JsonParseException(e);
-        }
-        return authorizerInfoDTO;
     }
 }

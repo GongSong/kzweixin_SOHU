@@ -3,15 +3,14 @@ package com.kuaizhan.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
+import com.kuaizhan.param.account.AddAccountParam;
 import com.kuaizhan.pojo.po.AccountPO;
-import com.kuaizhan.pojo.po.UnbindPO;
 import com.kuaizhan.pojo.vo.AccountSettingVO;
 import com.kuaizhan.pojo.vo.AccountVO;
 import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.param.UpdateAppSecretParam;
 import com.kuaizhan.utils.PojoSwitcher;
-import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -69,19 +68,11 @@ public class AccountController extends BaseController {
     }
 
     /**
-     * 解绑账户
+     * 新增一个绑定(授权者)
      */
-    @RequestMapping(value = "/account/unbind", method = RequestMethod.POST)
-    public JsonResponse unbind(@RequestParam long siteId,
-                               @RequestBody String postData) {
-        AccountPO account = accountService.getAccountBySiteId(siteId);
-        JSONObject jsonObject = new JSONObject(postData);
-        int type = jsonObject.getInt("type");
-        String text = jsonObject.getString("text");
-        UnbindPO unbind = new UnbindPO();
-        unbind.setUnbindText(text);
-        unbind.setUnbindType(type);
-        accountService.unbindAccount(account, unbind);
+    @RequestMapping(value = "/accounts", method = RequestMethod.POST)
+    public JsonResponse addBindAccount(@Valid @RequestBody AddAccountParam param) {
+        accountService.bindAccount(param.getUserId(), param.getAuthCode(), param.getSiteId());
         return new JsonResponse(ImmutableMap.of());
     }
 

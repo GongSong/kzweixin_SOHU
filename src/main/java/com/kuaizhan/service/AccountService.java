@@ -17,9 +17,12 @@ public interface AccountService {
     String getBindUrl(Long userId, Long siteId);
 
     /**
-     * 绑定账号
+     * 新增绑定公众号
+     * @param userId 绑定的用户id
+     * @param authCode 微信授权码
+     * @param siteId 绑定的siteId, 允许为空
      */
-    void bindAccount(AccountPO account) throws RedisException, DaoException;
+    void bindAccount(Long userId, String authCode, Long siteId);
 
     /**
      * 获取accessToken

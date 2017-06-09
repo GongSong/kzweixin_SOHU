@@ -5,6 +5,7 @@ import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.dao.mapper.AccountDao;
 import com.kuaizhan.dao.mapper.UnbindDao;
+import com.kuaizhan.dao.mapper.auto.SiteWeixinMapper;
 import com.kuaizhan.dao.redis.RedisAccountDao;
 import com.kuaizhan.exception.BusinessException;
 import com.kuaizhan.exception.common.DaoException;
@@ -12,19 +13,24 @@ import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.weixin.WxIPNotInWhitelistException;
 import com.kuaizhan.exception.weixin.WxInvalidAppSecretException;
 import com.kuaizhan.manager.WxAccountManager;
+import com.kuaizhan.manager.WxAuthManager;
+import com.kuaizhan.pojo.dto.AuthorizerInfoDTO;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.UnbindPO;
 import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
+import com.kuaizhan.pojo.po.auto.SiteWeixin;
+import com.kuaizhan.pojo.po.auto.SiteWeixinExample;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.WeixinAuthService;
 import com.kuaizhan.utils.DateUtil;
-import com.kuaizhan.utils.IdGeneratorUtil;
 import com.kuaizhan.utils.UrlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by liangjiateng on 2017/3/15.
@@ -38,6 +44,8 @@ public class AccountServiceImpl implements AccountService {
     private AccountDao accountDao;
     @Resource
     private UnbindDao unbindDao;
+    @Resource
+    private SiteWeixinMapper siteWeixinMapper;
     @Resource
     private WeixinAuthService weixinAuthService;
 
@@ -58,47 +66,94 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void bindAccount(AccountPO account) throws RedisException, DaoException {
-        try {
-            //删缓存
-            redisAccountDao.deleteAccountInfo(account.getSiteId());
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
-        AccountPO accountPO;
-        try {
-            //将其他公众号删除
-            accountDao.deleteAccountByAppId(account.getAppId());
-            //先查数据库存不存在
-            accountPO = accountDao.getDeleteAccountBySiteId(account.getSiteId());
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-        //存在记录 恢复记录 更新数据库
-        if (accountPO != null) {
-            account.setIsDel(0);
-            account.setUnbindTime(0L);
-            try {
-                accountDao.updateAccountBySiteId(account);
-            } catch (Exception e) {
-                throw new DaoException(e);
+    public void bindAccount(Long userId, String authCode, Long siteId) {
+        String componentAccessToken = weixinAuthService.getComponentAccessToken();
+        AuthorizationInfoDTO authorizationInfo = WxAuthManager.getAuthorizationInfo(ApplicationConfig.WEIXIN_APPID_THIRD, componentAccessToken, authCode);
+        String appId = authorizationInfo.getAppId();
+        AuthorizerInfoDTO authorizerInfo = WxAuthManager.getAuthorizerInfo(ApplicationConfig.WEIXIN_APPID_THIRD, componentAccessToken, appId);
+
+        // 是否有现存的
+        SiteWeixinExample example = new SiteWeixinExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andIsDelEqualTo(0);
+        List<SiteWeixin> results = siteWeixinMapper.selectByExample(example);
+
+        // 新用户
+        if (results.size() == 0) {
+            // 以前是否绑定过
+            example = new SiteWeixinExample();
+            example.createCriteria()
+                    .andAppIdEqualTo(appId)
+                    .andIsDelEqualTo(1);
+            example.setOrderByClause("unbind_time DESC"); // 尽量取最新的历史记录
+            List<SiteWeixin> oldResults = siteWeixinMapper.selectByExample(example);
+
+            // 更新老的数据
+            if (oldResults.size() > 0) {
+
+                // 老的记录
+                SiteWeixin record = oldResults.get(0);
+                // 删除状态设为0
+                record.setIsDel(0);
+                record.setSiteId(siteId);
+                record.setUserId(userId);
+
+                // TODO: 清理accessToken
+                record.setAccessToken(authorizationInfo.getAccessToken());
+                record.setRefreshToken(authorizationInfo.getRefreshToken());
+                record.setExpiresTime(authorizationInfo.getExpiresIn() + DateUtil.curSeconds() - 10 * 60);
+                record.setFuncInfoJson(authorizationInfo.getFuncInfo());
+
+                record.setBindTime(DateUtil.curSeconds());
+                record.setUpdateTime(DateUtil.curSeconds());
+
+                siteWeixinMapper.updateByPrimaryKeySelective(record);
+            // 不存在，新增
+            } else {
+                SiteWeixin record = new SiteWeixin();
+
+                record.setWeixinAppid(genWeixinAppid());
+                record.setSiteId(siteId);
+                record.setUserId(userId);
+
+                record.setAccessToken(authorizationInfo.getAccessToken());
+                record.setRefreshToken(authorizationInfo.getRefreshToken());
+                record.setExpiresTime(authorizationInfo.getExpiresIn() + DateUtil.curSeconds() - 10 * 60);
+                record.setFuncInfoJson(authorizationInfo.getFuncInfo());
+
+                record.setAppId(appId);
+                // 后面改为由对象序列化
+                record.setInterestJson("[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"]");
+                record.setAdvancedFuncInfoJson("{\"open_login\":0,\"open_share\":0}");
+                record.setMenuJson("");
+
+                record.setBindTime(DateUtil.curSeconds());
+                record.setCreateTime(DateUtil.curSeconds());
+                record.setUpdateTime(DateUtil.curSeconds());
+
+                siteWeixinMapper.insertSelective(record);
             }
-            //刷新缓存
-            try {
-                redisAccountDao.setAccountInfo(accountPO);
-            } catch (Exception e) {
-                throw new RedisException(e);
-            }
-        }
-        //不存在则创建新的数据
-        else {
-            account.setWeixinAppId(IdGeneratorUtil.getID());
-            account.setIsDel(0);
-            try {
-                accountDao.insertAccount(account);
-            } catch (Exception e) {
-                throw new DaoException(e);
-            }
+            // 各种导入的异步任务
+
+        // 老用户没有解绑，在某些场景下触发再次绑定,
+        } else if (results.size() == 1){
+            SiteWeixin record = results.get(0);
+            record.setUserId(userId);
+            record.setSiteId(siteId);
+
+            record.setAccessToken(authorizationInfo.getAccessToken());
+            record.setRefreshToken(authorizationInfo.getRefreshToken());
+            record.setExpiresTime(authorizationInfo.getExpiresIn() + DateUtil.curSeconds() - 10 * 60);
+            record.setFuncInfoJson(authorizationInfo.getFuncInfo());
+
+            record.setBindTime(DateUtil.curSeconds());
+            record.setUpdateTime(DateUtil.curSeconds());
+
+            siteWeixinMapper.updateByPrimaryKeySelective(record);
+        } else {
+            // 当前就绑定了两个，垃圾数据
+            logger.error("[bindAccount:垃圾数据] appId当前有多个绑定, appId:" + appId);
         }
     }
 
@@ -206,5 +261,23 @@ public class AccountServiceImpl implements AccountService {
         updatePO.setWeixinAppId(weixinAppId);
         updatePO.setAppSecret(appSecret);
         accountDao.updateAccountByWeixinAppId(updatePO);
+    }
+
+    private long genWeixinAppid() {
+
+        final long MIN = 1000000000L;
+        final long MAX = 9999999999L;
+        int count = 1;
+
+        long weixinAppid = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+        while (siteWeixinMapper.selectByPrimaryKey(weixinAppid) != null) {
+            weixinAppid = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+            count++;
+        }
+        // 随机三次及以上才随机到，报警
+        if (count >= 3) {
+            logger.warn("[genWeixinAppid] gen times reach {}", count);
+        }
+        return weixinAppid;
     }
 }

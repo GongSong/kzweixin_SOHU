@@ -3,6 +3,8 @@ package com.kuaizhan.manager;
 import com.kuaizhan.config.ApplicationConfig;
 import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.exception.weixin.WxApiException;
+import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
+import com.kuaizhan.pojo.dto.AuthorizerInfoDTO;
 import com.kuaizhan.utils.HttpClientUtil;
 import com.kuaizhan.utils.JsonUtil;
 import org.json.JSONObject;
@@ -36,5 +38,49 @@ public class WxAuthManager {
             throw new WxApiException("[Weixin:getPreAuthCode] unexpected result:" + resultJson);
         }
         return resultJson.getString("pre_auth_code");
+    }
+
+    /**
+     * 获取授权信息
+     * @throws WxApiException: 未知调用错误
+     */
+    public static AuthorizationInfoDTO getAuthorizationInfo(String componentAppid, String componentAccessToken, String authCode) {
+        Map<String, String> param = new HashMap<>();
+        param.put("component_appid", componentAppid);
+        param.put("authorization_code", authCode);
+
+        String url = WxApiConfig.getQueryAuthUrl(componentAccessToken);
+        String result = HttpClientUtil.postJson(url, JsonUtil.bean2String(param));
+
+        if (result == null) {
+            throw new WxApiException("[Weixin:getAuthorizationInfo] result is null");
+        }
+        JSONObject resultJson = new JSONObject(result);
+        if (resultJson.optInt("errcode") != 0) {
+            throw new WxApiException("[Weixin:getAuthorizationInfo] unexpected result:" + result);
+        }
+        return JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
+    }
+
+    /**
+     * 获取授权公众号信息
+     */
+    public static AuthorizerInfoDTO getAuthorizerInfo(String componentAppid, String componentAccessToken, String appid) {
+        Map<String, String> param = new HashMap<>();
+        param.put("component_appid", componentAppid);
+        param.put("authorizer_appid", appid);
+
+        String result = HttpClientUtil.postJson(WxApiConfig.getAuthorizerInfoUrl(componentAccessToken), JsonUtil.bean2String(param));
+
+        if (result == null) {
+            throw new WxApiException("[Weixin:getAuthorizerInfo] result is null");
+        }
+
+        JSONObject resultJson = new JSONObject(result);
+        if (resultJson.optInt("errcode") != 0) {
+            throw new WxApiException("[Weixin:getAuthorizerInfo] unexpected result:" + result);
+        }
+
+       return JsonUtil.string2Bean(result, AuthorizerInfoDTO.class);
     }
 }

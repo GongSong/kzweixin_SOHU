@@ -1,10 +1,8 @@
 package com.kuaizhan.service;
 
 
-import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.exception.deprecated.system.*;
 import com.kuaizhan.pojo.dto.AuthorizationInfoDTO;
-import com.kuaizhan.pojo.dto.AuthorizerInfoDTO;
 
 /**
  * Created by Mr.Jadyn on 2017/1/19.
@@ -35,18 +33,7 @@ public interface WeixinAuthService {
     String getPreAuthCode();
 
     /**
-     * 使用授权码换取公众号的接口调用凭据和授权信息
-     */
-    AuthorizationInfoDTO getAuthorizationInfo(String componentAccessToken, String componentAppId, String authCode) throws JsonParseException;
-
-    /**
      * 获取（刷新）授权公众号的接口调用凭据（令牌）
      */
     AuthorizationInfoDTO refreshAuthorizationInfo(String componentAccessToken, String componentAppId, String authorizerAppId, String authorizerRefreshToken);
-
-    /**
-     * 获取授权方的公众号帐号基本信息
-     */
-    AuthorizerInfoDTO getAuthorizerInfo(String componentAccessToken, String componentAppId, String authorizerAppId) throws JsonParseException;
-
 }

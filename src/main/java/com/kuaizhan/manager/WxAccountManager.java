@@ -4,6 +4,7 @@ import com.kuaizhan.config.WxApiConfig;
 import com.kuaizhan.constant.WxErrCode;
 import com.kuaizhan.exception.weixin.*;
 import com.kuaizhan.utils.HttpClientUtil;
+import com.kuaizhan.exception.weixin.WxApiException;
 import org.json.JSONObject;
 
 
@@ -46,6 +47,5 @@ public class WxAccountManager {
         } else {
             throw new WxApiException("[Weixin:getAccessToken] unexpected result:" + resultJson);
         }
-
     }
 }
