@@ -89,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
             example.setOrderByClause("unbind_time DESC"); // 尽量取最新的历史记录
             List<SiteWeixin> oldResults = siteWeixinMapper.selectByExample(example);
 
-            // 更新老的数据
+            // 绑定过，恢复老的数据
             if (oldResults.size() > 0) {
 
                 // 老的记录
@@ -109,7 +109,7 @@ public class AccountServiceImpl implements AccountService {
                 record.setUpdateTime(DateUtil.curSeconds());
 
                 siteWeixinMapper.updateByPrimaryKeySelective(record);
-            // 不存在，新增
+            // 没绑定过，新增
             } else {
                 SiteWeixin record = new SiteWeixin();
 
@@ -136,7 +136,7 @@ public class AccountServiceImpl implements AccountService {
             }
             // 各种导入的异步任务
 
-        // 老用户没有解绑，在某些场景下触发再次绑定,
+        // 老用户没有解绑，在某些场景下触发再次绑定, 更新绑定信息
         } else if (results.size() == 1){
             SiteWeixin record = results.get(0);
             record.setUserId(userId);

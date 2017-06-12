@@ -1,5 +1,4 @@
-kzweixin2.iml
-kzweixin.iml
+**/*.iml
 out
 target
 .idea
