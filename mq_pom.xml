@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.kuaizhan</groupId>
-    <artifactId>kzweixin</artifactId>
+    <groupId>com.kuaizhan.kzweixin</groupId>
+    <artifactId>kzweixin-mq</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <!-- 打包方式 -->
@@ -309,7 +309,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>1.5.2.RELEASE</version>
                 <configuration>
-                    <mainClass>com.kuaizhan.mq.Main</mainClass>
+                    <mainClass>com.kuaizhan.kzweixin.mq.Main</mainClass>
                     <layout>ZIP</layout>
                 </configuration>
                 <executions>

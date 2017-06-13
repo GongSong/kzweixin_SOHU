@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.kuaizhan.dao.mapper.UnbindDao">
+<mapper namespace="com.kuaizhan.kzweixin.dao.mapper.UnbindDao">
     <!--添加自动回复-->
     <insert id="insertUnbind">
         insert into weixin_unbind
@@ -14,7 +14,7 @@
         create_time=unix_timestamp(now()),
         update_time=unix_timestamp(now())
     </insert>
-    <select id="getUnbindByWeixinAppId" resultType="com.kuaizhan.pojo.po.UnbindPO">
+    <select id="getUnbindByWeixinAppId" resultType="com.kuaizhan.kzweixin.pojo.po.UnbindPO">
         select * from weixin_unbind
         where weixin_appid=#{appId}
     </select>

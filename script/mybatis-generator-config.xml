@@ -22,7 +22,7 @@
             </javaTypeResolver>
 
             <!-- 生成PO对象 -->
-            <javaModelGenerator targetPackage="com.kuaizhan.pojo.po.auto" targetProject="src/main/java">
+            <javaModelGenerator targetPackage="com.kuaizhan.kzweixin.pojo.po.auto" targetProject="src/main/java">
                     <property name="enableSubPackages" value="false" />
             </javaModelGenerator>
 
@@ -32,7 +32,7 @@
             </sqlMapGenerator>
 
             <!-- 生成DAO的类文件 -->
-            <javaClientGenerator type="XMLMAPPER" targetPackage="com.kuaizhan.dao.mapper.auto"
+            <javaClientGenerator type="XMLMAPPER" targetPackage="com.kuaizhan.kzweixin.dao.mapper.auto"
                                  targetProject="src/main/java">
                     <property name="enableSubPackages" value="true" />
             </javaClientGenerator>

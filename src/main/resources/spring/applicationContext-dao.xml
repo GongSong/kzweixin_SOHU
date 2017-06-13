@@ -5,7 +5,7 @@
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
     <!-- 扫描包加载Dao实现类 -->
-    <context:component-scan base-package="com.kuaizhan.dao.mapper,com.kuaizhan.dao.redis.impl,com.kuaizhan.dao.mongo.impl"/>
+    <context:component-scan base-package="com.kuaizhan.kzweixin.dao.mapper,com.kuaizhan.kzweixin.dao.redis.impl,com.kuaizhan.kzweixin.dao.mongo.impl"/>
     <!-- 数据库连接池 -->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
         <property name="url" value="${jdbc.url}"/>
@@ -20,12 +20,12 @@
         <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
         <property name="dataSource" ref="dataSource"/>
         <property name="mapperLocations" value="classpath:mapper/**/*.xml"/>
-        <property name="typeAliasesPackage" value="com.kuaizhan.pojo.po"/>
+        <property name="typeAliasesPackage" value="com.kuaizhan.kzweixin.pojo.po"/>
     </bean>
 
     <!-- 配置扫描包，加载mapper代理对象 -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.kuaizhan.dao.mapper"/>
+        <property name="basePackage" value="com.kuaizhan.kzweixin.dao.mapper"/>
     </bean>
 
 

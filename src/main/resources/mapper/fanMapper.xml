@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.kuaizhan.dao.mapper.FanDao">
+<mapper namespace="com.kuaizhan.kzweixin.dao.mapper.FanDao">
     <!--查询数目-->
     <select id="count" resultType="long">
         <foreach collection="tables" item="tableName" separator="union all">
@@ -21,8 +21,8 @@
         </foreach>
     </select>
     <!--分页查询-->
-    <select id="listFansByPagination" parameterType="com.kuaizhan.pojo.dto.Page"
-            resultType="com.kuaizhan.pojo.po.FanPO">
+    <select id="listFansByPagination" parameterType="com.kuaizhan.kzweixin.pojo.dto.Page"
+            resultType="com.kuaizhan.kzweixin.pojo.po.FanPO">
         <foreach collection="tables" item="tableName" separator="union all">
             (select *
             from ${tableName}
@@ -40,7 +40,7 @@
         limit #{pageEntity.offset}, #{pageEntity.limit}
     </select>
     <!--根据openId批量查找-->
-    <select id="listFansByOpenIds" resultType="com.kuaizhan.pojo.po.FanPO">
+    <select id="listFansByOpenIds" resultType="com.kuaizhan.kzweixin.pojo.po.FanPO">
         SELECT *
         FROM ${tableName}
         WHERE
@@ -73,7 +73,7 @@
         </foreach>
     </update>
     <!--查询粉丝信息（参数）-->
-    <select id="listFansByParam" resultType="com.kuaizhan.pojo.po.FanPO">
+    <select id="listFansByParam" resultType="com.kuaizhan.kzweixin.pojo.po.FanPO">
         <foreach collection="tables" item="tableName" separator="union all">
             (select *
             from ${tableName}
@@ -101,7 +101,7 @@
         </foreach>
     </select>
     <!--获取粉丝-->
-    <select id="getFanByOpenId" resultType="com.kuaizhan.pojo.po.FanPO">
+    <select id="getFanByOpenId" resultType="com.kuaizhan.kzweixin.pojo.po.FanPO">
             SELECT *
             FROM ${tableName}
             WHERE
@@ -109,7 +109,7 @@
             AND open_id=#{openId}
     </select>
     <!--获取被删除的粉丝-->
-    <select id="getDeleteFanByOpenId" resultType="com.kuaizhan.pojo.po.FanPO">
+    <select id="getDeleteFanByOpenId" resultType="com.kuaizhan.kzweixin.pojo.po.FanPO">
         <foreach collection="tables" item="tableName" separator="union all">
             (select *
             from ${tableName}
@@ -120,7 +120,7 @@
         </foreach>
     </select>
     <!--添加粉丝-->
-    <insert id="insertFan" parameterType="com.kuaizhan.pojo.po.FanPO">
+    <insert id="insertFan" parameterType="com.kuaizhan.kzweixin.pojo.po.FanPO">
             insert into ${tableName}
             set app_id=#{fans.appId},
             open_id=#{fans.openId},
@@ -143,7 +143,7 @@
             update_time=unix_timestamp(now())
     </insert>
     <!--更新粉丝-->
-    <update id="updateFan" parameterType="com.kuaizhan.pojo.po.FanPO">
+    <update id="updateFan" parameterType="com.kuaizhan.kzweixin.pojo.po.FanPO">
         <foreach collection="tables" item="tableName" separator=";">
             update ${tableName}
             set
