@@ -4,6 +4,7 @@ import com.kuaizhan.exception.common.DaoException;
 import com.kuaizhan.exception.common.RedisException;
 import com.kuaizhan.pojo.po.AccountPO;
 import com.kuaizhan.pojo.po.UnbindPO;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 /**
  * 账号服务
@@ -52,4 +53,14 @@ public interface AccountService {
      * 修改appSecret
      */
     void updateAppSecret(long weixinAppId, String appSecret);
+
+    /**
+     * 修改用户自定义分享开启／关闭状态
+     * */
+    void updateCustomizeShare(long weixinAppId, Integer openShare);
+
+    /**
+     * 修改服务号授权登录开启／关闭状态
+     * */
+    void updateAuthLogin(long weixinAppId, Integer openLogin);
 }

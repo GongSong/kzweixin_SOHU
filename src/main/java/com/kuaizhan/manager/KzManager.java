@@ -10,11 +10,9 @@ import com.kuaizhan.exception.kuaizhan.KzApiException;
 import com.kuaizhan.pojo.dto.ArticleDTO;
 import com.kuaizhan.pojo.po.PostPO;
 import com.kuaizhan.utils.*;
-import com.mongodb.util.JSON;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -146,4 +144,27 @@ public class KzManager {
 
         return ImmutableMap.of("clientId", clientId, "token", token);
     }
+
+    /**
+     * 通过社区登录功能验证微信服务号是否开启授权登录
+     * @param siteId 用户的快站ID
+     * @throws KzApiException 社区登录验证失败
+     * @return 微信第三方平台验证信息
+     * */
+    public static boolean kzAccountWxLoginCheck(long siteId) throws KzApiException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Host", ApplicationConfig.KZ_FORUM_INTRANET_HOST);
+        String result = HttpClientUtil.get(KzApiConfig.getKzForumLoginUrl(siteId), headers);
+        try {
+            JSONObject resultJson = new JSONObject(result);
+            if (resultJson.get("thirdpart_wx") == null) {
+                return false;
+            } else {
+                return resultJson.getBoolean("thirdpart_wx");
+            }
+        } catch (KzApiException e) {
+            throw new KzApiException("[Kz:kzAccountWxLoginCheck] 接口调用失败，siteId: " + siteId);
+        }
+    }
+
 }

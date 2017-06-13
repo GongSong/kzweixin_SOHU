@@ -10,6 +10,8 @@ import com.kuaizhan.pojo.vo.AccountVO;
 import com.kuaizhan.pojo.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.param.UpdateAppSecretParam;
+import com.kuaizhan.param.UpdateOpenShareParam;
+import com.kuaizhan.param.UpdateAuthLoginParam;
 import com.kuaizhan.utils.PojoSwitcher;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
@@ -91,6 +93,24 @@ public class AccountController extends BaseController {
     @RequestMapping(value = "/accounts/{weixinAppid}/app_secret", method = RequestMethod.PUT)
     public JsonResponse updateAppSecret(@PathVariable("weixinAppid") long weixinAppid, @Valid @RequestBody UpdateAppSecretParam param) {
         accountService.updateAppSecret(weixinAppid, param.getAppSecret());
+        return new JsonResponse(ImmutableMap.of());
+    }
+
+    /**
+     * 修改用户自定义分享开启／关闭状态
+     * */
+    @RequestMapping(value = "/accounts/{weixinAppid}/customize_share", method = RequestMethod.PUT)
+    public JsonResponse updateCustomizeShare(@PathVariable("weixinAppid") long weixinAppid, @Valid @RequestBody UpdateOpenShareParam param) {
+        accountService.updateCustomizeShare(weixinAppid, param.getOpenShare());
+        return new JsonResponse(ImmutableMap.of());
+    }
+
+    /**
+     * 修改服务号授权登录开启／关闭状态
+     * */
+    @RequestMapping(value = "/accounts/{weixinAppid}/authorize_login", method = RequestMethod.PUT)
+    public JsonResponse updateAuthLogin(@PathVariable("weixinAppid") long weixinAppid, @Valid @RequestBody UpdateAuthLoginParam param) {
+        accountService.updateAuthLogin(weixinAppid, param.getOpenLogin());
         return new JsonResponse(ImmutableMap.of());
     }
 
