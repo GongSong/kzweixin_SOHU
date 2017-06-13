@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.dao.mapper;
 
 
 import com.kuaizhan.kzweixin.dao.po.FanPO;
-import com.kuaizhan.kzweixin.pojo.dto.Page;
+import com.kuaizhan.kzweixin.entity.common.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

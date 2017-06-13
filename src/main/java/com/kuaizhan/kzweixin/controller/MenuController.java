@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.constant.ResponseType;
 import com.kuaizhan.kzweixin.controller.param.WeixinAppidParam;
-import com.kuaizhan.kzweixin.pojo.dto.MenuWrapper;
+import com.kuaizhan.kzweixin.entity.menu.MenuWrapper;
 import com.kuaizhan.kzweixin.dao.po.auto.WeixinConditionalMenu;
 import com.kuaizhan.kzweixin.controller.vo.ConditionalMenuVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;

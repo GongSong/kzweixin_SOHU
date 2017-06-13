@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.pojo.dto;
+package com.kuaizhan.kzweixin.entity.fan;
 
 import lombok.Data;
 

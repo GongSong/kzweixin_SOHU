@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.pojo.dto;
+package com.kuaizhan.kzweixin.entity.msg;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

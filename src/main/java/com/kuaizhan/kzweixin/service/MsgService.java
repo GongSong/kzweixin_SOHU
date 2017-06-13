@@ -3,7 +3,7 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.constant.MsgType;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
-import com.kuaizhan.kzweixin.pojo.dto.Page;
+import com.kuaizhan.kzweixin.entity.common.Page;
 
 import java.util.List;
 

@@ -9,7 +9,7 @@ import com.kuaizhan.kzweixin.controller.param.UploadPicParam;
 import com.kuaizhan.kzweixin.controller.param.WxSyncsPostParam;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
-import com.kuaizhan.kzweixin.pojo.dto.Page;
+import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.controller.vo.PostListFlatVO;
 import com.kuaizhan.kzweixin.controller.vo.PostListVO;

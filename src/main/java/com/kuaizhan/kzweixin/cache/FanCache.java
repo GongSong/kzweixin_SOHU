@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.cache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.kzweixin.dao.po.FanPO;
-import com.kuaizhan.kzweixin.pojo.dto.TagDTO;
+import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 
 import java.io.IOException;
 import java.util.List;

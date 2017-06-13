@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.mq.dto;
 
-import com.kuaizhan.kzweixin.pojo.dto.WxPostDTO;
+import com.kuaizhan.kzweixin.entity.post.WxPostDTO;
 import lombok.Data;
 
 import java.util.List;

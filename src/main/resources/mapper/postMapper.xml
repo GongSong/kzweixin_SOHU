@@ -21,7 +21,7 @@
     </select>
 
     <!--根据weixin_appid分页查询图文消息列表-->
-    <select id="listPostsByPagination" parameterType="com.kuaizhan.kzweixin.pojo.dto.Page"
+    <select id="listPostsByPagination" parameterType="com.kuaizhan.kzweixin.entity.common.Page"
             resultType="com.kuaizhan.kzweixin.dao.po.PostPO">
         select *
         from weixin_post

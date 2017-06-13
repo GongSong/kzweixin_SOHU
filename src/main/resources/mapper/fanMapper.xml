@@ -21,7 +21,7 @@
         </foreach>
     </select>
     <!--分页查询-->
-    <select id="listFansByPagination" parameterType="com.kuaizhan.kzweixin.pojo.dto.Page"
+    <select id="listFansByPagination" parameterType="com.kuaizhan.kzweixin.entity.common.Page"
             resultType="com.kuaizhan.kzweixin.dao.po.FanPO">
         <foreach collection="tables" item="tableName" separator="union all">
             (select *

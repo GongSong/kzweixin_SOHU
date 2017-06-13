@@ -12,7 +12,7 @@ import com.kuaizhan.kzweixin.controller.param.UpdateQuickRepliesParam;
 
 import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
-import com.kuaizhan.kzweixin.pojo.dto.Page;
+import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.service.MsgService;
 

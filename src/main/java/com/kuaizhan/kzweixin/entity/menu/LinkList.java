@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.pojo.dto;
+package com.kuaizhan.kzweixin.entity.menu;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

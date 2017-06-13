@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.cache;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
-import com.kuaizhan.kzweixin.pojo.dto.AuthorizationInfoDTO;
+import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
 
 /**
  * 账号缓存

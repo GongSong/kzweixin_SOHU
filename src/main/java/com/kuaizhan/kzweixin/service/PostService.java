@@ -3,9 +3,9 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.exception.kuaizhan.GetKzArticleException;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
-import com.kuaizhan.kzweixin.pojo.dto.ArticleDTO;
-import com.kuaizhan.kzweixin.pojo.dto.Page;
-import com.kuaizhan.kzweixin.pojo.dto.WxPostDTO;
+import com.kuaizhan.kzweixin.entity.post.ArticleDTO;
+import com.kuaizhan.kzweixin.entity.common.Page;
+import com.kuaizhan.kzweixin.entity.post.WxPostDTO;
 
 import java.util.HashMap;
 import java.util.List;

@@ -8,7 +8,7 @@ import com.kuaizhan.kzweixin.exception.common.GetComponentAccessTokenFailed;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.exception.deprecated.system.*;
 import com.kuaizhan.kzweixin.manager.WxAuthManager;
-import com.kuaizhan.kzweixin.pojo.dto.AuthorizationInfoDTO;
+import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
 import com.kuaizhan.kzweixin.service.WeixinAuthService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.EncryptUtil;

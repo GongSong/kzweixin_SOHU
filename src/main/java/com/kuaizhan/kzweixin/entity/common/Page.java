@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.pojo.dto;
+package com.kuaizhan.kzweixin.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;

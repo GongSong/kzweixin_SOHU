@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.mq.consumer;
 
 import com.kuaizhan.kzweixin.mq.dto.SyncWxPostDTO;
-import com.kuaizhan.kzweixin.pojo.dto.WxPostDTO;
+import com.kuaizhan.kzweixin.entity.post.WxPostDTO;
 import com.kuaizhan.kzweixin.service.PostService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import org.slf4j.Logger;
