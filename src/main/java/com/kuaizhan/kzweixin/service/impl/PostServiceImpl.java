@@ -6,8 +6,8 @@ import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.dao.mapper.PostDao;
-import com.kuaizhan.kzweixin.dao.redis.RedisImageDao;
-import com.kuaizhan.kzweixin.dao.redis.RedisPostDao;
+import com.kuaizhan.kzweixin.cache.ImageCache;
+import com.kuaizhan.kzweixin.cache.PostCache;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.DownloadFileFailedException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.Export2KzException;
@@ -58,9 +58,9 @@ public class PostServiceImpl implements PostService {
     @Resource
     private PostDao postDao;
     @Resource
-    private RedisImageDao redisImageDao;
+    private ImageCache imageCache;
     @Resource
-    private RedisPostDao redisPostDao;
+    private PostCache postCache;
     @Resource
     private MqUtil mqUtil;
     @Resource
@@ -705,7 +705,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void syncWeixinPosts(long weixinAppid, long userId) {
-        if (! redisPostDao.couldSyncWxPost(weixinAppid)) {
+        if (! postCache.couldSyncWxPost(weixinAppid)) {
             throw new BusinessException(ErrorCode.SYNC_WX_POST_TOO_OFTEN_ERROR);
         }
 
@@ -866,7 +866,7 @@ public class PostServiceImpl implements PostService {
         }
 
         // 先从redis中取
-        String wxUrl = redisImageDao.getImageUrl(imgUrl);
+        String wxUrl = imageCache.getImageUrl(imgUrl);
         if (wxUrl != null) {
             return wxUrl;
         }
@@ -878,7 +878,7 @@ public class PostServiceImpl implements PostService {
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载图片失败，请稍后重试");
         }
 
-        redisImageDao.setImageUrl(imgUrl, wxUrl);
+        imageCache.setImageUrl(imgUrl, wxUrl);
         return wxUrl;
     }
 

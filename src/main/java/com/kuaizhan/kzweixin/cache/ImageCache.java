@@ -1,9 +1,9 @@
-package com.kuaizhan.kzweixin.dao.redis;
+package com.kuaizhan.kzweixin.cache;
 
 /**
  * Created by zixiong on 2017/4/6.
  */
-public interface RedisImageDao {
+public interface ImageCache {
 
     /**
      * 把上传过的图片url缓存起来

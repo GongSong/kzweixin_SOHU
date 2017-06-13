@@ -1,14 +1,15 @@
-package com.kuaizhan.kzweixin.dao.redis.impl;
+package com.kuaizhan.kzweixin.cache.impl;
 
 import com.kuaizhan.kzweixin.constant.RedisConstant;
-import com.kuaizhan.kzweixin.dao.redis.RedisPostDao;
+import com.kuaizhan.kzweixin.cache.PostCache;
 import org.springframework.stereotype.Repository;
 
 /**
  * Created by zixiong on 2017/4/19.
  */
-@Repository("redisPostDao")
-public class RedisPostDaoImpl extends RedisBaseDaoImpl implements RedisPostDao {
+// TODO: Repository里面的昵称，原来不是必须的...
+@Repository("postCache")
+public class PostCacheImpl extends RedisBaseDaoImpl implements PostCache {
 
     @Override
     public boolean couldSyncWxPost(long weixinAppid) {

@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.dao.redis.impl;
+package com.kuaizhan.kzweixin.cache.impl;
 import com.kuaizhan.kzweixin.utils.RedisUtil;
 import javax.annotation.Resource;
 

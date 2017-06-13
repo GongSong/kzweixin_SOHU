@@ -1,7 +1,7 @@
-package com.kuaizhan.kzweixin.dao.redis.impl;
+package com.kuaizhan.kzweixin.cache.impl;
 
 import com.kuaizhan.kzweixin.constant.RedisConstant;
-import com.kuaizhan.kzweixin.dao.redis.RedisAccountDao;
+import com.kuaizhan.kzweixin.cache.AccountCache;
 
 import com.kuaizhan.kzweixin.pojo.po.AccountPO;
 import com.kuaizhan.kzweixin.pojo.dto.AuthorizationInfoDTO;
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 /**
  * Created by Mr.Jadyn on 2017/2/9.
  */
-@Repository("redisAccountDao")
-public class RedisAccountDaoImpl extends RedisBaseDaoImpl implements RedisAccountDao {
+@Repository("accountCache")
+public class AccountCacheImpl extends RedisBaseDaoImpl implements AccountCache {
 
 
     @Override

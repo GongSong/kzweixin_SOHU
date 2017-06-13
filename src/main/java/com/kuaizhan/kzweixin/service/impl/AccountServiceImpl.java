@@ -6,7 +6,7 @@ import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.dao.mapper.AccountDao;
 import com.kuaizhan.kzweixin.dao.mapper.UnbindDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.SiteWeixinMapper;
-import com.kuaizhan.kzweixin.dao.redis.RedisAccountDao;
+import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.RedisException;
@@ -39,7 +39,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AccountServiceImpl implements AccountService {
 
     @Resource
-    private RedisAccountDao redisAccountDao;
+    private AccountCache accountCache;
     @Resource
     private AccountDao accountDao;
     @Resource
@@ -160,7 +160,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String getAccessToken(long weixinAppId) {
         //存在高并发场景下access_token失效的问题
-        String accessToken = redisAccountDao.getAccessToken(weixinAppId);
+        String accessToken = accountCache.getAccessToken(weixinAppId);
         // TODO: 在这里实现分布式锁，否则在消息队列和web同时调用的情况下，有一定几率相互覆盖
         if (accessToken == null) {
             AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
@@ -178,7 +178,7 @@ public class AccountServiceImpl implements AccountService {
             updateAccountPO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
             accountDao.updateAccountByWeixinAppId(updateAccountPO);
             //设置缓存
-            redisAccountDao.setAccessToken(weixinAppId, authorizationInfoDTO);
+            accountCache.setAccessToken(weixinAppId, authorizationInfoDTO);
         }
         return accessToken;
     }
@@ -204,7 +204,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountPO getAccountByWeixinAppId(long weinxinAppid) {
         // 从缓存拿
-        AccountPO accountPO = redisAccountDao.getAccountInfoByWeixinAppId(weinxinAppid);
+        AccountPO accountPO = accountCache.getAccountInfoByWeixinAppId(weinxinAppid);
 
         if (accountPO == null) {
             //从数据库拿
@@ -214,7 +214,7 @@ public class AccountServiceImpl implements AccountService {
             }
 
             //存缓存
-            redisAccountDao.setAccountInfo(accountPO);
+            accountCache.setAccountInfo(accountPO);
         }
         return accountPO;
     }
@@ -224,7 +224,7 @@ public class AccountServiceImpl implements AccountService {
         UnbindPO unbind;
         //删缓存
         try {
-            redisAccountDao.deleteAccountInfo(account.getSiteId());
+            accountCache.deleteAccountInfo(account.getSiteId());
         } catch (Exception e) {
             throw new RedisException(e);
         }

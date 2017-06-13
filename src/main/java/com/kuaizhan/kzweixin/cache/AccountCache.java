@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.dao.redis;
+package com.kuaizhan.kzweixin.cache;
 import com.kuaizhan.kzweixin.pojo.po.AccountPO;
 import com.kuaizhan.kzweixin.pojo.dto.AuthorizationInfoDTO;
 
@@ -6,7 +6,7 @@ import com.kuaizhan.kzweixin.pojo.dto.AuthorizationInfoDTO;
  * 账号缓存
  * Created by Mr.Jadyn on 2017/2/9.
  */
-public interface RedisAccountDao {
+public interface AccountCache {
 
 
     AccountPO getAccountInfoByWeixinAppId(long weixinAppId);

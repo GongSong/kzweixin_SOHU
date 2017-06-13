@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
-import com.kuaizhan.kzweixin.dao.redis.RedisFanDao;
+import com.kuaizhan.kzweixin.cache.FanCache;
 import com.kuaizhan.kzweixin.exception.deprecated.business.*;
 import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.RedisException;
@@ -33,7 +33,7 @@ public class FanServiceImpl implements FanService {
     @Resource
     private FanDao fanDao;
     @Resource
-    private RedisFanDao redisFanDao;
+    private FanCache fanCache;
     @Resource
     private WeixinFanService weixinFanService;
     @Resource
@@ -76,7 +76,7 @@ public class FanServiceImpl implements FanService {
         fanDOPage.setTotalCount(totalNum);
         //从redis拿数据
         try {
-            List<FanPO> fanses = redisFanDao.listFanByPagination(siteId, field);
+            List<FanPO> fanses = fanCache.listFanByPagination(siteId, field);
             if (fanses != null) {
                 fanDOPage.setResult(fanses);
                 return fanDOPage;
@@ -104,10 +104,10 @@ public class FanServiceImpl implements FanService {
         try {
             //存缓存
             if (fanses.size() > 20) {
-                redisFanDao.setFanByPagination(siteId, field, fanses.subList(0, 20));
+                fanCache.setFanByPagination(siteId, field, fanses.subList(0, 20));
                 fanDOPage.setResult(fanses.subList(0, 20));
             } else {
-                redisFanDao.setFanByPagination(siteId, field, fanses.subList(0, fanses.size()));
+                fanCache.setFanByPagination(siteId, field, fanses.subList(0, fanses.size()));
                 fanDOPage.setResult(fanses.subList(0, fanses.size()));
             }
         } catch (Exception e) {
@@ -122,7 +122,7 @@ public class FanServiceImpl implements FanService {
         List<TagDTO> tagDTOList;
         //从redis拿数据
         try {
-            tagDTOList = redisFanDao.listTags(siteId);
+            tagDTOList = fanCache.listTags(siteId);
             if (tagDTOList != null) {
                 return tagDTOList;
             }
@@ -141,7 +141,7 @@ public class FanServiceImpl implements FanService {
         //存到redis
         if (tags != null) {
             try {
-                redisFanDao.setTag(siteId, tags);
+                fanCache.setTag(siteId, tags);
             } catch (Exception e) {
                 throw new RedisException(e);
             }
@@ -159,7 +159,7 @@ public class FanServiceImpl implements FanService {
                 throw new ServerException();
             case 1:
                 try {
-                    redisFanDao.deleteTag(siteId);
+                    fanCache.deleteTag(siteId);
                 } catch (Exception e) {
                     throw new RedisException(e);
                 }
@@ -214,7 +214,7 @@ public class FanServiceImpl implements FanService {
 //        }
 //        try {
 //            //清空redis缓存
-//            redisFanDao.deleteFanByPagination(siteId);
+//            fanCache.deleteFanByPagination(siteId);
 //        } catch (Exception e) {
 //            throw new DaoException(e);
 //        }
@@ -259,8 +259,8 @@ public class FanServiceImpl implements FanService {
                 }
                 try {
                     //删除缓存
-                    redisFanDao.deleteTag(siteId);
-                    redisFanDao.deleteFanByPagination(siteId);
+                    fanCache.deleteTag(siteId);
+                    fanCache.deleteFanByPagination(siteId);
                 } catch (Exception e) {
                     throw new RedisException(e);
                 }
@@ -282,7 +282,7 @@ public class FanServiceImpl implements FanService {
                 throw new TagModifyException();
         }
         try {
-            redisFanDao.deleteTag(siteId);
+            fanCache.deleteTag(siteId);
         } catch (Exception e) {
             throw new RedisException(e);
         }
@@ -316,7 +316,7 @@ public class FanServiceImpl implements FanService {
             throw new DaoException(e);
         }
         try {
-            redisFanDao.deleteFanByPagination(siteId);
+            fanCache.deleteFanByPagination(siteId);
         } catch (Exception e) {
             throw new RedisException(e);
         }
@@ -351,7 +351,7 @@ public class FanServiceImpl implements FanService {
             throw new DaoException(e);
         }
         try {
-            redisFanDao.deleteFanByPagination(siteId);
+            fanCache.deleteFanByPagination(siteId);
         } catch (Exception e) {
             throw new RedisException(e);
         }

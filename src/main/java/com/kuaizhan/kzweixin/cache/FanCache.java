@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.dao.redis;
+package com.kuaizhan.kzweixin.cache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.kzweixin.pojo.po.FanPO;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by liangjiateng on 2017/3/16.
  */
-public interface RedisFanDao {
+public interface FanCache {
     /**
      * 分页查询粉丝列表
      *

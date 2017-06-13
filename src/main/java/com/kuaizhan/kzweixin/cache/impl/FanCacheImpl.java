@@ -1,8 +1,8 @@
-package com.kuaizhan.kzweixin.dao.redis.impl;
+package com.kuaizhan.kzweixin.cache.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.kzweixin.constant.RedisConstant;
-import com.kuaizhan.kzweixin.dao.redis.RedisFanDao;
+import com.kuaizhan.kzweixin.cache.FanCache;
 import com.kuaizhan.kzweixin.pojo.po.FanPO;
 import com.kuaizhan.kzweixin.pojo.dto.TagDTO;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
@@ -14,8 +14,8 @@ import java.util.List;
 /**
  * Created by liangjiateng on 2017/3/16.
  */
-@Repository("redisFanDaoImpl")
-public class RedisFanDaoImpl extends RedisBaseDaoImpl implements RedisFanDao {
+@Repository("fanCache")
+public class FanCacheImpl extends RedisBaseDaoImpl implements FanCache {
 
 
     @Override

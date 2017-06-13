@@ -1,7 +1,15 @@
 package com.kuaizhan.kzweixin.cache;
 
 /**
- * Created by zixiong on 2017/6/6.
+ * Created by Mr.Jadyn on 2017/1/19.
  */
-public class AuthCache {
+public interface AuthCache {
+
+    String getComponentVerifyTicket();
+
+    void setComponentVerifyTicket(String ticket);
+
+    String getComponentAccessToken();
+
+    void setComponentAccessToken(String componentAccessToken);
 }

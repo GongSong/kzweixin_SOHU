@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.dao.redis;
 
+import com.kuaizhan.kzweixin.cache.ImageCache;
 import com.kuaizhan.kzweixin.constant.RedisConstant;
 import com.kuaizhan.kzweixin.utils.RedisUtil;
 import org.junit.Test;
@@ -16,22 +17,22 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/*.xml")
-public class RedisImageDaoTest {
+public class ImageCacheTest {
     @Resource
-    RedisImageDao redisImageDao;
+    private ImageCache imageCache;
 
     @Resource
-    RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
     @Test
     public void setAndGetImageUrl() throws Exception {
         String originUrl = "http://kz.testurl.com";
         String weixinUrl = "http://weixin.testurl.com";
-        redisImageDao.setImageUrl(originUrl, weixinUrl);
+        imageCache.setImageUrl(originUrl, weixinUrl);
 
-        assertEquals(weixinUrl, redisImageDao.getImageUrl(originUrl));
+        assertEquals(weixinUrl, imageCache.getImageUrl(originUrl));
 
         redisUtil.delete(RedisConstant.KEY_IMAGE_WEIXIN_RUL + originUrl);
-        assertEquals(redisImageDao.getImageUrl(originUrl), null);
+        assertEquals(imageCache.getImageUrl(originUrl), null);
     }
 }

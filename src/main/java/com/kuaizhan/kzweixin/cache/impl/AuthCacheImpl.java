@@ -1,7 +1,7 @@
-package com.kuaizhan.kzweixin.dao.redis.impl;
+package com.kuaizhan.kzweixin.cache.impl;
 
 import com.kuaizhan.kzweixin.constant.RedisConstant;
-import com.kuaizhan.kzweixin.dao.redis.RedisAuthDao;
+import com.kuaizhan.kzweixin.cache.AuthCache;
 import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 /**
  * Created by Mr.Jadyn on 2017/1/19.
  */
-@Repository("redisAuthDao")
-public class RedisAuthDaoImpl extends RedisBaseDaoImpl implements RedisAuthDao {
+@Repository("authCache")
+public class AuthCacheImpl extends RedisBaseDaoImpl implements AuthCache {
 
     @Override
     public String getComponentVerifyTicket() {

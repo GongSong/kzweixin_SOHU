@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
-import com.kuaizhan.kzweixin.dao.redis.RedisAuthDao;
+import com.kuaizhan.kzweixin.cache.AuthCache;
 import com.kuaizhan.kzweixin.exception.common.DecryptException;
 import com.kuaizhan.kzweixin.exception.common.GetComponentAccessTokenFailed;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
@@ -39,7 +39,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     public static final Logger logger = LoggerFactory.getLogger(WeixinAuthServiceImpl.class);
 
     @Resource
-    RedisAuthDao redisAuthDao;
+    private AuthCache authCache;
 
     @Override
     public boolean checkMsg(String signature, String timestamp, String nonce) throws EncryptException {
@@ -81,19 +81,19 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         logger.info("[WeiXin:ticket] get ticket:{}", ticket);
         //缓存
         if (ticket != null) {
-            redisAuthDao.setComponentVerifyTicket(ticket.getText());
+            authCache.setComponentVerifyTicket(ticket.getText());
         }
     }
 
     @Override
     public String getComponentAccessToken() {
         //TODO: component_access_token 直接存储json
-        String ticket = redisAuthDao.getComponentVerifyTicket();
+        String ticket = authCache.getComponentVerifyTicket();
         if (ticket == null || "".equals(ticket)){
             throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] ticket is null");
         }
 
-        String componentAccessToken = redisAuthDao.getComponentAccessToken();
+        String componentAccessToken = authCache.getComponentAccessToken();
         if (componentAccessToken == null) {
                 //请求微信接口
             JSONObject jsonObject = new JSONObject();
@@ -118,7 +118,7 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
 
             resultJson.put("expires_time", DateUtil.curSeconds() + 7100);
             //检查token是否一样
-            redisAuthDao.setComponentAccessToken(resultJson.toString());
+            authCache.setComponentAccessToken(resultJson.toString());
         }
         return componentAccessToken;
     }
