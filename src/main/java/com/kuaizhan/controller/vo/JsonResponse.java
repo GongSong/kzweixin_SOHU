@@ -1,4 +1,4 @@
-package com.kuaizhan.pojo.vo;
+package com.kuaizhan.controller.vo;
 
 import com.kuaizhan.constant.ErrorCode;
 import lombok.Data;

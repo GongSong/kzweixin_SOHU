@@ -3,11 +3,11 @@ package com.kuaizhan.controller;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.constant.ResponseType;
-import com.kuaizhan.param.common.WeixinAppidParam;
+import com.kuaizhan.controller.param.WeixinAppidParam;
 import com.kuaizhan.pojo.dto.MenuWrapper;
 import com.kuaizhan.pojo.po.auto.WeixinConditionalMenu;
-import com.kuaizhan.pojo.vo.ConditionalMenuVO;
-import com.kuaizhan.pojo.vo.JsonResponse;
+import com.kuaizhan.controller.vo.ConditionalMenuVO;
+import com.kuaizhan.controller.vo.JsonResponse;
 import com.kuaizhan.service.MenuService;
 import org.springframework.web.bind.annotation.*;
 

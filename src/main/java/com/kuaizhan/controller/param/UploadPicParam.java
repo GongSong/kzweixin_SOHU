@@ -1,4 +1,4 @@
-package com.kuaizhan.param;
+package com.kuaizhan.controller.param;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;

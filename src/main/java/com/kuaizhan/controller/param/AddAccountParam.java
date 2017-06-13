@@ -1,4 +1,4 @@
-package com.kuaizhan.param.account;
+package com.kuaizhan.controller.param;
 
 import lombok.Data;
 

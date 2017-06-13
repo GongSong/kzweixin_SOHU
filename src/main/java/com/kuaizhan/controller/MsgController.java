@@ -4,14 +4,15 @@ package com.kuaizhan.controller;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
 import com.kuaizhan.constant.MsgType;
-import com.kuaizhan.param.common.WeixinAppidParam;
-import com.kuaizhan.param.msg.SendCustomMsgParam;
-import com.kuaizhan.param.msg.UpdateQuickRepliesParam;
+import com.kuaizhan.controller.vo.JsonResponse;
+import com.kuaizhan.controller.vo.MsgListVO;
+import com.kuaizhan.controller.param.WeixinAppidParam;
+import com.kuaizhan.controller.param.SendCustomMsgParam;
+import com.kuaizhan.controller.param.UpdateQuickRepliesParam;
 
 import com.kuaizhan.pojo.po.FanPO;
 import com.kuaizhan.pojo.po.MsgPO;
 import com.kuaizhan.pojo.dto.Page;
-import com.kuaizhan.pojo.vo.*;
 import com.kuaizhan.service.FanService;
 import com.kuaizhan.service.MsgService;
 
@@ -42,8 +43,8 @@ public class MsgController extends BaseController {
      */
     @RequestMapping(value = "/msgs", method = RequestMethod.GET)
     public JsonResponse getMsgs(@RequestParam long weixinAppid, @RequestParam int page,
-                                 @RequestParam(required = false) String queryStr,
-                                 @RequestParam(required = false, defaultValue = "0") boolean filterKeywords) {
+                                @RequestParam(required = false) String queryStr,
+                                @RequestParam(required = false, defaultValue = "0") boolean filterKeywords) {
         Page<MsgPO> msgPOPage = msgService.listMsgsByPagination(weixinAppid, queryStr, filterKeywords, page);
         List<MsgPO> msgPOS = msgPOPage.getResult();
 

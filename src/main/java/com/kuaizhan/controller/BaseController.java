@@ -5,7 +5,7 @@ import com.kuaizhan.constant.ErrorCode;
 import com.kuaizhan.exception.BaseException;
 
 import com.kuaizhan.exception.BusinessException;
-import com.kuaizhan.pojo.vo.JsonResponse;
+import com.kuaizhan.controller.vo.JsonResponse;
 
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;

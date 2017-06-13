@@ -2,10 +2,10 @@ package com.kuaizhan.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.param.AddSysTplParam;
-import com.kuaizhan.param.SendTplMsgParam;
+import com.kuaizhan.controller.param.AddSysTplParam;
+import com.kuaizhan.controller.param.SendTplMsgParam;
 import com.kuaizhan.pojo.po.AccountPO;
-import com.kuaizhan.pojo.vo.JsonResponse;
+import com.kuaizhan.controller.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
 import com.kuaizhan.service.TplService;
 import org.springframework.web.bind.annotation.RequestBody;

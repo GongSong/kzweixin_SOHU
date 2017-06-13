@@ -1,4 +1,4 @@
-package com.kuaizhan.param;
+package com.kuaizhan.controller.param;
 
 import com.kuaizhan.pojo.po.PostPO;
 import lombok.Data;

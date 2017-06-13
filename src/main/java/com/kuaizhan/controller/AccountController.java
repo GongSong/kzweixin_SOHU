@@ -3,13 +3,13 @@ package com.kuaizhan.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.param.account.AddAccountParam;
+import com.kuaizhan.controller.param.AddAccountParam;
 import com.kuaizhan.pojo.po.AccountPO;
-import com.kuaizhan.pojo.vo.AccountSettingVO;
-import com.kuaizhan.pojo.vo.AccountVO;
-import com.kuaizhan.pojo.vo.JsonResponse;
+import com.kuaizhan.controller.vo.AccountSettingVO;
+import com.kuaizhan.controller.vo.AccountVO;
+import com.kuaizhan.controller.vo.JsonResponse;
 import com.kuaizhan.service.AccountService;
-import com.kuaizhan.param.UpdateAppSecretParam;
+import com.kuaizhan.controller.param.UpdateAppSecretParam;
 import com.kuaizhan.utils.PojoSwitcher;
 import org.springframework.web.bind.annotation.*;
 
