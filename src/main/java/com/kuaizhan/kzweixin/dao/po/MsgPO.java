@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.pojo.po;
+package com.kuaizhan.kzweixin.dao.po;
 
 
 import lombok.Data;

@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.mq.consumer;
 
 import com.kuaizhan.kzweixin.config.KzApiConfig;
 import com.kuaizhan.kzweixin.mq.dto.ArticleImportDTO;
-import com.kuaizhan.kzweixin.pojo.po.PostPO;
+import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.pojo.dto.ArticleDTO;
 import com.kuaizhan.kzweixin.service.PostService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;

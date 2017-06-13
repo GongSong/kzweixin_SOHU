@@ -3,7 +3,7 @@ package com.kuaizhan.kzweixin.cache.impl;
 import com.kuaizhan.kzweixin.constant.RedisConstant;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 
-import com.kuaizhan.kzweixin.pojo.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.AccountPO;
 import com.kuaizhan.kzweixin.pojo.dto.AuthorizationInfoDTO;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;

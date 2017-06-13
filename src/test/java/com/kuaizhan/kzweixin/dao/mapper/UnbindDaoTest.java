@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.dao.mapper;
 
-import com.kuaizhan.kzweixin.pojo.po.UnbindPO;
+import com.kuaizhan.kzweixin.dao.po.UnbindPO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

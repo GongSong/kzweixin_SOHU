@@ -22,7 +22,7 @@ import com.kuaizhan.kzweixin.manager.WxPostManager;
 import com.kuaizhan.kzweixin.mq.dto.ArticleImportDTO;
 import com.kuaizhan.kzweixin.mq.dto.SyncWxPostDTO;
 import com.kuaizhan.kzweixin.mq.dto.SyncWxPostListDTO;
-import com.kuaizhan.kzweixin.pojo.po.PostPO;
+import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.pojo.dto.ArticleDTO;
 import com.kuaizhan.kzweixin.pojo.dto.Page;
 import com.kuaizhan.kzweixin.pojo.dto.WxPostListDTO;

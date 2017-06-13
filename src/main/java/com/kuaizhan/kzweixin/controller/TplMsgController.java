@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.param.AddSysTplParam;
 import com.kuaizhan.kzweixin.controller.param.SendTplMsgParam;
-import com.kuaizhan.kzweixin.pojo.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.AccountPO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.TplService;

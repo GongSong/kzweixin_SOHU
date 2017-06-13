@@ -3,7 +3,7 @@ package com.kuaizhan.kzweixin.cache.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.kzweixin.constant.RedisConstant;
 import com.kuaizhan.kzweixin.cache.FanCache;
-import com.kuaizhan.kzweixin.pojo.po.FanPO;
+import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.pojo.dto.TagDTO;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import org.springframework.stereotype.Repository;

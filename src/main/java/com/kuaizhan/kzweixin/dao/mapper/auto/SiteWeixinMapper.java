@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.dao.mapper.auto;
 
-import com.kuaizhan.kzweixin.pojo.po.auto.SiteWeixin;
-import com.kuaizhan.kzweixin.pojo.po.auto.SiteWeixinExample;
+import com.kuaizhan.kzweixin.dao.po.auto.SiteWeixin;
+import com.kuaizhan.kzweixin.dao.po.auto.SiteWeixinExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 

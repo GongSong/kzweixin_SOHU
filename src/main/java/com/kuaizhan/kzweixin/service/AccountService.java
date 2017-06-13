@@ -2,8 +2,8 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.RedisException;
-import com.kuaizhan.kzweixin.pojo.po.AccountPO;
-import com.kuaizhan.kzweixin.pojo.po.UnbindPO;
+import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.UnbindPO;
 
 /**
  * 账号服务

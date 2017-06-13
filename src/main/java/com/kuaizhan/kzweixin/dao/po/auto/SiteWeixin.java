@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.pojo.po.auto;
+package com.kuaizhan.kzweixin.dao.po.auto;
 
 public class SiteWeixin {
     /**

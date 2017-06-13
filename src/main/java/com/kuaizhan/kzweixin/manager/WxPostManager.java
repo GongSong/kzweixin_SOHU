@@ -9,7 +9,7 @@ import com.kuaizhan.kzweixin.exception.common.*;
 import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
 import com.kuaizhan.kzweixin.exception.weixin.WxMediaIdNotExistException;
 import com.kuaizhan.kzweixin.exception.weixin.WxPostListGetException;
-import com.kuaizhan.kzweixin.pojo.po.PostPO;
+import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.pojo.dto.WxPostListDTO;
 import com.kuaizhan.kzweixin.pojo.dto.WxPostDTO;
 import com.kuaizhan.kzweixin.utils.HttpClientUtil;

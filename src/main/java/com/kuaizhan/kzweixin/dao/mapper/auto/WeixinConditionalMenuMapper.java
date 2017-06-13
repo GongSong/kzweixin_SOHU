@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.dao.mapper.auto;
 
-import com.kuaizhan.kzweixin.pojo.po.auto.WeixinConditionalMenu;
-import com.kuaizhan.kzweixin.pojo.po.auto.WeixinConditionalMenuExample;
+import com.kuaizhan.kzweixin.dao.po.auto.WeixinConditionalMenu;
+import com.kuaizhan.kzweixin.dao.po.auto.WeixinConditionalMenuExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 

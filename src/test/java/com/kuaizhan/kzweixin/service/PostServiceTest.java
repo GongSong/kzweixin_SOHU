@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
 
-import com.kuaizhan.kzweixin.pojo.po.PostPO;
+import com.kuaizhan.kzweixin.dao.po.PostPO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

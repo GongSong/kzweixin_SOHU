@@ -3,8 +3,8 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
-import com.kuaizhan.kzweixin.pojo.po.AccountPO;
-import com.kuaizhan.kzweixin.pojo.po.FanPO;
+import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.pojo.dto.TagDTO;
 
 import java.util.List;

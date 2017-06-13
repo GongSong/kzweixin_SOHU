@@ -22,7 +22,7 @@
             </javaTypeResolver>
 
             <!-- 生成PO对象 -->
-            <javaModelGenerator targetPackage="com.kuaizhan.kzweixin.pojo.po.auto" targetProject="src/main/java">
+            <javaModelGenerator targetPackage="com.kuaizhan.kzweixin.dao.po.auto" targetProject="src/main/java">
                     <property name="enableSubPackages" value="false" />
             </javaModelGenerator>
 

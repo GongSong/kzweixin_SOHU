@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.dao.mapper;
 
-import com.kuaizhan.kzweixin.pojo.po.MsgPO;
+import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.pojo.dto.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

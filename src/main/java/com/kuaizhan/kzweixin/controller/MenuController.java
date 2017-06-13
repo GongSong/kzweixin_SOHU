@@ -5,7 +5,7 @@ import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.constant.ResponseType;
 import com.kuaizhan.kzweixin.controller.param.WeixinAppidParam;
 import com.kuaizhan.kzweixin.pojo.dto.MenuWrapper;
-import com.kuaizhan.kzweixin.pojo.po.auto.WeixinConditionalMenu;
+import com.kuaizhan.kzweixin.dao.po.auto.WeixinConditionalMenu;
 import com.kuaizhan.kzweixin.controller.vo.ConditionalMenuVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.service.MenuService;

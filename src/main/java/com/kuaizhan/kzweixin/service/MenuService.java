@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.pojo.dto.MenuDTO;
 import com.kuaizhan.kzweixin.pojo.dto.MenuWrapper;
-import com.kuaizhan.kzweixin.pojo.po.auto.WeixinConditionalMenu;
+import com.kuaizhan.kzweixin.dao.po.auto.WeixinConditionalMenu;
 
 import java.util.List;
 

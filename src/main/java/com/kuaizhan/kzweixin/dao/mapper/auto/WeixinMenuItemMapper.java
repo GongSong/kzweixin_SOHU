@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.dao.mapper.auto;
 
-import com.kuaizhan.kzweixin.pojo.po.auto.WeixinMenuItem;
-import com.kuaizhan.kzweixin.pojo.po.auto.WeixinMenuItemExample;
+import com.kuaizhan.kzweixin.dao.po.auto.WeixinMenuItem;
+import com.kuaizhan.kzweixin.dao.po.auto.WeixinMenuItemExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 

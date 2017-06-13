@@ -31,7 +31,7 @@
     </select>
 
     <!--分页查询消息列表-->
-    <select id="listMsgsByPagination" resultType="com.kuaizhan.kzweixin.pojo.po.MsgPO">
+    <select id="listMsgsByPagination" resultType="com.kuaizhan.kzweixin.dao.po.MsgPO">
         SELECT *
         FROM ${tableName}
         WHERE

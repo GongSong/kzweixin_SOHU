@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.dao.mongo.impl;
 
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.dao.mongo.MongoPostDao;
-import com.kuaizhan.kzweixin.pojo.po.MongoPostPO;
+import com.kuaizhan.kzweixin.dao.po.MongoPostPO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;

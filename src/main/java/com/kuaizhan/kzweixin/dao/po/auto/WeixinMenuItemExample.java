@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.pojo.po.auto;
+package com.kuaizhan.kzweixin.dao.po.auto;
 
 import java.util.ArrayList;
 import java.util.List;

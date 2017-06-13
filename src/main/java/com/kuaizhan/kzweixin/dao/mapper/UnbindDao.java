@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.dao.mapper;
 
 
-import com.kuaizhan.kzweixin.pojo.po.UnbindPO;
+import com.kuaizhan.kzweixin.dao.po.UnbindPO;
 
 
 /**

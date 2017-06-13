@@ -1,8 +1,8 @@
 package com.kuaizhan.kzweixin.utils;
 
-import com.kuaizhan.kzweixin.pojo.po.AccountPO;
-import com.kuaizhan.kzweixin.pojo.po.MsgPO;
-import com.kuaizhan.kzweixin.pojo.po.PostPO;
+import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.MsgPO;
+import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.controller.vo.AccountSettingVO;
 import com.kuaizhan.kzweixin.controller.vo.AccountVO;
 import com.kuaizhan.kzweixin.controller.vo.MsgVO;

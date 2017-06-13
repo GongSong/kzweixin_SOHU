@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.controller.param;
 
-import com.kuaizhan.kzweixin.pojo.po.PostPO;
+import com.kuaizhan.kzweixin.dao.po.PostPO;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 

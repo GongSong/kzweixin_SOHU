@@ -8,7 +8,7 @@ import com.kuaizhan.kzweixin.exception.kuaizhan.GetKzArticleException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KzApiException;
 import com.kuaizhan.kzweixin.pojo.dto.ArticleDTO;
-import com.kuaizhan.kzweixin.pojo.po.PostPO;
+import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.utils.*;
 import org.json.JSONException;
 import org.json.JSONObject;

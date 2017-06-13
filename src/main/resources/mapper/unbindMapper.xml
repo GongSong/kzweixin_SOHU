@@ -14,7 +14,7 @@
         create_time=unix_timestamp(now()),
         update_time=unix_timestamp(now())
     </insert>
-    <select id="getUnbindByWeixinAppId" resultType="com.kuaizhan.kzweixin.pojo.po.UnbindPO">
+    <select id="getUnbindByWeixinAppId" resultType="com.kuaizhan.kzweixin.dao.po.UnbindPO">
         select * from weixin_unbind
         where weixin_appid=#{appId}
     </select>

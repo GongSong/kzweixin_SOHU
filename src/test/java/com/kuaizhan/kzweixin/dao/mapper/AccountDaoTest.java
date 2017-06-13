@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.dao.mapper;
 
-import com.kuaizhan.kzweixin.pojo.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.AccountPO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

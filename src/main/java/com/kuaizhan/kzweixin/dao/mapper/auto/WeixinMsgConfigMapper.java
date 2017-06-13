@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.dao.mapper.auto;
 
-import com.kuaizhan.kzweixin.pojo.po.auto.WeixinMsgConfig;
-import com.kuaizhan.kzweixin.pojo.po.auto.WeixinMsgConfigExample;
+import com.kuaizhan.kzweixin.dao.po.auto.WeixinMsgConfig;
+import com.kuaizhan.kzweixin.dao.po.auto.WeixinMsgConfigExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 

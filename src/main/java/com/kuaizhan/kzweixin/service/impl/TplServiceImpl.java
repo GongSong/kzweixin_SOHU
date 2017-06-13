@@ -8,7 +8,7 @@ import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.manager.WxTplManager;
 import com.kuaizhan.kzweixin.mq.dto.SendTplMsgDTO;
-import com.kuaizhan.kzweixin.pojo.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.AccountPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.TplService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;

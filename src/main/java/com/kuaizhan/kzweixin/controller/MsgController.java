@@ -10,8 +10,8 @@ import com.kuaizhan.kzweixin.controller.param.WeixinAppidParam;
 import com.kuaizhan.kzweixin.controller.param.SendCustomMsgParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateQuickRepliesParam;
 
-import com.kuaizhan.kzweixin.pojo.po.FanPO;
-import com.kuaizhan.kzweixin.pojo.po.MsgPO;
+import com.kuaizhan.kzweixin.dao.po.FanPO;
+import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.pojo.dto.Page;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.service.MsgService;
