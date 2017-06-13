@@ -32,8 +32,8 @@ public class ApplicationConfig {
     public static final int KZ_PUSH_ACCESS_ID = PropertiesUtil.getInt(PROP, "kz.push.accessId");
     public static final String KZ_PUSH_ACCESS_KEY = PropertiesUtil.getString(PROP, "kz.push.accessKey");
     public static final String KZ_DOMAIN_MAIN = PropertiesUtil.getString(PROP, "kz.domain.main");
-    public static final String KZ_FORUM_INTRANET_IP = PropertiesUtil.getString(PROP, "kz.service.forum.ip");
-    public static final String KZ_FORUM_INTRANET_HOST = PropertiesUtil.getString(PROP, "kz.service.forum.host");
+    public static final String KZ_SERVICE_FORUM_IP = PropertiesUtil.getString(PROP, "kz.service.forum.ip");
+    public static final String KZ_SERVICE_FORUM_HOST = PropertiesUtil.getString(PROP, "kz.service.forum.host");
 
     // 分表
     public static final int MSG_TABLE_NUM = PropertiesUtil.getInt(PROP, "table.num.msg");

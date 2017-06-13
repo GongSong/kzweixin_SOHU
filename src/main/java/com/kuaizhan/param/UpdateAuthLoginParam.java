@@ -9,6 +9,6 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class UpdateAuthLoginParam {
-    @NotNull(message = "授权登录变量不能为空")
+    @NotNull(message = "openLogin cannot be null")
     private Integer openLogin;
 }

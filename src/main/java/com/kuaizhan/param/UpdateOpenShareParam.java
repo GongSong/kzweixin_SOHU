@@ -9,6 +9,6 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class UpdateOpenShareParam {
-    @NotNull(message = "自定义分享变量不能为空")
+    @NotNull(message = "openShare cannot be null")
     private Integer openShare;
 }

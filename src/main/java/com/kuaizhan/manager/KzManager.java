@@ -149,22 +149,29 @@ public class KzManager {
      * 通过社区登录功能验证微信服务号是否开启授权登录
      * @param siteId 用户的快站ID
      * @throws KzApiException 社区登录验证失败
-     * @return 微信第三方平台验证信息
+     * @return
      * */
     public static boolean kzAccountWxLoginCheck(long siteId) throws KzApiException {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Host", ApplicationConfig.KZ_FORUM_INTRANET_HOST);
-        String result = HttpClientUtil.get(KzApiConfig.getKzForumLoginUrl(siteId), headers);
-        try {
-            JSONObject resultJson = new JSONObject(result);
-            if (resultJson.get("thirdpart_wx") == null) {
-                return false;
-            } else {
-                return resultJson.getBoolean("thirdpart_wx");
-            }
-        } catch (KzApiException e) {
-            throw new KzApiException("[Kz:kzAccountWxLoginCheck] 接口调用失败，siteId: " + siteId);
+        Map<String, Object> param = new HashMap<>();
+        param.put("Host", ApplicationConfig.KZ_SERVICE_FORUM_HOST);
+        param.put("status", true);
+
+        String result = HttpClientUtil.postJson(KzApiConfig.getKzServiceAuthLoginCheckUrl(siteId), JsonUtil.bean2String(param));
+        if (result == null) {
+            throw new KzApiException("[Kz:applyPushToken] result is null");
         }
+
+        JSONObject resultJson;
+        try {
+            resultJson = new JSONObject(result);
+        } catch (JSONException e) {
+            throw new KzApiException("[Kz:kzAccountWxLoginCheck] Json Parse Error, result:" + result);
+        }
+        int code = resultJson.optInt("code");
+        if (code != 0) {
+            throw new KzApiException("[Kz:kzAccountWxLoginCheck] Invalid Json result, result:" + result);
+        }
+        return true;
     }
 
 }

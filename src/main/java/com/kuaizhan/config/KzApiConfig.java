@@ -30,8 +30,8 @@ public class KzApiConfig {
     }
 
     // 登录快站社区服务器
-    public static String getKzForumLoginUrl(long siteId) {
-        return "http://" + ApplicationConfig.KZ_FORUM_INTRANET_IP + "/apiv1/internal/passport/sites/" + siteId + "/login-channel";
+    public static String getKzServiceAuthLoginCheckUrl(long siteId) {
+        return "http://" + ApplicationConfig.KZ_SERVICE_FORUM_IP + "/apiv1/internal/passport/sites/" + siteId + "/thirdpart-wx";
     }
 }
 

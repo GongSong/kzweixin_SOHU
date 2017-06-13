@@ -219,7 +219,6 @@ public class AccountServiceImpl implements AccountService {
         //检测数据库是否存在记录，并更新自定义分享状态
         if (accountPO.getAdvancedFuncInfoJson() == "") {
             jsonObject = new JSONObject();
-            jsonObject.put("open_login", 0);
         } else {
             jsonObject = new JSONObject(accountPO.getAdvancedFuncInfoJson());
         }
@@ -240,7 +239,6 @@ public class AccountServiceImpl implements AccountService {
         //检测数据库是否存在记录
         if (accountPO.getAdvancedFuncInfoJson() == "") {
             jsonObject = new JSONObject();
-            jsonObject.put("open_share", 0);
         } else {
             jsonObject = new JSONObject(accountPO.getAdvancedFuncInfoJson());
         }
