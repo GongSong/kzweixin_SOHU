@@ -152,11 +152,15 @@ public class KzManager {
      * @return
      * */
     public static boolean kzAccountWxLoginCheck(long siteId) throws KzApiException {
-        Map<String, Object> param = new HashMap<>();
-        param.put("Host", ApplicationConfig.KZ_SERVICE_FORUM_HOST);
-        param.put("status", true);
+        //指定Host
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Host", ApplicationConfig.KZ_SERVICE_FORUM_HOST);
 
-        String result = HttpClientUtil.postJson(KzApiConfig.getKzServiceAuthLoginCheckUrl(siteId), JsonUtil.bean2String(param));
+        //传递参数
+        Map<String, Object> params = new HashMap<>();
+        params.put("status", true);
+
+        String result = HttpClientUtil.post(KzApiConfig.getKzServiceAuthLoginConfigUrl(siteId), params, headers);
         if (result == null) {
             throw new KzApiException("[Kz:applyPushToken] result is null");
         }

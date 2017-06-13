@@ -30,7 +30,7 @@ public class KzApiConfig {
     }
 
     // 登录快站社区服务器
-    public static String getKzServiceAuthLoginCheckUrl(long siteId) {
+    public static String getKzServiceAuthLoginConfigUrl(long siteId) {
         return "http://" + ApplicationConfig.KZ_SERVICE_FORUM_IP + "/apiv1/internal/passport/sites/" + siteId + "/thirdpart-wx";
     }
 }
