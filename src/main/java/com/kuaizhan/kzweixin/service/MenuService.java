@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.entity.menu.MenuDTO;
 import com.kuaizhan.kzweixin.entity.menu.MenuWrapper;
-import com.kuaizhan.kzweixin.dao.po.auto.WeixinConditionalMenu;
+import com.kuaizhan.kzweixin.dao.po.auto.ConditionMenuPO;
 
 import java.util.List;
 
@@ -41,5 +41,5 @@ public interface MenuService {
     /**
      * 获取微信的自定义菜单列表
      */
-    List<WeixinConditionalMenu> getConditionalMenus(long weixinAppid);
+    List<ConditionMenuPO> getConditionalMenus(long weixinAppid);
 }

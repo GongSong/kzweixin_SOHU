@@ -5,7 +5,7 @@ import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.dao.mapper.AccountDao;
 import com.kuaizhan.kzweixin.dao.mapper.UnbindDao;
-import com.kuaizhan.kzweixin.dao.mapper.auto.SiteWeixinMapper;
+import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.DaoException;
@@ -18,8 +18,8 @@ import com.kuaizhan.kzweixin.entity.account.AuthorizerInfoDTO;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.UnbindPO;
 import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
-import com.kuaizhan.kzweixin.dao.po.auto.SiteWeixin;
-import com.kuaizhan.kzweixin.dao.po.auto.SiteWeixinExample;
+import com.kuaizhan.kzweixin.dao.po.auto.Account;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountExample;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.WeixinAuthService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
@@ -45,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
     @Resource
     private UnbindDao unbindDao;
     @Resource
-    private SiteWeixinMapper siteWeixinMapper;
+    private AccountMapper accountMapper;
     @Resource
     private WeixinAuthService weixinAuthService;
 
@@ -73,27 +73,27 @@ public class AccountServiceImpl implements AccountService {
         AuthorizerInfoDTO authorizerInfo = WxAuthManager.getAuthorizerInfo(ApplicationConfig.WEIXIN_APPID_THIRD, componentAccessToken, appId);
 
         // 是否有现存的
-        SiteWeixinExample example = new SiteWeixinExample();
+        AccountExample example = new AccountExample();
         example.createCriteria()
                 .andAppIdEqualTo(appId)
                 .andIsDelEqualTo(0);
-        List<SiteWeixin> results = siteWeixinMapper.selectByExample(example);
+        List<Account> results = accountMapper.selectByExample(example);
 
         // 新用户
         if (results.size() == 0) {
             // 以前是否绑定过
-            example = new SiteWeixinExample();
+            example = new AccountExample();
             example.createCriteria()
                     .andAppIdEqualTo(appId)
                     .andIsDelEqualTo(1);
             example.setOrderByClause("unbind_time DESC"); // 尽量取最新的历史记录
-            List<SiteWeixin> oldResults = siteWeixinMapper.selectByExample(example);
+            List<Account> oldResults = accountMapper.selectByExample(example);
 
             // 绑定过，恢复老的数据
             if (oldResults.size() > 0) {
 
                 // 老的记录
-                SiteWeixin record = oldResults.get(0);
+                Account record = oldResults.get(0);
                 // 删除状态设为0
                 record.setIsDel(0);
                 record.setSiteId(siteId);
@@ -108,10 +108,10 @@ public class AccountServiceImpl implements AccountService {
                 record.setBindTime(DateUtil.curSeconds());
                 record.setUpdateTime(DateUtil.curSeconds());
 
-                siteWeixinMapper.updateByPrimaryKeySelective(record);
+                accountMapper.updateByPrimaryKeySelective(record);
             // 没绑定过，新增
             } else {
-                SiteWeixin record = new SiteWeixin();
+                Account record = new Account();
 
                 record.setWeixinAppid(genWeixinAppid());
                 record.setSiteId(siteId);
@@ -132,13 +132,13 @@ public class AccountServiceImpl implements AccountService {
                 record.setCreateTime(DateUtil.curSeconds());
                 record.setUpdateTime(DateUtil.curSeconds());
 
-                siteWeixinMapper.insertSelective(record);
+                accountMapper.insertSelective(record);
             }
             // 各种导入的异步任务
 
         // 老用户没有解绑，在某些场景下触发再次绑定, 更新绑定信息
         } else if (results.size() == 1){
-            SiteWeixin record = results.get(0);
+            Account record = results.get(0);
             record.setUserId(userId);
             record.setSiteId(siteId);
 
@@ -150,7 +150,7 @@ public class AccountServiceImpl implements AccountService {
             record.setBindTime(DateUtil.curSeconds());
             record.setUpdateTime(DateUtil.curSeconds());
 
-            siteWeixinMapper.updateByPrimaryKeySelective(record);
+            accountMapper.updateByPrimaryKeySelective(record);
         } else {
             // 当前就绑定了两个，垃圾数据
             logger.error("[bindAccount:垃圾数据] appId当前有多个绑定, appId:" + appId);
@@ -270,7 +270,7 @@ public class AccountServiceImpl implements AccountService {
         int count = 1;
 
         long weixinAppid = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
-        while (siteWeixinMapper.selectByPrimaryKey(weixinAppid) != null) {
+        while (accountMapper.selectByPrimaryKey(weixinAppid) != null) {
             weixinAppid = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
             count++;
         }

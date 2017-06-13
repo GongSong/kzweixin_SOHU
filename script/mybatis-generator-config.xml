@@ -37,19 +37,23 @@
                     <property name="enableSubPackages" value="true" />
             </javaClientGenerator>
 
-            <!--<table tableName="weixin_msg_config">-->
+
+            <!--<table tableName="weixin_msg_config" domainObjectName="MsgConfigPO" mapperName="MsgConfigMapper">-->
                 <!--&lt;!&ndash;status没被使用&ndash;&gt;-->
                 <!--<ignoreColumn column="status" />-->
             <!--</table>-->
-            <!--<table tableName="weixin_menu_item">-->
+
+            <!--<table tableName="weixin_menu_item" domainObjectName="MenuItemPO" mapperName="MenuItemMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
-            <!--<table tableName="weixin_conditional_menu">-->
+
+            <!--<table tableName="weixin_conditional_menu" domainObjectName="ConditionMenuPO" mapperName="ConditionMenuMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
-            <table tableName="site_weixin">
-                <columnOverride column="service_type" javaType="java.lang.Integer"/>
-                <columnOverride column="is_del" javaType="java.lang.Integer"/>
-            </table>
+
+            <!--<table tableName="site_weixin" domainObjectName="Account">-->
+                <!--<columnOverride column="service_type" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="is_del" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
         </context>
 </generatorConfiguration>

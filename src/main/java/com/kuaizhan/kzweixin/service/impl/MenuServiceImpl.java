@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.ResponseType;
 import com.kuaizhan.kzweixin.dao.mapper.AccountDao;
-import com.kuaizhan.kzweixin.dao.mapper.auto.WeixinConditionalMenuMapper;
-import com.kuaizhan.kzweixin.dao.mapper.auto.WeixinMenuItemMapper;
+import com.kuaizhan.kzweixin.dao.mapper.auto.ConditionMenuMapper;
+import com.kuaizhan.kzweixin.dao.mapper.auto.MenuItemMapper;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.menu.MenuCheckException;
 import com.kuaizhan.kzweixin.entity.menu.LinkList;
@@ -15,10 +15,10 @@ import com.kuaizhan.kzweixin.entity.menu.MenuDTO;
 import com.kuaizhan.kzweixin.entity.menu.MenuWrapper;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
-import com.kuaizhan.kzweixin.dao.po.auto.WeixinConditionalMenu;
-import com.kuaizhan.kzweixin.dao.po.auto.WeixinConditionalMenuExample;
-import com.kuaizhan.kzweixin.dao.po.auto.WeixinMenuItem;
-import com.kuaizhan.kzweixin.dao.po.auto.WeixinMenuItemExample;
+import com.kuaizhan.kzweixin.dao.po.auto.ConditionMenuPO;
+import com.kuaizhan.kzweixin.dao.po.auto.ConditionMenuPOExample;
+import com.kuaizhan.kzweixin.dao.po.auto.MenuItemPO;
+import com.kuaizhan.kzweixin.dao.po.auto.MenuItemPOExample;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.MenuService;
 import com.kuaizhan.kzweixin.service.PostService;
@@ -48,9 +48,9 @@ public class MenuServiceImpl implements MenuService {
     @Resource
     private AccountDao accountDao;
     @Resource
-    private WeixinMenuItemMapper menuItemMapper;
+    private MenuItemMapper menuItemMapper;
     @Resource
-    private WeixinConditionalMenuMapper conditionalMenuMapper;
+    private ConditionMenuMapper conditionMenuMapper;
     @Resource
     private PostService postService;
 
@@ -108,7 +108,7 @@ public class MenuServiceImpl implements MenuService {
         responseJson = cleanResponseJson(weixinAppid, responseType, responseJson);
 
         // 修改menuItem
-        WeixinMenuItem record = new WeixinMenuItem();
+        MenuItemPO record = new MenuItemPO();
         record.setMenuKey(menuKey);
         record.setResponseType(responseType);
         record.setResponseJson(responseJson);
@@ -148,7 +148,7 @@ public class MenuServiceImpl implements MenuService {
             logger.warn("[genPageId] gen times reach {}", count);
         }
 
-        WeixinMenuItem record = new WeixinMenuItem();
+        MenuItemPO record = new MenuItemPO();
         record.setWeixinAppid(weixinAppid);
         record.setMenuKey(menuKey);
         record.setResponseType(responseType);
@@ -172,13 +172,13 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<WeixinConditionalMenu> getConditionalMenus(long weixinAppid) {
-        WeixinConditionalMenuExample example = new WeixinConditionalMenuExample();
+    public List<ConditionMenuPO> getConditionalMenus(long weixinAppid) {
+        ConditionMenuPOExample example = new ConditionMenuPOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andStatusEqualTo(1);
         example.setOrderByClause("update_time desc");
-        return conditionalMenuMapper.selectByExample(example);
+        return conditionMenuMapper.selectByExample(example);
     }
 
     /**
@@ -210,7 +210,7 @@ public class MenuServiceImpl implements MenuService {
             throw new MenuCheckException("菜单【" + button.getName() + "】没有设置动作");
         }
         // key是否存在, 是否有必要?
-        WeixinMenuItemExample example = new WeixinMenuItemExample();
+        MenuItemPOExample example = new MenuItemPOExample();
         example.createCriteria()
                 .andMenuKeyEqualTo(button.getKey())
                 .andStatusEqualTo(1);
@@ -301,7 +301,7 @@ public class MenuServiceImpl implements MenuService {
      * 删除一个menu
      */
     private void deleteMenuItem(long menuKey) {
-        WeixinMenuItem menuItem = new WeixinMenuItem();
+        MenuItemPO menuItem = new MenuItemPO();
         menuItem.setMenuKey(menuKey);
         menuItem.setStatus(2);
         menuItem.setUpdateTime(DateUtil.curSeconds());

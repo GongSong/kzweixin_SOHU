@@ -10,7 +10,7 @@ import com.kuaizhan.kzweixin.constant.MsgType;
 import com.kuaizhan.kzweixin.constant.WxMsgType;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.dao.mapper.MsgDao;
-import com.kuaizhan.kzweixin.dao.mapper.auto.WeixinMsgConfigMapper;
+import com.kuaizhan.kzweixin.dao.mapper.auto.MsgConfigMapper;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.DownloadFileFailedException;
 import com.kuaizhan.kzweixin.manager.KzManager;
@@ -22,7 +22,7 @@ import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
-import com.kuaizhan.kzweixin.dao.po.auto.WeixinMsgConfig;
+import com.kuaizhan.kzweixin.dao.po.auto.MsgConfigPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.MsgService;
 import com.kuaizhan.kzweixin.service.PostService;
@@ -47,7 +47,7 @@ public class MsgServiceImpl implements MsgService {
     @Resource
     private MsgDao msgDao;
     @Resource
-    private WeixinMsgConfigMapper msgConfigMapper;
+    private MsgConfigMapper msgConfigMapper;
     @Resource
     private AccountService accountService;
     @Resource
@@ -69,7 +69,7 @@ public class MsgServiceImpl implements MsgService {
 
     @Override
     public void markMsgRead(long weixinAppid) {
-        WeixinMsgConfig config = new WeixinMsgConfig();
+        MsgConfigPO config = new MsgConfigPO();
         config.setWeixinAppid(weixinAppid);
         config.setLastReadTime(DateUtil.curSeconds());
         msgConfigMapper.updateByPrimaryKeySelective(config);
@@ -127,13 +127,13 @@ public class MsgServiceImpl implements MsgService {
 
     @Override
     public List<String> getQuickReplies(long weixinAppid) {
-        WeixinMsgConfig config = msgConfigMapper.selectByPrimaryKey(weixinAppid);
+        MsgConfigPO config = msgConfigMapper.selectByPrimaryKey(weixinAppid);
         return JsonUtil.string2List(config.getQuickReplyJson(), String.class);
     }
 
     @Override
     public void updateQuickReplies(long weixinAppid, List<String> replies) {
-        WeixinMsgConfig config = new WeixinMsgConfig();
+        MsgConfigPO config = new MsgConfigPO();
         config.setWeixinAppid(weixinAppid);
         config.setQuickReplyJson(JsonUtil.list2Str(replies));
         msgConfigMapper.updateByPrimaryKeySelective(config);
@@ -263,10 +263,10 @@ public class MsgServiceImpl implements MsgService {
 
     /** 获取消息的最后阅读时间，不存在则新建 **/
     private int getLastReadTime(long weixinAppid) {
-        WeixinMsgConfig config = msgConfigMapper.selectByPrimaryKey(weixinAppid);
+        MsgConfigPO config = msgConfigMapper.selectByPrimaryKey(weixinAppid);
         // 不存在则新建
         if (config == null) {
-            config = new WeixinMsgConfig();
+            config = new MsgConfigPO();
             config.setWeixinAppid(weixinAppid);
             config.setQuickReplyJson("[]");
             int now = DateUtil.curSeconds();

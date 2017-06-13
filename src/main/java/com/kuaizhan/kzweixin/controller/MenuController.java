@@ -5,7 +5,7 @@ import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.constant.ResponseType;
 import com.kuaizhan.kzweixin.controller.param.WeixinAppidParam;
 import com.kuaizhan.kzweixin.entity.menu.MenuWrapper;
-import com.kuaizhan.kzweixin.dao.po.auto.WeixinConditionalMenu;
+import com.kuaizhan.kzweixin.dao.po.auto.ConditionMenuPO;
 import com.kuaizhan.kzweixin.controller.vo.ConditionalMenuVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.service.MenuService;
@@ -53,10 +53,10 @@ public class MenuController extends BaseController {
      */
     @RequestMapping(value = "conditional_menus", method = RequestMethod.GET)
     public JsonResponse getConditionalMenus(@RequestParam long weixinAppid) {
-        List<WeixinConditionalMenu> menus = menuService.getConditionalMenus(weixinAppid);
+        List<ConditionMenuPO> menus = menuService.getConditionalMenus(weixinAppid);
         List<ConditionalMenuVO> menuVOS = new ArrayList<>();
 
-        for (WeixinConditionalMenu menu: menus) {
+        for (ConditionMenuPO menu: menus) {
             ConditionalMenuVO menuVO = new ConditionalMenuVO();
             menuVO.setId(menu.getId());
             menuVO.setMenuId(menu.getMenuId());

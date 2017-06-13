@@ -308,7 +308,7 @@
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
-                <version>1.3.0</version>
+                <version>1.3.5</version>
                 <configuration>
                     <configurationFile>
                         script/mybatis-generator-config.xml
