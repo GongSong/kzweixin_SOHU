@@ -34,7 +34,7 @@ public class TmpSpringTest {
     @Test
     public void tmp() throws Exception {
         System.out.println("---->" + "#########################");
-        System.out.println("---->" + openIdMapper.selectByPrimaryKey(364).getOpenId());
+        System.out.println("---->" + openIdMapper.selectByPrimaryKey(364, "weixin_open_ids_1").getOpenId());
         System.out.println("---->" + "#########################");
     }
 }
