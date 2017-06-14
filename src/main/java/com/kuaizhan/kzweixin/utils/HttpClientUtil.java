@@ -225,7 +225,7 @@ public final class HttpClientUtil {
     }
 
     /**
-     * post json数据
+     * put json数据
      *
      * @param url
      * @param jsonStr

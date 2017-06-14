@@ -10,8 +10,10 @@ import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.RedisException;
+import com.kuaizhan.kzweixin.exception.kuaizhan.KzApiException;
 import com.kuaizhan.kzweixin.exception.weixin.WxIPNotInWhitelistException;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidAppSecretException;
+import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxAccountManager;
 import com.kuaizhan.kzweixin.manager.WxAuthManager;
 import com.kuaizhan.kzweixin.entity.account.AuthorizerInfoDTO;
@@ -24,6 +26,7 @@ import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.WeixinAuthService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.UrlUtil;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -261,6 +264,60 @@ public class AccountServiceImpl implements AccountService {
         updatePO.setWeixinAppId(weixinAppId);
         updatePO.setAppSecret(appSecret);
         accountDao.updateAccountByWeixinAppId(updatePO);
+    }
+
+    @Override
+    public void updateCustomizeShare(long weixinAppId, Integer openShare) {
+        AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
+        JSONObject jsonObject;
+
+        //检测数据库是否存在记录，并更新自定义分享状态
+        if ("".equals(accountPO.getAdvancedFuncInfoJson())) {
+            jsonObject = new JSONObject();
+        } else {
+            jsonObject = new JSONObject(accountPO.getAdvancedFuncInfoJson());
+        }
+        jsonObject.put("open_share", openShare);
+
+        AccountPO updatePO = new AccountPO();
+        updatePO.setWeixinAppId(weixinAppId);
+        updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
+        accountDao.updateAccountByWeixinAppId(updatePO);
+
+    }
+
+    @Override
+    public void updateAuthLogin(long weixinAppId, Integer openLogin) {
+        AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
+        JSONObject jsonObject;
+
+        //检测数据库是否存在记录
+        if ("".equals(accountPO.getAdvancedFuncInfoJson())) {
+            jsonObject = new JSONObject();
+        } else {
+            jsonObject = new JSONObject(accountPO.getAdvancedFuncInfoJson());
+        }
+        jsonObject.put("open_login", 0);
+
+        //如果是服务号，进行验证。通过则保持服务号授权登录状态，不通过则关闭授权登录
+        if (accountPO.getServiceType() == 2) {
+            try {
+                KzManager.kzAccountWxLoginCheck(accountPO.getSiteId());
+            } catch (KzApiException e) {
+                AccountPO updatePO = new AccountPO();
+                updatePO.setWeixinAppId(weixinAppId);
+                updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
+                accountDao.updateAccountByWeixinAppId(updatePO);
+                throw new BusinessException(ErrorCode.NOT_SERVICE_NUMBER);
+            }
+            jsonObject.put("open_login", openLogin);
+        }
+
+        AccountPO updatePO = new AccountPO();
+        updatePO.setWeixinAppId(weixinAppId);
+        updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
+        accountDao.updateAccountByWeixinAppId(updatePO);
+
     }
 
     private long genWeixinAppid() {

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class UpdateAppSecretParam {
-    @NotNull(message = "App Secret不能为空")
+    @NotNull(message = "App Secret cannot be null")
     private String appSecret;
 }
 

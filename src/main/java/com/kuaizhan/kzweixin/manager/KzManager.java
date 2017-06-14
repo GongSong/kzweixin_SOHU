@@ -144,4 +144,38 @@ public class KzManager {
 
         return ImmutableMap.of("clientId", clientId, "token", token);
     }
+
+    /**
+     * 通过社区登录功能验证微信服务号是否开启授权登录
+     * @param siteId 用户的快站ID
+     * @throws KzApiException 社区登录验证失败
+     * @return
+     * */
+    public static boolean kzAccountWxLoginCheck(long siteId) throws KzApiException {
+        //指定Host
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Host", ApplicationConfig.KZ_SERVICE_FORUM_HOST);
+
+        //传递参数
+        Map<String, Object> params = new HashMap<>();
+        params.put("status", true);
+
+        String result = HttpClientUtil.post(KzApiConfig.getKzServiceAuthLoginConfigUrl(siteId), params, headers);
+        if (result == null) {
+            throw new KzApiException("[Kz:applyPushToken] result is null");
+        }
+
+        JSONObject resultJson;
+        try {
+            resultJson = new JSONObject(result);
+        } catch (JSONException e) {
+            throw new KzApiException("[Kz:kzAccountWxLoginCheck] Json Parse Error, result:" + result);
+        }
+        int code = resultJson.optInt("code");
+        if (code != 0) {
+            throw new KzApiException("[Kz:kzAccountWxLoginCheck] Invalid Json result, result:" + result);
+        }
+        return true;
+    }
+
 }

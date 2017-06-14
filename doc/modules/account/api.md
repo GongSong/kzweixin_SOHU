@@ -88,3 +88,35 @@
         ```
     * 异常情况:
         * 账号不存在，返回码 102003 
+
+#### 5 修改用户自定义分享开启／关闭状态
+
+* **协议**：HTTPS
+* **方法**：PUT
+* **URL**：/v1/accounts/`<weixinAppid>`/customize_share
+* **参数**：
+    * weixinAppid 主键
+    * openShare 用户选择切换的自定义分享状态
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {}
+        ```
+ 
+#### 6 修改服务号授权登录开启／关闭状态
+
+* **协议**：HTTPS
+* **方法**：PUT
+* **URL**：/v1/accounts/`<weixinAppid>`/authorize_login
+* **参数**：
+    * weixinAppid 主键
+    * openLogin 用户选择切换的授权登录状态
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {}
+        ```
