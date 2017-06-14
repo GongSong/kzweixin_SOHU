@@ -55,5 +55,12 @@
                 <!--<columnOverride column="service_type" javaType="java.lang.Integer"/>-->
                 <!--<columnOverride column="is_del" javaType="java.lang.Integer"/>-->
             <!--</table>-->
+
+            <!--<table tableName="weixin_msg_0" domainObjectName="MsgPO" mapperName="MsgMapper">-->
+            <!--</table>-->
+
+            <table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">
+            </table>
+
         </context>
 </generatorConfiguration>

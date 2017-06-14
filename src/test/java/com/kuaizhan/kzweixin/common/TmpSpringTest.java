@@ -1,10 +1,8 @@
 package com.kuaizhan.kzweixin.common;
 
-import com.google.common.collect.ImmutableList;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
+import com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper;
 import com.kuaizhan.kzweixin.service.AccountService;
-import com.kuaizhan.kzweixin.service.MenuService;
-import com.kuaizhan.kzweixin.service.PostService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,9 +21,7 @@ public class TmpSpringTest {
     @Resource
     private AccountService accountService;
     @Resource
-    private MenuService menuService;
-    @Resource
-    private PostService postService;
+    private OpenIdMapper openIdMapper;
 
     @Test
     public void getAccessToken() throws Exception {
@@ -37,8 +33,8 @@ public class TmpSpringTest {
 
     @Test
     public void tmp() throws Exception {
-        postService.importKzArticle(132413434L, ImmutableList.of(1323L, 32342L));
-        postService.importKzArticle(132413434L, ImmutableList.of(1323L, 32342L));
-        postService.importKzArticle(132413434L, ImmutableList.of(1323L, 32342L));
+        System.out.println("---->" + "#########################");
+        System.out.println("---->" + openIdMapper.selectByPrimaryKey(364).getOpenId());
+        System.out.println("---->" + "#########################");
     }
 }
