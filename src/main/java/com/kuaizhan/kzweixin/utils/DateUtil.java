@@ -24,8 +24,6 @@ public class DateUtil {
 
     /**
      * 当前时间往后几天的日期，days为负值表示往前数几天
-     * @param days
-     * @return
      */
     public static Date addDaysToCurrent(int days){
         Calendar cal = Calendar.getInstance();
@@ -35,22 +33,17 @@ public class DateUtil {
 
     /**
      * 根据持续毫秒值，获取时分秒
-     * @param millis
-     * @return
      */
     public static String getLastTime(long millis){
         long second = (millis / 1000) % 60;
         long minute = (millis / (1000 * 60)) % 60;
         long hour = (millis / (1000 * 60 * 60)) % 24;
 
-        String time = String.format("%02d:%02d:%02d", hour, minute, second);
-        return time;
+        return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
     /**
      * String类型的时间，转为Date
-     * @param dateStr
-     * @return
      */
     public static Date stringToDate(String dateStr){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -66,20 +59,14 @@ public class DateUtil {
 
     /**
      * 返回 yyyy-MM-dd
-     * @param date
-     * @return
      */
     public static String dateToString(Date date){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String dateStr = dateFormat.format(date).toString();
-        return dateStr;
+        return dateFormat.format(date);
     }
 
     /**
      * 计算日期之间的天数
-     * @param from
-     * @param to
-     * @return
      */
     public static int daysBetween(String from,String to){
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
@@ -103,9 +90,6 @@ public class DateUtil {
 
     /**
      * 获取两个日期之间所有的日期
-     * @param from
-     * @param to
-     * @return
      */
     public static ArrayList days(String from, String to) {
         String dateFormat = "yyyy-MM-dd";

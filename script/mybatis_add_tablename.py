@@ -2,11 +2,16 @@
 """
 mybatis generator的分表支持脚本
 
-mybatis generator不支持分表，本脚本对生成的mapper.xml和mapper.java文件进行处理，
-使得支持在调用mapper方法时，能够传入tableName
+mybatis generator不支持分表，本脚本对生成的 XXXmapper.xml和 XXXmapper.java文件进行处理，
+使得支持在调用mapper方法时，能够灵活传入tableName
 
 * 对于mapper.xml, 把delete from, select from, update等sql语句中的表名替换成${tableName}
 * 对于mapper.java, 给所有的方法，加入参数 @Param("tableName") String tableName
+
+使用方式
+     * 安装python
+     * 执行 python script/mybatis_add_tablename.py path_to_mapper_java
+     * 执行 python script/mybatis_add_tablename.py path_to_mapper_xml
 """
 import sys
 import re
@@ -16,7 +21,7 @@ def parse_xml(file_path):
     """
     把delete from, select from, update等sql语句中的表名替换成${tableName}
     """
-    with open(file_path, "r+", encoding="utf8") as file:
+    with open(file_path, "r+") as file:
         result = ""
         for line in file.readlines():
 
@@ -40,12 +45,12 @@ def parse_xml(file_path):
 
             result += line
 
-    with open(file_path, "w+", encoding="utf8") as file:
+    with open(file_path, "w+") as file:
         file.write(result)
 
 
 def parse_java(file_path):
-    with open(file_path, "r+", encoding="utf8") as file:
+    with open(file_path, "r+") as file:
         result = ""
         # TODO: 又忘记了可变个数的group写法
         for line in file.readlines():
@@ -65,7 +70,7 @@ def parse_java(file_path):
 
             result += line
 
-    with open(file_path, "w+", encoding="utf8") as file:
+    with open(file_path, "w+") as file:
         file.write(result)
 
 
