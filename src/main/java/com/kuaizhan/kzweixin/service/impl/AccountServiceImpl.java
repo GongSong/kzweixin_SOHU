@@ -25,6 +25,7 @@ import com.kuaizhan.kzweixin.dao.po.auto.AccountExample;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.WeixinAuthService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
+import com.kuaizhan.kzweixin.utils.MqUtil;
 import com.kuaizhan.kzweixin.utils.UrlUtil;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -50,6 +51,8 @@ public class AccountServiceImpl implements AccountService {
     @Resource
     private AccountMapper accountMapper;
     @Resource
+    private MqUtil mqUtil;
+    @Resource
     private WeixinAuthService weixinAuthService;
 
     private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
@@ -70,10 +73,17 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void bindAccount(Long userId, String authCode, Long siteId) {
+        // 获取授权信息
         String componentAccessToken = weixinAuthService.getComponentAccessToken();
-        AuthorizationInfoDTO authorizationInfo = WxAuthManager.getAuthorizationInfo(ApplicationConfig.WEIXIN_APPID_THIRD, componentAccessToken, authCode);
-        String appId = authorizationInfo.getAppId();
-        AuthorizerInfoDTO authorizerInfo = WxAuthManager.getAuthorizerInfo(ApplicationConfig.WEIXIN_APPID_THIRD, componentAccessToken, appId);
+        AuthorizationInfoDTO authInfo = WxAuthManager.getAuthorizationInfo(
+                ApplicationConfig.WEIXIN_APPID_THIRD,
+                componentAccessToken, authCode);
+        // 获取授权者信息
+        String appId = authInfo.getAppId();
+        AuthorizerInfoDTO authorizerInfo = WxAuthManager.getAuthorizerInfo(
+                ApplicationConfig.WEIXIN_APPID_THIRD,
+                componentAccessToken,
+                appId);
 
         // 是否有现存的
         AccountExample example = new AccountExample();
@@ -103,14 +113,7 @@ public class AccountServiceImpl implements AccountService {
                 record.setUserId(userId);
 
                 // TODO: 清理accessToken
-                record.setAccessToken(authorizationInfo.getAccessToken());
-                record.setRefreshToken(authorizationInfo.getRefreshToken());
-                record.setExpiresTime(authorizationInfo.getExpiresIn() + DateUtil.curSeconds() - 10 * 60);
-                record.setFuncInfoJson(authorizationInfo.getFuncInfo());
-
-                record.setBindTime(DateUtil.curSeconds());
-                record.setUpdateTime(DateUtil.curSeconds());
-
+                setAccountRecord(record, authInfo, authorizerInfo);
                 accountMapper.updateByPrimaryKeySelective(record);
             // 没绑定过，新增
             } else {
@@ -120,21 +123,14 @@ public class AccountServiceImpl implements AccountService {
                 record.setSiteId(siteId);
                 record.setUserId(userId);
 
-                record.setAccessToken(authorizationInfo.getAccessToken());
-                record.setRefreshToken(authorizationInfo.getRefreshToken());
-                record.setExpiresTime(authorizationInfo.getExpiresIn() + DateUtil.curSeconds() - 10 * 60);
-                record.setFuncInfoJson(authorizationInfo.getFuncInfo());
-
                 record.setAppId(appId);
                 // 后面改为由对象序列化
                 record.setInterestJson("[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"]");
                 record.setAdvancedFuncInfoJson("{\"open_login\":0,\"open_share\":0}");
                 record.setMenuJson("");
-
-                record.setBindTime(DateUtil.curSeconds());
                 record.setCreateTime(DateUtil.curSeconds());
-                record.setUpdateTime(DateUtil.curSeconds());
 
+                setAccountRecord(record, authInfo, authorizerInfo);
                 accountMapper.insertSelective(record);
             }
             // 各种导入的异步任务
@@ -145,14 +141,7 @@ public class AccountServiceImpl implements AccountService {
             record.setUserId(userId);
             record.setSiteId(siteId);
 
-            record.setAccessToken(authorizationInfo.getAccessToken());
-            record.setRefreshToken(authorizationInfo.getRefreshToken());
-            record.setExpiresTime(authorizationInfo.getExpiresIn() + DateUtil.curSeconds() - 10 * 60);
-            record.setFuncInfoJson(authorizationInfo.getFuncInfo());
-
-            record.setBindTime(DateUtil.curSeconds());
-            record.setUpdateTime(DateUtil.curSeconds());
-
+            setAccountRecord(record, authInfo, authorizerInfo);
             accountMapper.updateByPrimaryKeySelective(record);
         } else {
             // 当前就绑定了两个，垃圾数据
@@ -320,6 +309,31 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    private void setAccountRecord(Account record, AuthorizationInfoDTO authInfo, AuthorizerInfoDTO authorizerInfo) {
+
+        // 授权信息
+        record.setAccessToken(authInfo.getAccessToken());
+        record.setRefreshToken(authInfo.getRefreshToken());
+        record.setExpiresTime(authInfo.getExpiresIn() + DateUtil.curSeconds() - 10 * 60);
+        record.setFuncInfoJson(authInfo.getFuncInfo());
+
+        // 授权者信息
+        record.setNickName(authorizerInfo.getNickName());
+        record.setHeadImg(authorizerInfo.getHeadImg());
+        record.setServiceType(authorizerInfo.getServiceTypeInfo().getId());
+        record.setVerifyType(authorizerInfo.getVerifyTypeInfo().getId());
+        record.setUserName(authorizerInfo.getUsername());
+        record.setAlias(authorizerInfo.getAlias());
+        record.setBusinessInfoJson(authorizerInfo.getBusinessInfo());
+        record.setQrcodeUrl(authorizerInfo.getQrcodeUrl());
+
+        record.setUpdateTime(DateUtil.curSeconds());
+        record.setBindTime(DateUtil.curSeconds());
+    }
+
+    /**
+     * 生成service
+     */
     private long genWeixinAppid() {
 
         final long MIN = 1000000000L;
