@@ -78,6 +78,13 @@ public class AccountController extends BaseController {
         return new JsonResponse(ImmutableMap.of());
     }
 
+    // 临时
+    @RequestMapping(value = "/accounts/tmp", method = RequestMethod.GET)
+    public JsonResponse tmpBindAccount(@RequestParam Long userId, @RequestParam String auth_code, @RequestParam(required = false) Long siteId) {
+        accountService.bindAccount(userId, auth_code, siteId);
+        return new JsonResponse(ImmutableMap.of());
+    }
+
     /**
      * 修改app_secret
      */

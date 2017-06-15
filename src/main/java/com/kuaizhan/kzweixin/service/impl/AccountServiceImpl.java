@@ -1,8 +1,10 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
+import com.kuaizhan.kzweixin.constant.KzExchange;
 import com.kuaizhan.kzweixin.dao.mapper.AccountDao;
 import com.kuaizhan.kzweixin.dao.mapper.UnbindDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
@@ -26,6 +28,7 @@ import com.kuaizhan.kzweixin.dao.po.auto.AccountExample;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.WeixinAuthService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
+import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.MqUtil;
 import com.kuaizhan.kzweixin.utils.UrlUtil;
 import org.json.JSONObject;
@@ -61,7 +64,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String getBindUrl(Long userId, Long siteId) {
-        String redirectUrl = ApplicationConfig.KZ_DOMAIN_MAIN + "/weixin/account-bind-callback?userId=" + userId;
+//        String redirectUrl = ApplicationConfig.KZ_DOMAIN_MAIN + "/weixin/account-bind-callback?userId=" + userId;
+        String redirectUrl = "http://94dbabe2de.kzsite09.cn:8080/v1/accounts/tmp?userId=";
+        redirectUrl += userId;
         // 同时绑定站点
         if (siteId != null) {
             redirectUrl += "&siteId=" + siteId;
@@ -76,15 +81,18 @@ public class AccountServiceImpl implements AccountService {
     public void bindAccount(Long userId, String authCode, Long siteId) {
         // 获取授权信息
         String componentAccessToken = weixinAuthService.getComponentAccessToken();
-        AuthorizationInfoDTO authInfo = WxAuthManager.getAuthorizationInfo(
+        AuthorizationInfoDTO.Info authInfo = WxAuthManager.getAuthorizationInfo(
                 ApplicationConfig.WEIXIN_APPID_THIRD,
-                componentAccessToken, authCode);
+                componentAccessToken, authCode)
+                .getInfo();
+
         // 获取授权者信息
         String appId = authInfo.getAppId();
-        AuthorizerInfoDTO authorizerInfo = WxAuthManager.getAuthorizerInfo(
+        AuthorizerInfoDTO.Info authorizerInfo = WxAuthManager.getAuthorizerInfo(
                 ApplicationConfig.WEIXIN_APPID_THIRD,
                 componentAccessToken,
-                appId);
+                appId)
+                .getInfo();
 
         // 是否有现存的
         AccountExample example = new AccountExample();
@@ -95,6 +103,8 @@ public class AccountServiceImpl implements AccountService {
 
         // 新用户
         if (results.size() == 0) {
+            Long weixinAppid;
+
             // 以前是否绑定过
             example = new AccountExample();
             example.createCriteria()
@@ -108,6 +118,7 @@ public class AccountServiceImpl implements AccountService {
 
                 // 老的记录
                 Account record = oldResults.get(0);
+                weixinAppid = record.getWeixinAppid();
                 // 删除状态设为0
                 record.setIsDel(0);
                 record.setSiteId(siteId);
@@ -119,8 +130,9 @@ public class AccountServiceImpl implements AccountService {
             // 没绑定过，新增
             } else {
                 Account record = new Account();
+                weixinAppid = genWeixinAppid();
 
-                record.setWeixinAppid(genWeixinAppid());
+                record.setWeixinAppid(weixinAppid);
                 record.setSiteId(siteId);
                 record.setUserId(userId);
 
@@ -135,6 +147,7 @@ public class AccountServiceImpl implements AccountService {
                 accountMapper.insertSelective(record);
             }
             // 各种导入的异步任务
+            mqUtil.publish(KzExchange.USER_IMPORT, "", JsonUtil.bean2String(ImmutableMap.of("weixin_appid", weixinAppid)));
 
         // 老用户没有解绑，在某些场景下触发再次绑定, 更新绑定信息
         } else if (results.size() == 1){
@@ -315,13 +328,15 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
-    private void setAccountRecord(Account record, AuthorizationInfoDTO authInfo, AuthorizerInfoDTO authorizerInfo) {
+    private void setAccountRecord(Account record,
+                                  AuthorizationInfoDTO.Info authInfo,
+                                  AuthorizerInfoDTO.Info authorizerInfo) {
 
         // 授权信息
         record.setAccessToken(authInfo.getAccessToken());
         record.setRefreshToken(authInfo.getRefreshToken());
         record.setExpiresTime(authInfo.getExpiresIn() + DateUtil.curSeconds() - 10 * 60);
-        record.setFuncInfoJson(authInfo.getFuncInfo());
+        record.setFuncInfoJson(JsonUtil.list2Str(authInfo.getFuncInfoList()));
 
         // 授权者信息
         record.setNickName(authorizerInfo.getNickName());
@@ -330,7 +345,7 @@ public class AccountServiceImpl implements AccountService {
         record.setVerifyType(authorizerInfo.getVerifyTypeInfo().getId());
         record.setUserName(authorizerInfo.getUsername());
         record.setAlias(authorizerInfo.getAlias());
-        record.setBusinessInfoJson(authorizerInfo.getBusinessInfo());
+        record.setBusinessInfoJson(JsonUtil.bean2String(authorizerInfo.getBusinessInfo()));
         record.setQrcodeUrl(authorizerInfo.getQrcodeUrl());
 
         record.setUpdateTime(DateUtil.curSeconds());

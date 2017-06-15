@@ -2,7 +2,6 @@ package com.kuaizhan.kzweixin.service;
 
 
 import com.kuaizhan.kzweixin.exception.deprecated.system.*;
-import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
 
 /**
  * Created by Mr.Jadyn on 2017/1/19.
