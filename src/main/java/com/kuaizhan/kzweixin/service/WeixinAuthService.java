@@ -26,14 +26,4 @@ public interface WeixinAuthService {
      * 获取第三方平台component_access_token
      */
     String getComponentAccessToken();
-
-    /**
-     * 获取预授权码
-     */
-    String getPreAuthCode();
-
-    /**
-     * 获取（刷新）授权公众号的接口调用凭据（令牌）
-     */
-    AuthorizationInfoDTO refreshAuthorizationInfo(String componentAccessToken, String componentAppId, String authorizerAppId, String authorizerRefreshToken);
 }

@@ -7,6 +7,7 @@ import com.kuaizhan.kzweixin.dao.mapper.AccountDao;
 import com.kuaizhan.kzweixin.dao.mapper.UnbindDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
+import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.RedisException;
@@ -66,7 +67,7 @@ public class AccountServiceImpl implements AccountService {
             redirectUrl += "&siteId=" + siteId;
         }
         redirectUrl = UrlUtil.encode(redirectUrl);
-        String preAuthCode = weixinAuthService.getPreAuthCode();
+        String preAuthCode = WxAuthManager.getPreAuthCode(weixinAuthService.getComponentAccessToken());
 
         return WxApiConfig.getBindUrl(preAuthCode, redirectUrl);
     }
@@ -154,23 +155,28 @@ public class AccountServiceImpl implements AccountService {
         //存在高并发场景下access_token失效的问题
         String accessToken = accountCache.getAccessToken(weixinAppId);
         // TODO: 在这里实现分布式锁，否则在消息队列和web同时调用的情况下，有一定几率相互覆盖
+
         if (accessToken == null) {
             AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
             //刷新
-            AuthorizationInfoDTO authorizationInfoDTO = weixinAuthService.refreshAuthorizationInfo(
+            AccessTokenDTO accessTokenDTO = WxAccountManager.refreshAccessToken(
+                    ApplicationConfig.WEIXIN_APPID_THIRD,
                     weixinAuthService.getComponentAccessToken(),
-                    ApplicationConfig.WEIXIN_APPID_THIRD, accountPO.getAppId(),
+                    accountPO.getAppId(),
                     accountPO.getRefreshToken());
-            accessToken = authorizationInfoDTO.getAccessToken();
+            accessToken = accessTokenDTO.getAccessToken();
 
             // 更新数据库
-            AccountPO updateAccountPO = new AccountPO();
-            updateAccountPO.setWeixinAppId(accountPO.getWeixinAppId());
-            updateAccountPO.setAccessToken(authorizationInfoDTO.getAccessToken());
-            updateAccountPO.setRefreshToken(authorizationInfoDTO.getRefreshToken());
-            accountDao.updateAccountByWeixinAppId(updateAccountPO);
+            Account record = new Account();
+            record.setWeixinAppid(accountPO.getWeixinAppId());
+            record.setRefreshToken(accessTokenDTO.getRefreshToken());
+            // 数据库中对accessToken和expireTime字段的维护，应该是没有必要的
+            record.setAccessToken(accessTokenDTO.getAccessToken());
+            record.setExpiresTime(accessTokenDTO.getExpiresIn() + DateUtil.curSeconds() - 10 * 60);
+            accountMapper.updateByPrimaryKeySelective(record);
+
             //设置缓存
-            accountCache.setAccessToken(weixinAppId, authorizationInfoDTO);
+            accountCache.setAccessToken(weixinAppId, accessTokenDTO);
         }
         return accessToken;
     }
@@ -242,7 +248,7 @@ public class AccountServiceImpl implements AccountService {
 
         //调用WxAccountManager，把用户ID和app_secret发给微信服务器接口，获取access token并验证
         try {
-            WxAccountManager.getAccessToken(accountPO.getAppId(), appSecret);
+            WxAccountManager.getUserAccessToken(accountPO.getAppId(), appSecret);
         } catch (WxIPNotInWhitelistException e) {
             throw new BusinessException(ErrorCode.IP_NOT_IN_WHITELIST);
         } catch (WxInvalidAppSecretException e) {

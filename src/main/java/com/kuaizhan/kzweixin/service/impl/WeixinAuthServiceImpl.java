@@ -122,22 +122,4 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         }
         return componentAccessToken;
     }
-
-    @Override
-    public String getPreAuthCode() {
-        return WxAuthManager.getPreAuthCode(getComponentAccessToken());
-    }
-
-    @Override
-    public AuthorizationInfoDTO refreshAuthorizationInfo(String componentAccessToken, String componentAppId, String authorizerAppId, String authorizerRefreshToken) {
-        AuthorizationInfoDTO authorizationInfoDTO;
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("component_appid", componentAppId);
-        jsonObject.put("authorizer_appid", authorizerAppId);
-        jsonObject.put("authorizer_refresh_token", authorizerRefreshToken);
-        String result = HttpClientUtil.postJson(WxApiConfig.getRefreshAuthUrl(componentAccessToken), jsonObject.toString());
-        // TODO: 这种写法，完全没有对返回数据做校验
-        authorizationInfoDTO = JsonUtil.string2Bean(result, AuthorizationInfoDTO.class);
-        return authorizationInfoDTO;
-    }
 }

@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.cache;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
-import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
+import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 
 /**
  * 账号缓存
@@ -16,11 +16,12 @@ public interface AccountCache {
     void deleteAccountInfo(long weixinAppId);
 
     /**
-     * 获取accessToken
-     * @param weixinAppId
-     * @return
+     * 获取accessToken缓存
      */
     String getAccessToken(long weixinAppId);
 
-    void setAccessToken(long weixinAppId,AuthorizationInfoDTO authorizationInfoDTO);
+    /**
+     * 缓存accessToken
+     */
+    void setAccessToken(long weixinAppId, AccessTokenDTO accessTokenDTO);
 }
