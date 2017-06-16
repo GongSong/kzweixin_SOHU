@@ -7,6 +7,7 @@ import com.kuaizhan.kzweixin.exception.common.DecryptException;
 import com.kuaizhan.kzweixin.exception.common.GetComponentAccessTokenFailed;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.exception.deprecated.system.*;
+import com.kuaizhan.kzweixin.manager.WxThirdPartManager;
 import com.kuaizhan.kzweixin.service.ThirdPartService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.EncryptUtil;
@@ -84,39 +85,25 @@ public class ThirdPartServiceImpl implements ThirdPartService {
 
     @Override
     public String getComponentAccessToken() {
-        //TODO: component_access_token 直接存储json
+        String componentAccessToken = authCache.getComponentAccessToken();
+        if (componentAccessToken != null) {
+            return componentAccessToken;
+        }
+
         String ticket = authCache.getComponentVerifyTicket();
         if (ticket == null || "".equals(ticket)){
             throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] ticket is null");
         }
+        JSONObject resultJson = WxThirdPartManager.getComponentAccessToken(
+                ApplicationConfig.WEIXIN_APPID_THIRD,
+                ApplicationConfig.WEIXIN_APP_SECRET_THIRD,
+                ticket);
 
-        String componentAccessToken = authCache.getComponentAccessToken();
-        if (componentAccessToken == null) {
-                //请求微信接口
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("component_appid", ApplicationConfig.WEIXIN_APPID_THIRD);
-            jsonObject.put("component_appsecret", ApplicationConfig.WEIXIN_APP_SECRET_THIRD);
-            jsonObject.put("component_verify_ticket", ticket);
+        // 缓存， 这种做法，完全是为了兼容php
+        int expiresIn = resultJson.getInt("expires_in");
+        resultJson.put("expires_time", DateUtil.curSeconds() + expiresIn - 100);
+        authCache.setComponentAccessToken(resultJson.toString());
 
-            String result = HttpClientUtil.postJson(WxApiConfig.getComponentAccessTokenUrl(), jsonObject.toString());
-            logger.info("[WeiXin:getComponentAccessToken] get componentAccessToken, params:{} return:{}", jsonObject, result);
-
-            if (result == null) {
-                throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] result is null");
-            }
-
-            JSONObject resultJson;
-            try {
-                resultJson = new JSONObject(result);
-                componentAccessToken = resultJson.getString("component_access_token");
-            } catch (JSONException e) {
-                throw new GetComponentAccessTokenFailed("[weixin:getComponentAccessToken] json exception, result:" + result, e);
-            }
-
-            resultJson.put("expires_time", DateUtil.curSeconds() + 7100);
-            //检查token是否一样
-            authCache.setComponentAccessToken(resultJson.toString());
-        }
-        return componentAccessToken;
+    return resultJson.getString("component_access_token");
     }
 }

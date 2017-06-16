@@ -15,7 +15,7 @@ import com.kuaizhan.kzweixin.exception.weixin.WxIPNotInWhitelistException;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidAppSecretException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxAccountManager;
-import com.kuaizhan.kzweixin.manager.WxAuthManager;
+import com.kuaizhan.kzweixin.manager.WxThirdPartManager;
 import com.kuaizhan.kzweixin.entity.account.AuthorizerInfoDTO;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
 import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
@@ -66,7 +66,7 @@ public class AccountServiceImpl implements AccountService {
             redirectUrl += "&siteId=" + siteId;
         }
         redirectUrl = UrlUtil.encode(redirectUrl);
-        String preAuthCode = WxAuthManager.getPreAuthCode(thirdPartService.getComponentAccessToken());
+        String preAuthCode = WxThirdPartManager.getPreAuthCode(thirdPartService.getComponentAccessToken());
 
         return WxApiConfig.getBindUrl(preAuthCode, redirectUrl);
     }
@@ -75,14 +75,14 @@ public class AccountServiceImpl implements AccountService {
     public void bindAccount(Long userId, String authCode, Long siteId) {
         // 获取授权信息
         String componentAccessToken = thirdPartService.getComponentAccessToken();
-        AuthorizationInfoDTO.Info authInfo = WxAuthManager.getAuthorizationInfo(
+        AuthorizationInfoDTO.Info authInfo = WxThirdPartManager.getAuthorizationInfo(
                 ApplicationConfig.WEIXIN_APPID_THIRD,
                 componentAccessToken, authCode)
                 .getInfo();
 
         // 获取授权者信息
         String appId = authInfo.getAppId();
-        AuthorizerInfoDTO.Info authorizerInfo = WxAuthManager.getAuthorizerInfo(
+        AuthorizerInfoDTO.Info authorizerInfo = WxThirdPartManager.getAuthorizerInfo(
                 ApplicationConfig.WEIXIN_APPID_THIRD,
                 componentAccessToken,
                 appId)

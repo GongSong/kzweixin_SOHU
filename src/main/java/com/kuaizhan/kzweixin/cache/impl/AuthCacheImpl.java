@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.cache.impl;
 
 import com.kuaizhan.kzweixin.constant.RedisConstant;
 import com.kuaizhan.kzweixin.cache.AuthCache;
+import com.kuaizhan.kzweixin.utils.DateUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
@@ -25,16 +26,18 @@ public class AuthCacheImpl extends RedisBaseDaoImpl implements AuthCache {
     @Override
     public String getComponentAccessToken() {
         String result = getData(RedisConstant.KEY_WEIXIN_COMPONENT_ACCESS_TOKEN);
-        if (result == null) {
-            return null;
-        } else {
+        if (result != null) {
             JSONObject jsonObject = new JSONObject(result);
-            return jsonObject.getString("component_access_token");
+            // 兼容php
+            if (DateUtil.curSeconds() < jsonObject.getInt("expires_time")) {
+                return jsonObject.getString("component_access_token");
+            }
         }
+        return null;
     }
 
     @Override
     public void setComponentAccessToken(String componentAccessToken) {
-        setData(RedisConstant.KEY_WEIXIN_COMPONENT_ACCESS_TOKEN, componentAccessToken, 110 * 60);
+        setData(RedisConstant.KEY_WEIXIN_COMPONENT_ACCESS_TOKEN, componentAccessToken, 2 * 60 * 60 - 100);
     }
 }

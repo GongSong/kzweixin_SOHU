@@ -8,15 +8,44 @@ import com.kuaizhan.kzweixin.entity.account.AuthorizerInfoDTO;
 import com.kuaizhan.kzweixin.utils.HttpClientUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 第三方平台授权相关api
+ * 第三方平台相关api
  * Created by zixiong on 2017/6/6.
  */
-public class WxAuthManager {
+public class WxThirdPartManager {
+
+    public static final Logger logger = LoggerFactory.getLogger(WxThirdPartManager.class);
+
+    /**
+     * 获取ComponentAccessToken
+     */
+    public static JSONObject getComponentAccessToken(String componentAppid, String componentAppSecret, String ticket) {
+        Map<String, String> param = new HashMap<>();
+        param.put("component_appid", componentAppid);
+        param.put("component_appsecret", componentAppSecret);
+        param.put("component_verify_ticket", ticket);
+        String paramStr = JsonUtil.bean2String(param);
+
+        String result = HttpClientUtil.postJson(WxApiConfig.getComponentAccessTokenUrl(), paramStr);
+        logger.info("[WeiXin:getComponentAccessToken] get componentAccessToken, params:{} return:{}", paramStr, result);
+
+        if (result == null) {
+            throw new WxApiException("[weixin:getComponentAccessToken] result is null");
+        }
+
+        JSONObject resultJson = new JSONObject(result);
+        if (resultJson.optInt("errcode") != 0 || !resultJson.has("component_access_token")) {
+            throw new WxApiException("[weixin:getComponentAccessToken] unexpected result:" + result);
+        }
+
+        return resultJson;
+    }
 
     /**
      * 获取预授权码
