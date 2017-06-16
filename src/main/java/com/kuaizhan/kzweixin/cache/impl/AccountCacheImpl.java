@@ -73,4 +73,9 @@ public class AccountCacheImpl extends RedisBaseDaoImpl implements AccountCache {
     public void deleteAccessToken(long weixinAppid) {
         deleteData(RedisConstant.KEY_WEIXIN_USER_ACCESS_TOKEN + weixinAppid);
     }
+
+    @Override
+    public void deletePhpAccountBySiteId(long siteId) {
+        deleteData(RedisConstant.KEY_PHP_ACCOUNT_BY_SITE_ID + siteId);
+    }
 }

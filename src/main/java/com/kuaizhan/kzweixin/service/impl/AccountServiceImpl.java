@@ -6,7 +6,6 @@ import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.KzExchange;
 import com.kuaizhan.kzweixin.dao.mapper.AccountDao;
-import com.kuaizhan.kzweixin.dao.mapper.UnbindDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
@@ -47,8 +46,6 @@ public class AccountServiceImpl implements AccountService {
     private AccountCache accountCache;
     @Resource
     private AccountDao accountDao;
-    @Resource
-    private UnbindDao unbindDao;
     @Resource
     private AccountMapper accountMapper;
     @Resource
@@ -165,6 +162,11 @@ public class AccountServiceImpl implements AccountService {
         // 清理之前可能缓存的账户信息和accessToken信息
         accountCache.deleteAccount(weixinAppid);
         accountCache.deleteAccessToken(weixinAppid);
+
+        // 清理php缓存
+        if (siteId != null) {
+            accountCache.deletePhpAccountBySiteId(siteId);
+        }
     }
 
     @Override

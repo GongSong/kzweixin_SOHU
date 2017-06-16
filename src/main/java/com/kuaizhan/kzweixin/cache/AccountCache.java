@@ -22,4 +22,11 @@ public interface AccountCache {
     String getAccessToken(long weixinAppid);
     void setAccessToken(long weixinAppid, AccessTokenDTO accessTokenDTO);
     void deleteAccessToken(long weixinAppid);
+
+
+    /* ----------- php缓存  ------------- */
+    /**
+     * 删除php那边根据siteId对account的缓存
+     */
+    void deletePhpAccountBySiteId(long siteId);
 }

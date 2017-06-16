@@ -2,10 +2,6 @@ package com.kuaizhan.kzweixin.controller;
 
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.exception.common.DaoException;
-import com.kuaizhan.kzweixin.exception.common.RedisException;
-import com.kuaizhan.kzweixin.exception.common.XMLParseException;
-import com.kuaizhan.kzweixin.exception.deprecated.system.*;
 import com.kuaizhan.kzweixin.service.ThirdPartService;
 import com.kuaizhan.kzweixin.service.WeixinMsgService;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +38,14 @@ public class WxCallbackController extends BaseController {
     /**
      * 微信消息推送
      */
-    @RequestMapping(value = "/msgs/{appId}/callback", method = RequestMethod.POST, produces = "application/xml;charset=UTF-8")
-    public String weixinPush(@PathVariable String appId, @RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody(required = false) String postData) throws EncryptException, DaoException, XMLParseException, RedisException {
+    @RequestMapping(value = "/app_ids/{appId}/events", method = RequestMethod.POST, produces = "application/xml;charset=UTF-8")
+    public String weixinPush(@PathVariable String appId,
+                             @RequestParam("msg_signature") String signature,
+                             @RequestParam String timestamp,
+                             @RequestParam String nonce,
+                             @RequestBody(required = false) String postData) {
         //检查消息是否来自微信
-        return weixinMsgService.handleWeixinPushMsg(appId, signature, timestamp, nonce, postData);
+//        return weixinMsgService.handleWeixinPushMsg(appId, signature, timestamp, nonce, postData);
+        return "success";
     }
 }

@@ -39,4 +39,8 @@ public class RedisConstant {
     // 图文模块
     public static final String KEY_COULD_SYNC_WX_POST = ApplicationConfig.REDIS_PREFIX + "kzweixin:could_sync_wx_post:";
     public static final int EXPIRE_COULD_SYNC_WX_POST = 10 * 60;
+
+
+    /* ------------ php缓存key ------------*/
+    public static final String KEY_PHP_ACCOUNT_BY_SITE_ID = ApplicationConfig.REDIS_PREFIX + "kz_weixin:plugin_by_site_id:";
 }
