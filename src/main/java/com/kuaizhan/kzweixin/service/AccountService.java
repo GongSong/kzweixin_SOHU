@@ -1,9 +1,6 @@
 package com.kuaizhan.kzweixin.service;
 
-import com.kuaizhan.kzweixin.exception.common.DaoException;
-import com.kuaizhan.kzweixin.exception.common.RedisException;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
-import com.kuaizhan.kzweixin.dao.po.UnbindPO;
 
 /**
  * 账号服务
@@ -43,13 +40,6 @@ public interface AccountService {
      * 根据long型Id获取账号信息
      */
     AccountPO getAccountByWeixinAppId(long weixinAppid);
-
-    /**
-     * 解绑账号
-     *
-     * @param account 账号
-     */
-    void unbindAccount(AccountPO account, UnbindPO unbindPO) throws RedisException, DaoException;
 
     /**
      * 修改appSecret

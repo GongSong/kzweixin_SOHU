@@ -7,13 +7,10 @@ import com.kuaizhan.kzweixin.exception.common.DecryptException;
 import com.kuaizhan.kzweixin.exception.common.GetComponentAccessTokenFailed;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.exception.deprecated.system.*;
-import com.kuaizhan.kzweixin.manager.WxAuthManager;
-import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
-import com.kuaizhan.kzweixin.service.WeixinAuthService;
+import com.kuaizhan.kzweixin.service.ThirdPartService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.EncryptUtil;
 import com.kuaizhan.kzweixin.utils.HttpClientUtil;
-import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.weixin.AesException;
 import com.kuaizhan.kzweixin.utils.weixin.WXBizMsgCrypt;
 import org.dom4j.Document;
@@ -34,9 +31,9 @@ import java.util.Arrays;
  * Created by liangjiateng on 2017/3/15.
  */
 @Service("weixinAuthService")
-public class WeixinAuthServiceImpl implements WeixinAuthService {
+public class ThirdPartServiceImpl implements ThirdPartService {
 
-    public static final Logger logger = LoggerFactory.getLogger(WeixinAuthServiceImpl.class);
+    public static final Logger logger = LoggerFactory.getLogger(ThirdPartServiceImpl.class);
 
     @Resource
     private AuthCache authCache;
@@ -59,12 +56,14 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
     }
 
     @Override
-    public void getComponentVerifyTicket(String signature, String timestamp, String nonce, String postData) {
+    public void refreshComponentVerifyTicket(String signature, String timestamp, String nonce, String postData) {
         //对消息进行解密
         String msg;
         logger.info("[WeiXin:ticket] ticket callback calling");
         try {
-            WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN, ApplicationConfig.WEIXIN_AES_KEY, ApplicationConfig.WEIXIN_APPID_THIRD);
+            WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN,
+                    ApplicationConfig.WEIXIN_AES_KEY,
+                    ApplicationConfig.WEIXIN_APPID_THIRD);
             msg = wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
         } catch (AesException e) {
             throw new DecryptException("[WeiXin:getComponentVerifyTicket] decrypt failed", e);
@@ -79,10 +78,8 @@ public class WeixinAuthServiceImpl implements WeixinAuthService {
         Element root = document.getRootElement();
         Element ticket = root.element("ComponentVerifyTicket");
         logger.info("[WeiXin:ticket] get ticket:{}", ticket);
-        //缓存
-        if (ticket != null) {
-            authCache.setComponentVerifyTicket(ticket.getText());
-        }
+        // 缓存
+        authCache.setComponentVerifyTicket(ticket.getText());
     }
 
     @Override

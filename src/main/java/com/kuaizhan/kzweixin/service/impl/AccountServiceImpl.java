@@ -11,8 +11,6 @@ import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
-import com.kuaizhan.kzweixin.exception.common.DaoException;
-import com.kuaizhan.kzweixin.exception.common.RedisException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KzApiException;
 import com.kuaizhan.kzweixin.exception.weixin.WxIPNotInWhitelistException;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidAppSecretException;
@@ -21,12 +19,11 @@ import com.kuaizhan.kzweixin.manager.WxAccountManager;
 import com.kuaizhan.kzweixin.manager.WxAuthManager;
 import com.kuaizhan.kzweixin.entity.account.AuthorizerInfoDTO;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
-import com.kuaizhan.kzweixin.dao.po.UnbindPO;
 import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
 import com.kuaizhan.kzweixin.dao.po.auto.Account;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountExample;
 import com.kuaizhan.kzweixin.service.AccountService;
-import com.kuaizhan.kzweixin.service.WeixinAuthService;
+import com.kuaizhan.kzweixin.service.ThirdPartService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.MqUtil;
@@ -57,7 +54,7 @@ public class AccountServiceImpl implements AccountService {
     @Resource
     private MqUtil mqUtil;
     @Resource
-    private WeixinAuthService weixinAuthService;
+    private ThirdPartService thirdPartService;
 
     private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
@@ -72,7 +69,7 @@ public class AccountServiceImpl implements AccountService {
             redirectUrl += "&siteId=" + siteId;
         }
         redirectUrl = UrlUtil.encode(redirectUrl);
-        String preAuthCode = WxAuthManager.getPreAuthCode(weixinAuthService.getComponentAccessToken());
+        String preAuthCode = WxAuthManager.getPreAuthCode(thirdPartService.getComponentAccessToken());
 
         return WxApiConfig.getBindUrl(preAuthCode, redirectUrl);
     }
@@ -80,7 +77,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void bindAccount(Long userId, String authCode, Long siteId) {
         // 获取授权信息
-        String componentAccessToken = weixinAuthService.getComponentAccessToken();
+        String componentAccessToken = thirdPartService.getComponentAccessToken();
         AuthorizationInfoDTO.Info authInfo = WxAuthManager.getAuthorizationInfo(
                 ApplicationConfig.WEIXIN_APPID_THIRD,
                 componentAccessToken, authCode)
@@ -181,7 +178,7 @@ public class AccountServiceImpl implements AccountService {
             //刷新
             AccessTokenDTO accessTokenDTO = WxAccountManager.refreshAccessToken(
                     ApplicationConfig.WEIXIN_APPID_THIRD,
-                    weixinAuthService.getComponentAccessToken(),
+                    thirdPartService.getComponentAccessToken(),
                     accountPO.getAppId(),
                     accountPO.getRefreshToken());
             accessToken = accessTokenDTO.getAccessToken();
@@ -235,31 +232,6 @@ public class AccountServiceImpl implements AccountService {
             accountCache.setAccount(accountPO);
         }
         return accountPO;
-    }
-
-    @Override
-    public void unbindAccount(AccountPO account, UnbindPO unbindPO) {
-        UnbindPO unbind;
-        //删缓存
-        try {
-            accountCache.deleteAccount(account.getSiteId());
-        } catch (Exception e) {
-            throw new RedisException(e);
-        }
-        try {
-            unbind = unbindDao.getUnbindByWeixinAppId(account.getWeixinAppId());
-            unbindPO.setWeixinAppId(account.getWeixinAppId());
-            if (unbind == null) {
-                unbindDao.insertUnbind(unbindPO);
-            } else {
-                unbindDao.updateUnbindByWeixinAppId(unbindPO);
-            }
-            account.setUnbindTime((long) DateUtil.curSeconds());
-            account.setIsDel(1);
-            accountDao.updateAccountBySiteId(account);
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
     }
 
     @Override

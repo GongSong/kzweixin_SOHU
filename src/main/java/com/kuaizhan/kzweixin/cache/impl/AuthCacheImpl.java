@@ -19,7 +19,7 @@ public class AuthCacheImpl extends RedisBaseDaoImpl implements AuthCache {
 
     @Override
     public void setComponentVerifyTicket(String ticket) {
-        setData(RedisConstant.KEY_WEIXIN_COMPONENT_VERIFY_TICKET, ticket, 11 * 60);
+        setData(RedisConstant.KEY_WEIXIN_COMPONENT_VERIFY_TICKET, ticket, 24 * 60 * 60);
     }
 
     @Override

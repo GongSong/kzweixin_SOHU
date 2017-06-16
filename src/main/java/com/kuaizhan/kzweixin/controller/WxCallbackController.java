@@ -6,7 +6,7 @@ import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.RedisException;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.exception.deprecated.system.*;
-import com.kuaizhan.kzweixin.service.WeixinAuthService;
+import com.kuaizhan.kzweixin.service.ThirdPartService;
 import com.kuaizhan.kzweixin.service.WeixinMsgService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,20 +18,23 @@ import javax.annotation.Resource;
  * Created by Mr.Jadyn on 2017/1/11.
  */
 @RestController
-@RequestMapping(value = AppConstant.VERSION + "/weixin")
+@RequestMapping(value = AppConstant.VERSION)
 public class WxCallbackController extends BaseController {
 
     @Resource
-    private WeixinAuthService weixinAuthService;
+    private ThirdPartService thirdPartService;
     @Resource
     private WeixinMsgService weixinMsgService;
 
     /**
      * 获取微信推送的component_verify_ticket
      */
-    @RequestMapping(value = "/auth/callback", method = RequestMethod.POST)
-    public String receiver(@RequestParam("msg_signature") String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestBody String postData) {
-        weixinAuthService.getComponentVerifyTicket(signature, timestamp, nonce, postData);
+    @RequestMapping(value = "/auth/tickets", method = RequestMethod.POST)
+    public String receiver(@RequestParam("msg_signature") String signature,
+                           @RequestParam String timestamp,
+                           @RequestParam String nonce,
+                           @RequestBody String postData) {
+        thirdPartService.refreshComponentVerifyTicket(signature, timestamp, nonce, postData);
         return "success";
     }
 

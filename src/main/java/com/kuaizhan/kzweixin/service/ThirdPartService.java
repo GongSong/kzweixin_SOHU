@@ -1,12 +1,13 @@
 package com.kuaizhan.kzweixin.service;
 
 
-import com.kuaizhan.kzweixin.exception.deprecated.system.*;
+import com.kuaizhan.kzweixin.exception.deprecated.system.EncryptException;
 
 /**
+ * 微信第三方平台相关操作service
  * Created by Mr.Jadyn on 2017/1/19.
  */
-public interface WeixinAuthService {
+public interface ThirdPartService {
     /**
      * 验证消息的确来自微信服务器
      *
@@ -17,9 +18,9 @@ public interface WeixinAuthService {
     boolean checkMsg(String signature, String timestamp, String nonce) throws EncryptException;
 
     /**
-     * 获取微信推送的component_verify_ticket
+     * 接收微信推送，刷新ComponentVerifyTicket
      */
-    void getComponentVerifyTicket(String signature, String timestamp, String nonce, String postData);
+    void refreshComponentVerifyTicket(String signature, String timestamp, String nonce, String postData);
 
     /**
      * 获取第三方平台component_access_token
