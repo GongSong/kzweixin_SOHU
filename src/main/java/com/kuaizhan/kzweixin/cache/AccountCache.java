@@ -9,19 +9,17 @@ import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 public interface AccountCache {
 
 
-    AccountPO getAccountInfoByWeixinAppId(long weixinAppId);
-
-    void setAccountInfo(AccountPO account);
-
-    void deleteAccountInfo(long weixinAppId);
+    /**
+     * 对用户信息的缓存
+     */
+    AccountPO getAccount(long weixinAppid);
+    void setAccount(AccountPO account);
+    void deleteAccount(long weixinAppid);
 
     /**
-     * 获取accessToken缓存
+     * 对accessToken的缓存
      */
-    String getAccessToken(long weixinAppId);
-
-    /**
-     * 缓存accessToken
-     */
-    void setAccessToken(long weixinAppId, AccessTokenDTO accessTokenDTO);
+    String getAccessToken(long weixinAppid);
+    void setAccessToken(long weixinAppid, AccessTokenDTO accessTokenDTO);
+    void deleteAccessToken(long weixinAppid);
 }

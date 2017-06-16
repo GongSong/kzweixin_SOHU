@@ -18,7 +18,7 @@ public class RedisConstant {
     public static final String KEY_WEIXIN_USER_ACCESS_TOKEN = ApplicationConfig.REDIS_PREFIX + "kz_weixin:user_access_token:";
 
     //缓存账户信息
-    public static final String KEY_ACCOUNT_INFO = ApplicationConfig.REDIS_PREFIX + "account_info:";
+    public static final String KEY_ACCOUNT = ApplicationConfig.REDIS_PREFIX + "kzweixin:account:";
 
     //粉丝
 

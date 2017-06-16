@@ -101,9 +101,10 @@ public class AccountServiceImpl implements AccountService {
                 .andIsDelEqualTo(0);
         List<Account> results = accountMapper.selectByExample(example);
 
+        Long weixinAppid;
+
         // 新用户
         if (results.size() == 0) {
-            Long weixinAppid;
 
             // 以前是否绑定过
             example = new AccountExample();
@@ -152,6 +153,7 @@ public class AccountServiceImpl implements AccountService {
         // 老用户没有解绑，在某些场景下触发再次绑定, 更新绑定信息
         } else if (results.size() == 1){
             Account record = results.get(0);
+            weixinAppid = record.getWeixinAppid();
             record.setUserId(userId);
             record.setSiteId(siteId);
 
@@ -160,7 +162,12 @@ public class AccountServiceImpl implements AccountService {
         } else {
             // 当前就绑定了两个，垃圾数据
             logger.error("[bindAccount:垃圾数据] appId当前有多个绑定, appId:" + appId);
+            return;
         }
+
+        // 清理之前可能缓存的账户信息和accessToken信息
+        accountCache.deleteAccount(weixinAppid);
+        accountCache.deleteAccessToken(weixinAppid);
     }
 
     @Override
@@ -215,7 +222,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountPO getAccountByWeixinAppId(long weinxinAppid) {
         // 从缓存拿
-        AccountPO accountPO = accountCache.getAccountInfoByWeixinAppId(weinxinAppid);
+        AccountPO accountPO = accountCache.getAccount(weinxinAppid);
 
         if (accountPO == null) {
             //从数据库拿
@@ -225,7 +232,7 @@ public class AccountServiceImpl implements AccountService {
             }
 
             //存缓存
-            accountCache.setAccountInfo(accountPO);
+            accountCache.setAccount(accountPO);
         }
         return accountPO;
     }
@@ -235,7 +242,7 @@ public class AccountServiceImpl implements AccountService {
         UnbindPO unbind;
         //删缓存
         try {
-            accountCache.deleteAccountInfo(account.getSiteId());
+            accountCache.deleteAccount(account.getSiteId());
         } catch (Exception e) {
             throw new RedisException(e);
         }
@@ -272,6 +279,9 @@ public class AccountServiceImpl implements AccountService {
         updatePO.setWeixinAppId(weixinAppId);
         updatePO.setAppSecret(appSecret);
         accountDao.updateAccountByWeixinAppId(updatePO);
+
+        // 清理缓存
+        accountCache.deleteAccount(weixinAppId);
     }
 
     @Override
@@ -292,6 +302,8 @@ public class AccountServiceImpl implements AccountService {
         updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
         accountDao.updateAccountByWeixinAppId(updatePO);
 
+        // 清理缓存
+        accountCache.deleteAccount(weixinAppId);
     }
 
     @Override
@@ -326,6 +338,8 @@ public class AccountServiceImpl implements AccountService {
         updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
         accountDao.updateAccountByWeixinAppId(updatePO);
 
+        // 清理缓存
+        accountCache.deleteAccount(weixinAppId);
     }
 
     private void setAccountRecord(Account record,
