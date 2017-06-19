@@ -55,4 +55,9 @@ public interface AccountService {
      * 修改服务号授权登录开启／关闭状态
      * */
     void updateAuthLogin(long weixinAppId, Integer openLogin);
+
+    /**
+     * 上传用户headImage为快站图片
+     */
+    void uploadHeadImage(long weixinAppid);
 }

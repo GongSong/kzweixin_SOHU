@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.config.WxApiConfig;
@@ -59,7 +60,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String getBindUrl(Long userId, Long siteId) {
 //        String redirectUrl = ApplicationConfig.KZ_DOMAIN_MAIN + "/weixin/account-bind-callback?userId=" + userId;
-        String redirectUrl = "http://94dbabe2de.kzsite09.cn:8080/v1/accounts/tmp?userId=";
+//        String redirectUrl = "http://94dbabe2de.kzsite09.cn:8080/v1/accounts/tmp?userId=";
+        String redirectUrl = "http://6680ef58aa5c.kzsite09.cn:8080/v1/accounts/tmp?userId=";
         redirectUrl += userId;
         // 同时绑定站点
         if (siteId != null) {
@@ -119,7 +121,6 @@ public class AccountServiceImpl implements AccountService {
                 record.setSiteId(siteId);
                 record.setUserId(userId);
 
-                // TODO: 清理accessToken
                 setAccountRecord(record, authInfo, authorizerInfo);
                 accountMapper.updateByPrimaryKeySelective(record);
             // 没绑定过，新增
@@ -132,17 +133,14 @@ public class AccountServiceImpl implements AccountService {
                 record.setUserId(userId);
 
                 record.setAppId(appId);
-                // 后面改为由对象序列化
-                record.setInterestJson("[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"]");
-                record.setAdvancedFuncInfoJson("{\"open_login\":0,\"open_share\":0}");
+                record.setInterestJson(JsonUtil.list2Str(ImmutableList.of("0","0","0","0","0","0")));
+                record.setAdvancedFuncInfoJson(JsonUtil.bean2String(ImmutableMap.of("open_login", 0, "open_share", 0)));
                 record.setMenuJson("");
                 record.setCreateTime(DateUtil.curSeconds());
 
                 setAccountRecord(record, authInfo, authorizerInfo);
                 accountMapper.insertSelective(record);
             }
-            // 各种导入的异步任务
-            mqUtil.publish(KzExchange.USER_IMPORT, "", JsonUtil.bean2String(ImmutableMap.of("weixin_appid", weixinAppid)));
 
         // 老用户没有解绑，在某些场景下触发再次绑定, 更新绑定信息
         } else if (results.size() == 1){
@@ -163,7 +161,11 @@ public class AccountServiceImpl implements AccountService {
         accountCache.deleteAccount(weixinAppid);
         accountCache.deleteAccessToken(weixinAppid);
 
-        // 清理php缓存
+        // 用户导入异步任务，使用php的
+        mqUtil.publish(KzExchange.USER_IMPORT, "", JsonUtil.bean2String(ImmutableMap.of("weixin_appid", weixinAppid)));
+        // 将用户的头像转为快站url
+
+        // 清理php缓存, 完全重构后删除
         if (siteId != null) {
             accountCache.deletePhpAccountBySiteId(siteId);
         }
@@ -314,6 +316,11 @@ public class AccountServiceImpl implements AccountService {
 
         // 清理缓存
         accountCache.deleteAccount(weixinAppId);
+    }
+
+    @Override
+    public void uploadHeadImage(long weixinAppid) {
+        AccountPO accountPO = getAccountByWeixinAppId(weixinAppid);
     }
 
     private void setAccountRecord(Account record,
