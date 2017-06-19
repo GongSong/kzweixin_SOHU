@@ -1,6 +1,5 @@
 package com.kuaizhan.kzweixin.service.impl;
 
-import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.cache.AuthCache;
 import com.kuaizhan.kzweixin.exception.common.DecryptException;
@@ -11,14 +10,12 @@ import com.kuaizhan.kzweixin.manager.WxThirdPartManager;
 import com.kuaizhan.kzweixin.service.ThirdPartService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.EncryptUtil;
-import com.kuaizhan.kzweixin.utils.HttpClientUtil;
 import com.kuaizhan.kzweixin.utils.weixin.AesException;
 import com.kuaizhan.kzweixin.utils.weixin.WXBizMsgCrypt;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

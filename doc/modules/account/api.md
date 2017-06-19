@@ -120,3 +120,38 @@
         ```
         {}
         ```
+        
+#### 7 获取绑定url
+
+* **协议**：HTTPS
+* **方法**：GET
+* **URL**：/v1/account/bind_url
+* **参数**：
+    * userId 账号userId，必需
+    * siteId 公众号绑定到的站点Id， 非必需
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {
+          "url": "https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=wx54effaa795c75b4f&pre_auth_code=preauthcode@@@1LhymUZZU7G5s4mXPdRA1lsn5Sf5DdIgc6eSdTEAgzxBxQROZSd3FP3B11T3SPRE&redirect_uri=http%3A%2F%2F94dbabe2de.kzsite09.cn%3A8080%2Fv1%2Faccounts%2Ftmp%3FuserId%3D3"
+        }
+        ```
+
+#### 8 新增绑定的公众号
+
+* **协议**：HTTPS
+* **方法**：POST
+* **URL**：/v1/accounts
+* **参数**：
+    * userId 账号userId，必需
+    * siteId 公众号绑定到的站点Id， 非必需
+    * authCode 微信跳转携带的authCode
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {}
+        ```
