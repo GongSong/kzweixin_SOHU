@@ -3,7 +3,7 @@ package com.kuaizhan.kzweixin.service.impl;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.exception.deprecated.system.EncryptException;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.MsgService;

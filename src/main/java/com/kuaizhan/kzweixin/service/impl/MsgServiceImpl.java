@@ -17,7 +17,7 @@ import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxCommonManager;
 import com.kuaizhan.kzweixin.manager.WxMsgManager;
 import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.Page;

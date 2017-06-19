@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.param.AddSysTplParam;
 import com.kuaizhan.kzweixin.controller.param.SendTplMsgParam;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.TplService;
@@ -34,7 +34,7 @@ public class TplMsgController extends BaseController {
     @RequestMapping(value = "/sys_tpl_msgs", method = RequestMethod.POST)
     public JsonResponse sendSysTplMsgs(@Valid @RequestBody SendTplMsgParam param) {
         AccountPO accountPO = accountService.getAccountByAppId(param.getAppId());
-        tplService.sendSysTplMsg(accountPO.getWeixinAppId(), param.getTemplateId(), param.getOpenId(),
+        tplService.sendSysTplMsg(accountPO.getWeixinAppid(), param.getTemplateId(), param.getOpenId(),
                 param.getUrl(), param.getData());
         return new JsonResponse(ImmutableMap.of());
     }
@@ -45,7 +45,7 @@ public class TplMsgController extends BaseController {
     @RequestMapping(value = "/sys_tpls", method = RequestMethod.POST)
     public JsonResponse addSysTpl(@Valid @RequestBody AddSysTplParam param) {
         AccountPO accountPO = accountService.getAccountBySiteId(param.getSiteId());
-        tplService.addTpl(accountPO.getWeixinAppId(), param.getTemplateId());
+        tplService.addTpl(accountPO.getWeixinAppid(), param.getTemplateId());
         return new JsonResponse(ImmutableMap.of());
     }
 }

@@ -18,10 +18,9 @@ import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxAccountManager;
 import com.kuaizhan.kzweixin.manager.WxThirdPartManager;
 import com.kuaizhan.kzweixin.entity.account.AuthorizerInfoDTO;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
-import com.kuaizhan.kzweixin.dao.po.auto.Account;
-import com.kuaizhan.kzweixin.dao.po.auto.AccountExample;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPOExample;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ThirdPartService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
@@ -91,11 +90,11 @@ public class AccountServiceImpl implements AccountService {
                 .getInfo();
 
         // 是否有现存的
-        AccountExample example = new AccountExample();
+        AccountPOExample example = new AccountPOExample();
         example.createCriteria()
                 .andAppIdEqualTo(appId)
                 .andIsDelEqualTo(0);
-        List<Account> results = accountMapper.selectByExample(example);
+        List<AccountPO> results = accountMapper.selectByExample(example);
 
         Long weixinAppid;
 
@@ -103,18 +102,18 @@ public class AccountServiceImpl implements AccountService {
         if (results.size() == 0) {
 
             // 以前是否绑定过
-            example = new AccountExample();
+            example = new AccountPOExample();
             example.createCriteria()
                     .andAppIdEqualTo(appId)
                     .andIsDelEqualTo(1);
             example.setOrderByClause("unbind_time DESC"); // 尽量取最新的历史记录
-            List<Account> oldResults = accountMapper.selectByExample(example);
+            List<AccountPO> oldResults = accountMapper.selectByExample(example);
 
             // 绑定过，恢复老的数据
             if (oldResults.size() > 0) {
 
                 // 老的记录
-                Account record = oldResults.get(0);
+                AccountPO record = oldResults.get(0);
                 weixinAppid = record.getWeixinAppid();
                 // 删除状态设为0
                 record.setIsDel(0);
@@ -125,7 +124,7 @@ public class AccountServiceImpl implements AccountService {
                 accountMapper.updateByPrimaryKeySelective(record);
             // 没绑定过，新增
             } else {
-                Account record = new Account();
+                AccountPO record = new AccountPO();
                 weixinAppid = genWeixinAppid();
 
                 record.setWeixinAppid(weixinAppid);
@@ -144,7 +143,7 @@ public class AccountServiceImpl implements AccountService {
 
         // 老用户没有解绑，在某些场景下触发再次绑定, 更新绑定信息
         } else if (results.size() == 1){
-            Account record = results.get(0);
+            AccountPO record = results.get(0);
             weixinAppid = record.getWeixinAppid();
             record.setUserId(userId);
             record.setSiteId(siteId);
@@ -188,8 +187,8 @@ public class AccountServiceImpl implements AccountService {
             accessToken = accessTokenDTO.getAccessToken();
 
             // 更新数据库
-            Account record = new Account();
-            record.setWeixinAppid(accountPO.getWeixinAppId());
+            AccountPO record = new AccountPO();
+            record.setWeixinAppid(accountPO.getWeixinAppid());
             record.setRefreshToken(accessTokenDTO.getRefreshToken());
             // 数据库中对accessToken和expireTime字段的维护，应该是没有必要的
             record.setAccessToken(accessTokenDTO.getAccessToken());
@@ -252,7 +251,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         AccountPO updatePO = new AccountPO();
-        updatePO.setWeixinAppId(weixinAppId);
+        updatePO.setWeixinAppid(weixinAppId);
         updatePO.setAppSecret(appSecret);
         accountDao.updateAccountByWeixinAppId(updatePO);
 
@@ -274,7 +273,7 @@ public class AccountServiceImpl implements AccountService {
         jsonObject.put("open_share", openShare);
 
         AccountPO updatePO = new AccountPO();
-        updatePO.setWeixinAppId(weixinAppId);
+        updatePO.setWeixinAppid(weixinAppId);
         updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
         accountDao.updateAccountByWeixinAppId(updatePO);
 
@@ -301,7 +300,7 @@ public class AccountServiceImpl implements AccountService {
                 KzManager.kzAccountWxLoginCheck(accountPO.getSiteId());
             } catch (KzApiException e) {
                 AccountPO updatePO = new AccountPO();
-                updatePO.setWeixinAppId(weixinAppId);
+                updatePO.setWeixinAppid(weixinAppId);
                 updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
                 accountDao.updateAccountByWeixinAppId(updatePO);
                 throw new BusinessException(ErrorCode.NOT_SERVICE_NUMBER);
@@ -310,7 +309,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         AccountPO updatePO = new AccountPO();
-        updatePO.setWeixinAppId(weixinAppId);
+        updatePO.setWeixinAppid(weixinAppId);
         updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
         accountDao.updateAccountByWeixinAppId(updatePO);
 
@@ -323,7 +322,7 @@ public class AccountServiceImpl implements AccountService {
         AccountPO accountPO = getAccountByWeixinAppId(weixinAppid);
     }
 
-    private void setAccountRecord(Account record,
+    private void setAccountRecord(AccountPO record,
                                   AuthorizationInfoDTO.Info authInfo,
                                   AuthorizerInfoDTO.Info authorizerInfo) {
 

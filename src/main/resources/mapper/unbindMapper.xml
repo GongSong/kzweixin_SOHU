@@ -5,7 +5,7 @@
     <insert id="insertUnbind">
         insert into weixin_unbind
         set
-        weixin_appid=#{weixinAppId},
+        weixin_appid=#{weixinAppid},
         unbind_type=#{unbindType},
         status=1,
         <if test="unbindText!=null">
@@ -32,6 +32,6 @@
         </if>
         update_time=unix_timestamp(now())
         where
-        weixin_appid=#{weixinAppId}
+        weixin_appid=#{weixinAppid}
     </update>
 </mapper>

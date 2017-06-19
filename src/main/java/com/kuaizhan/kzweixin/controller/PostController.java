@@ -7,7 +7,7 @@ import com.kuaizhan.kzweixin.exception.common.DownloadFileFailedException;
 import com.kuaizhan.kzweixin.controller.param.PostsParam;
 import com.kuaizhan.kzweixin.controller.param.UploadPicParam;
 import com.kuaizhan.kzweixin.controller.param.WxSyncsPostParam;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;

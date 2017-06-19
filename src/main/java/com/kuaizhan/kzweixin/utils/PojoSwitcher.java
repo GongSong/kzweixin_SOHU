@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.utils;
 
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.controller.vo.AccountSettingVO;
@@ -52,7 +52,7 @@ public class PojoSwitcher {
             return null;
         }
         AccountVO accountVO = new AccountVO();
-        accountVO.setWeixinAppid(accountPO.getWeixinAppId());
+        accountVO.setWeixinAppid(accountPO.getWeixinAppid());
         accountVO.setAppId(accountPO.getAppId());
 
         // 对appSecret进行打码处理

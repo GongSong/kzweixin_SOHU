@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.dao.mapper;
 
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import javax.annotation.Resource;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring/*.xml")
-public class AccountDaoTest {
+public class AccountPODaoTest {
 
     @Resource
     AccountDao accountDao;
@@ -53,7 +53,7 @@ public class AccountDaoTest {
     @Test
     public void insertAccount() throws Exception {
         AccountPO accountPO = accountDao.getAccountBySiteId(123456L);
-        accountPO.setWeixinAppId(8888888888L);
+        accountPO.setWeixinAppid(8888888888L);
         accountPO.setSiteId(1234567L);
         accountDao.insertAccount(accountPO);
     }

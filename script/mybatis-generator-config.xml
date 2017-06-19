@@ -51,7 +51,7 @@
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
-            <!--<table tableName="site_weixin" domainObjectName="Account">-->
+            <!--<table tableName="site_weixin" domainObjectName="AccountPO" mapperName="AccountMapper">-->
                 <!--<columnOverride column="service_type" javaType="java.lang.Integer"/>-->
                 <!--<columnOverride column="is_del" javaType="java.lang.Integer"/>-->
             <!--</table>-->

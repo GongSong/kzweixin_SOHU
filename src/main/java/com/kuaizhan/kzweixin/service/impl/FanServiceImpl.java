@@ -7,7 +7,7 @@ import com.kuaizhan.kzweixin.exception.deprecated.business.*;
 import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.RedisException;
 import com.kuaizhan.kzweixin.exception.deprecated.system.ServerException;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;

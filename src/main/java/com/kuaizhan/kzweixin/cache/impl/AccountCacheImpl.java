@@ -3,7 +3,7 @@ package com.kuaizhan.kzweixin.cache.impl;
 import com.kuaizhan.kzweixin.constant.RedisConstant;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
@@ -31,7 +31,7 @@ public class AccountCacheImpl extends RedisBaseDaoImpl implements AccountCache {
 
     @Override
     public void setAccount(AccountPO account) {
-        String key = RedisConstant.KEY_ACCOUNT + account.getWeixinAppId();
+        String key = RedisConstant.KEY_ACCOUNT + account.getWeixinAppid();
         String str = JsonUtil.bean2String(account);
         
         // TODO: 因为修改账号信息还在php代码那边，缓存时间设置得很短，账号模块完全重构后修改

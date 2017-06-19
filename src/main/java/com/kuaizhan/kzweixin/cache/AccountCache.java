@@ -1,5 +1,5 @@
 package com.kuaizhan.kzweixin.cache;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 
 /**

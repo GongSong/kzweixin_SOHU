@@ -4,7 +4,7 @@ import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.service.WeixinFanService;

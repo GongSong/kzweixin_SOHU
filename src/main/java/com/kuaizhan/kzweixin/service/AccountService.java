@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.service;
 
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 
 /**
  * 账号服务

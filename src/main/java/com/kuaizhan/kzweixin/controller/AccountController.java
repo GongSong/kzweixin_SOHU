@@ -6,7 +6,7 @@ import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.param.AddAccountParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateAuthLoginParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateOpenShareParam;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.controller.vo.AccountSettingVO;
 import com.kuaizhan.kzweixin.controller.vo.AccountVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;

@@ -13,7 +13,7 @@ import com.kuaizhan.kzweixin.exception.menu.MenuCheckException;
 import com.kuaizhan.kzweixin.entity.menu.LinkList;
 import com.kuaizhan.kzweixin.entity.menu.MenuDTO;
 import com.kuaizhan.kzweixin.entity.menu.MenuWrapper;
-import com.kuaizhan.kzweixin.dao.po.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ConditionMenuPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ConditionMenuPOExample;
@@ -95,7 +95,7 @@ public class MenuServiceImpl implements MenuService {
         menu.setMenu(menuDTO);
 
         AccountPO account = new AccountPO();
-        account.setWeixinAppId(weixinAppid);
+        account.setWeixinAppid(weixinAppid);
         account.setMenuJson(JsonUtil.bean2String(menu));
 
         accountDao.updateAccountByWeixinAppId(accountPO);
