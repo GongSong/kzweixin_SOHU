@@ -3,10 +3,10 @@ package com.kuaizhan.kzweixin.cache.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuaizhan.kzweixin.constant.RedisConstant;
 import com.kuaizhan.kzweixin.cache.FanCache;
-import com.kuaizhan.kzweixin.dao.po.FanPO;
-import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import org.springframework.stereotype.Repository;
+import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,26 +43,29 @@ public class FanCacheImpl extends RedisBaseDaoImpl implements FanCache {
     }
 
     @Override
-    public List<TagDTO> listTags(long siteId) throws IOException {
-        String key = RedisConstant.KEY_TAG + siteId;
+    public void deleteTags(long weixinAppid) {
+        String key = RedisConstant.KEY_TAG + weixinAppid;
+        deleteData(key);
+    }
+
+    @Override
+    public List<TagDTO> getTags(long weixinAppid) {
+        String key = RedisConstant.KEY_TAG + weixinAppid;
         String result = getData(key);
-        if (result != null) {
-            return JsonUtil.string2List(result, TagDTO.class);
+        if (result == null) {
+            return null;
+        }
+        List<TagDTO> tagsList = JsonUtil.string2List(result, TagDTO.class);
+        if (tagsList != null && tagsList.size() != 0) {
+            return tagsList;
         }
         return null;
     }
 
     @Override
-    public void setTag(long siteId, List<TagDTO> tags) throws JsonProcessingException {
-        String key = RedisConstant.KEY_TAG + siteId;
-        String json = JsonUtil.bean2String(tags);
+    public void setTag(long weixinAppid, List<TagDTO> tagsList) throws JsonProcessingException {
+        String key = RedisConstant.KEY_TAG + weixinAppid;
+        String json = JsonUtil.list2Str(tagsList);
         setData(key, json, 10 * 60 * 60);
-    }
-
-
-    @Override
-    public void deleteTag(long siteId) {
-        String key = RedisConstant.KEY_TAG + siteId;
-        deleteData(key);
     }
 }

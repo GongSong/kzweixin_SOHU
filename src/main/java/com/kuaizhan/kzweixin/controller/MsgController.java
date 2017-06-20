@@ -9,8 +9,7 @@ import com.kuaizhan.kzweixin.controller.vo.MsgListVO;
 import com.kuaizhan.kzweixin.controller.param.WeixinAppidParam;
 import com.kuaizhan.kzweixin.controller.param.SendCustomMsgParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateQuickRepliesParam;
-
-import com.kuaizhan.kzweixin.dao.po.FanPO;
+import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.service.FanService;

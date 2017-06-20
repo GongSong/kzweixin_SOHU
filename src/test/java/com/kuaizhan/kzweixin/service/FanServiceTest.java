@@ -31,15 +31,15 @@ public class FanServiceTest {
 
     }
 
-    @Test
-    public void countFan() throws Exception {
-        System.out.println("----->" + fanService.countFan("wx1a4ff9ec0e369bd1", 0, null, null));
-    }
-
-    @Test
-    public void listFanByPagination() throws Exception {
-        System.out.println("----->" + fanService.listFanByPagination(123456L, "wx1a4ff9ec0e369bd1", 1, 0, null, null));
-    }
+//    @Test
+//    public void countFan() throws Exception {
+//        System.out.println("----->" + fanService.countFan("wx1a4ff9ec0e369bd1", 0, null, null));
+//    }
+//
+//    @Test
+//    public void listFanByPagination() throws Exception {
+//        System.out.println("----->" + fanService.listFanByPagination(123456L, "wx1a4ff9ec0e369bd1", 1, 0, null, null));
+//    }
 
     @Test
     public void listTag() throws Exception {

@@ -1,10 +1,10 @@
 package com.kuaizhan.kzweixin.dao.mapper;
 
 
-import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 
 import java.util.List;
 import java.util.Map;

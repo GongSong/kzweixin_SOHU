@@ -1,8 +1,8 @@
 package com.kuaizhan.kzweixin.cache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
+import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,25 +35,21 @@ public interface FanCache {
     void deleteFanByPagination(long siteId);
 
     /**
+     * 清除tag
+     */
+    void deleteTags(long weixinAppid);
+
+    /**
      * 获取所有标签
-     *
      * @return
      */
-    List<TagDTO> listTags(long siteId) throws IOException;
+    List<TagDTO> getTags(long weixinAppid);
 
     /**
      * 缓存标签
-     *
-     * @param tags
+     * @param tagsList List格式的标签对象
      */
-    void setTag(long siteId, List<TagDTO> tags) throws JsonProcessingException;
+    void setTag(long weixinAppid, List<TagDTO> tagsList) throws JsonProcessingException;
 
 
-
-    /**
-     * 清除tag
-     *
-     * @param siteId
-     */
-    void deleteTag(long siteId);
 }

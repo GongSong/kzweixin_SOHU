@@ -5,7 +5,7 @@ import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.exception.common.DaoException;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
-import com.kuaizhan.kzweixin.dao.po.FanPO;
+import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.service.WeixinFanService;
 import com.kuaizhan.kzweixin.utils.DBTableUtil;
@@ -148,14 +148,14 @@ public class WeixinFanServiceImpl implements WeixinFanService {
             fans.setCountry(jsonObject.getString("country"));
             fans.setHeadImgUrl(jsonObject.getString("headimgurl"));
             fans.setUnionId(jsonObject.getString("unionid"));
-            fans.setSubscribeTime(jsonObject.getLong("subscribe_time"));
-            fans.setGroupId(jsonObject.getLong("groupid"));
+            fans.setSubscribeTime(jsonObject.getInt("subscribe_time"));
+            fans.setGroupId(jsonObject.getInt("groupid"));
             fans.setAppId(appId);
             fans.setTagIdsJson(jsonObject.getJSONArray("tagid_list").toString());
-            fans.setInBlackList(0);
+            fans.setInBlacklist(0);
             fans.setRemark(jsonObject.getString("remark"));
             fans.setStatus(1);
-            fans.setLastInteractTime(0L);
+            fans.setLastInteractTime(0);
             return fans;
         }
     }
