@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 账号模块接口
@@ -76,6 +78,17 @@ public class AccountController extends BaseController {
     public JsonResponse addBindAccount(@Valid @RequestBody AddAccountParam param) {
         accountService.bindAccount(param.getUserId(), param.getAuthCode(), param.getSiteId());
         return new JsonResponse(ImmutableMap.of());
+    }
+
+    @RequestMapping(value = "/accounts", method = RequestMethod.GET)
+    public JsonResponse getAccounts(@RequestParam long userId) {
+        List<AccountPO> accountPOS = accountService.getAccounts(userId);
+        List<AccountVO> accountVOS = new ArrayList<>();
+
+        for (AccountPO accountPO: accountPOS) {
+            accountVOS.add(PojoSwitcher.accountPOToVO(accountPO));
+        }
+        return new JsonResponse(ImmutableMap.of("accounts", accountVOS));
     }
 
     // 临时

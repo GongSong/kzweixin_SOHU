@@ -155,3 +155,29 @@
         ```
         {}
         ```
+        
+#### 9 获取用户的所有公众号
+* **协议**：HTTPS
+* **方法**：GET
+* **URL**：/v1/accounts
+* **参数**： 
+    * userId 账号userId，必需
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        "accounts": [
+             {
+                "weixinAppid": 601145633, // 主键
+                "appId": "wx1a4ff9ec0e369bd1", // 微信后台的appid
+                "headImg": "http://wx.qlogo.cn/mmopen/l0fmnePhf2dtiaEmpOZmeMrUMYBLbcQHOSYOPjFWCNdOoWUO53oawfQJA5k1DvdfK4sbX3Dn60rYI2AbOUU10thWiasCH8Q4re/0",
+                "qrcode": "http://mmbiz.qpic.cn/mmbiz/UqZMrMwVpn1ulvkiaTJ2P6TRsljBSnjm9XEOZlVw08lrIYGHHe8oicoxttaNm48Kribps5ib18GPamib9GnWt92BmOg/0",
+                "name": "快站开发测试专用2",
+                "serviceType": 2 //0订阅号 1历史老账号升级后的订阅号 2服务号
+                "verifyType": 0 // 授权方认证类型，-1代表未认证，0代表微信认证，1代表新浪微博认证，2代表腾讯微博认证，3代表已资质认证通过但还未通过名称认证，4代表已资质认证通过、还未通过名称认证，但通过了新浪微博认证，5代表已资质认证通过、还未通过名称认证，但通过了腾讯微博认证
+            }
+         ]
+        ```
+    * 异常情况:
+        * siteId不存在或未绑定公众号，返回码 102002 

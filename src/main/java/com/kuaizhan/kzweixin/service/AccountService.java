@@ -2,6 +2,8 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 
+import java.util.List;
+
 /**
  * 账号服务
  * Created by liangjiateng on 2017/3/15.
@@ -20,6 +22,12 @@ public interface AccountService {
      * @param siteId 绑定的siteId, 允许为空
      */
     void bindAccount(Long userId, String authCode, Long siteId);
+
+    /**
+     * 获取公众号列表
+     */
+    // TODO: 需要加索引
+    List<AccountPO> getAccounts(long userId);
 
     /**
      * 获取accessToken
