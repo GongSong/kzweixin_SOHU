@@ -39,7 +39,7 @@ public class ErrorCode {
     public static final ErrorCode INVALID_TAG_LENGTH = new ErrorCode(104002, "标签名过长，不能超过30个字节");
     public static final ErrorCode INVALID_TAG_NUM = new ErrorCode(104003, "标签数量过多，不能超过100个");
     public static final ErrorCode INVALID_TAG_MODIFIED = new ErrorCode(104004, "不能修改系统保留标签");
-    public static final ErrorCode DELETE_TAG_FANS_EXCEED_10W = new ErrorCode(104004, "该标签下粉丝超过10万，不能直接删除");
+    public static final ErrorCode DELETE_TAG_FANS_EXCEED_10W = new ErrorCode(104005, "该标签下粉丝超过10万，不能直接删除");
 
     // 图文(07)
     public static final ErrorCode POST_USED_BY_OTHER_ERROR = new ErrorCode(107001, "自定义菜单或自动回复中包含该图文，无法删除");
