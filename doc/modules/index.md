@@ -9,4 +9,5 @@
 * [消息模块](msg/api.md)
 * [模板消息模块](tpl-msg/api.md)
 * [图文模块](post/api.md)
+* [扫码投票模块](vote/api.md)
 
