@@ -11,6 +11,7 @@ import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
+import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KzApiException;
 import com.kuaizhan.kzweixin.exception.weixin.WxIPNotInWhitelistException;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidAppSecretException;
@@ -152,7 +153,7 @@ public class AccountServiceImpl implements AccountService {
             accountMapper.updateByPrimaryKeySelective(record);
         } else {
             // 当前就绑定了两个，垃圾数据
-            logger.error("[bindAccount:垃圾数据] appId当前有多个绑定, appId:" + appId);
+            logger.error("[bindAccount:垃圾数据] appId当前有多个绑定, appId:{}", appId);
             return;
         }
 
@@ -318,8 +319,20 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void uploadHeadImage(long weixinAppid) {
+    public void uploadQrcode2Kz(long weixinAppid) {
         AccountPO accountPO = getAccountByWeixinAppId(weixinAppid);
+        String qrcodeUrlKz;
+        try {
+            qrcodeUrlKz = KzManager.uploadPicToKz(accountPO.getQrcodeUrl(), accountPO.getUserId());
+        } catch (KZPicUploadException e) {
+            logger.error("[uploadQrcode2Kz] upload pic failed, weixinAppid:{}", weixinAppid);
+            return;
+        }
+
+        AccountPO record = new AccountPO();
+        record.setWeixinAppid(weixinAppid);
+        record.setQrcodeUrlKz(qrcodeUrlKz);
+        accountMapper.updateByPrimaryKeySelective(record);
     }
 
     private void setAccountRecord(AccountPO record,

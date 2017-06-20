@@ -14,4 +14,6 @@ public class MqConstant {
     public static final String IMPORT_WEIXIN_POST = "sys-kzweixin-import-weixin-post";
     // 发送模板消息
     public static final String SEND_SYS_TPL_MSG = "sys-kzweixin-send-sys-tpl-msg";
+    // 用户绑定后的操作
+    public static final String AFTER_BIND = "sys-kzweixin-after-bind";
 }

@@ -57,7 +57,8 @@ public interface AccountService {
     void updateAuthLogin(long weixinAppId, Integer openLogin);
 
     /**
-     * 上传用户headImage为快站图片
+     * 上传公众号QrcodeUrl为快站链接
+     * (使用微信链接，页面上可能会出现无法显示)
      */
-    void uploadHeadImage(long weixinAppid);
+    void uploadQrcode2Kz(long weixinAppid);
 }

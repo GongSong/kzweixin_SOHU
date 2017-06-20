@@ -7,6 +7,5 @@ import lombok.Data;
  */
 @Data
 public class AfterBindDTO {
-    private Long userId;
     private Long weixinAppid;
 }

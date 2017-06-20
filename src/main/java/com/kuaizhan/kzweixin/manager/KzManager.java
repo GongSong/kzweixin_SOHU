@@ -49,6 +49,7 @@ public class KzManager {
 
     /**
      * 把外部图片上传到主站，转换为快站链接
+     * @throws KZPicUploadException 图片格式不对，以及各种未知原因导致的图片上传失败
      */
     public static String uploadPicToKz(String url, long userId) throws KZPicUploadException {
         Map<String, Object> params = new HashMap<>();
