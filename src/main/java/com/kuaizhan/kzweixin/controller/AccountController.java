@@ -3,17 +3,15 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.controller.param.AddAccountParam;
-import com.kuaizhan.kzweixin.controller.param.UpdateAuthLoginParam;
-import com.kuaizhan.kzweixin.controller.param.UpdateOpenShareParam;
+import com.kuaizhan.kzweixin.controller.param.*;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.controller.vo.AccountSettingVO;
 import com.kuaizhan.kzweixin.controller.vo.AccountVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.service.AccountService;
-import com.kuaizhan.kzweixin.controller.param.UpdateAppSecretParam;
 import com.kuaizhan.kzweixin.utils.PojoSwitcher;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -61,23 +59,32 @@ public class AccountController extends BaseController {
     }
 
     /**
-     * 获取绑定url
-     * @param userId 绑定公众号的userId
-     * @param siteId 是否绑定在某个站点上
+     * 新增绑定，跳转到微信服务器
      */
+    @RequestMapping(value = "/account/binds", method = RequestMethod.POST)
+    public RedirectView getBindUrl(@Valid @RequestBody BindParam param) {
+        String bindUrl = accountService.getBindUrl(param.getUserId(), param.getSiteId(), param.getRedirectUrl());
+        return new RedirectView(bindUrl);
+    }
+
     @RequestMapping(value = "/account/bind_url", method = RequestMethod.GET)
-    public JsonResponse getBindUrl(@RequestParam long userId, @RequestParam(required = false) Long siteId) {
-        String bindUrl = accountService.getBindUrl(userId, siteId);
+    public JsonResponse addBindAccount(@RequestParam Long userId,
+                                       @RequestParam(required = false) Long siteId,
+                                       @RequestParam String redirectUrl ) {
+        String bindUrl = accountService.getBindUrl(userId, siteId, redirectUrl);
         return new JsonResponse(ImmutableMap.of("url", bindUrl));
     }
 
     /**
-     * 新增一个绑定(授权者)
+     * 新增绑定，微信服务器跳转回来
      */
-    @RequestMapping(value = "/accounts", method = RequestMethod.POST)
-    public JsonResponse addBindAccount(@Valid @RequestBody AddAccountParam param) {
-        accountService.bindAccount(param.getUserId(), param.getAuthCode(), param.getSiteId());
-        return new JsonResponse(ImmutableMap.of());
+    @RequestMapping(value = "/account/bind_redirect", method = RequestMethod.GET)
+    public RedirectView addBindAccount(@RequestParam Long userId,
+                                       @RequestParam(required = false) Long siteId,
+                                       @RequestParam String redirectUrl,
+                                       @RequestParam(value = "auth_code") String authCode) {
+        accountService.bindAccount(userId, authCode, siteId);
+        return new RedirectView(redirectUrl);
     }
 
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)

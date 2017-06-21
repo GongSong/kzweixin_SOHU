@@ -129,6 +129,7 @@
 * **参数**：
     * userId 账号userId，必需
     * siteId 公众号绑定到的站点Id， 非必需
+    * redirectUrl 绑定完成后的跳转地址， 需包含协议头，需进行url encode
 
 * **返回**：
     * 获取成功时返回:
@@ -139,22 +140,18 @@
         }
         ```
 
-#### 8 新增绑定的公众号
+#### 8 绑定新用户
 
 * **协议**：HTTPS
 * **方法**：POST
-* **URL**：/v1/accounts
+* **URL**：/v1/account/binds
 * **参数**：
     * userId 账号userId，必需
     * siteId 公众号绑定到的站点Id， 非必需
-    * authCode 微信跳转携带的authCode
+    * redirectUrl 绑定完成后的跳转地址， 需包含协议头，需进行url encode
 
 * **返回**：
-    * 获取成功时返回:
-
-        ```
-        {}
-        ```
+    * 获取成功时302跳转
         
 #### 9 获取用户的所有公众号
 * **协议**：HTTPS

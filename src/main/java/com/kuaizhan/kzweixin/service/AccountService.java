@@ -13,7 +13,7 @@ public interface AccountService {
     /**
      * 获取绑定公众号的url
      */
-    String getBindUrl(Long userId, Long siteId);
+    String getBindUrl(Long userId, Long siteId, String redirectUrl);
 
     /**
      * 新增绑定公众号

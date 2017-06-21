@@ -58,19 +58,16 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public String getBindUrl(Long userId, Long siteId) {
-//        String redirectUrl = ApplicationConfig.KZ_DOMAIN_MAIN + "/weixin/account-bind-callback?userId=" + userId;
-//        String redirectUrl = "http://94dbabe2de.kzsite09.cn:8080/v1/accounts/tmp?userId=";
-        String redirectUrl = "http://6680ef58aa5c.kzsite09.cn:8080/v1/accounts/tmp?userId=";
-        redirectUrl += userId;
-        // 同时绑定站点
+    public String getBindUrl(Long userId, Long siteId, String redirectUrl) {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append("http://").append(ApplicationConfig.KZ_DOMAIN_OUT).append(":8080").append("/v1/account/bind_redirect");
+        urlBuilder.append("?userId=").append(userId);
+        urlBuilder.append("&redirectUrl=").append(UrlUtil.encode(redirectUrl));
         if (siteId != null) {
-            redirectUrl += "&siteId=" + siteId;
+            urlBuilder.append("&siteId=").append(siteId);
         }
-        redirectUrl = UrlUtil.encode(redirectUrl);
         String preAuthCode = WxThirdPartManager.getPreAuthCode(thirdPartService.getComponentAccessToken());
-
-        return WxApiConfig.getBindUrl(preAuthCode, redirectUrl);
+        return WxApiConfig.getBindUrl(preAuthCode, UrlUtil.encode(urlBuilder.toString()));
     }
 
     @Override
