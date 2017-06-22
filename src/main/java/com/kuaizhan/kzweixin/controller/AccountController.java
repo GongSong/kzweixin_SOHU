@@ -75,18 +75,6 @@ public class AccountController extends BaseController {
         return new JsonResponse(ImmutableMap.of("url", bindUrl));
     }
 
-    /**
-     * 新增绑定，微信服务器跳转回来
-     */
-    @RequestMapping(value = "/account/bind_redirect", method = RequestMethod.GET)
-    public RedirectView addBindAccount(@RequestParam Long userId,
-                                       @RequestParam(required = false) Long siteId,
-                                       @RequestParam String redirectUrl,
-                                       @RequestParam(value = "auth_code") String authCode) {
-        accountService.bindAccount(userId, authCode, siteId);
-        return new RedirectView(redirectUrl);
-    }
-
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
     public JsonResponse getAccounts(@RequestParam long userId) {
         List<AccountPO> accountPOS = accountService.getAccounts(userId);
@@ -96,13 +84,6 @@ public class AccountController extends BaseController {
             accountVOS.add(PojoSwitcher.accountPOToVO(accountPO));
         }
         return new JsonResponse(ImmutableMap.of("accounts", accountVOS));
-    }
-
-    // 临时
-    @RequestMapping(value = "/accounts/tmp", method = RequestMethod.GET)
-    public JsonResponse tmpBindAccount(@RequestParam Long userId, @RequestParam String auth_code, @RequestParam(required = false) Long siteId) {
-        accountService.bindAccount(userId, auth_code, siteId);
-        return new JsonResponse(ImmutableMap.of());
     }
 
     /**

@@ -2,9 +2,10 @@ package com.kuaizhan.kzweixin.controller;
 
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ThirdPartService;
-import com.kuaizhan.kzweixin.service.WeixinMsgService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
 
@@ -14,13 +15,25 @@ import javax.annotation.Resource;
  * Created by Mr.Jadyn on 2017/1/11.
  */
 @RestController
-@RequestMapping(value = AppConstant.VERSION)
+@RequestMapping(value = "public/" + AppConstant.VERSION)
 public class WxCallbackController extends BaseController {
 
     @Resource
     private ThirdPartService thirdPartService;
     @Resource
-    private WeixinMsgService weixinMsgService;
+    private AccountService accountService;
+
+    /**
+     * 新增绑定，微信服务器跳转回来
+     */
+    @RequestMapping(value = "/bind_redirect", method = RequestMethod.GET)
+    public RedirectView addBindAccount(@RequestParam Long userId,
+                                       @RequestParam(required = false) Long siteId,
+                                       @RequestParam String redirectUrl,
+                                       @RequestParam(value = "auth_code") String authCode) {
+        accountService.bindAccount(userId, authCode, siteId);
+        return new RedirectView(redirectUrl);
+    }
 
     /**
      * 获取微信推送的component_verify_ticket
@@ -45,7 +58,6 @@ public class WxCallbackController extends BaseController {
                              @RequestParam String nonce,
                              @RequestBody(required = false) String postData) {
         //检查消息是否来自微信
-//        return weixinMsgService.handleWeixinPushMsg(appId, signature, timestamp, nonce, postData);
         return "success";
     }
 }
