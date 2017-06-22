@@ -5,15 +5,9 @@ import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.WxErrCode;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.entity.fan.TagWrapper;
-import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
-import com.kuaizhan.kzweixin.exception.weixin.WxDuplicateTagException;
-import com.kuaizhan.kzweixin.exception.weixin.WxTagLengthExceedException;
-import com.kuaizhan.kzweixin.exception.weixin.WxTagNumExceedException;
-import com.kuaizhan.kzweixin.exception.weixin.WxTagReservedModifiedException;
-import com.kuaizhan.kzweixin.exception.weixin.WxFansNumExceedException;
+import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.utils.HttpClientUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -26,7 +20,7 @@ import java.util.Map;
  */
 public class WxFanManager {
     public static int createTag(String accessToken, String tagName) throws WxDuplicateTagException,
-            WxTagLengthExceedException, WxTagNumExceedException, WxApiException{
+            WxTagNumExceedException, WxApiException{
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("tag", ImmutableMap.of("name", tagName));
         String paramStr = JsonUtil.bean2String(paramMap);
@@ -46,8 +40,6 @@ public class WxFanManager {
         int errCode = resultJson.optInt("errcode");
         if (errCode == WxErrCode.DUPLICATED_TAGS) {
             throw new WxDuplicateTagException("[Weixin:createNewTag] tagName:" + tagName);
-        } else if (errCode == WxErrCode.TAG_LENGTH_EXCEEDS) {
-            throw new WxTagLengthExceedException("[Weixin:createNewTag] tagName:" + tagName);
         } else if (errCode == WxErrCode.TAG_NUM_EXCEEDS) {
             throw new WxTagNumExceedException("[Weixin:createNewTag] tagName:" + tagName);
         } else {
@@ -61,15 +53,19 @@ public class WxFanManager {
             throw new WxApiException("[WeiXin:getTags] result is null");
         }
 
-        TagWrapper wrapper = JsonUtil.string2Bean(result, TagWrapper.class);
-        if (wrapper.getTags() == null || wrapper.getTags().size() == 0) {
+        JSONObject resultJson = new JSONObject(result);
+        int errCode = resultJson.optInt("errcode");
+
+        if (errCode == 0) {
+            TagWrapper wrapper = JsonUtil.string2Bean(result, TagWrapper.class);
+            return wrapper.getTags();
+        } else {
             throw new WxApiException("[WeiXin:getTags] unexpected error, result:" + result);
         }
-        return wrapper.getTags();
     }
 
     public static void updateTag(String accessToken, int tagId, String tagName) throws WxDuplicateTagException,
-            WxTagLengthExceedException, WxTagReservedModifiedException, WxApiException {
+            WxTagReservedModifiedException, WxApiException {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("tag", ImmutableMap.of("id", tagId, "name", tagName));
         String result = HttpClientUtil.postJson(WxApiConfig.updateTagsUrl(accessToken), JsonUtil.bean2String(paramMap));
@@ -87,8 +83,6 @@ public class WxFanManager {
 
         if (errCode == WxErrCode.DUPLICATED_TAGS) {
             throw new WxDuplicateTagException("[Weixin:updateTag] tagId:" + tagId + " tagName:" + tagName);
-        } else if (errCode == WxErrCode.TAG_LENGTH_EXCEEDS) {
-            throw new WxTagLengthExceedException("[Weixin:updateTag] tagId:" + tagId + " tagName:" + tagName);
         } else if (errCode == WxErrCode.TAG_RESERVED_MODIFIED) {
             throw new WxTagReservedModifiedException("[Weixin:updateTag] tagId:" + tagId + " tagName:" + tagName);
         } else {
@@ -100,7 +94,7 @@ public class WxFanManager {
             WxFansNumExceedException, WxApiException {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("tag", ImmutableMap.of("id", tagId));
-        String result = HttpClientUtil.postJson(WxApiConfig.deleteTagsUrl(accessToken), JsonUtil.bean2String(paramMap));
+        String result = HttpClientUtil.postJson(WxApiConfig.deleteTagUrl(accessToken), JsonUtil.bean2String(paramMap));
 
         if (result == null) {
             throw new WxApiException("[WeiXin:deleteTag] result is null");
@@ -122,6 +116,69 @@ public class WxFanManager {
         }
     }
 
+    public static void addFanTag(String accessToken, List<String> fansOpenId, int tagId) throws WxOpenIdExceedException,
+            WxInvalidTagException, WxFansTagExceedException, WxInvalidOpenIdException, WxOpenIdMismatchException,
+            WxApiException {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("openid_list", fansOpenId);
+        paramMap.put("tagid", tagId);
+        String result = HttpClientUtil.postJson(WxApiConfig.setUserTagUrl(accessToken), JsonUtil.bean2String(paramMap));
 
+        if (result == null) {
+            throw new WxApiException("[WeiXin:addFanTag] result is null");
+        }
+
+        JSONObject resultJson = new JSONObject(result);
+        int errCode = resultJson.optInt("errcode");
+
+        if (errCode == 0) {
+            return;
+        }
+
+        if (errCode == WxErrCode.OPEN_ID_EXCEED) {
+            throw new WxOpenIdExceedException("[Weixin:addFanTag] tagId:" + tagId);
+        } else if (errCode == WxErrCode.INVALID_TAG) {
+            throw new WxInvalidTagException("[Weixin:addFanTag] tagId:" + tagId);
+        } else if (errCode == WxErrCode.FANS_TAG_EXCEED) {
+            throw new WxFansTagExceedException("[Weixin:addFanTag] tagId:" + tagId);
+        } else if (errCode == WxErrCode.INVALID_OPEN_ID) {
+            throw new WxInvalidOpenIdException("[Weixin:addFanTag] tagId:" + tagId);
+        } else if (errCode == WxErrCode.OPEN_ID_MISMATCH_APPID) {
+            throw new WxOpenIdMismatchException("[Weixin:addFanTag] tagId:" + tagId);
+        } else {
+            throw new WxApiException("[Weixin:addFanTag] not expected result:" + resultJson +  " tagId:" + tagId);
+        }
+    }
+
+    public static void deleteFanTag(String accessToken, List<String> fansOpenId, int tagId) throws WxOpenIdExceedException,
+            WxInvalidTagException, WxInvalidOpenIdException, WxOpenIdMismatchException, WxApiException {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("openid_list", fansOpenId);
+        paramMap.put("tagid", tagId);
+        String result = HttpClientUtil.postJson(WxApiConfig.deleteUserTagUrl(accessToken), JsonUtil.bean2String(paramMap));
+
+        if (result == null) {
+            throw new WxApiException("[WeiXin:deleteFanTag] result is null");
+        }
+
+        JSONObject resultJson = new JSONObject(result);
+        int errCode = resultJson.optInt("errcode");
+
+        if (errCode == 0) {
+            return;
+        }
+
+        if (errCode == WxErrCode.OPEN_ID_EXCEED) {
+            throw new WxOpenIdExceedException("[Weixin:deleteFanTag] tagId:" + tagId);
+        } else if (errCode == WxErrCode.INVALID_TAG) {
+            throw new WxInvalidTagException("[Weixin:deleteFanTag] tagId:" + tagId);
+        } else if (errCode == WxErrCode.INVALID_OPEN_ID) {
+            throw new WxInvalidOpenIdException("[Weixin:deleteFanTag] tagId:" + tagId);
+        } else if (errCode == WxErrCode.OPEN_ID_MISMATCH_APPID) {
+            throw new WxOpenIdMismatchException("[Weixin:deleteFanTag] tagId:" + tagId);
+        } else {
+            throw new WxApiException("[Weixin:deleteFanTag] not expected result:" + resultJson +  " tagId:" + tagId);
+        }
+    }
 
 }

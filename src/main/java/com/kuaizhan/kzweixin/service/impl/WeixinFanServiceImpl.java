@@ -62,7 +62,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
         if (openIdList != null)
             jsonObject.put("openid_list", openIdList);
         jsonObject.put("tagid", tagId);
-        String result = HttpClientUtil.postJson(WxApiConfig.setTagsUrl(accessToken), jsonObject.toString());
+        String result = HttpClientUtil.postJson(WxApiConfig.setUserTagUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         if (Integer.parseInt(returnJson.get("errcode").toString()) == 0)
             return 1;
@@ -76,7 +76,7 @@ public class WeixinFanServiceImpl implements WeixinFanService {
         Map<String, Object> id = new HashMap<>();
         id.put("id", tagId);
         jsonObject.put("tag", id);
-        String result = HttpClientUtil.postJson(WxApiConfig.deleteTagsUrl(accessToken), jsonObject.toString());
+        String result = HttpClientUtil.postJson(WxApiConfig.deleteTagUrl(accessToken), jsonObject.toString());
         JSONObject returnJson = new JSONObject(result);
         if (Integer.parseInt(returnJson.get("errcode").toString()) == 0)
             return 1;

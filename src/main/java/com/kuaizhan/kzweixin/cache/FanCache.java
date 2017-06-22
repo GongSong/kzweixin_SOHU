@@ -49,7 +49,7 @@ public interface FanCache {
      * 缓存标签
      * @param tagsList List格式的标签对象
      */
-    void setTag(long weixinAppid, List<TagDTO> tagsList) throws JsonProcessingException;
+    void setTag(long weixinAppid, List<TagDTO> tagsList);
 
 
 }

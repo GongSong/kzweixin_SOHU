@@ -56,14 +56,11 @@ public class FanCacheImpl extends RedisBaseDaoImpl implements FanCache {
             return null;
         }
         List<TagDTO> tagsList = JsonUtil.string2List(result, TagDTO.class);
-        if (tagsList != null && tagsList.size() != 0) {
-            return tagsList;
-        }
-        return null;
+        return tagsList;
     }
 
     @Override
-    public void setTag(long weixinAppid, List<TagDTO> tagsList) throws JsonProcessingException {
+    public void setTag(long weixinAppid, List<TagDTO> tagsList) {
         String key = RedisConstant.KEY_TAG + weixinAppid;
         String json = JsonUtil.list2Str(tagsList);
         setData(key, json, 10 * 60 * 60);
