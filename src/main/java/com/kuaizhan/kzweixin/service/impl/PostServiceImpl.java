@@ -88,12 +88,12 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public Page<PostPO> listPostsByPagination(long weixinAppid, String title, Integer pageNum, Boolean flat) {
+    public Page<PostPO> listPostsByPage(long weixinAppid, String title, Integer pageNum, Boolean flat) {
 
         Page<PostPO> page = new Page<>(pageNum, AppConstant.PAGE_SIZE_MIDDLE);
 
         List<PostPO> posts;
-        posts = postDao.listPostsByPagination(weixinAppid, title, page, flat);
+        posts = postDao.listPostsByPage(weixinAppid, title, page, flat);
 
         long totalCount = postDao.count(weixinAppid, title, flat);
         page.setTotalCount(totalCount);
@@ -131,8 +131,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Boolean exist(long weixinAppid, String mediaId) {
-        return postDao.exist(weixinAppid, mediaId);
+    public Boolean existPost(long weixinAppid, String mediaId) {
+        return postDao.existPost(weixinAppid, mediaId);
     }
 
     @Override

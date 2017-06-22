@@ -26,7 +26,7 @@ public interface PostService {
      * 获取图文消息列表
      * @param pageNum 页码
      */
-    Page<PostPO> listPostsByPagination(long weixinAppid, String title, Integer pageNum, Boolean flat);
+    Page<PostPO> listPostsByPage(long weixinAppid, String title, Integer pageNum, Boolean flat);
 
     /**
      * 根据mediaId获取所有的多图文
@@ -44,7 +44,7 @@ public interface PostService {
      * 是否存在微信图文
      * @return
      */
-    Boolean exist(long weixinAppid, String mediaId);
+    Boolean existPost(long weixinAppid, String mediaId);
 
     /**
      * 获取图文

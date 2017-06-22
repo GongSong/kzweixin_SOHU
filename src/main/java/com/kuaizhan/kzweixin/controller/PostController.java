@@ -51,9 +51,9 @@ public class PostController extends BaseController {
      * 获取多图文列表
      */
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
-    public JsonResponse listPostByPagination(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam(required = false) String title, @RequestParam(defaultValue = "0") Boolean flat) {
+    public JsonResponse listPostsByPage(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam(required = false) String title, @RequestParam(defaultValue = "0") Boolean flat) {
 
-        Page<PostPO> postDOPage = postService.listPostsByPagination(weixinAppid, title, page, flat);
+        Page<PostPO> postDOPage = postService.listPostsByPage(weixinAppid, title, page, flat);
         List<PostPO> postPOList = postDOPage.getResult();
 
         // 展开多图文

@@ -28,7 +28,7 @@ public interface PostDao {
      * @param page
      * @return
      */
-    List<PostPO> listPostsByPagination(@Param("weixinAppid") long weixinAppid, @Param("title") String title, @Param("pageEntity") Page page, @Param("flat") Boolean flat);
+    List<PostPO> listPostsByPage(@Param("weixinAppid") long weixinAppid, @Param("title") String title, @Param("pageEntity") Page page, @Param("flat") Boolean flat);
 
     /**
      * 获取图文消息的多图文
@@ -42,7 +42,7 @@ public interface PostDao {
     /**
      * 判断是否存在微信图文
      */
-    Boolean exist(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
+    Boolean existPost(@Param("weixinAppid") long weixinAppid, @Param("mediaId") String mediaId);
 
     /**
      * 根据mediaId删除图文, 逻辑删除

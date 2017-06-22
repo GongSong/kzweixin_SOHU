@@ -21,7 +21,7 @@
     </select>
 
     <!--根据weixin_appid分页查询图文消息列表-->
-    <select id="listPostsByPagination" parameterType="com.kuaizhan.kzweixin.entity.common.Page"
+    <select id="listPostsByPage" parameterType="com.kuaizhan.kzweixin.entity.common.Page"
             resultType="com.kuaizhan.kzweixin.dao.po.PostPO">
         select *
         from weixin_post
@@ -172,7 +172,7 @@
         WHERE `page_id` = #{pageId}
     </update>
 
-    <select id="exist" resultType="Boolean">
+    <select id="existPost" resultType="Boolean">
         SELECT COUNT(*)
         FROM weixin_post
         WHERE `weixin_appid` = #{weixinAppid} AND `media_id` = #{mediaId} AND `status` = 1

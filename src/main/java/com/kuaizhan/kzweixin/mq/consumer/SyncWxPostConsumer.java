@@ -36,7 +36,7 @@ public class SyncWxPostConsumer extends BaseConsumer {
 
         // 新增
         if (isNew) {
-            if (!postService.exist(weixinAppid, mediaId)) {
+            if (!postService.existPost(weixinAppid, mediaId)) {
                 logger.info("[mq:从微信导入单条图文], weixinAppid:{} mediaId:{}", weixinAppid, mediaId);
                 try {
                     postService.importWeixinPost(weixinAppid, mediaId, updateTime, userId, wxPostDTOS);
