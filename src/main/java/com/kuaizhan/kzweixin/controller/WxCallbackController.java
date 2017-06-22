@@ -38,7 +38,7 @@ public class WxCallbackController extends BaseController {
     /**
      * 微信消息推送
      */
-    @RequestMapping(value = "/app_ids/{appId}/events", method = RequestMethod.POST, produces = "application/xml;charset=UTF-8")
+    @RequestMapping(value = "/accounts/{appId}/events", method = RequestMethod.POST, produces = "application/xml;charset=UTF-8")
     public String weixinPush(@PathVariable String appId,
                              @RequestParam("msg_signature") String signature,
                              @RequestParam String timestamp,

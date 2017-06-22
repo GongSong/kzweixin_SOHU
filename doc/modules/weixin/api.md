@@ -3,7 +3,7 @@
 #### 1 事件推送
 * **协议**：HTTPS
 * **方法**：POST
-* **URL**：/v1/app_ids/`<appId>`/events
+* **URL**：/v1/accounts/`<appId>`/events
 * **参数**：
     * msgSignature 签名
     * timestamp 时间戳
