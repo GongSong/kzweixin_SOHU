@@ -3,7 +3,7 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.service.AccountService;
-import com.kuaizhan.kzweixin.service.ThirdPartService;
+import com.kuaizhan.kzweixin.service.WxThirdPartService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 public class WxCallbackController extends BaseController {
 
     @Resource
-    private ThirdPartService thirdPartService;
+    private WxThirdPartService wxThirdPartService;
     @Resource
     private AccountService accountService;
 
@@ -43,7 +43,7 @@ public class WxCallbackController extends BaseController {
                            @RequestParam String timestamp,
                            @RequestParam String nonce,
                            @RequestBody String postData) {
-        thirdPartService.refreshComponentVerifyTicket(signature, timestamp, nonce, postData);
+        wxThirdPartService.refreshComponentVerifyTicket(signature, timestamp, nonce, postData);
         return "success";
     }
 

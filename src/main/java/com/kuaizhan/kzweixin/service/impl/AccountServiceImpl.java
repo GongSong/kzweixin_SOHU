@@ -23,7 +23,7 @@ import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.entity.account.AuthorizationInfoDTO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPOExample;
 import com.kuaizhan.kzweixin.service.AccountService;
-import com.kuaizhan.kzweixin.service.ThirdPartService;
+import com.kuaizhan.kzweixin.service.WxThirdPartService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.MqUtil;
@@ -52,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
     @Resource
     private MqUtil mqUtil;
     @Resource
-    private ThirdPartService thirdPartService;
+    private WxThirdPartService wxThirdPartService;
 
     private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
@@ -66,14 +66,14 @@ public class AccountServiceImpl implements AccountService {
         if (siteId != null) {
             urlBuilder.append("&siteId=").append(siteId);
         }
-        String preAuthCode = WxThirdPartManager.getPreAuthCode(thirdPartService.getComponentAccessToken());
+        String preAuthCode = WxThirdPartManager.getPreAuthCode(wxThirdPartService.getComponentAccessToken());
         return WxApiConfig.getBindUrl(preAuthCode, UrlUtil.encode(urlBuilder.toString()));
     }
 
     @Override
     public void bindAccount(Long userId, String authCode, Long siteId) {
         // 获取授权信息
-        String componentAccessToken = thirdPartService.getComponentAccessToken();
+        String componentAccessToken = wxThirdPartService.getComponentAccessToken();
         AuthorizationInfoDTO.Info authInfo = WxThirdPartManager.getAuthorizationInfo(
                 ApplicationConfig.WEIXIN_APPID_THIRD,
                 componentAccessToken, authCode)
@@ -188,7 +188,7 @@ public class AccountServiceImpl implements AccountService {
             //刷新
             AccessTokenDTO accessTokenDTO = WxAccountManager.refreshAccessToken(
                     ApplicationConfig.WEIXIN_APPID_THIRD,
-                    thirdPartService.getComponentAccessToken(),
+                    wxThirdPartService.getComponentAccessToken(),
                     accountPO.getAppId(),
                     accountPO.getRefreshToken());
             accessToken = accessTokenDTO.getAccessToken();

@@ -7,7 +7,7 @@ import com.kuaizhan.kzweixin.exception.deprecated.system.EncryptException;
  * 微信第三方平台相关操作service
  * Created by Mr.Jadyn on 2017/1/19.
  */
-public interface ThirdPartService {
+public interface WxThirdPartService {
     /**
      * 验证消息的确来自微信服务器
      *

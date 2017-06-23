@@ -7,7 +7,7 @@ import com.kuaizhan.kzweixin.exception.common.GetComponentAccessTokenFailed;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.exception.deprecated.system.*;
 import com.kuaizhan.kzweixin.manager.WxThirdPartManager;
-import com.kuaizhan.kzweixin.service.ThirdPartService;
+import com.kuaizhan.kzweixin.service.WxThirdPartService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.EncryptUtil;
 import com.kuaizhan.kzweixin.utils.weixin.AesException;
@@ -29,9 +29,9 @@ import java.util.Arrays;
  * Created by liangjiateng on 2017/3/15.
  */
 @Service("weixinAuthService")
-public class ThirdPartServiceImpl implements ThirdPartService {
+public class WxThirdPartServiceImpl implements WxThirdPartService {
 
-    public static final Logger logger = LoggerFactory.getLogger(ThirdPartServiceImpl.class);
+    public static final Logger logger = LoggerFactory.getLogger(WxThirdPartServiceImpl.class);
 
     @Resource
     private AuthCache authCache;
