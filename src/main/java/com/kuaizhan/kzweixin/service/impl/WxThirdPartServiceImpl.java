@@ -5,11 +5,9 @@ import com.kuaizhan.kzweixin.cache.AuthCache;
 import com.kuaizhan.kzweixin.exception.common.DecryptException;
 import com.kuaizhan.kzweixin.exception.common.GetComponentAccessTokenFailed;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
-import com.kuaizhan.kzweixin.exception.deprecated.system.*;
 import com.kuaizhan.kzweixin.manager.WxThirdPartManager;
 import com.kuaizhan.kzweixin.service.WxThirdPartService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
-import com.kuaizhan.kzweixin.utils.EncryptUtil;
 import com.kuaizhan.kzweixin.utils.weixin.AesException;
 import com.kuaizhan.kzweixin.utils.weixin.WXBizMsgCrypt;
 import org.dom4j.Document;
@@ -22,13 +20,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 /**
  * Created by liangjiateng on 2017/3/15.
  */
-@Service("weixinAuthService")
+@Service
 public class WxThirdPartServiceImpl implements WxThirdPartService {
 
     public static final Logger logger = LoggerFactory.getLogger(WxThirdPartServiceImpl.class);
@@ -37,39 +33,25 @@ public class WxThirdPartServiceImpl implements WxThirdPartService {
     private AuthCache authCache;
 
     @Override
-    public boolean checkMsg(String signature, String timestamp, String nonce) throws EncryptException {
-        String[] arrTmp = {ApplicationConfig.WEIXIN_TOKEN, timestamp, nonce};
-        Arrays.sort(arrTmp);
-        StringBuilder sb = new StringBuilder();
-        for (String anArrTmp : arrTmp) {
-            sb.append(anArrTmp);
-        }
-        String pwd;
-        try {
-            pwd = EncryptUtil.sha1(sb.toString());
-        } catch (NoSuchAlgorithmException e) {
-            throw new EncryptException(e);
-        }
-        return pwd.equals(signature);
-    }
-
-    @Override
-    public void refreshComponentVerifyTicket(String signature, String timestamp, String nonce, String postData) {
-        //对消息进行解密
-        String msg;
-        logger.info("[WeiXin:ticket] ticket callback calling");
+    public String decryptMsg(String signature, String timestamp, String nonce, String postData) {
         try {
             WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN,
                     ApplicationConfig.WEIXIN_AES_KEY,
                     ApplicationConfig.WEIXIN_APPID_THIRD);
-            msg = wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
+            return wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
         } catch (AesException e) {
-            throw new DecryptException("[WeiXin:getComponentVerifyTicket] decrypt failed", e);
+            throw new DecryptException("[WeiXin:decryptMsg] decrypt failed, appId:" + ApplicationConfig.WEIXIN_APPID_THIRD, e);
         }
+    }
+
+    @Override
+    public void refreshComponentVerifyTicket(String xmlStr) {
+        //对消息进行解密
+        logger.info("[WeiXin:ticket] ticket callback calling");
         //解析xml
         Document document;
         try {
-            document = DocumentHelper.parseText(msg);
+            document = DocumentHelper.parseText(xmlStr);
         } catch (DocumentException e) {
             throw new XMLParseException("[WeiXin:getComponentVerifyTicket] xml parse failed", e);
         }

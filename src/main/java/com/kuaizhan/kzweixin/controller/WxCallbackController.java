@@ -39,11 +39,12 @@ public class WxCallbackController extends BaseController {
      * 获取微信推送的component_verify_ticket
      */
     @RequestMapping(value = "/auth/tickets", method = RequestMethod.POST)
-    public String receiver(@RequestParam("msg_signature") String signature,
-                           @RequestParam String timestamp,
-                           @RequestParam String nonce,
-                           @RequestBody String postData) {
-        wxThirdPartService.refreshComponentVerifyTicket(signature, timestamp, nonce, postData);
+    public String refreshTicket(@RequestParam("msg_signature") String signature,
+                                @RequestParam String timestamp,
+                                @RequestParam String nonce,
+                                @RequestBody String postData) {
+        String xmlStr = wxThirdPartService.decryptMsg(signature, timestamp, nonce, postData);
+        wxThirdPartService.refreshComponentVerifyTicket(xmlStr);
         return "success";
     }
 
@@ -52,11 +53,12 @@ public class WxCallbackController extends BaseController {
      * 微信消息推送
      */
     @RequestMapping(value = "/accounts/{appId}/events", method = RequestMethod.POST, produces = "application/xml;charset=UTF-8")
-    public String weixinPush(@PathVariable String appId,
-                             @RequestParam("msg_signature") String signature,
-                             @RequestParam String timestamp,
-                             @RequestParam String nonce,
-                             @RequestBody(required = false) String postData) {
+    public String handleEventPush(@PathVariable String appId,
+                                  @RequestParam("msg_signature") String signature,
+                                  @RequestParam String timestamp,
+                                  @RequestParam String nonce,
+                                  @RequestBody String postData) {
+        String xmlStr = wxThirdPartService.decryptMsg(signature, timestamp, nonce, postData);
         //检查消息是否来自微信
         return "success";
     }

@@ -1,26 +1,24 @@
 package com.kuaizhan.kzweixin.service;
 
 
-import com.kuaizhan.kzweixin.exception.deprecated.system.EncryptException;
-
 /**
  * 微信第三方平台相关操作service
  * Created by Mr.Jadyn on 2017/1/19.
  */
 public interface WxThirdPartService {
+
     /**
-     * 验证消息的确来自微信服务器
-     *
-     * @param signature 微信加密签名，signature结合了开发者填写的token参数和请求中的timestamp参数、nonce参数。
-     * @param timestamp 时间戳
-     * @param nonce     随机数
+     * 解密微信回调的消息体
+     * @param msg 解密前文本
+     * @return 机密后文本
      */
-    boolean checkMsg(String signature, String timestamp, String nonce) throws EncryptException;
+    String decryptMsg(String signature, String timestamp, String nonce, String msg);
 
     /**
      * 接收微信推送，刷新ComponentVerifyTicket
+     * @param xmlStr 微信推送的xml
      */
-    void refreshComponentVerifyTicket(String signature, String timestamp, String nonce, String postData);
+    void refreshComponentVerifyTicket(String xmlStr);
 
     /**
      * 获取第三方平台component_access_token
