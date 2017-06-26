@@ -179,4 +179,30 @@ public class KzManager {
         return true;
     }
 
+    public static String kzResponseMsg(String appId, String timestamp, String nonce, String xmlStr) {
+        Map<String, Object> param =  new HashMap<>();
+        param.put("app_id", appId);
+        param.put("timestamp", timestamp);
+        param.put("nonce", nonce);
+        param.put("post_str", xmlStr);
+
+        Map<String, String> header = ImmutableMap.of("Host", ApplicationConfig.KZ_SERVICE_HOST);
+
+        String result = HttpClientUtil.post(KzApiConfig.KZ_OLD_WX_CALLBACK, param, header);
+        if (result == null) {
+            throw new KzApiException("[Kz:responseMsg] result is null");
+        }
+
+        JSONObject resultJson;
+        try {
+            resultJson = new JSONObject(result);
+        } catch (JSONException e) {
+            throw new KzApiException("[Kz:responseMsg] Json Parse Error, result:" + result);
+        }
+        if (resultJson.optInt("ret") != 0) {
+            throw new KzApiException("[Kz:responseMsg] unexpected result, result:" + result);
+        }
+        return resultJson.getString("result");
+    }
+
 }

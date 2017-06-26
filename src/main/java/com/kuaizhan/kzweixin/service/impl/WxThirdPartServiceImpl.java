@@ -40,7 +40,11 @@ public class WxThirdPartServiceImpl implements WxThirdPartService {
                     ApplicationConfig.WEIXIN_APPID_THIRD);
             return wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
         } catch (AesException e) {
-            throw new DecryptException("[WeiXin:decryptMsg] decrypt failed, appId:" + ApplicationConfig.WEIXIN_APPID_THIRD, e);
+            throw new DecryptException("[WeiXin:decryptMsg] decrypt failed," +
+                    " signature:" + signature +
+                    " timestamp:" + timestamp +
+                    " nonce:" + nonce +
+                    " postData:" + postData, e);
         }
     }
 

@@ -11,7 +11,9 @@ public class KzApiConfig {
     // 上传图片到快站用户空间
     public static final String KZ_UPLOAD_PIC_URL = "http://" + ApplicationConfig.KZ_SERVICE_IP + "/pic/service-upload-pic-by-url";
     // 新增快文
-    public static final String KZ_POST_ARTICLE_URL = "http://"+ ApplicationConfig.KZ_SERVICE_HOST + "/post/service-sync-to-kz-post";
+    public static final String KZ_POST_ARTICLE_URL = "http://" + ApplicationConfig.KZ_SERVICE_HOST + "/post/service-sync-to-kz-post";
+    // 微信回调，老的php处理
+    public static final String KZ_OLD_WX_CALLBACK = "http://" + ApplicationConfig.KZ_SERVICE_IP + "/weixin/service-wx-callback-response-msg";
 
 
     // 获取快文详情

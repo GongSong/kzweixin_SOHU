@@ -9,10 +9,10 @@ public interface WxThirdPartService {
 
     /**
      * 解密微信回调的消息体
-     * @param msg 解密前文本
+     * @param postData 解密前文本
      * @return 机密后文本
      */
-    String decryptMsg(String signature, String timestamp, String nonce, String msg);
+    String decryptMsg(String signature, String timestamp, String nonce, String postData);
 
     /**
      * 接收微信推送，刷新ComponentVerifyTicket

@@ -3,6 +3,7 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.service.AccountService;
+import com.kuaizhan.kzweixin.service.WxPushService;
 import com.kuaizhan.kzweixin.service.WxThirdPartService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
@@ -22,6 +23,8 @@ public class WxCallbackController extends BaseController {
     private WxThirdPartService wxThirdPartService;
     @Resource
     private AccountService accountService;
+    @Resource
+    private WxPushService wxPushService;
 
     /**
      * 新增绑定，微信服务器跳转回来
@@ -59,7 +62,6 @@ public class WxCallbackController extends BaseController {
                                   @RequestParam String nonce,
                                   @RequestBody String postData) {
         String xmlStr = wxThirdPartService.decryptMsg(signature, timestamp, nonce, postData);
-        //检查消息是否来自微信
-        return "success";
+        return wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
     }
 }
