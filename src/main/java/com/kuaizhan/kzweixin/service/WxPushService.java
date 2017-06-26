@@ -7,7 +7,7 @@ package com.kuaizhan.kzweixin.service;
 public interface WxPushService {
 
     /**
-     * 事件推送处理
+     * 微信服务器事件推送处理
      * @param xmlStr xml数据
      * @return 返回字符串
      */

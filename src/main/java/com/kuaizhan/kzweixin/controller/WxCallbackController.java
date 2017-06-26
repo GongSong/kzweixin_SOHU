@@ -5,6 +5,9 @@ import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.WxPushService;
 import com.kuaizhan.kzweixin.service.WxThirdPartService;
+import com.kuaizhan.kzweixin.utils.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -18,6 +21,8 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping(value = "public/" + AppConstant.VERSION)
 public class WxCallbackController extends BaseController {
+
+    private static final Logger logger = LoggerFactory.getLogger(WxCallbackController.class);
 
     @Resource
     private WxThirdPartService wxThirdPartService;
@@ -62,6 +67,17 @@ public class WxCallbackController extends BaseController {
                                   @RequestParam String nonce,
                                   @RequestBody String postData) {
         String xmlStr = wxThirdPartService.decryptMsg(signature, timestamp, nonce, postData);
-        return wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
+
+        long startTime = System.currentTimeMillis();
+        String resultStr = wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
+
+        // 超过两秒warning日志
+        long delta = System.currentTimeMillis() - startTime;
+        if (delta > 2 * 1000) {
+            logger.warn("[Weixin:event] handle time up to 2 seconds, time:" + delta);
+        } else if (delta > 4 * 1000) {
+            logger.error("[Weixin:event] handle time up to 4 seconds, time:" + delta);
+        }
+        return resultStr;
     }
 }
