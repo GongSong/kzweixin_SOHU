@@ -3,7 +3,7 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.constant.MsgType;
+import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.controller.vo.MsgListVO;
 import com.kuaizhan.kzweixin.controller.param.WeixinAppidParam;

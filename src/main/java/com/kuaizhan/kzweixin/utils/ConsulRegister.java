@@ -1,7 +1,6 @@
-package com.kuaizhan.kzweixin.common;
+package com.kuaizhan.kzweixin.utils;
 
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
-import com.kuaizhan.kzweixin.utils.HttpClientUtil;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

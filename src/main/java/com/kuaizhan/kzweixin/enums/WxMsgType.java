@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.constant;
+package com.kuaizhan.kzweixin.enums;
 
 import java.util.HashMap;
 import java.util.Map;

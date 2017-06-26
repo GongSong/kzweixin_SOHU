@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
 
-import com.kuaizhan.kzweixin.constant.MsgType;
+import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 

@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.manager;
 
 import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.WxErrCode;
-import com.kuaizhan.kzweixin.constant.WxMsgType;
+import com.kuaizhan.kzweixin.enums.WxMsgType;
 import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidOpenIdException;
 import com.kuaizhan.kzweixin.exception.weixin.WxOutOfResponseLimitException;
