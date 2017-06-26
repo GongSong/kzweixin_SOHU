@@ -3,7 +3,6 @@ package com.kuaizhan.kzweixin.common;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +38,6 @@ public class TmpTest {
 
     @Test
     public void testInt() throws Exception {
-        System.out.println("---->" + JsonUtil.string2List("[]", String.class));
-        System.out.println("---->" + new JSONObject("{}"));
     }
 
     @Test

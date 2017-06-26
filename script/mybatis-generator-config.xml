@@ -10,7 +10,7 @@
 
             <commentGenerator>
                     <property name="suppressDate" value="true" />
-                    <property name="suppressAllComments" value="false" />
+                    <property name="suppressAllComments" value="true" />
             </commentGenerator>
 
             <jdbcConnection driverClass="com.mysql.jdbc.Driver"
@@ -59,7 +59,13 @@
             <!--<table tableName="weixin_msg_0" domainObjectName="MsgPO" mapperName="MsgMapper">-->
             <!--</table>-->
 
-            <table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">
+            <!--<table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">-->
+            <!--</table>-->
+
+            <table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">
+                <generatedKey column="id" sqlStatement="MySql" identity="true" />
+                <columnOverride column="action_type" javaType="java.lang.Integer"/>
+                <columnOverride column="response_type" javaType="java.lang.Integer"/>
             </table>
 
         </context>
