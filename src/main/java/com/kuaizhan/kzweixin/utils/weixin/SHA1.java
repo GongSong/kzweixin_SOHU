@@ -1,5 +1,7 @@
 /**
- * 对公众平台发送给公众账号的消息加解密
+ * 对公众平台发送给公众账号的消息加解密示例代码.
+ * 
+ * @copyright Copyright (c) 1998-2014 Tencent Inc.
  */
 
 // ------------------------------------------------------------------------
@@ -23,7 +25,7 @@ class SHA1 {
 	 * @param nonce 随机字符串
 	 * @param encrypt 密文
 	 * @return 安全签名
-	 * @throws AesException
+	 * @throws AesException 
 	 */
 	public static String getSHA1(String token, String timestamp, String nonce, String encrypt) throws AesException
 			  {

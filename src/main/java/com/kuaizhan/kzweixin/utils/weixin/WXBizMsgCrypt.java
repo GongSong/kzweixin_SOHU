@@ -1,5 +1,7 @@
 /**
- * 对公众平台发送给公众账号的消息加解密
+ * 对公众平台发送给公众账号的消息加解密示例代码.
+ * 
+ * @copyright Copyright (c) 1998-2014 Tencent Inc.
  */
 
 // ------------------------------------------------------------------------
@@ -11,14 +13,15 @@
  */
 package com.kuaizhan.kzweixin.utils.weixin;
 
-import org.apache.commons.codec.binary.Base64;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Random;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * 提供接收和推送给公众平台消息的加解密接口(UTF8编码的字符串).
@@ -161,7 +164,6 @@ public class WXBizMsgCrypt {
 			// 解密
 			original = cipher.doFinal(encrypted);
 		} catch (Exception e) {
-
 			e.printStackTrace();
 			throw new AesException(AesException.DecryptAESError);
 		}
