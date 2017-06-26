@@ -53,4 +53,6 @@ public class WxErrCode {
     public static final int FANS_TAG_EXCEED = 45059;
     // OpenId不属于此AppId
     public static final int OPEN_ID_MISMATCH_APPID = 49003;
+    // 单次拉黑用户超过20个上限
+    public static final int ADD_BLACKLIST_EXCEED_LIMIT = 40032;
 }

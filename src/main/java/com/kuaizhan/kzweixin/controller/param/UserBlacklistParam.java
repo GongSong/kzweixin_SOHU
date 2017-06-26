@@ -7,10 +7,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * Created by fangtianyu on 6/20/17.
+ * Created by fangtianyu on 6/22/17.
  */
 @Data
-public class UpdateFanTagParam {
+public class UserBlacklistParam {
     @NotNull
     private Long weixinAppid;
 
@@ -18,9 +18,6 @@ public class UpdateFanTagParam {
     @Size(min = 1, max = 20)
     private List<String> fansOpenId;
 
-    @Size(max = 3)
-    private List<Integer> newTagsId;
-
-    @Size(max = 3)
-    private List<Integer> deleteTagsId;
+    @NotNull
+    private Boolean setBlacklist;
 }

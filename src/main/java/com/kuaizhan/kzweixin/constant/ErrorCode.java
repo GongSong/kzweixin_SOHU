@@ -44,6 +44,7 @@ public class ErrorCode {
     public static final ErrorCode INVALID_TAG_ERROR = new ErrorCode(104007, "非法标签错误");
     public static final ErrorCode FANS_TAG_EXCEED = new ErrorCode(104008, "粉丝标签超过20个");
     public static final ErrorCode OPEN_ID_MISMATCH_ERROR = new ErrorCode(104009, "OpenId不属于此公众号");
+    public static final ErrorCode ADD_BLACKLIST_EXCEED_LIMIT = new ErrorCode(104010, "一次只能拉黑/取消拉黑20个用户");
 
     // 图文(07)
     public static final ErrorCode POST_USED_BY_OTHER_ERROR = new ErrorCode(107001, "自定义菜单或自动回复中包含该图文，无法删除");

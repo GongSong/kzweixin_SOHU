@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
-
+import com.kuaizhan.kzweixin.entity.common.Page;
 import java.util.List;
 
 /**
@@ -57,4 +57,28 @@ public interface FanService {
      * @param deleteTagsId 删除标签Id
      */
     void deleteFanTag(long weixinAppid, List<String> fansOpenId, List<Integer> deleteTagsId);
+
+    /**
+     * 按标签搜索粉丝
+     * @param pageNum 当前页页码
+     * @param pageSize 每页显示结果条数
+     * @param tagIds 粉丝所在的标签组
+     * @param queryStr 关键字搜索字符串
+     * @param isBlacklist 是否在黑名单里查找
+     * @return 粉丝信息列表
+     * */
+    Page<FanPO> listFansByPage(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist);
+
+    /**
+     * 拉黑用户
+     * @param fansOpenId 粉丝Id列表
+     */
+    void addFanBlacklist(long weixinAppid, List<String> fansOpenId);
+
+    /**
+     * 取消拉黑用户
+     * @param fansOpenId 粉丝Id列表
+     */
+    void removeFanBlacklist(long weixinAppid, List<String> fansOpenId);
+
 }

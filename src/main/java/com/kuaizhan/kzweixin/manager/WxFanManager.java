@@ -181,4 +181,59 @@ public class WxFanManager {
         }
     }
 
+    public static void addBlacklist(String accessToken, List<String> fansOpenId) throws WxInvalidOpenIdException,
+            WxOpenIdMismatchException, WxBlacklistExceedException, WxApiException{
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("openid_list", fansOpenId);
+        String result = HttpClientUtil.postJson(WxApiConfig.insertBlackUrl(accessToken), JsonUtil.bean2String(paramMap));
+
+        if (result == null) {
+            throw new WxApiException("[WeiXin:addBlacklist] result is null");
+        }
+
+        JSONObject resultJson = new JSONObject(result);
+        int errCode = resultJson.optInt("errcode");
+
+        if (errCode == 0) {
+            return;
+        }
+
+        if (errCode == WxErrCode.INVALID_OPEN_ID) {
+            throw new WxInvalidOpenIdException("[Weixin:addBlacklist] fansOpenId:" + fansOpenId.toString());
+        } else if (errCode == WxErrCode.OPEN_ID_MISMATCH_APPID) {
+            throw new WxOpenIdMismatchException("[Weixin:addBlacklist] fansOpenId:" + fansOpenId.toString());
+        } else if (errCode == WxErrCode.ADD_BLACKLIST_EXCEED_LIMIT) {
+            throw new WxBlacklistExceedException("[Weixin:addBlacklist] fansOpenId:" + fansOpenId.toString());
+        } else {
+            throw new WxApiException("[Weixin:addBlacklist] not expected result:" + resultJson +  " fansOpenId:" + fansOpenId.toString());
+        }
+    }
+
+    public static void removeBlacklist(String accessToken, List<String> fansOpenId) throws WxInvalidOpenIdException,
+            WxOpenIdMismatchException, WxBlacklistExceedException, WxApiException{
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("openid_list", fansOpenId);
+        String result = HttpClientUtil.postJson(WxApiConfig.deleteBlackUrl(accessToken), JsonUtil.bean2String(paramMap));
+
+        if (result == null) {
+            throw new WxApiException("[WeiXin:removeBlacklist] result is null");
+        }
+
+        JSONObject resultJson = new JSONObject(result);
+        int errCode = resultJson.optInt("errcode");
+
+        if (errCode == 0) {
+            return;
+        }
+
+        if (errCode == WxErrCode.INVALID_OPEN_ID) {
+            throw new WxInvalidOpenIdException("[Weixin:removeBlacklist] fansOpenId:" + fansOpenId.toString());
+        } else if (errCode == WxErrCode.OPEN_ID_MISMATCH_APPID) {
+            throw new WxOpenIdMismatchException("[Weixin:removeBlacklist] fansOpenId:" + fansOpenId.toString());
+        } else if (errCode == WxErrCode.ADD_BLACKLIST_EXCEED_LIMIT) {
+            throw new WxBlacklistExceedException("[Weixin:removeBlacklist] fansOpenId:" + fansOpenId.toString());
+        } else {
+            throw new WxApiException("[Weixin:removeBlacklist] not expected result:" + resultJson +  " fansOpenId:" + fansOpenId.toString());
+        }
+    }
 }

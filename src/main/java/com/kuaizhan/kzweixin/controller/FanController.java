@@ -5,7 +5,10 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.param.TagNameParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateFanTagParam;
+import com.kuaizhan.kzweixin.controller.param.UserBlacklistParam;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
+import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
+import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
@@ -74,4 +77,30 @@ public class FanController extends BaseController {
         fansService.deleteFanTag(param.getWeixinAppid(), param.getFansOpenId(), param.getDeleteTagsId());
         return new JsonResponse(ImmutableMap.of());
     }
+
+    /**
+     * 按标签搜索粉丝
+     * */
+    @RequestMapping(value = "/fan/search", method = RequestMethod.GET)
+    public JsonResponse fanTagSearch(@RequestParam long weixinAppid, @RequestParam int pageNum,
+                                     @RequestParam(required = false) List<Integer> tagIds,
+                                     @RequestParam(required = false) String queryStr,
+                                     @RequestParam(required = false, defaultValue = "0") int isBlacklist) {
+        Page<FanPO> fanList = fansService.listFansByPage(weixinAppid, pageNum, AppConstant.PAGE_SIZE_LARGE, tagIds, queryStr, isBlacklist);
+        return new JsonResponse(fanList);
+    }
+
+    /**
+     * 更新黑名单用户信息
+     * */
+    @RequestMapping(value = "/fan/blacklist", method = RequestMethod.POST)
+    public JsonResponse updateFanBlacklist(@Valid @RequestBody UserBlacklistParam param) {
+        if (param.getSetBlacklist()) {
+            fansService.addFanBlacklist(param.getWeixinAppid(), param.getFansOpenId());
+        } else {
+            fansService.removeFanBlacklist(param.getWeixinAppid(), param.getFansOpenId());
+        }
+        return new JsonResponse(ImmutableMap.of());
+    }
+
 }
