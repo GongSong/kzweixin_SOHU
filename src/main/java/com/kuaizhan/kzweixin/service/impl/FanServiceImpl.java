@@ -247,45 +247,6 @@ public class FanServiceImpl implements FanService {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         Page<FanPO> fanPage = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
         FanPOExample example = new FanPOExample();
-////        FanPOExample.Criteria criteria = example.createCriteria();
-////        criteria.andStatusEqualTo(1)
-////                .andAppIdEqualTo(accountPO.getAppId())
-////                .andInBlacklistEqualTo(isBlacklist);
-//
-//        example.createCriteria()
-//                .andStatusEqualTo(1)
-//                .andAppIdEqualTo(accountPO.getAppId())
-//                .andInBlacklistEqualTo(isBlacklist);
-//
-//        if (tagIds != null && tagIds.size() != 0) {
-//            for (int tagId: tagIds) {
-//                String tagIdStr = tagId + "";
-//                if ("2".equals(tagIdStr)) {
-////                    criteria.andTagIdsJsonLike("%[2]%")
-////                            .andTagIdsJsonLike("%,2]%")
-////                            .andTagIdsJsonLike("%[2,%")
-////                            .andTagIdsJsonLike("%,2,%");
-//                    example.or().andTagIdsJsonLike("%[2]%");
-//                    example.or().andTagIdsJsonLike("%,2]%");
-//                    example.or().andTagIdsJsonLike("%[2,%");
-//                    example.or().andTagIdsJsonLike("%,2,%");
-//                } else {
-////                    criteria.andTagIdsJsonLike("%" + tagIdStr + "%");
-//                    example.or().andTagIdsJsonLike("%" + tagIdStr + "%");
-//                }
-//            }
-//        } else if (queryStr != null && !"".equals(queryStr)) {
-////            criteria.andNickNameLike(queryStr);
-//            example.or().andNickNameLike(queryStr);
-//        }
-////        example.or(criteria);
-
-
-
-//        FanPOExample.Criteria criteria = example.createCriteria();
-//        criteria.andStatusEqualTo(1)
-//                .andAppIdEqualTo(accountPO.getAppId())
-//                .andInBlacklistEqualTo(isBlacklist);
 
         if (tagIds != null && tagIds.size() != 0) {
             for (int tagId: tagIds) {
@@ -343,21 +304,10 @@ public class FanServiceImpl implements FanService {
             example.or(criteria7);
         }
 
-
-
-
-
-
-
-        System.out.println("##########################################################################################");
         RowBounds rowBounds = new RowBounds(fanPage.getOffset(), fanPage.getLimit());
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());
         long totalCount = fanMapper.countByExample(example, table);
-        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-        System.out.println("[Service]totalCount:" + totalCount);
         List<FanPO> fanList = fanMapper.selectByExampleWithRowbounds(example, rowBounds, table);
-        System.out.println("------------------------------------------------------------------------------------------");
-//        System.out.println("[Service]fanList1:" + fanList.get(0).getNickName() + " 2:" + fanList.get(1).getNickName());
         fanPage.setTotalCount(totalCount);
         fanPage.setResult(fanList);
         return fanPage;
@@ -427,5 +377,22 @@ public class FanServiceImpl implements FanService {
                 fanMapper.updateByPrimaryKeySelective(fanPO, table);
             }
         }
+    }
+
+
+    @Override
+    public Page<FanPO> listFansByPageFromDao(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist) {
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        Page<FanPO> fanPage = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
+        String table = DBTableUtil.getFanTableName(accountPO.getAppId());
+
+        long totalCount = fanDao.countFan(accountPO.getAppId(), isBlacklist, tagIds, queryStr, table);
+        List<FanPO> fanPOList = fanDao.listFansByPage(accountPO.getAppId(), fanPage, isBlacklist, tagIds, queryStr, table);
+
+        fanPage.setTotalCount(totalCount);
+        fanPage.setResult(fanPOList);
+
+        return fanPage;
+
     }
 }

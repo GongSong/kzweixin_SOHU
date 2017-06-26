@@ -86,7 +86,8 @@ public class FanController extends BaseController {
                                      @RequestParam(required = false) List<Integer> tagIds,
                                      @RequestParam(required = false) String queryStr,
                                      @RequestParam(required = false, defaultValue = "0") int isBlacklist) {
-        Page<FanPO> fanList = fansService.listFansByPage(weixinAppid, pageNum, AppConstant.PAGE_SIZE_LARGE, tagIds, queryStr, isBlacklist);
+//        Page<FanPO> fanList = fansService.listFansByPage(weixinAppid, pageNum, AppConstant.PAGE_SIZE_LARGE, tagIds, queryStr, isBlacklist);
+        Page<FanPO> fanList = fansService.listFansByPageFromDao(weixinAppid, pageNum, AppConstant.PAGE_SIZE_LARGE, tagIds, queryStr, isBlacklist);
         return new JsonResponse(fanList);
     }
 

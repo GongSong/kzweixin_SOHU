@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kuaizhan.kzweixin.dao.mapper.FanDao">
+
+    <!--根据weixin_appid查询粉丝总数-->
+    <select id="countFan" parameterType="Long" resultType="Long">
+        SELECT COUNT(*)
+        FROM ${tableName}
+        WHERE `app_id` = #{appId} AND `status` = 1
+        <if test="isBlacklist != null">
+            AND `in_blacklist` = #{isBlacklist}
+        </if>
+        <if test="tagIds != null">
+            AND
+            <foreach item="tagId" index="index" collection="tagIds"
+                     open=" (tag_ids_json LIKE" separator="and" close=")">
+                <if test="tagId == 2">
+                    CONCAT('%[', #{tagId}, ']%')
+                    OR tag_ids_json LIKE CONCAT('%,', #{tagId}, ']%')
+                    OR tag_ids_json LIKE CONCAT('%[', #{tagId}, ',%')
+                    OR tag_ids_json LIKE CONCAT('%,', #{tagId}, ',%')
+                </if>
+                <if test="tagId != 2">
+                    CONCAT('%', #{tagId}, '%')
+                </if>
+            </foreach>
+        </if>
+        <if test="queryStr != null">
+            AND `nick_name` LIKE CONCAT('%', #{queryStr} ,'%')
+        </if>
+    </select>
+
+    <!--根据weixin_appid分页查询粉丝信息列表-->
+    <select id="listFansByPage" parameterType="com.kuaizhan.kzweixin.entity.common.Page"
+            resultType="com.kuaizhan.kzweixin.dao.po.auto.FanPO">
+        SELECT *
+        FROM ${tableName}
+        WHERE `app_id` = #{appId} AND `status` = 1
+        <if test="isBlacklist != null">
+            AND `in_blacklist` = #{isBlacklist}
+        </if>
+        <if test="tagIds != null">
+            AND
+            <foreach item="tagId" index="index" collection="tagIds"
+                     open=" (tag_ids_json LIKE" separator="and" close=")">
+                <if test="tagId == 2">
+                    CONCAT('%[', #{tagId}, ']%')
+                    OR tag_ids_json LIKE CONCAT('%,', #{tagId}, ']%')
+                    OR tag_ids_json LIKE CONCAT('%[', #{tagId}, ',%')
+                    OR tag_ids_json LIKE CONCAT('%,', #{tagId}, ',%')
+                </if>
+                <if test="tagId != 2">
+                    CONCAT('%', #{tagId}, '%')
+                </if>
+            </foreach>
+        </if>
+        <if test="queryStr != null">
+            AND `nick_name` LIKE CONCAT('%', #{queryStr} ,'%')
+        </if>
+        ORDER BY `create_time` DESC
+        limit #{pageEntity.offset}, #{pageEntity.limit}
+    </select>
+
+</mapper>
