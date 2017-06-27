@@ -43,6 +43,7 @@ public class ErrorCode {
     public static final ErrorCode THUMB_MEDIA_ID_NOT_EXIST_ERROR = new ErrorCode(107010, "封面图在微信后台被删除，请重新上传");
     public static final ErrorCode DIFFERENT_POSTS_NUM_ERROR = new ErrorCode(107011, "多图文的条数在微信后台与快站不一致，请前往微信公众平台查看");
     public static final ErrorCode MEDIA_COUNT_OUT_OF_LIMIT = new ErrorCode(107012, "微信图片素材数量超出限制，请前往微信公众平台查看");
+    public static final ErrorCode CAN_NOT_CHANGE_POST_NUM = new ErrorCode(107013, "由于微信限制，不能修改多图文的数目");
 
     // 消息、模板消息(08)
     public static final ErrorCode TPL_DATA_FORMAT_ERROR = new ErrorCode(108001, "模板消息数据格式错误");

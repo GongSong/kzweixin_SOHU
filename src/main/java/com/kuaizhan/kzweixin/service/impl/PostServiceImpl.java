@@ -12,10 +12,8 @@ import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.DownloadFileFailedException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.Export2KzException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.GetKzArticleException;
-import com.kuaizhan.kzweixin.exception.deprecated.business.*;
 import com.kuaizhan.kzweixin.dao.mongo.MongoPostDao;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
-import com.kuaizhan.kzweixin.exception.post.CleanPostException;
 import com.kuaizhan.kzweixin.exception.weixin.WxMediaIdNotExistException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxPostManager;
@@ -30,7 +28,6 @@ import com.kuaizhan.kzweixin.entity.post.WxPostDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.PostService;
 import com.kuaizhan.kzweixin.utils.*;
-import com.vdurmont.emoji.EmojiParser;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -249,7 +246,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void insertMultiPosts(long weixinAppid, List<PostPO> posts) throws Exception {
+    public void insertMultiPosts(long weixinAppid, List<PostPO> posts)  {
 
         // 在方法执行过程中，有失效的风险
         String accessToken = accountService.getAccessToken(weixinAppid);
@@ -258,7 +255,7 @@ public class PostServiceImpl implements PostService {
         posts = cleanPosts(posts, accessToken);
 
         // 上传到微信
-        String mediaId = WxPostManager.uploadPosts(accessToken, wrapWeiXinPosts(accessToken, posts));
+        String mediaId = WxPostManager.uploadPosts(accessToken, wrapWxPosts(accessToken, posts));
         for (PostPO postPO : posts) {
             postPO.setMediaId(mediaId);
         }
@@ -268,7 +265,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updateMultiPosts(long weixinAppid, long pageId, List<PostPO> posts) throws Exception {
+    public void updateMultiPosts(long weixinAppid, long pageId, List<PostPO> posts) {
 
         // 老图文
         List<PostPO> oldPosts;
@@ -285,7 +282,7 @@ public class PostServiceImpl implements PostService {
 
         // 数目不对应, 接口调用错误
         if (oldPosts.size() != posts.size()) {
-            throw new ParamException("由于微信限制，不能修改多图文的数目:" + oldPosts.size());
+            throw new BusinessException(ErrorCode.CAN_NOT_CHANGE_POST_NUM);
         }
 
         String accessToken = accountService.getAccessToken(weixinAppid);
@@ -293,7 +290,7 @@ public class PostServiceImpl implements PostService {
         // 对图文数据做预处理
         posts = cleanPosts(posts, accessToken);
         // 更新到微信的图文数据
-        List<PostPO> wxPosts = wrapWeiXinPosts(accessToken, posts);
+        List<PostPO> wxPosts = wrapWxPosts(accessToken, posts);
 
         // 修改微信后台文章
         String mediaId = oldPost.getMediaId();
@@ -341,25 +338,13 @@ public class PostServiceImpl implements PostService {
      * 比较两个post上传给微信的字段是否不同
      */
     private boolean wxPostEqual(PostPO postPO1, PostPO postPO2) {
-        if (!Objects.equals(postPO1.getTitle(), postPO2.getTitle())) {
-            return false;
-        }
-        if (!Objects.equals(postPO1.getThumbMediaId(), postPO2.getThumbMediaId())) {
-            return false;
-        }
-        if (!Objects.equals(postPO1.getAuthor(), postPO2.getAuthor())) {
-            return false;
-        }
-        if (!Objects.equals(postPO1.getDigest(), postPO2.getDigest())) {
-            return false;
-        }
-        if (!Objects.equals(postPO1.getShowCoverPic(), postPO2.getShowCoverPic())) {
-            return false;
-        }
-        if (!Objects.equals(postPO1.getContentSourceUrl(), postPO2.getContentSourceUrl())) {
-            return false;
-        }
-        if (!Objects.equals(postPO1.getContent(), postPO2.getContent())) {
+        if (!Objects.equals(postPO1.getTitle(), postPO2.getTitle())
+                || !Objects.equals(postPO1.getThumbMediaId(), postPO2.getThumbMediaId())
+                || !Objects.equals(postPO1.getAuthor(), postPO2.getAuthor())
+                || !Objects.equals(postPO1.getDigest(), postPO2.getDigest())
+                || !Objects.equals(postPO1.getShowCoverPic(), postPO2.getShowCoverPic())
+                || !Objects.equals(postPO1.getContentSourceUrl(), postPO2.getContentSourceUrl())
+                || !Objects.equals(postPO1.getContent(), postPO2.getContent())) {
             return false;
         }
         return true;
@@ -403,7 +388,7 @@ public class PostServiceImpl implements PostService {
      * 把存数据库的多图文DO对象，封装成同步给微信的。
      * 替换了内容中的图片url为wx_src
      */
-    private List<PostPO> wrapWeiXinPosts(String accessToken, List<PostPO> posts) throws Exception {
+    private List<PostPO> wrapWxPosts(String accessToken, List<PostPO> posts) {
         List<PostPO> wxPosts = new ArrayList<>();
 
         for (PostPO postPO : posts) {
@@ -415,7 +400,7 @@ public class PostServiceImpl implements PostService {
             wxPost.setShowCoverPic(postPO.getShowCoverPic());
             wxPost.setContentSourceUrl(postPO.getContentSourceUrl());
             // 替换内容
-            String replacedContent = replaceContentForUpload(accessToken, postPO.getContent());
+            String replacedContent = getWxContent(accessToken, postPO.getContent());
             wxPost.setContent(replacedContent);
             // 设置顺序
             wxPost.setIndex(postPO.getIndex());
@@ -426,14 +411,14 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * 对图文数据做预处理
+     * 保存前，对图文数据做预处理
      * 上传内容中的图片到微信、上传封面图片；替换emoji, 替换js
      *
      * @param posts 多图文
      * @return
      * @parm accessToken 上传用的token
      */
-    private List<PostPO> cleanPosts(List<PostPO> posts, String accessToken) throws Exception {
+    private List<PostPO> cleanPosts(List<PostPO> posts, String accessToken) {
 
         int index =0;
         short type = (short) (posts.size() > 1 ? 3 : 1);
@@ -445,30 +430,17 @@ public class PostServiceImpl implements PostService {
             postPO.setType(type);
 
             /* 清理title */
-            String title = postPO.getTitle();
-            if (title != null) {
-                title = EmojiParser.removeAllEmojis(postPO.getTitle());
-            }
-            postPO.setTitle(title);
+            postPO.setTitle(StrUtil.removeEmojis(postPO.getTitle()));
 
             /* 清理digest */
             String digest = postPO.getDigest();
-            if (digest != null) {
-                digest = EmojiParser.removeAllEmojis(digest);
-                if (digest.length() > DIGEST_MAX) {
-                    digest = digest.substring(0, DIGEST_MAX);
-                    logger.warn("[cleanPosts] digest too long, length:{} digest:{}", digest.length(), digest);
-                }
-            }
+            digest = StrUtil.removeEmojis(digest);
+            digest = StrUtil.chopStr(digest, DIGEST_MAX);
             postPO.setDigest(digest);
 
             /* 检查contentSourceUrl */
             String contentSourceUrl = postPO.getContentSourceUrl();
-            if (contentSourceUrl != null) {
-                if (contentSourceUrl.length() > CONTENT_SOURCE_URL_MAX) {
-                    throw new CleanPostException("[cleanPosts] contentSourceUrl 过长: " + contentSourceUrl);
-                }
-            }
+            postPO.setContentSourceUrl(StrUtil.chopStr(contentSourceUrl, CONTENT_SOURCE_URL_MAX));
 
             /* 清理content */
             // 上传图片
@@ -480,7 +452,7 @@ public class PostServiceImpl implements PostService {
             // 上传封面图片
             String thumbMediaId = postPO.getThumbMediaId();
             if (thumbMediaId == null || thumbMediaId.equals("")) {
-                HashMap<String, String> retMap = WxPostManager.uploadImage(accessToken, postPO.getThumbUrl());
+                HashMap<String, String> retMap = WxPostManager.uploadMaterial(accessToken, postPO.getThumbUrl());
                 thumbMediaId = retMap.get("mediaId");
             }
             postPO.setThumbMediaId(thumbMediaId);
@@ -497,61 +469,53 @@ public class PostServiceImpl implements PostService {
     }
 
 
-    /*** 清理微信图文数据 ***/
-    private List<PostPO> cleanWxPosts(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception {
-        int key = 0;
-        List<PostPO> postPOList = new ArrayList<>();
+    /*** 清理微信返回的图文数据 ***/
+    private List<PostPO> cleanWxPosts(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
+
+        List<PostPO> posts = new ArrayList<>();
+
         for (WxPostDTO wxPostDTO : wxPostDTOs) {
-
             PostPO postPO = new PostPO();
-
-            String title = wxPostDTO.getTitle();
-            if (title != null) {
-                title = EmojiParser.removeAllEmojis(title);
-            }
-            postPO.setTitle(title);
+            postPO.setTitle(StrUtil.removeEmojis(wxPostDTO.getTitle()));
 
             String digest = wxPostDTO.getDigest();
-            if (digest != null) {
-                digest = EmojiParser.removeAllEmojis(digest);
-            }
+            digest = StrUtil.removeEmojis(digest);
+            digest = StrUtil.chopStr(digest, DIGEST_MAX);
             postPO.setDigest(digest);
 
-            String author = wxPostDTO.getAuthor();
-            if (author != null) {
-                author = EmojiParser.removeAllEmojis(author);
-            }
-            postPO.setAuthor(author);
-
+            postPO.setAuthor(wxPostDTO.getAuthor());
             postPO.setThumbMediaId(wxPostDTO.getThumbMediaId());
             postPO.setShowCoverPic(wxPostDTO.getShowCoverPic());
             postPO.setPostUrl(wxPostDTO.getUrl().replaceAll("&chksm=[^&]+", ""));
-            postPO.setContentSourceUrl(wxPostDTO.getContentSourceUrl() == null ? "" : wxPostDTO.getContentSourceUrl());
-            // 内容替换图片及视频
-            String content = replacePicUrlFromWeixinPost(wxPostDTO.getContent(), userId);
-            postPO.setContent(replaceVideoFromWeixinPost(content));
-            // 缩略图链接替换
-            String picUrl;
-            if (wxPostDTO.getThumbUrl() == null || "".equals(wxPostDTO.getThumbUrl())) {
-                if (key == 0) {
-                    picUrl = KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
-                } else {
-                    picUrl = KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-200-200.png");
-                }
-            } else {
-                picUrl = getKzImgUrlByWeixinImgUrl(wxPostDTO.getThumbUrl(), userId);
-            }
-            postPO.setThumbUrl(picUrl);
-
+            postPO.setContentSourceUrl(StrUtil.chopStr(wxPostDTO.getContentSourceUrl(), CONTENT_SOURCE_URL_MAX));
             postPO.setWeixinAppid(weixinAppid);
             postPO.setMediaId(mediaId);
             postPO.setUpdateTime((int) updateTime);
 
-            postPOList.add(postPO);
-            key++;
+            // 内容清理
+            postPO.setContent(cleanWxPostContent(wxPostDTO.getContent(), userId));
+
+            // 缩略图链接替换
+            String picUrl = wxPostDTO.getThumbUrl();
+            if (picUrl == null || "".equals(picUrl)) {
+                picUrl = KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
+            }
+            postPO.setThumbUrl(getKzImageUrl(picUrl, userId));
+
+            posts.add(postPO);
         }
+
         // 继续清理数据
-        return cleanPosts(postPOList, accountService.getAccessToken(weixinAppid));
+        int index =0;
+        short type = (short) (posts.size() > 1 ? 3 : 1);
+        for (PostPO postPO : posts) {
+            // 设置index顺序
+            postPO.setIndex(index++);
+            // 图文类型
+            postPO.setType(type);
+        }
+
+        return posts;
     }
 
 
@@ -612,7 +576,7 @@ public class PostServiceImpl implements PostService {
     /**
      * 删除html中的js标签，on_click事件
      */
-    private String filterHtml(String html) throws Exception {
+    private String filterHtml(String html) {
         // 删除js标签
         html = html.replaceAll("<script[^>]*?>.*?</script>", "");
 
@@ -627,7 +591,7 @@ public class PostServiceImpl implements PostService {
     /**
      * 上传图文content中的图片到微信，并写入wx_src到img标签
      */
-    private String uploadContentImg(final String accessToken, String content) throws Exception {
+    private String uploadContentImg(final String accessToken, String content) {
         // 对wx_src垃圾数据进行清理，即wx_src标签下的内容不是微信链接。
         String wxSrcRegex = "(wx_src=)[\"'](?<wxSrc>[^\"']+?)[\"']";
         ReplaceCallbackMatcher callbackMatcher = new ReplaceCallbackMatcher(wxSrcRegex);
@@ -635,7 +599,7 @@ public class PostServiceImpl implements PostService {
         content = callbackMatcher.replaceMatches(content,
                 matcher -> {
                     String wxSrc = matcher.group("wxSrc");
-                    wxSrc = uploadImageForPost(accessToken, wxSrc);
+                    wxSrc = getWxImageUrl(accessToken, wxSrc);
                     return "wx_src=\"" + wxSrc + "\"";
                 }
         );
@@ -652,7 +616,7 @@ public class PostServiceImpl implements PostService {
                     } else {
                         // 不存在wx_src，则从微信服务器换取wx_src，并加入到img标签中。
                         String src = matcher.group("src");
-                        String wxSrc = uploadImageForPost(accessToken, src);
+                        String wxSrc = getWxImageUrl(accessToken, src);
                         replacement = matcher.group(1) + "\"" + src + "\" wx_src=\"" + wxSrc + "\"" + matcher.group(3);
                     }
                     return replacement;
@@ -669,11 +633,9 @@ public class PostServiceImpl implements PostService {
      * @param content
      * @return
      */
-    private String replaceContentForUpload(final String accessToken, String content) throws Exception {
+    private String getWxContent(final String accessToken, String content) {
 
         // 用微信wx_src替换src
-
-        // 替换的回调
         ReplaceCallbackMatcher.Callback callback =
                 matcher -> matcher.group(1) +
                         matcher.group("wxSrc") +
@@ -696,7 +658,7 @@ public class PostServiceImpl implements PostService {
         callbackMatcher = new ReplaceCallbackMatcher(regex);
         content = callbackMatcher.replaceMatches(content,
                 matcher -> matcher.group(1) +
-                        uploadImageForPost(accessToken, matcher.group(2)) + matcher.group(3)
+                        getWxImageUrl(accessToken, matcher.group(2)) + matcher.group(3)
         );
 
         // TODO: 对中转链接的替换； 校验上传成功的微信图片，肯定是小于1M的。
@@ -740,33 +702,15 @@ public class PostServiceImpl implements PostService {
 
     }
 
-    /*** 判断是否应该同步微信图文，并发布mq消息 ***/
-    private void publishSyncWeixinPost(List<WxPostDTO> wxPostDTOs, String mediaId, int updateTime, long weixinAppid, long userId) {
-        PostPO postPO = getPostByMediaId(weixinAppid, mediaId);
-        // 需要新增或者需要更新
-        if (postPO == null || updateTime - postPO.getUpdateTime() > 2) {
-
-            SyncWxPostDTO dto = new SyncWxPostDTO();
-            dto.setWeixinAppid(weixinAppid);
-            dto.setUserId(userId);
-            dto.setMediaId(mediaId);
-            dto.setUpdateTime(updateTime);
-            dto.setWxPostDTOS(wxPostDTOs);
-            dto.setIsNew(postPO == null);
-            mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, JsonUtil.bean2String(dto));
-        }
-    }
-
-
     @Override
-    public void importWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception {
+    public void importWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
         List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, userId, wxPostDTOs);
         // 入库
         saveMultiPosts(weixinAppid, postPOList);
     }
 
     @Override
-    public void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception {
+    public void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
         List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, userId, wxPostDTOs);
 
         // 修改数据库
@@ -840,7 +784,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public HashMap<String, String> uploadWxMaterial(long weixinAppid, String imgUrl) {
         try {
-            return WxPostManager.uploadImage(accountService.getAccessToken(weixinAppid), imgUrl);
+            return WxPostManager.uploadMaterial(accountService.getAccessToken(weixinAppid), imgUrl);
         } catch (DownloadFileFailedException e) {
             logger.warn("[Post:uploadWxMaterial] download file failed, imgUrl:{}", imgUrl, e);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载图片失败，请稍后重试");
@@ -848,15 +792,35 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public String uploadImageForPost(long weixinAppid, String imgUrl) {
+    public String uploadWxImage(long weixinAppid, String imgUrl) {
         String accessToken = accountService.getAccessToken(weixinAppid);
-        return uploadImageForPost(accessToken, imgUrl);
+        return getWxImageUrl(accessToken, imgUrl);
+    }
+
+
+    /**
+     *  判断是否应该同步微信图文，并发布mq消息
+     */
+    private void publishSyncWeixinPost(List<WxPostDTO> wxPostDTOs, String mediaId, int updateTime, long weixinAppid, long userId) {
+        PostPO postPO = getPostByMediaId(weixinAppid, mediaId);
+        // 需要新增或者需要更新
+        if (postPO == null || updateTime - postPO.getUpdateTime() > 2) {
+
+            SyncWxPostDTO dto = new SyncWxPostDTO();
+            dto.setWeixinAppid(weixinAppid);
+            dto.setUserId(userId);
+            dto.setMediaId(mediaId);
+            dto.setUpdateTime(updateTime);
+            dto.setWxPostDTOS(wxPostDTOs);
+            dto.setIsNew(postPO == null);
+            mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST, JsonUtil.bean2String(dto));
+        }
     }
 
     /**
-     * 使用accessToke上传图文中的图片
+     * 获取图片的微信url
      */
-    private String uploadImageForPost(String accessToken, String imgUrl) {
+    private String getWxImageUrl(String accessToken, String imgUrl) {
         imgUrl = UrlUtil.fixQuote(imgUrl);
         imgUrl = UrlUtil.fixProtocol(imgUrl);
 
@@ -872,9 +836,9 @@ public class PostServiceImpl implements PostService {
         }
 
         try {
-            wxUrl = WxPostManager.uploadImgForPost(accessToken, imgUrl);
+            wxUrl = WxPostManager.uploadImage(accessToken, imgUrl);
         } catch (DownloadFileFailedException e) {
-            logger.warn("[Post:uploadImageForPost] download file failed, imgUrl:{}", imgUrl, e);
+            logger.warn("[Post:getWxImageUrl] download file failed, imgUrl:{}", imgUrl, e);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载图片失败，请稍后重试");
         }
 
@@ -884,7 +848,7 @@ public class PostServiceImpl implements PostService {
 
 
     /*** 微信图片地址生成快站图片url，若失败则返回原url ***/
-     private String getKzImgUrlByWeixinImgUrl(String imgUrl, long userId) {
+     private String getKzImageUrl(String imgUrl, long userId) {
         // 若不是微信图片则返回原url
         if (!imgUrl.contains("mmbiz")) return imgUrl;
 
@@ -898,6 +862,7 @@ public class PostServiceImpl implements PostService {
         try {
             return KzManager.uploadPicToKz(kzPicUrl, userId);
         } catch (KZPicUploadException e) {
+            logger.warn("[getKzImageUrl] upload kz image failed, url: {}", kzPicUrl, e);
             LogUtil.logMsg(e);
         }
 
@@ -905,8 +870,12 @@ public class PostServiceImpl implements PostService {
         return imgUrl;
     }
 
-    /*** 替换微信内容中的微信图片链接为快站链接 ***/
-    private String replacePicUrlFromWeixinPost(String content, final long userId) throws Exception {
+    /**
+     * 清理微信内容
+     * 替换微信内容中的微信图片链接为快站链接
+     * 替换微信图文中视频链接
+     */
+    private String cleanWxPostContent(String content, long userId) {
         // 将文章中的图片的data-src替换为src
         content = content.replaceAll("(<img [^>]*)(data-src)", "$1src");
 
@@ -915,7 +884,7 @@ public class PostServiceImpl implements PostService {
         ReplaceCallbackMatcher replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         content = replaceCallbackMatcher.replaceMatches(content,
                 matcher -> matcher.group(1)
-                        + getKzImgUrlByWeixinImgUrl(matcher.group(2), userId)
+                        + getKzImageUrl(matcher.group(2), userId)
                         + "\" wx_src=\""
                         + matcher.group(2)
                         + matcher.group(3)
@@ -925,19 +894,18 @@ public class PostServiceImpl implements PostService {
         regex = "url\\(\"?'?(?:&quot;)?(https?:\\/\\/mmbiz[^)]+?)(?:&quot;)?\"?'?\\)";
         replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         content = replaceCallbackMatcher.replaceMatches(content,
-                matcher -> "url(" + getKzImgUrlByWeixinImgUrl(matcher.group(1), userId) + ")"
+                matcher -> "url(" + getKzImageUrl(matcher.group(1), userId) + ")"
         );
 
-        return content;
-    }
-
-    /*** 替换微信图文中视频链接 ***/
-    private String replaceVideoFromWeixinPost(String content) {
-        return content.replaceAll(
+        // 视频链接
+        content = content.replaceAll(
                 "<iframe[^>]*class=\"video_iframe\"[^>]*data-src=\"([^\"]+)vid=([^&]+)([^\"]+)\"[^>]*>",
                 "<iframe style=\"z-index:1;\" class=\"video_iframe\" data-src=\"$1vid=$2$3\" " +
                         "frameborder=\"0\" allowfullscreen=\"\" " +
                         "src=\"https://v.qq.com/iframe/player.html?vid=$2&tiny=0&auto=0\" width=\"280px\" height=\"100%\">"
         );
+
+        return content;
+
     }
 }

@@ -2,7 +2,6 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.exception.deprecated.business.*;
 import com.kuaizhan.kzweixin.exception.common.DownloadFileFailedException;
 import com.kuaizhan.kzweixin.controller.param.PostsParam;
 import com.kuaizhan.kzweixin.controller.param.UploadPicParam;
@@ -148,7 +147,7 @@ public class PostController extends BaseController {
      * 新增多图文
      */
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public JsonResponse insertPost(@Valid @RequestBody PostsParam postsParam) throws Exception {
+    public JsonResponse insertPost(@Valid @RequestBody PostsParam postsParam) {
 
         postService.insertMultiPosts(postsParam.getWeixinAppid(), postsParam.getPostDOs());
         return new JsonResponse(ImmutableMap.of());
@@ -158,7 +157,7 @@ public class PostController extends BaseController {
      * 修改多图文
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.PUT)
-    public JsonResponse updatePost(@PathVariable("pageId") long pageId, @Valid @RequestBody PostsParam postsParam) throws Exception {
+    public JsonResponse updatePost(@PathVariable("pageId") long pageId, @Valid @RequestBody PostsParam postsParam) {
         postService.updateMultiPosts(postsParam.getWeixinAppid(), pageId, postsParam.getPostDOs());
         return new JsonResponse(ImmutableMap.of());
     }
@@ -176,7 +175,7 @@ public class PostController extends BaseController {
      * 一键同步微信文章到快站微信
      */
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
-    public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) throws ParamException {
+    public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) {
         postService.syncWeixinPosts(wxSyncsPostParam.getWeixinAppid(), wxSyncsPostParam.getUid());
         return new JsonResponse(ImmutableMap.of());
     }
@@ -226,7 +225,7 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "weixin_pics", method = RequestMethod.POST)
     public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
-        String url = postService.uploadImageForPost(uploadPicParam.getWeixinAppid(), uploadPicParam.getImgUrl());
+        String url = postService.uploadWxImage(uploadPicParam.getWeixinAppid(), uploadPicParam.getImgUrl());
         Map<String ,String> result = new HashMap<>();
         result.put("url", url);
         return new JsonResponse(result);

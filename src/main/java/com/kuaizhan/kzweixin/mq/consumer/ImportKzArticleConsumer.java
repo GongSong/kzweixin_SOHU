@@ -72,11 +72,7 @@ public class ImportKzArticleConsumer extends BaseConsumer {
                 List<PostPO> postPOList = new ArrayList<>();
                 postPOList.add(postPO);
                 // 新增文章
-                try {
-                    postService.insertMultiPosts(weixinAppid, postPOList);
-                } catch (Exception e) {
-                    throw new RuntimeException("[mq] insertMultiPosts error", e);
-                }
+                postService.insertMultiPosts(weixinAppid, postPOList);
             }
         }
     }
