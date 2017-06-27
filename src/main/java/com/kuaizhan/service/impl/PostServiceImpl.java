@@ -865,7 +865,6 @@ public class PostServiceImpl implements PostService {
             return KzManager.uploadPicToKz(kzPicUrl, userId);
         } catch (KZPicUploadException e) {
             logger.warn("[getKzImageUrl] upload kz image failed, url: {}", kzPicUrl, e);
-            LogUtil.logMsg(e);
         }
 
         // 上传失败，返回原始url
