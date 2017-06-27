@@ -65,7 +65,7 @@ public class WxPostManager {
      * 上传图片到微信永久素材
      * @throws DownloadFileFailedException 下载文件失败
      */
-    public static HashMap<String, String> uploadImage(String accessToken, String imgUrl) throws DownloadFileFailedException {
+    public static HashMap<String, String> uploadMaterial(String accessToken, String imgUrl) throws DownloadFileFailedException {
         // 处理没有http头的问题
 
         imgUrl = UrlUtil.fixQuote(imgUrl);
@@ -105,7 +105,7 @@ public class WxPostManager {
     /**
      * 上传图文中的图片到微信服务器
      */
-    public static String uploadImgForPost(String accessToken, String imgUrl) throws DownloadFileFailedException {
+    public static String uploadImage(String accessToken, String imgUrl) throws DownloadFileFailedException {
 
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
@@ -121,7 +121,7 @@ public class WxPostManager {
                 throw new BusinessException(ErrorCode.OPERATION_FAILED, "图文中图片格式不对，上传到微信失败");
             }
             // TODO: 这种报错，损失了调用栈 && 45009错误 http://sentryjs.kuaizhan.sohuno.com/sentry/online/issues/132550/
-            logger.error("[Weixin:uploadImgForPost] 上传图文中图片失败: result:{} imgUrl:{}", returnJson, imgUrl);
+            logger.error("[Weixin:uploadImage] 上传图文中图片失败: result:{} imgUrl:{}", returnJson, imgUrl);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传内容中图片失败，请重试");
         }
         return returnJson.getString("url");

@@ -2,7 +2,6 @@ package com.kuaizhan.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.constant.AppConstant;
-import com.kuaizhan.exception.deprecated.business.*;
 import com.kuaizhan.exception.common.DownloadFileFailedException;
 import com.kuaizhan.param.PostsParam;
 import com.kuaizhan.param.UploadPicParam;
@@ -226,7 +225,7 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "weixin_pics", method = RequestMethod.POST)
     public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
-        String url = postService.uploadImageForPost(uploadPicParam.getWeixinAppid(), uploadPicParam.getImgUrl());
+        String url = postService.uploadWxImage(uploadPicParam.getWeixinAppid(), uploadPicParam.getImgUrl());
         Map<String ,String> result = new HashMap<>();
         result.put("url", url);
         return new JsonResponse(result);

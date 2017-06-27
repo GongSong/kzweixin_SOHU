@@ -125,5 +125,5 @@ public interface PostService {
      * 上传图文中的图片
      * @return  图片url
      */
-    String uploadImageForPost(long weixinAppid, String imgUrl);
+    String uploadWxImage(long weixinAppid, String imgUrl);
 }
