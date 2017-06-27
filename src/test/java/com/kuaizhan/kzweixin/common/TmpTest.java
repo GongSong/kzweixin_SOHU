@@ -1,7 +1,6 @@
 package com.kuaizhan.kzweixin.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
 import org.junit.Test;
 import org.slf4j.Logger;

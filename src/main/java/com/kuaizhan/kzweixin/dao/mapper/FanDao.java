@@ -1,10 +1,10 @@
 package com.kuaizhan.kzweixin.dao.mapper;
 
 
-import com.kuaizhan.kzweixin.dao.po.FanPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 
 import java.util.List;
 import java.util.Map;
@@ -15,28 +15,6 @@ import java.util.Map;
  */
 @Repository
 public interface FanDao {
-    /**
-     * 查询数量
-     *
-     * @param appId   公众号appId
-     * @param isBlack 0白1黑
-     * @param tagIds  标签id列表
-     * @param keyword 搜索关键词
-     * @param tables  表列表
-     * @return
-     */
-
-    List<Long> count(@Param("appId") String appId, @Param("inBlackList") Integer isBlack, @Param("tagIds") List<Integer> tagIds, @Param("keyword") String keyword, @Param("tables") List<String> tables);
-
-    /**
-     * 分页查询
-     *
-     * @param page 分页封装类
-     * @param tables     表列表
-     * @return
-     */
-    List<FanPO> listFansByPagination(@Param("pageEntity") Page page, @Param("tables") List<String> tables);
-
     /**
      * 批量更新粉丝信息
      *
@@ -96,5 +74,38 @@ public interface FanDao {
      * @return
      */
     int updateFan(@Param("fans") FanPO fan, @Param("tables") List<String> tables);
+
+    /**
+     * 查询粉丝数量
+     *
+     * @param isBlacklist 0白1黑
+     * @param tagIds      标签id列表
+     * @param queryStr    搜索关键词
+     * @param tableName   表名
+     * @return 粉丝数量
+     */
+
+    Long countFan(@Param("appId") String appId,
+                  @Param("isBlacklist") Integer isBlacklist,
+                  @Param("tagIds") List<Integer> tagIds,
+                  @Param("queryStr") String queryStr,
+                  @Param("tableName") String tableName);
+
+    /**
+     * 分页查询
+     *
+     * @param pageEntity  分页封装类
+     * @param isBlacklist 0白1黑
+     * @param tagIds      标签id列表
+     * @param queryStr    搜索关键词
+     * @param tableName   表名
+     * @return 粉丝列表
+     */
+    List<FanPO> listFansByPage(@Param("appId") String appId,
+                               @Param("pageEntity") Page pageEntity,
+                               @Param("isBlacklist") Integer isBlacklist,
+                               @Param("tagIds") List<Integer> tagIds,
+                               @Param("queryStr") String queryStr,
+                               @Param("tableName") String tableName);
 
 }

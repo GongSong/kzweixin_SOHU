@@ -34,6 +34,18 @@ public class ErrorCode {
     public static final ErrorCode INVALID_APP_SECRET = new ErrorCode(102007, "App Secret错误");
     public static final ErrorCode NOT_SERVICE_NUMBER = new ErrorCode(102008, "非服务号无法开通授权登录");
 
+    // 粉丝(04)
+    public static final ErrorCode DUPLICATED_TAG = new ErrorCode(104001, "标签名已存在");
+    public static final ErrorCode INVALID_TAG_LENGTH = new ErrorCode(104002, "标签名过长，不能超过30个字节");
+    public static final ErrorCode INVALID_TAG_NUM = new ErrorCode(104003, "标签数量过多，不能超过100个");
+    public static final ErrorCode INVALID_TAG_MODIFIED = new ErrorCode(104004, "不能修改系统保留标签");
+    public static final ErrorCode DELETE_TAG_FANS_EXCEED_10W = new ErrorCode(104005, "该标签下粉丝超过10万，不能直接删除");
+    public static final ErrorCode OPEN_ID_EXCEED = new ErrorCode(104006, "传入粉丝OpenId超过50个");
+    public static final ErrorCode INVALID_TAG_ERROR = new ErrorCode(104007, "非法标签错误");
+    public static final ErrorCode FANS_TAG_EXCEED = new ErrorCode(104008, "粉丝标签超过20个");
+    public static final ErrorCode OPEN_ID_MISMATCH_ERROR = new ErrorCode(104009, "OpenId不属于此公众号");
+    public static final ErrorCode ADD_BLACKLIST_EXCEED_LIMIT = new ErrorCode(104010, "一次只能拉黑/取消拉黑20个用户");
+
     // 图文(07)
     public static final ErrorCode POST_USED_BY_OTHER_ERROR = new ErrorCode(107001, "自定义菜单或自动回复中包含该图文，无法删除");
     public static final ErrorCode MEDIA_SIZE_OUT_OF_LIMIT = new ErrorCode(107002, "图片过大，不能上传到微信");

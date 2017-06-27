@@ -34,4 +34,25 @@ public class WxErrCode {
     public static final int INVALID_APP_SECRET_2 = 40125;  // 实际是这个
     // 调用接口的IP地址不在白名单中
     public static final int IP_NOT_IN_WHITELIST = 40164;
+
+    // 创建失败，标签名已存在
+    public static final int DUPLICATED_TAGS = 45157;
+    // 标签名过长
+    public static final int TAG_LENGTH_EXCEEDS = 45158;
+    // 创建标签数过多
+    public static final int TAG_NUM_EXCEEDS = 45056;
+    // 不能修改0/1/2三个系统默认保留标签
+    public static final int TAG_RESERVED_MODIFIED = 45058;
+    // 标签下粉丝超过10万，不能直接删除标签
+    public static final int TAG_FANS_EXCEED_10W = 45057;
+    // 每次批量打标签不能超过50个OpenId
+    public static final int OPEN_ID_EXCEED = 40032;
+    // 非法标签
+    public static final int INVALID_TAG = 45159;
+    // 粉丝标签数超过20个的上限
+    public static final int FANS_TAG_EXCEED = 45059;
+    // OpenId不属于此AppId
+    public static final int OPEN_ID_MISMATCH_APPID = 49003;
+    // 单次拉黑用户超过20个上限
+    public static final int ADD_BLACKLIST_EXCEED_LIMIT = 40032;
 }

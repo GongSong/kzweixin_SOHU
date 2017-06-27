@@ -37,7 +37,9 @@ public class WxApiConfig {
     // 创建新的标签
     private static final String WEIXIN_CREATE_TAGS = "/cgi-bin/tags/create?access_token=";
     // 批量为用户打标签
-    private static final String WEIXIN_SET_TAGS = "/cgi-bin/tags/members/batchtagging?access_token=";
+    private static final String WEIXIN_SET_USER_TAGS = "/cgi-bin/tags/members/batchtagging?access_token=";
+    // 批量为用户删除标签
+    private static final String WEIXIN_DELETE_USER_TAGS = "/cgi-bin/tags/members/batchuntagging?access_token=";
     // 删除标签
     private static final String WEIXIN_DELETE_TAGS = "/cgi-bin/tags/delete?access_token=";
     // 重命名标签
@@ -162,14 +164,21 @@ public class WxApiConfig {
     /**
      * 批量为用户打标签
      */
-    public static String setTagsUrl(String accessToken) {
-        return DOMAIN_WEIXIN_API + WEIXIN_SET_TAGS + accessToken;
+    public static String setUserTagUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_SET_USER_TAGS + accessToken;
+    }
+
+    /**
+     * 批量为用户删除标签
+     */
+    public static String deleteUserTagUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_DELETE_USER_TAGS + accessToken;
     }
 
     /**
      * 删除标签
      */
-    public static String deleteTagsUrl(String accessToken) {
+    public static String deleteTagUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_DELETE_TAGS + accessToken;
     }
 

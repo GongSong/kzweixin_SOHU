@@ -25,7 +25,7 @@ public class RedisConstant {
     //缓存粉丝列表
     public static final String KEY_FAN_LIST = ApplicationConfig.REDIS_PREFIX + "kzweixin:fan_list:";
     //缓存标签
-    public static final String KEY_TAG = ApplicationConfig.REDIS_PREFIX + "kzweixin:tag:";
+    public static final String KEY_TAG = ApplicationConfig.REDIS_PREFIX + "kzweixin:tags:";
 
     //消息
 
