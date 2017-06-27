@@ -84,3 +84,87 @@
     * 异常情况：
         * 修改默认保留标签，返回码 104004 
         * 删除超过10万粉丝的标签，返回码 104005
+        
+#### 5 给粉丝贴标签
+* **协议**：HTTPS
+* **方法**：PUT
+* **URL**：/v1/fan/fan_tags
+* **参数**：
+    * weixinAppid 主键
+    * fansOpenId 要贴标签的粉丝openId
+    * newTagsId 增加的标签id
+    * deleteTagsId 删除的标签id
+
+* **返回**：
+    * 获取成功时返回:
+       
+        ```
+        {}
+        ```
+    * 异常情况：
+        * 传入粉丝openId超过50个，返回码 104006 
+        * 非法标签，返回码 104007
+        * 粉丝标签超过20个，返回码 104008
+        * openId不属于此公众号，返回码 104009
+        * 非法的openId或用户未关注公众号，返回码 108006
+        
+#### 6 按标签搜索粉丝
+* **协议**：HTTPS
+* **方法**：GET
+* **URL**：/v1/fan/fans
+* **参数**：
+    * weixinAppid 主键
+    * pageNum 当前页码
+    * tagIds 要查找的标签id
+    * queryStr 要查找的昵称字符串
+    * isBlacklist 是否在黑名单里查找
+
+* **返回**：
+    * 获取成功时返回:
+       
+        ```
+         "totalNum": 2,
+                "currentPage": 1,
+                "totalPage": 1,
+                "fans": [
+                    {
+                        "id": 4337,
+                        "name": "Fe.y.z",
+                        "headImgUrl": "http://wx.qlogo.cn/mmopen/1XRNasCU4H4YUNfib1b8rpK0L61c3sU7iaQZ7y9IcRpNWlD5ctNbzMKKWNIRqyxKo0dMmVaoqBat4Cyvum3KLbrzL2XvPrJibdp/0",
+                        "sex": 1,
+                        "openId": "oBGGJt1hO7E-HVpveyJNRpW3xc9Q",
+                        "address": "中国 四川",
+                        "focusTime": 1490091579,
+                        "tagIds": [
+                            199,
+                            201,
+                            202
+                        ]
+                    },
+                    {
+                        ......
+                    },
+                    ......
+                ]
+        ```
+
+#### 7 更新黑名单用户信息
+* **协议**：HTTPS
+* **方法**：PUT
+* **URL**：/v1/fan/blacklist
+* **参数**：
+    * weixinAppid 主键
+    * openIds 要操作的粉丝openId
+    * setBlacklist 是否设置为黑名单用户，true拉黑false解除拉黑
+
+* **返回**：
+    * 获取成功时返回:
+       
+       ```
+       {}
+       ```   
+    * 异常情况：
+        * 非法的openId或用户未关注公众号，返回码 108006
+        * openId不属于此公众号，返回码 104009
+        * 一次只能拉黑/取消拉黑20个用户，返回码 104010
+                    

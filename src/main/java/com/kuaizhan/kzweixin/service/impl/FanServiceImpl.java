@@ -15,7 +15,6 @@ import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.manager.WxFanManager;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
-import com.kuaizhan.kzweixin.service.WeixinFanService;
 import com.kuaizhan.kzweixin.utils.DBTableUtil;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
@@ -39,8 +38,6 @@ public class FanServiceImpl implements FanService {
     private FanCache fanCache;
     @Resource
     private FanMapper fanMapper;
-    @Resource
-    private WeixinFanService weixinFanService;
     @Resource
     private AccountService accountService;
 

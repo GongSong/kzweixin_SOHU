@@ -40,10 +40,10 @@ public class ErrorCode {
     public static final ErrorCode INVALID_TAG_NUM = new ErrorCode(104003, "标签数量过多，不能超过100个");
     public static final ErrorCode INVALID_TAG_MODIFIED = new ErrorCode(104004, "不能修改系统保留标签");
     public static final ErrorCode DELETE_TAG_FANS_EXCEED_10W = new ErrorCode(104005, "该标签下粉丝超过10万，不能直接删除");
-    public static final ErrorCode OPEN_ID_EXCEED = new ErrorCode(104006, "传入粉丝OpenId超过50个");
+    public static final ErrorCode OPEN_ID_EXCEED = new ErrorCode(104006, "传入粉丝openId超过50个");
     public static final ErrorCode INVALID_TAG_ERROR = new ErrorCode(104007, "非法标签错误");
     public static final ErrorCode FANS_TAG_EXCEED = new ErrorCode(104008, "粉丝标签超过20个");
-    public static final ErrorCode OPEN_ID_MISMATCH_ERROR = new ErrorCode(104009, "OpenId不属于此公众号");
+    public static final ErrorCode OPEN_ID_MISMATCH_ERROR = new ErrorCode(104009, "openId不属于此公众号");
     public static final ErrorCode ADD_BLACKLIST_EXCEED_LIMIT = new ErrorCode(104010, "一次只能拉黑/取消拉黑20个用户");
 
     // 图文(07)

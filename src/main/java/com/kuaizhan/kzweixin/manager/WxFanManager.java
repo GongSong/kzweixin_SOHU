@@ -19,6 +19,15 @@ import java.util.Map;
  * Created by fangtianyu on 6/15/17.
  */
 public class WxFanManager {
+
+    /**
+     * 创建标签
+     * @param tagName 标签名
+     * @throws WxDuplicateTagException 标签重名错误
+     * @throws WxTagNumExceedException 标签数量超过限制
+     * @throws WxApiException 微信接口返回结果为null, 不能json序列化，或返回未知错误码
+     * @return 标签id
+     * */
     public static int createTag(String accessToken, String tagName) throws WxDuplicateTagException,
             WxTagNumExceedException, WxApiException{
         Map<String, Object> paramMap = new HashMap<>();
@@ -47,6 +56,12 @@ public class WxFanManager {
         }
     }
 
+
+    /**
+     * 获取标签列表
+     * @throws WxApiException 微信接口返回结果为null, 不能json序列化，或返回未知错误码
+     * @return 标签信息列表
+     * */
     public static List<TagDTO> getTags(String accessToken) throws WxApiException{
         String result = HttpClientUtil.get(WxApiConfig.getTagsUrl(accessToken));
         if (result == null) {
@@ -64,6 +79,15 @@ public class WxFanManager {
         }
     }
 
+
+    /**
+     * 重命名标签
+     * @param tagName 标签名
+     * @param tagId 标签id
+     * @throws WxDuplicateTagException 标签重名错误
+     * @throws WxTagReservedModifiedException 修改系统保留标签错误
+     * @throws WxApiException 微信接口返回结果为null, 不能json序列化，或返回未知错误码
+     * */
     public static void updateTag(String accessToken, int tagId, String tagName) throws WxDuplicateTagException,
             WxTagReservedModifiedException, WxApiException {
         Map<String, Object> paramMap = new HashMap<>();
@@ -90,6 +114,14 @@ public class WxFanManager {
         }
     }
 
+
+    /**
+     * 删除标签
+     * @param tagId 标签id
+     * @throws WxTagReservedModifiedException 修改系统保留标签错误
+     * @throws WxFansNumExceedException 粉丝数量超出限制，删除错误
+     * @throws WxApiException 微信接口返回结果为null, 不能json序列化，或返回未知错误码
+     * */
     public static void deleteTag(String accessToken, int tagId) throws WxTagReservedModifiedException,
             WxFansNumExceedException, WxApiException {
         Map<String, Object> paramMap = new HashMap<>();
@@ -116,6 +148,18 @@ public class WxFanManager {
         }
     }
 
+
+    /**
+     * 增加粉丝标签
+     * @param fansOpenId 粉丝openId列表
+     * @param tagId 标签id
+     * @throws WxOpenIdExceedException 批量修改标签超过上限错误
+     * @throws WxInvalidTagException 非法标签错误
+     * @throws WxFansTagExceedException 粉丝标签数超过上限错误
+     * @throws WxInvalidOpenIdException 非法openId错误
+     * @throws WxOpenIdMismatchException OpenId不属于此AppId错误
+     * @throws WxApiException 微信接口返回结果为null, 不能json序列化，或返回未知错误码
+     * */
     public static void addFanTag(String accessToken, List<String> fansOpenId, int tagId) throws WxOpenIdExceedException,
             WxInvalidTagException, WxFansTagExceedException, WxInvalidOpenIdException, WxOpenIdMismatchException,
             WxApiException {
@@ -150,6 +194,17 @@ public class WxFanManager {
         }
     }
 
+
+    /**
+     * 删除粉丝标签
+     * @param fansOpenId 粉丝openId列表
+     * @param tagId 标签id
+     * @throws WxOpenIdExceedException 批量修改标签超过上限错误
+     * @throws WxInvalidTagException 非法标签错误
+     * @throws WxInvalidOpenIdException 非法openId错误
+     * @throws WxOpenIdMismatchException OpenId不属于此AppId错误
+     * @throws WxApiException 微信接口返回结果为null, 不能json序列化，或返回未知错误码
+     * */
     public static void deleteFanTag(String accessToken, List<String> fansOpenId, int tagId) throws WxOpenIdExceedException,
             WxInvalidTagException, WxInvalidOpenIdException, WxOpenIdMismatchException, WxApiException {
         Map<String, Object> paramMap = new HashMap<>();
@@ -181,6 +236,15 @@ public class WxFanManager {
         }
     }
 
+
+    /**
+     * 拉黑用户
+     * @param fansOpenId 粉丝openId列表
+     * @throws WxInvalidOpenIdException 非法openId错误
+     * @throws WxOpenIdMismatchException OpenId不属于此AppId错误
+     * @throws WxBlacklistExceedException 单次操作用户超过上限错误
+     * @throws WxApiException 微信接口返回结果为null, 不能json序列化，或返回未知错误码
+     * */
     public static void addBlacklist(String accessToken, List<String> fansOpenId) throws WxInvalidOpenIdException,
             WxOpenIdMismatchException, WxBlacklistExceedException, WxApiException{
         Map<String, Object> paramMap = new HashMap<>();
@@ -209,6 +273,15 @@ public class WxFanManager {
         }
     }
 
+
+    /**
+     * 解除拉黑用户
+     * @param fansOpenId 粉丝openId列表
+     * @throws WxInvalidOpenIdException 非法openId错误
+     * @throws WxOpenIdMismatchException OpenId不属于此AppId错误
+     * @throws WxBlacklistExceedException 单次操作用户超过上限错误
+     * @throws WxApiException 微信接口返回结果为null, 不能json序列化，或返回未知错误码
+     * */
     public static void removeBlacklist(String accessToken, List<String> fansOpenId) throws WxInvalidOpenIdException,
             WxOpenIdMismatchException, WxBlacklistExceedException, WxApiException{
         Map<String, Object> paramMap = new HashMap<>();
