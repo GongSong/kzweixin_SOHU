@@ -2,7 +2,6 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
-import com.kuaizhan.kzweixin.exception.BaseException;
 
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
@@ -24,14 +23,10 @@ public abstract class BaseController {
     @ExceptionHandler
     @ResponseBody
     public JsonResponse handleException(Exception ex) {
-        if (ex instanceof BaseException) {
-            return new JsonResponse(((BaseException) ex).getCode(), ((BaseException) ex).getMsg(), ImmutableMap.of());
-        }
         //自定义spring @RequestParam 异常
-        else if (ex instanceof ServletRequestBindingException) {
+        if (ex instanceof ServletRequestBindingException) {
             return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), ErrorCode.PARAM_ERROR.getMessage(), ImmutableMap.of());
         } else {
-            ex.printStackTrace();
             return new JsonResponse(ErrorCode.SERVER_ERROR.getCode(), ErrorCode.SERVER_ERROR.getMessage(), ImmutableMap.of());
         }
     }
