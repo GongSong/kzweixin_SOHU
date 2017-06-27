@@ -112,20 +112,20 @@ public class WxPostManager {
         String result = HttpClientUtil.postFile(WxApiConfig.getAddPostImageUrl(accessToken), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
-        int errCode = returnJson.optInt("errcode");
-        if (errCode != 0) {
-            if (errCode == WxErrCode.MEDIA_SIZE_OUT_OF_LIMIT) {
-                throw new BusinessException(ErrorCode.MEDIA_SIZE_OUT_OF_LIMIT);
-            }
-            if (errCode == WxErrCode.INVALID_IMAGE_FORMAT) {
-                throw new BusinessException(ErrorCode.OPERATION_FAILED, "图文中图片格式不对，上传到微信失败");
-            }
-            // TODO: 这种报错，损失了调用栈 && 45009错误 http://sentryjs.kuaizhan.sohuno.com/sentry/online/issues/132550/
-            logger.error("[Weixin:uploadImage] 上传图文中图片失败: result:{} imgUrl:{}", returnJson, imgUrl);
-            throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传内容中图片失败，请重试");
-        }
-        return returnJson.getString("url");
 
+        int errCode = returnJson.optInt("errcode");
+
+        if (errCode == 0) {
+            return returnJson.getString("url");
+        }
+
+        if (errCode == WxErrCode.MEDIA_SIZE_OUT_OF_LIMIT) {
+            throw new BusinessException(ErrorCode.MEDIA_SIZE_OUT_OF_LIMIT);
+        } else if (errCode == WxErrCode.INVALID_IMAGE_FORMAT) {
+            throw new BusinessException(ErrorCode.OPERATION_FAILED, "图文中图片格式不对，上传到微信失败");
+        }
+        logger.error("[Weixin:uploadImage] 上传图文中图片失败: result:{} imgUrl:{}", returnJson, imgUrl);
+        throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传内容中图片失败，请重试");
     }
 
     /**

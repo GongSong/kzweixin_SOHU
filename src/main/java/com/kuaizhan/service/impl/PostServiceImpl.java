@@ -432,30 +432,17 @@ public class PostServiceImpl implements PostService {
             postPO.setType(type);
 
             /* 清理title */
-            String title = postPO.getTitle();
-            if (title != null) {
-                title = EmojiParser.removeAllEmojis(postPO.getTitle());
-            }
-            postPO.setTitle(title);
+            postPO.setTitle(StrUtil.removeEmojis(postPO.getTitle()));
 
             /* 清理digest */
             String digest = postPO.getDigest();
-            if (digest != null) {
-                digest = EmojiParser.removeAllEmojis(digest);
-                if (digest.length() > DIGEST_MAX) {
-                    digest = digest.substring(0, DIGEST_MAX);
-                    logger.warn("[cleanPosts] digest too long, length:{} digest:{}", digest.length(), digest);
-                }
-            }
+            digest = StrUtil.removeEmojis(digest);
+            digest = StrUtil.chopStr(digest, DIGEST_MAX);
             postPO.setDigest(digest);
 
             /* 检查contentSourceUrl */
             String contentSourceUrl = postPO.getContentSourceUrl();
-            if (contentSourceUrl != null) {
-                if (contentSourceUrl.length() > CONTENT_SOURCE_URL_MAX) {
-                    throw new CleanPostException("[cleanPosts] contentSourceUrl 过长: " + contentSourceUrl);
-                }
-            }
+            postPO.setContentSourceUrl(StrUtil.chopStr(contentSourceUrl, CONTENT_SOURCE_URL_MAX));
 
             /* 清理content */
             // 上传图片
@@ -486,58 +473,51 @@ public class PostServiceImpl implements PostService {
 
     /*** 清理微信返回的图文数据 ***/
     private List<PostPO> cleanWxPosts(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
-        int key = 0;
-        List<PostPO> postPOList = new ArrayList<>();
+
+        List<PostPO> posts = new ArrayList<>();
+
         for (WxPostDTO wxPostDTO : wxPostDTOs) {
-
             PostPO postPO = new PostPO();
-
-            String title = wxPostDTO.getTitle();
-            if (title != null) {
-                title = EmojiParser.removeAllEmojis(title);
-            }
-            postPO.setTitle(title);
+            postPO.setTitle(StrUtil.removeEmojis(wxPostDTO.getTitle()));
 
             String digest = wxPostDTO.getDigest();
-            if (digest != null) {
-                digest = EmojiParser.removeAllEmojis(digest);
-            }
+            digest = StrUtil.removeEmojis(digest);
+            digest = StrUtil.chopStr(digest, DIGEST_MAX);
             postPO.setDigest(digest);
 
-            String author = wxPostDTO.getAuthor();
-            if (author != null) {
-                author = EmojiParser.removeAllEmojis(author);
-            }
-            postPO.setAuthor(author);
-
+            postPO.setAuthor(wxPostDTO.getAuthor());
             postPO.setThumbMediaId(wxPostDTO.getThumbMediaId());
             postPO.setShowCoverPic(wxPostDTO.getShowCoverPic());
             postPO.setPostUrl(wxPostDTO.getUrl().replaceAll("&chksm=[^&]+", ""));
-            postPO.setContentSourceUrl(wxPostDTO.getContentSourceUrl() == null ? "" : wxPostDTO.getContentSourceUrl());
-            // 内容清理
-            postPO.setContent(cleanWxPostContent(wxPostDTO.getContent(), userId));
-            // 缩略图链接替换
-            String picUrl;
-            if (wxPostDTO.getThumbUrl() == null || "".equals(wxPostDTO.getThumbUrl())) {
-                if (key == 0) {
-                    picUrl = KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
-                } else {
-                    picUrl = KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-200-200.png");
-                }
-            } else {
-                picUrl = getKzImageUrl(wxPostDTO.getThumbUrl(), userId);
-            }
-            postPO.setThumbUrl(picUrl);
-
+            postPO.setContentSourceUrl(StrUtil.chopStr(wxPostDTO.getContentSourceUrl(), CONTENT_SOURCE_URL_MAX));
             postPO.setWeixinAppid(weixinAppid);
             postPO.setMediaId(mediaId);
             postPO.setUpdateTime((int) updateTime);
 
-            postPOList.add(postPO);
-            key++;
+            // 内容清理
+            postPO.setContent(cleanWxPostContent(wxPostDTO.getContent(), userId));
+
+            // 缩略图链接替换
+            String picUrl = wxPostDTO.getThumbUrl();
+            if (picUrl == null || "".equals(picUrl)) {
+                picUrl = KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
+            }
+            postPO.setThumbUrl(getKzImageUrl(picUrl, userId));
+
+            posts.add(postPO);
         }
+
         // 继续清理数据
-        return cleanPosts(postPOList, accountService.getAccessToken(weixinAppid));
+        int index =0;
+        short type = (short) (posts.size() > 1 ? 3 : 1);
+        for (PostPO postPO : posts) {
+            // 设置index顺序
+            postPO.setIndex(index++);
+            // 图文类型
+            postPO.setType(type);
+        }
+
+        return posts;
     }
 
 
