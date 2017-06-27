@@ -5,7 +5,6 @@ import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.WxPushService;
 import com.kuaizhan.kzweixin.service.WxThirdPartService;
-import com.kuaizhan.kzweixin.utils.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -71,10 +70,11 @@ public class WxCallbackController extends BaseController {
         long startTime = System.currentTimeMillis();
         String resultStr = wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
 
-        // 超过两秒warning日志
+        // 超过2秒warning日志
         long delta = System.currentTimeMillis() - startTime;
         if (delta > 2 * 1000) {
             logger.warn("[Weixin:event] handle time up to 2 seconds, time:" + delta);
+       // 超过4秒error日志
         } else if (delta > 4 * 1000) {
             logger.error("[Weixin:event] handle time up to 4 seconds, time:" + delta);
         }
