@@ -16,7 +16,7 @@ public class UserBlacklistParam {
 
     @NotNull
     @Size(min = 1, max = 20)
-    private List<String> fansOpenId;
+    private List<String> openIds;
 
     @NotNull
     private Boolean setBlacklist;

@@ -7,11 +7,10 @@ import java.util.List;
 
 /**
  * 粉丝列表展示对象
- * Created by liangjiateng on 2017/3/16.
+ * Created by fangtianyu on 2017/6/27.
  */
 @Data
 public class FanListVO {
-
     private Long totalNum;
     private Integer currentPage;
     private Integer totalPage;

@@ -7,12 +7,14 @@ import com.kuaizhan.kzweixin.controller.param.TagNameParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateFanTagParam;
 import com.kuaizhan.kzweixin.controller.param.UserBlacklistParam;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
+import com.kuaizhan.kzweixin.controller.vo.FanListVO;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
 import org.springframework.web.bind.annotation.*;
+import com.kuaizhan.kzweixin.utils.PojoSwitcher;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -81,25 +83,34 @@ public class FanController extends BaseController {
     /**
      * 按标签搜索粉丝
      * */
-    @RequestMapping(value = "/fan/search", method = RequestMethod.GET)
+    @RequestMapping(value = "/fan/fans", method = RequestMethod.GET)
     public JsonResponse fanTagSearch(@RequestParam long weixinAppid, @RequestParam int pageNum,
                                      @RequestParam(required = false) List<Integer> tagIds,
                                      @RequestParam(required = false) String queryStr,
                                      @RequestParam(required = false, defaultValue = "0") int isBlacklist) {
-//        Page<FanPO> fanList = fansService.listFansByPage(weixinAppid, pageNum, AppConstant.PAGE_SIZE_LARGE, tagIds, queryStr, isBlacklist);
-        Page<FanPO> fanList = fansService.listFansByPageFromDao(weixinAppid, pageNum, AppConstant.PAGE_SIZE_LARGE, tagIds, queryStr, isBlacklist);
-        return new JsonResponse(fanList);
+        Page<FanPO> fanPage = fansService.listFansByPage(weixinAppid, pageNum, AppConstant.PAGE_SIZE_LARGE, tagIds, queryStr, isBlacklist);
+        List<FanPO> fanPOList = fanPage.getResult();
+
+        FanListVO fanListVO = new FanListVO();
+        fanListVO.setTotalNum(fanPage.getTotalCount());
+        fanListVO.setTotalPage(fanPage.getTotalPages());
+        fanListVO.setCurrentPage(fanPage.getPageNo());
+
+        for(FanPO fanPO: fanPOList) {
+            fanListVO.getFans().add(PojoSwitcher.fanPOToVO(fanPO));
+        }
+        return new JsonResponse(fanListVO);
     }
 
     /**
      * 更新黑名单用户信息
      * */
-    @RequestMapping(value = "/fan/blacklist", method = RequestMethod.POST)
+    @RequestMapping(value = "/fan/blacklist", method = RequestMethod.PUT)
     public JsonResponse updateFanBlacklist(@Valid @RequestBody UserBlacklistParam param) {
         if (param.getSetBlacklist()) {
-            fansService.addFanBlacklist(param.getWeixinAppid(), param.getFansOpenId());
+            fansService.addFanBlacklist(param.getWeixinAppid(), param.getOpenIds());
         } else {
-            fansService.removeFanBlacklist(param.getWeixinAppid(), param.getFansOpenId());
+            fansService.removeFanBlacklist(param.getWeixinAppid(), param.getOpenIds());
         }
         return new JsonResponse(ImmutableMap.of());
     }

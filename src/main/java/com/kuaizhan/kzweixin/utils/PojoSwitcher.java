@@ -3,14 +3,18 @@ package com.kuaizhan.kzweixin.utils;
 import com.kuaizhan.kzweixin.dao.po.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
+import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.controller.vo.AccountSettingVO;
 import com.kuaizhan.kzweixin.controller.vo.AccountVO;
 import com.kuaizhan.kzweixin.controller.vo.MsgVO;
 import com.kuaizhan.kzweixin.controller.vo.PostVO;
+import com.kuaizhan.kzweixin.controller.vo.FanVO;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 /**
  * pojo的转换组件
@@ -136,5 +140,31 @@ public class PojoSwitcher {
             msgVO.setContent(contentJson.toMap());
         }
         return msgVO;
+    }
+
+    /**
+     * 粉丝管理
+     * */
+    public static FanVO fanPOToVO(FanPO fanPO) {
+        if (fanPO == null) {
+            return null;
+        }
+
+        FanVO fanVO = new FanVO();
+        fanVO.setId(fanPO.getFanId());
+        fanVO.setName(fanPO.getNickName());
+        fanVO.setHeadImgUrl(fanPO.getHeadImgUrl());
+        fanVO.setSex(fanPO.getSex());
+        fanVO.setOpenId(fanPO.getOpenId());
+        fanVO.setAddress(fanPO.getCountry() + " " + fanPO.getProvince());
+        fanVO.setFocusTime(fanPO.getSubscribeTime());
+
+        if ("".equals(fanPO.getTagIdsJson())) {
+            fanVO.setTagIds(new ArrayList<>());
+        } else {
+            fanVO.setTagIds(JsonUtil.string2List(fanPO.getTagIdsJson(), Integer.class));
+        }
+
+        return fanVO;
     }
 }

@@ -243,77 +243,6 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public Page<FanPO> listFansByPage(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist) {
-        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
-        Page<FanPO> fanPage = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
-        FanPOExample example = new FanPOExample();
-
-        if (tagIds != null && tagIds.size() != 0) {
-            for (int tagId: tagIds) {
-                String tagIdStr = tagId + "";
-                if ("2".equals(tagIdStr)) {
-                    FanPOExample.Criteria criteria1 = example.createCriteria();
-                    criteria1.andStatusEqualTo(1)
-                            .andAppIdEqualTo(accountPO.getAppId())
-                            .andInBlacklistEqualTo(isBlacklist)
-                            .andTagIdsJsonLike("%[2]%");
-                    example.or(criteria1);
-
-                    FanPOExample.Criteria criteria2 = example.createCriteria();
-                    criteria2.andStatusEqualTo(1)
-                            .andAppIdEqualTo(accountPO.getAppId())
-                            .andInBlacklistEqualTo(isBlacklist)
-                            .andTagIdsJsonLike("%,2]%");
-                    example.or(criteria2);
-
-                    FanPOExample.Criteria criteria3 = example.createCriteria();
-                    criteria3.andStatusEqualTo(1)
-                            .andAppIdEqualTo(accountPO.getAppId())
-                            .andInBlacklistEqualTo(isBlacklist)
-                            .andTagIdsJsonLike("%[2,%");
-                    example.or(criteria3);
-
-                    FanPOExample.Criteria criteria4 = example.createCriteria();
-                    criteria4.andStatusEqualTo(1)
-                            .andAppIdEqualTo(accountPO.getAppId())
-                            .andInBlacklistEqualTo(isBlacklist)
-                            .andTagIdsJsonLike("%,2,%");
-                    example.or(criteria4);
-
-                } else {
-                    FanPOExample.Criteria criteria5 = example.createCriteria();
-                    criteria5.andStatusEqualTo(1)
-                            .andAppIdEqualTo(accountPO.getAppId())
-                            .andInBlacklistEqualTo(isBlacklist)
-                            .andTagIdsJsonLike("%" + tagIdStr + "%");
-                    example.or(criteria5);
-                }
-            }
-        } else if (queryStr != null && !"".equals(queryStr)) {
-            FanPOExample.Criteria criteria6 = example.createCriteria();
-            criteria6.andStatusEqualTo(1)
-                    .andAppIdEqualTo(accountPO.getAppId())
-                    .andInBlacklistEqualTo(isBlacklist)
-                    .andNickNameLike(queryStr);
-            example.or(criteria6);
-        } else {
-            FanPOExample.Criteria criteria7 = example.createCriteria();
-            criteria7.andStatusEqualTo(1)
-                    .andAppIdEqualTo(accountPO.getAppId())
-                    .andInBlacklistEqualTo(isBlacklist);
-            example.or(criteria7);
-        }
-
-        RowBounds rowBounds = new RowBounds(fanPage.getOffset(), fanPage.getLimit());
-        String table = DBTableUtil.getFanTableName(accountPO.getAppId());
-        long totalCount = fanMapper.countByExample(example, table);
-        List<FanPO> fanList = fanMapper.selectByExampleWithRowbounds(example, rowBounds, table);
-        fanPage.setTotalCount(totalCount);
-        fanPage.setResult(fanList);
-        return fanPage;
-    }
-
-    @Override
     public void addFanBlacklist(long weixinAppid, List<String> fansOpenId) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountService.getAccessToken(weixinAppid);
@@ -381,7 +310,7 @@ public class FanServiceImpl implements FanService {
 
 
     @Override
-    public Page<FanPO> listFansByPageFromDao(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist) {
+    public Page<FanPO> listFansByPage(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         Page<FanPO> fanPage = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());

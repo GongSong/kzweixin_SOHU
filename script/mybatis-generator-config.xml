@@ -63,7 +63,7 @@
 
             <!--<table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">-->
 
-            <table tableName="weixin_fans_0" domainObjectName="FanPO" mapperName="FanMapper2">
+            <table tableName="weixin_fans_0" domainObjectName="FanPO" mapperName="FanMapper">
                 <columnOverride column="status" javaType="java.lang.Integer"/>
                 <columnOverride column="sex" javaType="java.lang.Integer"/>
                 <columnOverride column="in_blacklist" javaType="java.lang.Integer"/>
