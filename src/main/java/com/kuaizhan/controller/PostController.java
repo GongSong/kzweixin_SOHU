@@ -148,7 +148,7 @@ public class PostController extends BaseController {
      * 新增多图文
      */
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public JsonResponse insertPost(@Valid @RequestBody PostsParam postsParam) throws Exception {
+    public JsonResponse insertPost(@Valid @RequestBody PostsParam postsParam) {
 
         postService.insertMultiPosts(postsParam.getWeixinAppid(), postsParam.getPostDOs());
         return new JsonResponse(ImmutableMap.of());
@@ -158,7 +158,7 @@ public class PostController extends BaseController {
      * 修改多图文
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.PUT)
-    public JsonResponse updatePost(@PathVariable("pageId") long pageId, @Valid @RequestBody PostsParam postsParam) throws Exception {
+    public JsonResponse updatePost(@PathVariable("pageId") long pageId, @Valid @RequestBody PostsParam postsParam) {
         postService.updateMultiPosts(postsParam.getWeixinAppid(), pageId, postsParam.getPostDOs());
         return new JsonResponse(ImmutableMap.of());
     }
@@ -176,7 +176,7 @@ public class PostController extends BaseController {
      * 一键同步微信文章到快站微信
      */
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
-    public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) throws ParamException {
+    public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) {
         postService.syncWeixinPosts(wxSyncsPostParam.getWeixinAppid(), wxSyncsPostParam.getUid());
         return new JsonResponse(ImmutableMap.of());
     }

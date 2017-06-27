@@ -249,7 +249,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void insertMultiPosts(long weixinAppid, List<PostPO> posts) throws Exception {
+    public void insertMultiPosts(long weixinAppid, List<PostPO> posts)  {
 
         // 在方法执行过程中，有失效的风险
         String accessToken = accountService.getAccessToken(weixinAppid);
@@ -268,7 +268,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updateMultiPosts(long weixinAppid, long pageId, List<PostPO> posts) throws Exception {
+    public void updateMultiPosts(long weixinAppid, long pageId, List<PostPO> posts) {
 
         // 老图文
         List<PostPO> oldPosts;
@@ -285,7 +285,7 @@ public class PostServiceImpl implements PostService {
 
         // 数目不对应, 接口调用错误
         if (oldPosts.size() != posts.size()) {
-            throw new ParamException("由于微信限制，不能修改多图文的数目:" + oldPosts.size());
+            throw new BusinessException(ErrorCode.CAN_NOT_CHANGE_POST_NUM);
         }
 
         String accessToken = accountService.getAccessToken(weixinAppid);
@@ -403,7 +403,7 @@ public class PostServiceImpl implements PostService {
      * 把存数据库的多图文DO对象，封装成同步给微信的。
      * 替换了内容中的图片url为wx_src
      */
-    private List<PostPO> wrapWeiXinPosts(String accessToken, List<PostPO> posts) throws Exception {
+    private List<PostPO> wrapWeiXinPosts(String accessToken, List<PostPO> posts) {
         List<PostPO> wxPosts = new ArrayList<>();
 
         for (PostPO postPO : posts) {
@@ -433,7 +433,7 @@ public class PostServiceImpl implements PostService {
      * @return
      * @parm accessToken 上传用的token
      */
-    private List<PostPO> cleanPosts(List<PostPO> posts, String accessToken) throws Exception {
+    private List<PostPO> cleanPosts(List<PostPO> posts, String accessToken) {
 
         int index =0;
         short type = (short) (posts.size() > 1 ? 3 : 1);
@@ -498,7 +498,7 @@ public class PostServiceImpl implements PostService {
 
 
     /*** 清理微信图文数据 ***/
-    private List<PostPO> cleanWxPosts(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception {
+    private List<PostPO> cleanWxPosts(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
         int key = 0;
         List<PostPO> postPOList = new ArrayList<>();
         for (WxPostDTO wxPostDTO : wxPostDTOs) {
@@ -612,7 +612,7 @@ public class PostServiceImpl implements PostService {
     /**
      * 删除html中的js标签，on_click事件
      */
-    private String filterHtml(String html) throws Exception {
+    private String filterHtml(String html) {
         // 删除js标签
         html = html.replaceAll("<script[^>]*?>.*?</script>", "");
 
@@ -627,7 +627,7 @@ public class PostServiceImpl implements PostService {
     /**
      * 上传图文content中的图片到微信，并写入wx_src到img标签
      */
-    private String uploadContentImg(final String accessToken, String content) throws Exception {
+    private String uploadContentImg(final String accessToken, String content) {
         // 对wx_src垃圾数据进行清理，即wx_src标签下的内容不是微信链接。
         String wxSrcRegex = "(wx_src=)[\"'](?<wxSrc>[^\"']+?)[\"']";
         ReplaceCallbackMatcher callbackMatcher = new ReplaceCallbackMatcher(wxSrcRegex);
@@ -669,7 +669,7 @@ public class PostServiceImpl implements PostService {
      * @param content
      * @return
      */
-    private String replaceContentForUpload(final String accessToken, String content) throws Exception {
+    private String replaceContentForUpload(final String accessToken, String content) {
 
         // 用微信wx_src替换src
 
@@ -759,14 +759,14 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public void importWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception {
+    public void importWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
         List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, userId, wxPostDTOs);
         // 入库
         saveMultiPosts(weixinAppid, postPOList);
     }
 
     @Override
-    public void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception {
+    public void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
         List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, userId, wxPostDTOs);
 
         // 修改数据库
@@ -906,7 +906,7 @@ public class PostServiceImpl implements PostService {
     }
 
     /*** 替换微信内容中的微信图片链接为快站链接 ***/
-    private String replacePicUrlFromWeixinPost(String content, final long userId) throws Exception {
+    private String replacePicUrlFromWeixinPost(String content, final long userId) {
         // 将文章中的图片的data-src替换为src
         content = content.replaceAll("(<img [^>]*)(data-src)", "$1src");
 

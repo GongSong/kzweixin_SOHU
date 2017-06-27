@@ -80,12 +80,12 @@ public interface PostService {
      * 新增一条多图文消息，并同步到微信服务器
      * @param posts 新增的post数据列表
      */
-    void insertMultiPosts(long weixinAppid, List<PostPO> posts) throws Exception;
+    void insertMultiPosts(long weixinAppid, List<PostPO> posts);
 
     /**
      * 更新一条多图文消息，并同步到微信服务器
      */
-    void updateMultiPosts(long weixinAppid, long pageId, List<PostPO> posts) throws Exception;
+    void updateMultiPosts(long weixinAppid, long pageId, List<PostPO> posts);
 
 
     /**
@@ -108,12 +108,12 @@ public interface PostService {
     /**
      * 由微信导入图文
      */
-    void importWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception;
+    void importWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs);
 
     /**
      * 更新微信图文
      */
-    void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) throws Exception;
+    void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs);
 
     /**
      * 上传微信永久素材，如缩略图
