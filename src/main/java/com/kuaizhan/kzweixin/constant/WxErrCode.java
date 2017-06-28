@@ -55,4 +55,9 @@ public class WxErrCode {
     public static final int OPEN_ID_MISMATCH_APPID = 49003;
     // 单次拉黑用户超过20个上限
     public static final int ADD_BLACKLIST_EXCEED_LIMIT = 40032;
+
+    // 图文被使用不能删除
+    public static final int POST_USED_BY_OTHER = 48005;
+    // 图文已经被删除
+    public static final int POST_ALREADY_DELETED = 40007;
 }

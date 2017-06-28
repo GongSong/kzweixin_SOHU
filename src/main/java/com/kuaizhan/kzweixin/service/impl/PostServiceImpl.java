@@ -14,7 +14,10 @@ import com.kuaizhan.kzweixin.exception.kuaizhan.Export2KzException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.GetKzArticleException;
 import com.kuaizhan.kzweixin.dao.mongo.MongoPostDao;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
+import com.kuaizhan.kzweixin.exception.weixin.WxInvalidImageFormatException;
 import com.kuaizhan.kzweixin.exception.weixin.WxMediaIdNotExistException;
+import com.kuaizhan.kzweixin.exception.weixin.WxMediaSizeOutOfLimitException;
+import com.kuaizhan.kzweixin.exception.weixin.WxPostUsedException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxPostManager;
 import com.kuaizhan.kzweixin.mq.dto.ArticleImportDTO;
@@ -115,7 +118,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(long weixinAppid, long pageId, String accessToken) {
+    public void deletePost(long weixinAppid, long pageId, String accessToken) throws WxPostUsedException {
 
         PostPO postPO = getPostByPageId(pageId);
         if (postPO != null) {
@@ -783,12 +786,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public HashMap<String, String> uploadWxMaterial(long weixinAppid, String imgUrl) {
-        try {
-            return WxPostManager.uploadMaterial(accountService.getAccessToken(weixinAppid), imgUrl);
-        } catch (DownloadFileFailedException e) {
-            logger.warn("[Post:uploadWxMaterial] download file failed, imgUrl:{}", imgUrl, e);
-            throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载图片失败，请稍后重试");
-        }
+        return WxPostManager.uploadMaterial(accountService.getAccessToken(weixinAppid), imgUrl);
     }
 
     @Override
@@ -820,7 +818,11 @@ public class PostServiceImpl implements PostService {
     /**
      * 获取图片的微信url
      */
-    private String getWxImageUrl(String accessToken, String imgUrl) {
+    private String getWxImageUrl(String accessToken, String imgUrl)
+            throws DownloadFileFailedException,
+            WxInvalidImageFormatException,
+            WxMediaSizeOutOfLimitException{
+
         imgUrl = UrlUtil.fixQuote(imgUrl);
         imgUrl = UrlUtil.fixProtocol(imgUrl);
 
@@ -835,14 +837,9 @@ public class PostServiceImpl implements PostService {
             return wxUrl;
         }
 
-        try {
-            wxUrl = WxPostManager.uploadImage(accessToken, imgUrl);
-        } catch (DownloadFileFailedException e) {
-            logger.warn("[Post:getWxImageUrl] download file failed, imgUrl:{}", imgUrl, e);
-            throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载图片失败，请稍后重试");
-        }
-
+        wxUrl = WxPostManager.uploadImage(accessToken, imgUrl);
         imageCache.setImageUrl(imgUrl, wxUrl);
+
         return wxUrl;
     }
 

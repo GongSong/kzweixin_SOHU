@@ -215,7 +215,7 @@ public class PostController extends BaseController {
      * 上传素材到微信服务器
      */
     @RequestMapping(value = "/weixin_materials", method = RequestMethod.POST)
-    public JsonResponse uploadWeixinThumb(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
+    public JsonResponse uploadWeixinThumb(@Valid @RequestBody UploadPicParam uploadPicParam) {
         Map result = postService.uploadWxMaterial(uploadPicParam.getWeixinAppid(), uploadPicParam.getImgUrl());
         return new JsonResponse(result);
     }
@@ -224,11 +224,9 @@ public class PostController extends BaseController {
      * 上传图文中图片
      */
     @RequestMapping(value = "weixin_pics", method = RequestMethod.POST)
-    public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) throws DownloadFileFailedException {
+    public JsonResponse uploadWeixinPic(@Valid @RequestBody UploadPicParam uploadPicParam) {
         String url = postService.uploadWxImage(uploadPicParam.getWeixinAppid(), uploadPicParam.getImgUrl());
-        Map<String ,String> result = new HashMap<>();
-        result.put("url", url);
-        return new JsonResponse(result);
+        return new JsonResponse(ImmutableMap.of("url", url));
     }
 
     /**
@@ -236,8 +234,7 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/posts/{pageId}/wx_url", method = RequestMethod.GET)
     public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) {
-        Map<String ,String> result = new HashMap<>();
-        result.put("wxUrl", postService.getPostWxUrl(weixinAppid, pageId));
-        return new JsonResponse(result);
+        String wxUrl = postService.getPostWxUrl(weixinAppid, pageId);
+        return new JsonResponse(ImmutableMap.of("wxUrl", wxUrl));
     }
 }
