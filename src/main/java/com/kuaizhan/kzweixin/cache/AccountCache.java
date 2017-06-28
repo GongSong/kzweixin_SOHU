@@ -10,11 +10,18 @@ public interface AccountCache {
 
 
     /**
-     * 对用户信息的缓存
+     * 根据weixinAppId对公众号信息的缓存
      */
-    AccountPO getAccount(long weixinAppid);
-    void setAccount(AccountPO account);
-    void deleteAccount(long weixinAppid);
+    AccountPO getAccountByWeixinAppid(long weixinAppid);
+    void setAccountByWeixinAppid(AccountPO accountPO);
+    void deleteAccountByWeixinAppid(long weixinAppid);
+
+    /**
+     * 根据appId对公众号信息缓存
+     */
+    AccountPO getAccountByAppid(String appid);
+    void setAccountByAppid(AccountPO accountPO);
+    void deleteAccountByAppid(String appid);
 
     /**
      * 对accessToken的缓存

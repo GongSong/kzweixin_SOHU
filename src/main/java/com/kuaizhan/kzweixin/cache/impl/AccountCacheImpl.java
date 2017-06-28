@@ -19,7 +19,7 @@ public class AccountCacheImpl extends RedisBaseDaoImpl implements AccountCache {
 
 
     @Override
-    public AccountPO getAccount(long weixinAppid) {
+    public AccountPO getAccountByWeixinAppid(long weixinAppid) {
         String key = RedisConstant.KEY_ACCOUNT + weixinAppid;
         String result = getData(key);
         if (result == null) {
@@ -30,17 +30,38 @@ public class AccountCacheImpl extends RedisBaseDaoImpl implements AccountCache {
 
 
     @Override
-    public void setAccount(AccountPO account) {
-        String key = RedisConstant.KEY_ACCOUNT + account.getWeixinAppid();
-        String str = JsonUtil.bean2String(account);
+    public void setAccountByWeixinAppid(AccountPO accountPO) {
+        String key = RedisConstant.KEY_ACCOUNT + accountPO.getWeixinAppid();
+        String str = JsonUtil.bean2String(accountPO);
         
         // TODO: 因为修改账号信息还在php代码那边，缓存时间设置得很短，账号模块完全重构后修改
         setData(key, str, 60);
     }
 
     @Override
-    public void deleteAccount(long weixinAppid) {
+    public void deleteAccountByWeixinAppid(long weixinAppid) {
         deleteData(RedisConstant.KEY_ACCOUNT + weixinAppid);
+    }
+
+    @Override
+    public AccountPO getAccountByAppid(String appid) {
+        String key = RedisConstant.KEY_ACCOUNT_BY_APPID + appid;
+        String result = getData(key);
+        if (result == null) {
+            return null;
+        }
+        return JsonUtil.string2Bean(result, AccountPO.class);
+    }
+
+    @Override
+    public void setAccountByAppid(AccountPO accountPO) {
+        String key = RedisConstant.KEY_ACCOUNT_BY_APPID + accountPO.getAppId();
+        setData(key, JsonUtil.bean2String(accountPO), 60);
+    }
+
+    @Override
+    public void deleteAccountByAppid(String appid) {
+        deleteData(RedisConstant.KEY_ACCOUNT_BY_APPID + appid);
     }
 
     @Override
