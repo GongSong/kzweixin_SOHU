@@ -13,7 +13,7 @@ public class NewsResponse {
     private List<News> news;
 
     @Data
-    class News {
+    public class News {
         private String title;
         private String description;
         private String picUrl;

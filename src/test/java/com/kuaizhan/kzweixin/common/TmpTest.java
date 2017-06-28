@@ -1,7 +1,13 @@
 package com.kuaizhan.kzweixin.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kuaizhan.kzweixin.entity.WxData;
+import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,17 +42,10 @@ public class TmpTest {
     }
 
     @Test
-    public void testInt() throws Exception {
+    public void testXml() throws Exception {
     }
 
     @Test
-    public void testJson() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        InputStream is = TmpTest.class.getResourceAsStream("/json/wx-sys-templates.json");
-        Map map = objectMapper.readValue(is, Map.class);
-        System.out.println("---->" + map);
-        System.out.println("---->" + map.containsKey("OPENTM213512088"));
-        System.out.println("---->" + map.get("title"));
-        System.out.println("---->" + map.get("keywords"));
+    public void testInt() throws Exception {
     }
 }

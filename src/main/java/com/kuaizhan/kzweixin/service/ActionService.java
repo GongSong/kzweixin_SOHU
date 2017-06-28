@@ -1,6 +1,9 @@
 package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
+import com.kuaizhan.kzweixin.enums.ActionType;
+
+import java.util.List;
 
 /**
  * Created by zixiong on 2017/6/26.
@@ -16,4 +19,10 @@ public interface ActionService {
      * @param action action对象
      */
     void updateAction(long weixinAppid, ActionPO action, Object responseObj);
+
+
+    /**
+     * 获取指定类型action列表
+     */
+    List<ActionPO> getActions(long weixinAppid, ActionType actionType);
 }

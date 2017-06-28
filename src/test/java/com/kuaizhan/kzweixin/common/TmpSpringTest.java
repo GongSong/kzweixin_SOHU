@@ -2,7 +2,14 @@ package com.kuaizhan.kzweixin.common;
 
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper;
+import com.kuaizhan.kzweixin.entity.WxData;
+import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.service.AccountService;
+import com.kuaizhan.kzweixin.service.WxPushService;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,7 +28,7 @@ public class TmpSpringTest {
     @Resource
     private AccountService accountService;
     @Resource
-    private OpenIdMapper openIdMapper;
+    private WxPushService wxPushService;
 
     @Test
     public void getAccessToken() throws Exception {
@@ -33,8 +40,35 @@ public class TmpSpringTest {
 
     @Test
     public void tmp() throws Exception {
-        System.out.println("---->" + "#########################");
-        System.out.println("---->" + openIdMapper.selectByPrimaryKey(364, "weixin_open_ids_1").getOpenId());
-        System.out.println("---->" + "#########################");
+
+        String xmlStr = "" +
+                "<xml><ToUserName><![CDATA[gh_c480b0a49842]]></ToUserName>\n" +
+                "<FromUserName><![CDATA[oBGGJt5SLU9P_wGu71Xo82m_Zq1s]]></FromUserName>\n" +
+                "<CreateTime>1498632800</CreateTime>\n" +
+                "<MsgType><![CDATA[text]]></MsgType>\n" +
+                "<Content><![CDATA[aaa]]></Content>\n" +
+                "<MsgId>6436578865132716922</MsgId>\n" +
+                "</xml>"
+                ;
+        Document document;
+        try {
+            document = DocumentHelper.parseText(xmlStr);
+        } catch (DocumentException e) {
+            throw new XMLParseException("[handleEventPush] xml parse failed, xmlStr:" + xmlStr, e);
+        }
+        Element root = document.getRootElement();
+
+        WxData wxData = new WxData();
+        // 必有字段
+        wxData.setAppId("wx1a4ff9ec0e369bd1");
+        wxData.setFromUserName(root.elementText("FromUserName"));
+        wxData.setToUserName(root.elementText("ToUserName"));
+        wxData.setMsgType(root.elementText("MsgType"));
+        wxData.setCreateTime(root.elementText("CreateTime"));
+        // 可能为空字段
+        wxData.setEvent(root.elementText("Event"));
+        wxData.setEventKey(root.elementText("EventKey"));
+
+        wxPushService.handleActions(8111772986L, wxData);
     }
 }

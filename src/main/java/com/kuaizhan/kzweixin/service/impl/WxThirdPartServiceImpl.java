@@ -3,6 +3,7 @@ package com.kuaizhan.kzweixin.service.impl;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.cache.AuthCache;
 import com.kuaizhan.kzweixin.exception.common.DecryptException;
+import com.kuaizhan.kzweixin.exception.common.EncryptException;
 import com.kuaizhan.kzweixin.exception.common.GetComponentAccessTokenFailed;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.manager.WxThirdPartManager;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by liangjiateng on 2017/3/15.
@@ -33,18 +35,33 @@ public class WxThirdPartServiceImpl implements WxThirdPartService {
     private AuthCache authCache;
 
     @Override
-    public String decryptMsg(String signature, String timestamp, String nonce, String postData) {
+    public String decryptMsg(String signature, String timestamp, String nonce, String content) {
         try {
             WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN,
                     ApplicationConfig.WEIXIN_AES_KEY,
                     ApplicationConfig.WEIXIN_APPID_THIRD);
-            return wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, postData);
+            return wxBizMsgCrypt.decryptMsg(signature, timestamp, nonce, content);
         } catch (AesException e) {
-            throw new DecryptException("[WeiXin:decryptMsg] decrypt failed," +
+            throw new DecryptException("[Weixin:decryptMsg] decrypt failed," +
                     " signature:" + signature +
                     " timestamp:" + timestamp +
                     " nonce:" + nonce +
-                    " postData:" + postData, e);
+                    " content:" + content, e);
+        }
+    }
+
+    @Override
+    public String encryptMsg(String content) {
+        try{
+            WXBizMsgCrypt wxBizMsgCrypt = new WXBizMsgCrypt(ApplicationConfig.WEIXIN_TOKEN,
+                    ApplicationConfig.WEIXIN_AES_KEY,
+                    ApplicationConfig.WEIXIN_APPID_THIRD);
+
+            String timestamp = Long.toString(DateUtil.curSeconds());
+            String nonce = Long.toString(ThreadLocalRandom.current().nextLong(1000000000L, 9999999999L));
+            return wxBizMsgCrypt.encryptMsg(content, timestamp, nonce);
+        } catch (AesException e) {
+            throw new EncryptException("[Weixin:encryMsg] encrypt failed, content:" + content, e);
         }
     }
 
