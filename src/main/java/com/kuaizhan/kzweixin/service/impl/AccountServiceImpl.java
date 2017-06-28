@@ -6,7 +6,6 @@ import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.KzExchange;
-import com.kuaizhan.kzweixin.dao.mapper.AccountDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
@@ -45,8 +44,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Resource
     private AccountCache accountCache;
-    @Resource
-    private AccountDao accountDao;
     @Resource
     private AccountMapper accountMapper;
     @Resource
@@ -275,10 +272,10 @@ public class AccountServiceImpl implements AccountService {
             throw new BusinessException(ErrorCode.INVALID_APP_SECRET);
         }
 
-        AccountPO updatePO = new AccountPO();
-        updatePO.setWeixinAppid(weixinAppId);
-        updatePO.setAppSecret(appSecret);
-        accountDao.updateAccountByWeixinAppId(updatePO);
+        AccountPO record = new AccountPO();
+        record.setWeixinAppid(weixinAppId);
+        record.setAppSecret(appSecret);
+        accountMapper.updateByPrimaryKeySelective(record);
 
         // 清理缓存
         accountCache.deleteAccountByWeixinAppid(weixinAppId);
@@ -298,10 +295,10 @@ public class AccountServiceImpl implements AccountService {
         }
         jsonObject.put("open_share", openShare);
 
-        AccountPO updatePO = new AccountPO();
-        updatePO.setWeixinAppid(weixinAppId);
-        updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
-        accountDao.updateAccountByWeixinAppId(updatePO);
+        AccountPO record = new AccountPO();
+        record.setWeixinAppid(weixinAppId);
+        record.setAdvancedFuncInfoJson(jsonObject.toString());
+        accountMapper.updateByPrimaryKeySelective(record);
 
         // 清理缓存
         accountCache.deleteAccountByWeixinAppid(weixinAppId);
@@ -326,19 +323,21 @@ public class AccountServiceImpl implements AccountService {
             try {
                 KzManager.kzAccountWxLoginCheck(accountPO.getSiteId());
             } catch (KzApiException e) {
-                AccountPO updatePO = new AccountPO();
-                updatePO.setWeixinAppid(weixinAppId);
-                updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
-                accountDao.updateAccountByWeixinAppId(updatePO);
+
+                AccountPO record = new AccountPO();
+                record.setWeixinAppid(weixinAppId);
+                record.setAdvancedFuncInfoJson(jsonObject.toString());
+                accountMapper.updateByPrimaryKeySelective(record);
+
                 throw new BusinessException(ErrorCode.NOT_SERVICE_NUMBER);
             }
             jsonObject.put("open_login", openLogin);
         }
 
-        AccountPO updatePO = new AccountPO();
-        updatePO.setWeixinAppid(weixinAppId);
-        updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
-        accountDao.updateAccountByWeixinAppId(updatePO);
+        AccountPO record = new AccountPO();
+        record.setWeixinAppid(weixinAppId);
+        record.setAdvancedFuncInfoJson(jsonObject.toString());
+        accountMapper.updateByPrimaryKeySelective(record);
 
         // 清理缓存
         accountCache.deleteAccountByWeixinAppid(weixinAppId);
