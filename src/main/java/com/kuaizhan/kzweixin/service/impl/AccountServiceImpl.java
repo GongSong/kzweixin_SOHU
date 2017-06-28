@@ -6,7 +6,6 @@ import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.KzExchange;
-import com.kuaizhan.kzweixin.dao.mapper.AccountDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
@@ -45,8 +44,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Resource
     private AccountCache accountCache;
-    @Resource
-    private AccountDao accountDao;
     @Resource
     private AccountMapper accountMapper;
     @Resource
@@ -155,7 +152,8 @@ public class AccountServiceImpl implements AccountService {
         }
 
         // 清理之前可能缓存的账户信息和accessToken信息
-        accountCache.deleteAccount(weixinAppid);
+        accountCache.deleteAccountByWeixinAppid(weixinAppid);
+        accountCache.deleteAccountByAppid(appId);
         accountCache.deleteAccessToken(weixinAppid);
 
         // 用户导入异步任务，使用php的
@@ -210,36 +208,53 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountPO getAccountBySiteId(long siteId) {
-        AccountPO accountPO = accountDao.getAccountBySiteId(siteId);
-        if (accountPO == null) {
+        AccountPOExample example = new AccountPOExample();
+        example.createCriteria()
+                .andSiteIdEqualTo(siteId)
+                .andIsDelEqualTo(0);
+        List<AccountPO> accountPOS = accountMapper.selectByExample(example);
+
+        if (accountPOS.size() == 0) {
             throw new BusinessException(ErrorCode.SITE_ID_NOT_EXIST);
+        }
+        return accountPOS.get(0);
+    }
+
+    @Override
+    public AccountPO getAccountByAppId(String appId) {
+        AccountPO accountPO = accountCache.getAccountByAppid(appId);
+
+        if (accountPO == null) {
+
+            AccountPOExample example = new AccountPOExample();
+            example.createCriteria()
+                    .andAppIdEqualTo(appId)
+                    .andIsDelEqualTo(0);
+            List<AccountPO> accountPOS = accountMapper.selectByExample(example);
+
+            if (accountPOS.size() == 0) {
+                throw new BusinessException(ErrorCode.APP_ID_NOT_EXIST);
+            }
+            accountPO = accountPOS.get(0);
+            accountCache.setAccountByAppid(accountPO);
         }
         return accountPO;
     }
 
     @Override
-    public AccountPO getAccountByAppId(String appId) {
-        AccountPO accountPO = accountDao.getAccountByAppId(appId);
-        if (accountPO == null) {
-            throw new BusinessException(ErrorCode.APP_ID_NOT_EXIST);
-        }
-        return accountDao.getAccountByAppId(appId);
-    }
-
-    @Override
-    public AccountPO getAccountByWeixinAppId(long weinxinAppid) {
+    public AccountPO getAccountByWeixinAppId(long weixinAppid) {
         // 从缓存拿
-        AccountPO accountPO = accountCache.getAccount(weinxinAppid);
+        AccountPO accountPO = accountCache.getAccountByWeixinAppid(weixinAppid);
 
         if (accountPO == null) {
             //从数据库拿
-            accountPO = accountDao.getAccountByWeixinAppId(weinxinAppid);
-            if (accountPO == null) {
+            accountPO = accountMapper.selectByPrimaryKey(weixinAppid);
+
+            if (accountPO == null || accountPO.getIsDel() == 1) {
                 throw new BusinessException(ErrorCode.ACCOUNT_NOT_EXIST);
             }
-
             //存缓存
-            accountCache.setAccount(accountPO);
+            accountCache.setAccountByWeixinAppid(accountPO);
         }
         return accountPO;
     }
@@ -257,13 +272,14 @@ public class AccountServiceImpl implements AccountService {
             throw new BusinessException(ErrorCode.INVALID_APP_SECRET);
         }
 
-        AccountPO updatePO = new AccountPO();
-        updatePO.setWeixinAppid(weixinAppId);
-        updatePO.setAppSecret(appSecret);
-        accountDao.updateAccountByWeixinAppId(updatePO);
+        AccountPO record = new AccountPO();
+        record.setWeixinAppid(weixinAppId);
+        record.setAppSecret(appSecret);
+        accountMapper.updateByPrimaryKeySelective(record);
 
         // 清理缓存
-        accountCache.deleteAccount(weixinAppId);
+        accountCache.deleteAccountByWeixinAppid(weixinAppId);
+        accountCache.deleteAccountByAppid(accountPO.getAppId());
     }
 
     @Override
@@ -279,20 +295,21 @@ public class AccountServiceImpl implements AccountService {
         }
         jsonObject.put("open_share", openShare);
 
-        AccountPO updatePO = new AccountPO();
-        updatePO.setWeixinAppid(weixinAppId);
-        updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
-        accountDao.updateAccountByWeixinAppId(updatePO);
+        AccountPO record = new AccountPO();
+        record.setWeixinAppid(weixinAppId);
+        record.setAdvancedFuncInfoJson(jsonObject.toString());
+        accountMapper.updateByPrimaryKeySelective(record);
 
         // 清理缓存
-        accountCache.deleteAccount(weixinAppId);
+        accountCache.deleteAccountByWeixinAppid(weixinAppId);
+        accountCache.deleteAccountByAppid(accountPO.getAppId());
     }
 
     @Override
     public void updateAuthLogin(long weixinAppId, Integer openLogin) {
         AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
-        JSONObject jsonObject;
 
+        JSONObject jsonObject;
         //检测数据库是否存在记录
         if ("".equals(accountPO.getAdvancedFuncInfoJson())) {
             jsonObject = new JSONObject();
@@ -306,22 +323,25 @@ public class AccountServiceImpl implements AccountService {
             try {
                 KzManager.kzAccountWxLoginCheck(accountPO.getSiteId());
             } catch (KzApiException e) {
-                AccountPO updatePO = new AccountPO();
-                updatePO.setWeixinAppid(weixinAppId);
-                updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
-                accountDao.updateAccountByWeixinAppId(updatePO);
+
+                AccountPO record = new AccountPO();
+                record.setWeixinAppid(weixinAppId);
+                record.setAdvancedFuncInfoJson(jsonObject.toString());
+                accountMapper.updateByPrimaryKeySelective(record);
+
                 throw new BusinessException(ErrorCode.NOT_SERVICE_NUMBER);
             }
             jsonObject.put("open_login", openLogin);
         }
 
-        AccountPO updatePO = new AccountPO();
-        updatePO.setWeixinAppid(weixinAppId);
-        updatePO.setAdvancedFuncInfoJson(jsonObject.toString());
-        accountDao.updateAccountByWeixinAppId(updatePO);
+        AccountPO record = new AccountPO();
+        record.setWeixinAppid(weixinAppId);
+        record.setAdvancedFuncInfoJson(jsonObject.toString());
+        accountMapper.updateByPrimaryKeySelective(record);
 
         // 清理缓存
-        accountCache.deleteAccount(weixinAppId);
+        accountCache.deleteAccountByWeixinAppid(weixinAppId);
+        accountCache.deleteAccountByAppid(accountPO.getAppId());
     }
 
     @Override

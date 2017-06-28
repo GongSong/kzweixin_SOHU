@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.ResponseType;
-import com.kuaizhan.kzweixin.dao.mapper.AccountDao;
+import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.dao.mapper.auto.ConditionMenuMapper;
 import com.kuaizhan.kzweixin.dao.mapper.auto.MenuItemMapper;
 import com.kuaizhan.kzweixin.exception.BusinessException;
@@ -46,7 +46,7 @@ public class MenuServiceImpl implements MenuService {
     @Resource
     private AccountService accountService;
     @Resource
-    private AccountDao accountDao;
+    private AccountMapper accountMapper;
     @Resource
     private MenuItemMapper menuItemMapper;
     @Resource
@@ -94,11 +94,11 @@ public class MenuServiceImpl implements MenuService {
         MenuWrapper menu = new MenuWrapper();
         menu.setMenu(menuDTO);
 
-        AccountPO account = new AccountPO();
-        account.setWeixinAppid(weixinAppid);
-        account.setMenuJson(JsonUtil.bean2String(menu));
+        AccountPO record = new AccountPO();
+        record.setWeixinAppid(weixinAppid);
+        record.setMenuJson(JsonUtil.bean2String(menu));
 
-        accountDao.updateAccountByWeixinAppId(accountPO);
+        accountMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override

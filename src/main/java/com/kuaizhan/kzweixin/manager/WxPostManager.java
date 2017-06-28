@@ -6,9 +6,7 @@ import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.WxErrCode;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.*;
-import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
-import com.kuaizhan.kzweixin.exception.weixin.WxMediaIdNotExistException;
-import com.kuaizhan.kzweixin.exception.weixin.WxPostListGetException;
+import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.entity.post.WxPostListDTO;
 import com.kuaizhan.kzweixin.entity.post.WxPostDTO;
@@ -33,31 +31,32 @@ public class WxPostManager {
 
     /**
      * 微信删除图文
+     * @throws WxPostUsedException 图文用于自动回复, 菜单等
+     * @throws WxApiException 未知异常
      */
     public static void deletePost(String mediaId, String accessToken) {
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("media_id", mediaId);
 
         String result = HttpClientUtil.postJson(WxApiConfig.deleteMaterialUrl(accessToken), jsonObject.toString());
         if (result == null) {
-            logger.error("[WxPostManager.deletePost] 删除图文返回为null, mediaId:{}", mediaId);
-            throw new BusinessException(ErrorCode.OPERATION_FAILED, "删除图文失败, 请稍后重试");
+            throw new WxApiException("[deletePost] result is null");
         }
 
         JSONObject returnJson = new JSONObject(result);
+
         int errCode = returnJson.optInt("errcode");
-        if (errCode != 0) {
-            // post被使用而不能被删除
-            if (errCode == 48005) {
-                throw new BusinessException(ErrorCode.POST_USED_BY_OTHER_ERROR);
-            }
-            // 40007错误码是已经被删除，不报错
-            else if (errCode == 40007) return;
-            else {
-                // 未知错误
-                logger.error("[WxPostManager.deletePost] 删除多图文失败, mediaId:{} result: {}", mediaId, returnJson);
-                throw new BusinessException(ErrorCode.OPERATION_FAILED, "删除图文失败, 请稍后重试");
-            }
+        if (errCode == 0 || errCode == WxErrCode.POST_ALREADY_DELETED) {
+            return;
+        }
+
+        // post被使用而不能被删除
+        if (errCode == WxErrCode.POST_USED_BY_OTHER) {
+            throw new WxPostUsedException();
+        } else {
+            // 未知错误
+            throw new WxApiException("[WxPostManager.deletePost] 删除多图文失败, mediaId:" + mediaId + " result:" + returnJson);
         }
     }
 
@@ -104,8 +103,14 @@ public class WxPostManager {
 
     /**
      * 上传图文中的图片到微信服务器
+     * @throws WxMediaSizeOutOfLimitException 图片过大
+     * @throws WxInvalidImageFormatException 图片格式不对
+     * @throws DownloadFileFailedException 下载文件失败
      */
-    public static String uploadImage(String accessToken, String imgUrl) throws DownloadFileFailedException {
+    public static String uploadImage(String accessToken, String imgUrl)
+            throws DownloadFileFailedException,
+            WxMediaSizeOutOfLimitException,
+            WxInvalidImageFormatException {
 
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
@@ -120,12 +125,12 @@ public class WxPostManager {
         }
 
         if (errCode == WxErrCode.MEDIA_SIZE_OUT_OF_LIMIT) {
-            throw new BusinessException(ErrorCode.MEDIA_SIZE_OUT_OF_LIMIT);
+            throw new WxMediaSizeOutOfLimitException();
         } else if (errCode == WxErrCode.INVALID_IMAGE_FORMAT) {
-            throw new BusinessException(ErrorCode.OPERATION_FAILED, "图文中图片格式不对，上传到微信失败");
+            throw new WxInvalidImageFormatException();
+        } else {
+            throw new WxApiException("[Weixin:uploadImage] 上传图文中图片失败: result: " + returnJson + " imgUrl:" + imgUrl);
         }
-        logger.error("[Weixin:uploadImage] 上传图文中图片失败: result:{} imgUrl:{}", returnJson, imgUrl);
-        throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传内容中图片失败，请重试");
     }
 
     /**

@@ -19,6 +19,7 @@ public class RedisConstant {
 
     //缓存账户信息
     public static final String KEY_ACCOUNT = ApplicationConfig.REDIS_PREFIX + "kzweixin:account:";
+    public static final String KEY_ACCOUNT_BY_APPID = ApplicationConfig.REDIS_PREFIX + "kzweixin:account:appid:";
 
     //粉丝
 

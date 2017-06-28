@@ -1,14 +1,12 @@
 package com.kuaizhan.kzweixin.exception;
 
 import com.kuaizhan.kzweixin.constant.ErrorCode;
-import lombok.Data;
 
 /**
  * 业务异常
- * 业务异常属于不可恢复异常，使用 unchecked RuntimeException, 外抛到最外层返回错误码。
+ * 使用 unchecked RuntimeException, 可以外抛到最外层返回业务错误码。
  * Created by zixiong on 2017/5/1.
  */
-@Data
 public class BusinessException extends RuntimeException {
 
     private final ErrorCode errorCode;
@@ -27,7 +25,17 @@ public class BusinessException extends RuntimeException {
         this.message = message;
     }
 
+    public BusinessException(ErrorCode errorCode, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCode =  errorCode;
+        this.message = message;
+    }
+
     public int getCode() {
-        return this.errorCode.getCode();
+        return errorCode.getCode();
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

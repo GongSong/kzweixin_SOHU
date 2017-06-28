@@ -168,12 +168,8 @@ public class MsgServiceImpl implements MsgService {
                 if (picUrl == null) {
                     throw new BusinessException(ErrorCode.PARAM_ERROR, "pic_url不能为空");
                 }
-                try {
-                    String mediaId = WxCommonManager.uploadTmpImage(accessToken, picUrl);
-                    image.setMediaId(mediaId);
-                } catch (DownloadFileFailedException e) {
-                    throw new BusinessException(ErrorCode.OPERATION_FAILED, "下载文件失败，请稍后重试");
-                }
+                String mediaId = WxCommonManager.uploadTmpImage(accessToken, picUrl);
+                image.setMediaId(mediaId);
                 contentObj = image;
                 break;
             // 多图文类型

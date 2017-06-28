@@ -6,6 +6,7 @@ import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.entity.post.ArticleDTO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.entity.post.WxPostDTO;
+import com.kuaizhan.kzweixin.exception.weixin.WxPostUsedException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,7 @@ public interface PostService {
      * 删除图文
      * 根据pageId，删除多图文下面的所有图文, 同时删除在微信后台的图文
      */
-    void deletePost(long weixinAppid, long pageId, String accessToken);
+    void deletePost(long weixinAppid, long pageId, String accessToken) throws WxPostUsedException;
 
     /**
      * 是否存在微信图文

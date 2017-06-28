@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.WxErrCode;
 import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
-import com.kuaizhan.kzweixin.exception.weixin.WxInvalidImageFormat;
-import com.kuaizhan.kzweixin.exception.weixin.WxMediaSizeOutOfLimit;
+import com.kuaizhan.kzweixin.exception.weixin.WxInvalidImageFormatException;
+import com.kuaizhan.kzweixin.exception.weixin.WxMediaSizeOutOfLimitException;
 import com.kuaizhan.kzweixin.utils.HttpClientUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.UrlUtil;
@@ -21,10 +21,10 @@ public class WxCommonManager {
 
     /**
      * 上传临时图片素材到微信, 换取临时mediaId
-     * @throws WxMediaSizeOutOfLimit 图片过大
-     * @throws WxInvalidImageFormat 不支持的图片类型
+     * @throws WxMediaSizeOutOfLimitException 图片过大
+     * @throws WxInvalidImageFormatException 不支持的图片类型
      */
-    public static String uploadTmpImage(String accessToken, String imgUrl) throws WxInvalidImageFormat, WxMediaSizeOutOfLimit {
+    public static String uploadTmpImage(String accessToken, String imgUrl) throws WxInvalidImageFormatException, WxMediaSizeOutOfLimitException {
 
         imgUrl = UrlUtil.fixQuote(imgUrl);
         // 获取内部地址
@@ -40,9 +40,9 @@ public class WxCommonManager {
         String mediaId = returnJson.optString("media_id");
 
         if (errCode == WxErrCode.MEDIA_SIZE_OUT_OF_LIMIT) {
-            throw new WxMediaSizeOutOfLimit();
+            throw new WxMediaSizeOutOfLimitException();
         } else if (errCode == WxErrCode.INVALID_IMAGE_FORMAT) {
-            throw new WxInvalidImageFormat();
+            throw new WxInvalidImageFormatException();
         } else if (errCode != 0 || mediaId == null) {
             throw new WxApiException("[Weixin:uploadTmpImage] unexpected result, imgUrl:" + imgUrl + " result:" + result);
         }
