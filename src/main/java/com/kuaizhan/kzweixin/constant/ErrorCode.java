@@ -25,6 +25,7 @@ public class ErrorCode {
     // 通用(01)
     public static final ErrorCode PARAM_ERROR = new ErrorCode(101001, "请求参数错误");
     public static final ErrorCode DOWNLOAD_FILE_FAILED = new ErrorCode(101002, "下载文件失败");
+    public static final ErrorCode API_UNAUTHORIZED = new ErrorCode(101003, "您没有授权此功能给快站");
 
     // 账号(02)
     public static final ErrorCode SITE_ID_NOT_EXIST = new ErrorCode(102002, "站点没有绑定公众号或siteId不存在");

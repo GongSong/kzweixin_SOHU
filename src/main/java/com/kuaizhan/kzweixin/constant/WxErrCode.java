@@ -60,4 +60,8 @@ public class WxErrCode {
     public static final int POST_USED_BY_OTHER = 48005;
     // 图文已经被删除
     public static final int POST_ALREADY_DELETED = 40007;
+
+
+    // 公众号没有授权此功能
+    public static final int API_IS_UNAUTHORIZED = 61007;
 }
