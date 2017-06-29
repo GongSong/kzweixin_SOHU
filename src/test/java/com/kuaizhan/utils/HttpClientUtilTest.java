@@ -1,14 +1,13 @@
 package com.kuaizhan.utils;
 
-import com.kuaizhan.config.WxApiConfig;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by zixiong on 2017/4/26.
@@ -34,12 +33,9 @@ public class HttpClientUtilTest {
 
     @Test
     public void postFile() throws Exception {
-        String fileUrl = "http://pic.kuaizhan.com/g2/M00/38/10/CgpQVFYawpuAYVC6AALqWSZDYzw3840099";
-        String fileHost = "pic.kuaizhan.com";
-        String token = "rSTqmdGkavwEabhhY4WIgtMA5hBE62yTsmtt8dAQq69DjZdIk331i-d454KSsXiM8laxd4InKHPLTjEWFzfWy_rRJsTWjktxKgsSLupdLDhKYu2YaV4TEVpsGYORF8GUPBCbAKDVHI";
-        String url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=" + token;
-        String res = HttpClientUtil.postFile(WxApiConfig.addMaterialUrl(token, "image"), fileUrl, fileHost);
-        System.out.println("---->" + res);
+        HttpResponse<JsonNode> jsonResponse = Unirest.post("http://cos.kuaizhan.sohuno.com/api/v2/upload")
+                .field("file", new File("/Users/zixiong/Desktop/0.jpeg"))
+                .asJson();
+        System.out.println("---->" + jsonResponse);
     }
-
 }
