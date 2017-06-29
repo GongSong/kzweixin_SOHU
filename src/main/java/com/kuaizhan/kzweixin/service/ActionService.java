@@ -25,4 +25,10 @@ public interface ActionService {
      * 获取指定类型action列表
      */
     List<ActionPO> getActions(long weixinAppid, ActionType actionType);
+
+
+    /**
+     * 根据bizData判断是否该触发action
+     */
+    boolean shouldAction(ActionPO actionPO, String bizData);
 }

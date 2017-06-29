@@ -57,17 +57,7 @@ public class WxPushServiceImpl implements WxPushService {
             throw new XMLParseException("[handleEventPush] xml parse failed, xmlStr:" + xmlStr, e);
         }
         Element root = document.getRootElement();
-
-        WxData wxData = new WxData();
-        // 必有字段
-        wxData.setAppId(appId);
-        wxData.setFromUserName(root.elementText("FromUserName"));
-        wxData.setToUserName(root.elementText("ToUserName"));
-        wxData.setMsgType(root.elementText("MsgType"));
-        wxData.setCreateTime(root.elementText("CreateTime"));
-        // 可能为空字段
-        wxData.setEvent(root.elementText("Event"));
-        wxData.setEventKey(root.elementText("EventKey"));
+        WxData wxData = getWxData(root, appId);
 
         String result = null;
         String msgType = wxData.getMsgType();
@@ -128,8 +118,14 @@ public class WxPushServiceImpl implements WxPushService {
     public String handleActions(long weixinAppid, WxData wxData, ActionType actionType) {
 
         List<ActionPO> actionPOS = actionService.getActions(weixinAppid, actionType);
-        // 先按业务排序
+
+        //TODO: 先按业务排序
         for (ActionPO actionPO: actionPOS) {
+
+            // 判断是否触发action
+            if (! actionService.shouldAction(actionPO, wxData.getContent())) {
+                continue;
+            }
 
             int responseType = actionPO.getResponseType();
             String fromUserName = wxData.getFromUserName();
@@ -202,6 +198,24 @@ public class WxPushServiceImpl implements WxPushService {
         String result = String.format(tpl, toUserName, fromUserName,
                 DateUtil.curSeconds(), news.size(), itemBuilder.toString());
         return wxThirdPartService.encryptMsg(result);
+    }
+
+    /**
+     * 从xml解析出wxData
+     */
+    private WxData getWxData(Element root, String appId) {
+        WxData wxData = new WxData();
+        // 必有字段
+        wxData.setAppId(appId);
+        wxData.setFromUserName(root.elementText("FromUserName"));
+        wxData.setToUserName(root.elementText("ToUserName"));
+        wxData.setMsgType(root.elementText("MsgType"));
+        wxData.setCreateTime(root.elementText("CreateTime"));
+        // 可能为空字段
+        wxData.setEvent(root.elementText("Event"));
+        wxData.setEventKey(root.elementText("EventKey"));
+        wxData.setContent(root.elementText("Content"));
+        return wxData;
     }
 
     /**

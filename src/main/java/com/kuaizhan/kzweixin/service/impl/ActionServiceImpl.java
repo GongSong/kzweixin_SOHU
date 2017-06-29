@@ -68,4 +68,17 @@ public class ActionServiceImpl implements ActionService {
                 .andStatusEqualTo(true);
         return actionMapper.selectByExampleWithBLOBs(example);
     }
+
+    @Override
+    public boolean shouldAction(ActionPO actionPO, String bizData) {
+        // 订阅类型，都触发
+        if (actionPO.getActionType() == ActionType.SUBSCRIBE.getValue()) {
+            return true;
+        }
+        // 回复类型，匹配bizData时触发
+        if (actionPO.getActionType() == ActionType.REPLY.getValue()) {
+            return bizData != null && bizData.matches(actionPO.getBizData());
+        }
+        return false;
+    }
 }
