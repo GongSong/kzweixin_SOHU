@@ -44,4 +44,9 @@ public class DBTableUtil {
     public static String chooseFanTable(long time) {
         return "weixin_fans_" + (time % ApplicationConfig.FAN_TABLE_NUM);
     }
+
+    public static String getOpenIdTableName(String appId) {
+        int tableNum = (int) (Crc32Util.getValue(appId) % ApplicationConfig.OPEN_ID_TABLE_NUM);
+        return "weixin_open_ids_" + tableNum;
+    }
 }

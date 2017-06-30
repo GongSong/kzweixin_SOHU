@@ -1,8 +1,8 @@
 package com.kuaizhan.kzweixin.common;
 
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
-import com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper;
 import com.kuaizhan.kzweixin.service.AccountService;
+import com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

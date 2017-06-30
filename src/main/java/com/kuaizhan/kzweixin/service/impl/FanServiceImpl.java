@@ -5,11 +5,11 @@ import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.cache.FanCache;
 import com.kuaizhan.kzweixin.dao.mapper.auto.FanMapper;
-import com.kuaizhan.kzweixin.dao.po.auto.FanPOExample;
+import com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper;
+import com.kuaizhan.kzweixin.dao.po.auto.*;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
+import com.kuaizhan.kzweixin.entity.fan.UserInfoDTO;
 import com.kuaizhan.kzweixin.entity.common.Page;
-import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
-import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.manager.WxFanManager;
@@ -40,6 +40,8 @@ public class FanServiceImpl implements FanService {
     private FanMapper fanMapper;
     @Resource
     private AccountService accountService;
+    @Resource
+    private OpenIdMapper openIdMapper;
 
 
     @Override
@@ -304,7 +306,6 @@ public class FanServiceImpl implements FanService {
         }
     }
 
-
     @Override
     public Page<FanPO> listFansByPage(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
@@ -319,4 +320,92 @@ public class FanServiceImpl implements FanService {
 
         return fanPage;
     }
+
+    @Override
+    public void userSubscribe(String appId, String openId) {
+        if (appId == null || "".equals(appId) || openId == null || "".equals(openId)) {
+            return;
+        }
+
+        OpenIdPOExample example = new OpenIdPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId);
+
+        String table = DBTableUtil.getOpenIdTableName(appId);
+        List<OpenIdPO> updateFans = openIdMapper.selectByExample(example, table);
+
+        if (updateFans.size() == 0) {
+            OpenIdPO newUserPO = new OpenIdPO();
+            newUserPO.setAppId(appId);
+            newUserPO.setOpenId(openId);
+            newUserPO.setStatus(1);
+            newUserPO.setCreateTime(DateUtil.curSeconds());
+            newUserPO.setUpdateTime(DateUtil.curSeconds());
+            openIdMapper.insertSelective(newUserPO, table);
+        } else {
+            OpenIdPO oldUserPO = new OpenIdPO();
+            oldUserPO.setId(updateFans.get(0).getId());
+            oldUserPO.setStatus(1);
+            oldUserPO.setUpdateTime(DateUtil.curSeconds());
+            openIdMapper.updateByPrimaryKeySelective(oldUserPO, table);
+        }
+    }
+
+    @Override
+    public void userUnsubscribe(String appId, String openId) {
+        if (appId == null || "".equals(appId) || openId == null || "".equals(openId)) {
+            return;
+        }
+
+        OpenIdPO oldUserPO = new OpenIdPO();
+        oldUserPO.setStatus(2);
+        oldUserPO.setUpdateTime(DateUtil.curSeconds());
+
+        OpenIdPOExample example = new OpenIdPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
+
+        String table = DBTableUtil.getOpenIdTableName(appId);
+        openIdMapper.updateByExampleSelective(oldUserPO, example, table);
+    }
+
+    @Override
+    public FanPO refreshUserInfo(long weixinAppid, String appId, String openId, boolean hasInteract) {
+        String accessToken = accountService.getAccessToken(weixinAppid);
+        UserInfoDTO userInfoDTO = WxFanManager.getFanInfo(accessToken, openId);
+
+        FanPO fanPO = new FanPO();
+
+        //从微信服务器接收并转换的部分
+        fanPO.setAppId(appId);
+        fanPO.setOpenId(openId);
+        fanPO.setStatus(userInfoDTO.getStatus());
+        fanPO.setNickName(userInfoDTO.getNickName());
+        fanPO.setCity(userInfoDTO.getCity());
+        fanPO.setProvince(userInfoDTO.getProvince());
+        fanPO.setCountry(userInfoDTO.getCountry());
+        fanPO.setHeadImgUrl(userInfoDTO.getHeadImgUrl());
+        //group id还需要维护吗？
+        fanPO.setGroupId(userInfoDTO.getGroupId());
+        fanPO.setLanguage(userInfoDTO.getLanguage());
+        fanPO.setRemark(userInfoDTO.getRemark());
+        fanPO.setUnionId(userInfoDTO.getUnionId());
+        fanPO.setSex(userInfoDTO.getSex());
+        fanPO.setSubscribeTime(userInfoDTO.getSubscribeTime());
+        fanPO.setTagIdsJson(userInfoDTO.getTagIdsJson());
+
+        //自定义部分
+        fanPO.setUpdateTime(DateUtil.curSeconds());
+        fanPO.setInBlacklist(userInfoDTO.getGroupId() == 1 ? 1 : 0);
+        fanPO.setLastInteractTime(hasInteract ? DateUtil.curSeconds() : 0);
+
+        String table = DBTableUtil.getFanTableName(appId);
+        fanMapper.updateByPrimaryKeySelective(fanPO, table);
+
+        return fanPO;
+    }
+
 }

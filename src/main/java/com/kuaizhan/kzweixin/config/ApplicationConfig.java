@@ -39,6 +39,7 @@ public class ApplicationConfig {
     // 分表
     public static final int MSG_TABLE_NUM = PropertiesUtil.getInt(PROP, "table.num.msg");
     public static final int FAN_TABLE_NUM = PropertiesUtil.getInt(PROP, "table.num.fan");
+    public static final int OPEN_ID_TABLE_NUM = PropertiesUtil.getInt(PROP, "table.num.openId");
 
     //微信配置
     public static final String WEIXIN_TOKEN = PropertiesUtil.getString(PROP, "weixin.third.token");
