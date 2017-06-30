@@ -86,14 +86,14 @@ public interface FanService {
      * @param appId 公众号Id
      * @param openId 粉丝openId
      * */
-    void userSubscribe(String appId, String openId);
+    void addFanOpenId(String appId, String openId);
 
     /**
      * 用户取消订阅
      * @param appId 公众号Id
      * @param openId 粉丝openId
      * */
-    void userUnsubscribe(String appId, String openId);
+    void delFanOpenId(String appId, String openId);
 
     /**
      * 更新用户个人信息
@@ -102,5 +102,5 @@ public interface FanService {
      * @param hasInteract 是否有粉丝互动，1有0没有
      * @return 粉丝信息
      * */
-    FanPO refreshUserInfo(long weixinAppid, String appId, String openId, boolean hasInteract);
+    FanPO addFan(long weixinAppid, String appId, String openId, boolean hasInteract);
 }

@@ -14,62 +14,38 @@ public class UserInfoDTO {
 
     @JsonProperty("subscribe")
     private Integer status;
+
     @JsonProperty("openid")
     private String openId;
-    @JsonProperty("nickname")
-    private String nickName;
-    @JsonProperty("headimgurl")
-    private String headImgUrl;
-    @JsonProperty("subscribe_time")
-    private Integer subscribeTime;
-    @JsonProperty("unionid")
-    private String unionId;
-    @JsonProperty("groupid")
-    private Integer groupId;
-    @JsonProperty("tagid_list")
-    private String tagIdsJson;
 
     private Integer sex;
+
+    @JsonProperty("nickname")
+    private String nickName;
+
     private String language;
+
     private String city;
+
     private String province;
+
     private String country;
+
+    @JsonProperty("headimgurl")
+    private String headImgUrl;
+
+    @JsonProperty("subscribe_time")
+    private Integer subscribeTime;
+
+    @JsonProperty("unionid")
+    private String unionId;
+
     private String remark;
 
-//    @JsonProperty("subscribe")
-//    private Integer status;
-//
-//    @JsonProperty("openid")
-//    private String openId;
-//
-//    private Integer sex;
-//
-//    @JsonProperty("nickname")
-//    private String nickName;
-//
-//    private String language;
-//
-//    private String city;
-//
-//    private String province;
-//
-//    private String country;
-//
-//    @JsonProperty("headimgurl")
-//    private String headImgUrl;
-//
-//    @JsonProperty("subscribe_time")
-//    private Integer subscribeTime;
-//
-//    @JsonProperty("unionid")
-//    private String unionId;
-//
-//    private String remark;
-//
-//    @JsonProperty("groupid")
-//    private Integer groupId;
-//
-//    @JsonProperty("tagid_list")
-//    private String tagIdsJson;
+    @JsonProperty("groupid")
+    private Integer groupId;
+
+    @JsonProperty("tagid_list")
+    private String tagIdsJson;
 
 }

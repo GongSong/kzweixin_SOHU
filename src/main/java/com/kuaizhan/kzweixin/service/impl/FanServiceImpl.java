@@ -263,11 +263,7 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void userSubscribe(String appId, String openId) {
-        if (appId == null || "".equals(appId) || openId == null || "".equals(openId)) {
-            return;
-        }
-
+    public void addFanOpenId(String appId, String openId) {
         OpenIdPOExample example = new OpenIdPOExample();
         example.createCriteria()
                 .andAppIdEqualTo(appId)
@@ -294,11 +290,7 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void userUnsubscribe(String appId, String openId) {
-        if (appId == null || "".equals(appId) || openId == null || "".equals(openId)) {
-            return;
-        }
-
+    public void delFanOpenId(String appId, String openId) {
         OpenIdPO oldUserPO = new OpenIdPO();
         oldUserPO.setStatus(2);
         oldUserPO.setUpdateTime(DateUtil.curSeconds());
@@ -311,10 +303,13 @@ public class FanServiceImpl implements FanService {
 
         String table = DBTableUtil.getOpenIdTableName(appId);
         openIdMapper.updateByExampleSelective(oldUserPO, example, table);
+
+        //TODO:删除Redis缓存
+
     }
 
     @Override
-    public FanPO refreshUserInfo(long weixinAppid, String appId, String openId, boolean hasInteract) {
+    public FanPO addFan(long weixinAppid, String appId, String openId, boolean hasInteract) {
         String accessToken = accountService.getAccessToken(weixinAppid);
         UserInfoDTO userInfoDTO = WxFanManager.getFanInfo(accessToken, openId);
 
@@ -329,7 +324,6 @@ public class FanServiceImpl implements FanService {
         fanPO.setProvince(userInfoDTO.getProvince());
         fanPO.setCountry(userInfoDTO.getCountry());
         fanPO.setHeadImgUrl(userInfoDTO.getHeadImgUrl());
-        //group id还需要维护吗？
         fanPO.setGroupId(userInfoDTO.getGroupId());
         fanPO.setLanguage(userInfoDTO.getLanguage());
         fanPO.setRemark(userInfoDTO.getRemark());

@@ -20,25 +20,25 @@ public class FanServiceImplTest {
     private FanService fanService;
 
     @Test
-    public void userSubscribe() throws Exception {
+    public void addFanOpenId() throws Exception {
         String appId = "wx118d7fb9ab2c9f8a";
-        String openId = "o_0ZuuAFUWo1JEv1pWdg7ak12345";
-        fanService.userSubscribe(appId, openId);
+        String openId = "";
+        fanService.addFanOpenId(appId, openId);
     }
 
     @Test
-    public void userUnsubscribe() throws Exception {
+    public void delFanOpenId() throws Exception {
         String appId = "wx118d7fb9ab2c9f8a";
         String openId = "o_0ZuuONsN8NFfGG-4CJ8xe5IqKE";
-        fanService.userUnsubscribe(appId, openId);
+        fanService.delFanOpenId(appId, openId);
     }
 
     @Test
-    public void refreshUserInfo() throws Exception {
+    public void addFan() throws Exception {
         long weixinAppid = 8111772986L;
         String appId = "wx1a4ff9ec0e369bd1";
         String openId = "oBGGJt--64-vu1E6AjHDZ0pEIw9E";
-        fanService.refreshUserInfo(weixinAppid, appId, openId, false);
+        fanService.addFan(weixinAppid, appId, openId, false);
     }
 
 }

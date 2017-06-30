@@ -331,9 +331,6 @@ public class WxFanManager {
             throw new WxApiException("[WeiXin:getFanInfo] unexpected result:" + result);
         }
 
-//        System.out.println("---------------------------------------------------------------------");
-//        System.out.println("[Manager]result: " + result);
-
         return JsonUtil.string2Bean(result, UserInfoDTO.class);
     }
 
