@@ -10,15 +10,15 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
+ * consul服务自动注册
+ * 监听容器启动事件，注册服务
+ * 监听容器退出事件，注销服务
  * Created by zixiong on 2017/4/23.
  */
 public class ConsulRegister {
