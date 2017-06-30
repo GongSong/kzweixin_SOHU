@@ -11,7 +11,7 @@
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
-      <foreach collection="oredCriteria" item="criteria" separator="or">
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
         <if test="criteria.valid">
           <trim prefix="(" prefixOverrides="and" suffix=")">
             <foreach collection="criteria.criteria" item="criterion">
@@ -70,9 +70,10 @@
   <sql id="Base_Column_List">
     id, app_id, open_id, status, create_time, update_time
   </sql>
+  <!--###########################################################-->
   <select id="selectByExample" parameterType="com.kuaizhan.kzweixin.dao.po.auto.OpenIdPOExample" resultMap="BaseResultMap">
     select
-    <if test="distinct">
+    <if test="example.distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
@@ -80,7 +81,7 @@
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
-    <if test="orderByClause != null">
+    <if test="example.orderByClause != null">
       order by ${orderByClause}
     </if>
   </select>
@@ -114,22 +115,22 @@
     insert into ${tableName}
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="record.id != null">
-        record.id,
+        id,
       </if>
       <if test="record.appId != null">
-        record.app_id,
+        app_id,
       </if>
       <if test="record.openId != null">
-        record.open_id,
+        open_id,
       </if>
       <if test="record.status != null">
-        record.status,
+        status,
       </if>
       <if test="record.createTime != null">
-        record.create_time,
+        create_time,
       </if>
       <if test="record.updateTime != null">
-        record.update_time,
+        update_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -197,26 +198,27 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
+  <!--###########################################################-->
   <update id="updateByPrimaryKeySelective" parameterType="com.kuaizhan.kzweixin.dao.po.auto.OpenIdPO">
     update ${tableName}
     <set>
-      <if test="appId != null">
-        app_id = #{appId,jdbcType=VARCHAR},
+      <if test="record.appId != null">
+        app_id = #{record.appId,jdbcType=VARCHAR},
       </if>
-      <if test="openId != null">
-        open_id = #{openId,jdbcType=VARCHAR},
+      <if test="record.openId != null">
+        open_id = #{record.openId,jdbcType=VARCHAR},
       </if>
-      <if test="status != null">
-        status = #{status,jdbcType=BIT},
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=BIT},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=INTEGER},
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=INTEGER},
       </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=INTEGER},
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=INTEGER},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{record.id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.kuaizhan.kzweixin.dao.po.auto.OpenIdPO">
     update ${tableName}
