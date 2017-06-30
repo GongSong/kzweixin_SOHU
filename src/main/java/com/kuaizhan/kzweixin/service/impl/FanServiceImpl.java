@@ -1,7 +1,6 @@
 package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.cache.FanCache;
 import com.kuaizhan.kzweixin.dao.mapper.auto.FanMapper;
@@ -10,8 +9,6 @@ import com.kuaizhan.kzweixin.dao.po.auto.*;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.entity.fan.UserInfoDTO;
 import com.kuaizhan.kzweixin.entity.common.Page;
-import com.kuaizhan.kzweixin.exception.BusinessException;
-import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.manager.WxFanManager;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
@@ -47,14 +44,7 @@ public class FanServiceImpl implements FanService {
     @Override
     public int createTag(long weixinAppid, String tagName) {
         String accessToken = accountService.getAccessToken(weixinAppid);
-        int tagId;
-        try {
-            tagId = WxFanManager.createTag(accessToken, tagName);
-        } catch (WxDuplicateTagException e) {
-            throw new BusinessException(ErrorCode.DUPLICATED_TAG);
-        } catch (WxTagNumExceedException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_NUM);
-        }
+        int tagId = WxFanManager.createTag(accessToken, tagName);
         fanCache.deleteTags(weixinAppid);
         return tagId;
     }
@@ -79,13 +69,7 @@ public class FanServiceImpl implements FanService {
     @Override
     public void updateTag(long weixinAppid, int tagId, String tagName) {
         String accessToken = accountService.getAccessToken(weixinAppid);
-        try {
-            WxFanManager.updateTag(accessToken, tagId, tagName);
-        } catch (WxDuplicateTagException e) {
-            throw new BusinessException(ErrorCode.DUPLICATED_TAG);
-        } catch (WxTagReservedModifiedException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_MODIFIED);
-        }
+        WxFanManager.updateTag(accessToken, tagId, tagName);
         fanCache.deleteTags(weixinAppid);
     }
 
@@ -93,13 +77,7 @@ public class FanServiceImpl implements FanService {
     public void deleteTag(long weixinAppid, int tagId) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountService.getAccessToken(weixinAppid);
-        try {
-            WxFanManager.deleteTag(accessToken, tagId);
-        } catch (WxTagReservedModifiedException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_MODIFIED);
-        } catch (WxFansNumExceedException e) {
-            throw new BusinessException(ErrorCode.DELETE_TAG_FANS_EXCEED_10W);
-        }
+        WxFanManager.deleteTag(accessToken, tagId);
         fanCache.deleteTags(weixinAppid);
 
         //删除数据库对应标签下的粉丝信息
@@ -149,20 +127,8 @@ public class FanServiceImpl implements FanService {
         }
 
         //发送给粉丝贴标签请求
-        try {
-            for (int tagId: newTagsId) {
-                WxFanManager.addFanTag(accessToken, fansOpenId, tagId);
-            }
-        } catch (WxOpenIdExceedException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_EXCEED);
-        } catch (WxInvalidTagException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_ERROR);
-        } catch (WxFansTagExceedException e) {
-            throw new BusinessException(ErrorCode.FANS_TAG_EXCEED);
-        } catch (WxInvalidOpenIdException e) {
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
-        } catch (WxOpenIdMismatchException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_MISMATCH_ERROR);
+        for (int tagId: newTagsId) {
+            WxFanManager.addFanTag(accessToken, fansOpenId, tagId);
         }
 
         //更新粉丝标签信息到本地数据库
@@ -195,18 +161,9 @@ public class FanServiceImpl implements FanService {
         if (deleteTagsId == null) {
             return;
         }
-        try {
-            for (int tagId: deleteTagsId) {
-                WxFanManager.deleteFanTag(accessToken, fansOpenId, tagId);
-            }
-        } catch (WxOpenIdExceedException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_EXCEED);
-        } catch (WxInvalidTagException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_ERROR);
-        } catch (WxInvalidOpenIdException e) {
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
-        } catch (WxOpenIdMismatchException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_MISMATCH_ERROR);
+
+        for (int tagId: deleteTagsId) {
+            WxFanManager.deleteFanTag(accessToken, fansOpenId, tagId);
         }
 
         //更新粉丝标签信息到本地数据库
@@ -244,15 +201,7 @@ public class FanServiceImpl implements FanService {
     public void addFanBlacklist(long weixinAppid, List<String> fansOpenId) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountService.getAccessToken(weixinAppid);
-        try {
-            WxFanManager.addBlacklist(accessToken, fansOpenId);
-        } catch (WxInvalidOpenIdException e) {
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
-        } catch (WxOpenIdMismatchException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_MISMATCH_ERROR);
-        } catch (WxBlacklistExceedException e) {
-            throw new BusinessException(ErrorCode.ADD_BLACKLIST_EXCEED_LIMIT);
-        }
+        WxFanManager.addBlacklist(accessToken, fansOpenId);
 
         FanPOExample example = new FanPOExample();
         example.createCriteria()
@@ -277,15 +226,7 @@ public class FanServiceImpl implements FanService {
     public void removeFanBlacklist(long weixinAppid, List<String> fansOpenId) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountService.getAccessToken(weixinAppid);
-        try {
-            WxFanManager.removeBlacklist(accessToken, fansOpenId);
-        } catch (WxInvalidOpenIdException e) {
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
-        } catch (WxOpenIdMismatchException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_MISMATCH_ERROR);
-        } catch (WxBlacklistExceedException e) {
-            throw new BusinessException(ErrorCode.ADD_BLACKLIST_EXCEED_LIMIT);
-        }
+        WxFanManager.removeBlacklist(accessToken, fansOpenId);
 
         FanPOExample example = new FanPOExample();
         example.createCriteria()

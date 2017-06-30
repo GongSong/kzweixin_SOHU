@@ -3,7 +3,6 @@ package com.kuaizhan.kzweixin.manager;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.WxErrCode;
-import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.entity.fan.UserInfoDTO;
 import com.kuaizhan.kzweixin.entity.fan.TagWrapper;
