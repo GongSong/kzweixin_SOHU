@@ -309,10 +309,9 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public FanPO addFan(long weixinAppid, String appId, String openId, boolean hasInteract) {
+    public FanPO addFan(long weixinAppid, String appId, String openId) {
         String accessToken = accountService.getAccessToken(weixinAppid);
         UserInfoDTO userInfoDTO = WxFanManager.getFanInfo(accessToken, openId);
-
         FanPO fanPO = new FanPO();
 
         //从微信服务器接收并转换的部分
@@ -330,15 +329,27 @@ public class FanServiceImpl implements FanService {
         fanPO.setUnionId(userInfoDTO.getUnionId());
         fanPO.setSex(userInfoDTO.getSex());
         fanPO.setSubscribeTime(userInfoDTO.getSubscribeTime());
-        fanPO.setTagIdsJson(userInfoDTO.getTagIdsJson());
+        fanPO.setTagIdsJson(userInfoDTO.getTagIdsList().toString());
+
+        FanPOExample example = new FanPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId);
+        String table = DBTableUtil.getFanTableName(appId);
+        List<FanPO> fanPOList = fanMapper.selectByExample(example, table);
 
         //自定义部分
         fanPO.setUpdateTime(DateUtil.curSeconds());
         fanPO.setInBlacklist(userInfoDTO.getGroupId() == 1 ? 1 : 0);
-        fanPO.setLastInteractTime(hasInteract ? DateUtil.curSeconds() : 0);
+        fanPO.setLastInteractTime(DateUtil.curSeconds());
 
-        String table = DBTableUtil.getFanTableName(appId);
-        fanMapper.updateByPrimaryKeySelective(fanPO, table);
+        if (fanPOList.size() != 0) {
+            fanPO.setFanId(fanPOList.get(0).getFanId());
+            fanMapper.updateByPrimaryKeySelective(fanPO, table);
+        } else {
+            fanPO.setCreateTime(DateUtil.curSeconds());
+            fanMapper.insertSelective(fanPO, table);
+        }
 
         return fanPO;
     }

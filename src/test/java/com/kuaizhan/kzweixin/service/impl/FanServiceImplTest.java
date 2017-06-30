@@ -29,7 +29,7 @@ public class FanServiceImplTest {
     @Test
     public void delFanOpenId() throws Exception {
         String appId = "wx118d7fb9ab2c9f8a";
-        String openId = "o_0ZuuONsN8NFfGG-4CJ8xe5IqKE";
+        String openId = "oBGGJt0uw6Eznx6VKK7Qvftngt9g";
         fanService.delFanOpenId(appId, openId);
     }
 
@@ -37,8 +37,8 @@ public class FanServiceImplTest {
     public void addFan() throws Exception {
         long weixinAppid = 8111772986L;
         String appId = "wx1a4ff9ec0e369bd1";
-        String openId = "oBGGJt--64-vu1E6AjHDZ0pEIw9E";
-        fanService.addFan(weixinAppid, appId, openId, false);
+        String openId = "oBGGJt-_qLdxlawjs3CjGcb6xrlQ";
+        fanService.addFan(weixinAppid, appId, openId);
     }
 
 }

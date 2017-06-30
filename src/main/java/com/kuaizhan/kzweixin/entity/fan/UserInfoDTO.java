@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 公众号粉丝基本信息业务对象
  * Created by fangtianyu on 6/28/17.
@@ -46,6 +48,6 @@ public class UserInfoDTO {
     private Integer groupId;
 
     @JsonProperty("tagid_list")
-    private String tagIdsJson;
+    private List<Integer> tagIdsList;
 
 }

@@ -99,8 +99,7 @@ public interface FanService {
      * 更新用户个人信息
      * @param appId 公众号Id
      * @param openId 粉丝openId
-     * @param hasInteract 是否有粉丝互动，1有0没有
      * @return 粉丝信息
      * */
-    FanPO addFan(long weixinAppid, String appId, String openId, boolean hasInteract);
+    FanPO addFan(long weixinAppid, String appId, String openId);
 }
