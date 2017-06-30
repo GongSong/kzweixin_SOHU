@@ -7,4 +7,5 @@
     <context:component-scan base-package="com.kuaizhan.utils"/>
     <!-- 注解式 -->
     <task:annotation-driven />
+    <bean id="appConfig" class="com.kuaizhan.config.AppConfig"/>
 </beans>

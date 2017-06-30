@@ -28,7 +28,6 @@ public class SyncWxPostConsumer extends BaseConsumer {
         SyncWxPostDTO dto = JsonUtil.string2Bean(message, SyncWxPostDTO.class);
 
         Long weixinAppid = dto.getWeixinAppid();
-        Long userId = dto.getUserId();
         Integer updateTime = dto.getUpdateTime();
         String mediaId = dto.getMediaId();
         Boolean isNew = dto.getIsNew();
@@ -37,11 +36,11 @@ public class SyncWxPostConsumer extends BaseConsumer {
         // 新增
         if (isNew) {
             if (!postService.exist(weixinAppid, mediaId)) {
-                postService.importWeixinPost(weixinAppid, mediaId, updateTime, userId, wxPostDTOS);
+                postService.importWeixinPost(weixinAppid, mediaId, updateTime, wxPostDTOS);
             }
         // 更新
         } else {
-            postService.updateWeixinPost(weixinAppid, mediaId, updateTime, userId, wxPostDTOS);
+            postService.updateWeixinPost(weixinAppid, mediaId, updateTime, wxPostDTOS);
         }
     }
 }

@@ -20,9 +20,7 @@ public class PostServiceTest {
 
 
     @Resource
-    PostService postService;
-
-    long weixinAppid = 601145633L;
+    private PostService postService;
 
     @Test
     public void genPageId() {
@@ -32,13 +30,6 @@ public class PostServiceTest {
     @Test
     public void export2KzArticle() throws Exception {
         postService.export2KzArticle(1900333742L,3911574514L,123456L);
-    }
-
-    @Test
-    public void syncWeixinPosts() throws Exception {
-        long weixinAppid = 1789089804L;
-        long uid = 123L;
-        postService.syncWeixinPosts(weixinAppid, uid);
     }
 
     @Test
@@ -57,10 +48,5 @@ public class PostServiceTest {
 
         posts.add(postPO);
         postService.insertMultiPosts(weixinAppid, posts);
-    }
-
-    @Test
-    public void calSyncWeixinPosts() throws Exception {
-//        postService.calSyncWeixinPosts(2326841584L, 1);
     }
 }

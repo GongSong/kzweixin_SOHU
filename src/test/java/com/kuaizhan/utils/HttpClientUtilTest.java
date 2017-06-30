@@ -1,11 +1,8 @@
 package com.kuaizhan.utils;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
+import com.kuaizhan.manager.KzManager;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,9 +30,7 @@ public class HttpClientUtilTest {
 
     @Test
     public void postFile() throws Exception {
-        HttpResponse<JsonNode> jsonResponse = Unirest.post("http://cos.kuaizhan.sohuno.com/api/v2/upload")
-                .field("file", new File("/Users/zixiong/Desktop/0.jpeg"))
-                .asJson();
-        System.out.println("---->" + jsonResponse);
+        String url = KzManager.uploadPicToKz("http://mmbiz.qpic.cn/mmbiz_gif/FCTGre24cSMiaI01H2IgbkdG0B2FsqQGQ2No2ic19UPpbHTKnGVGgNDoDwbtwu06nxLialjBabNictLuGH05uocbEA/0?wx_fmt=gif");
+        System.out.println("---->" + url);
     }
 }

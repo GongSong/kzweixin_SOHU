@@ -95,25 +95,24 @@ public interface PostService {
 
     /**
      * 同步微信消息(异步)
-     * @param userId 用户id，用于上传图片
      * @return 是否可以同步
      */
-    void syncWeixinPosts(long weixinAppid, long userId);
+    void syncWeixinPosts(long weixinAppid);
 
     /**
      * 计算应该同步的微信图文
      */
-    void calSyncWeixinPosts(long weixinAppid, long userId);
+    void calSyncWeixinPosts(long weixinAppid);
 
     /**
      * 由微信导入图文
      */
-    void importWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs);
+    void importWeixinPost(long weixinAppid, String mediaId, long updateTime, List<WxPostDTO> wxPostDTOs);
 
     /**
      * 更新微信图文
      */
-    void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs);
+    void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, List<WxPostDTO> wxPostDTOs);
 
     /**
      * 上传微信永久素材，如缩略图
