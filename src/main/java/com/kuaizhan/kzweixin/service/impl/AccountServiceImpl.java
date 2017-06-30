@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -264,13 +265,7 @@ public class AccountServiceImpl implements AccountService {
         AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
 
         //调用WxAccountManager，把用户ID和app_secret发给微信服务器接口，获取access token并验证
-        try {
-            WxAccountManager.getUserAccessToken(accountPO.getAppId(), appSecret);
-        } catch (WxIPNotInWhitelistException e) {
-            throw new BusinessException(ErrorCode.IP_NOT_IN_WHITELIST);
-        } catch (WxInvalidAppSecretException e) {
-            throw new BusinessException(ErrorCode.INVALID_APP_SECRET);
-        }
+        WxAccountManager.getUserAccessToken(accountPO.getAppId(), appSecret);
 
         AccountPO record = new AccountPO();
         record.setWeixinAppid(weixinAppId);
@@ -309,6 +304,12 @@ public class AccountServiceImpl implements AccountService {
     public void updateAuthLogin(long weixinAppId, Integer openLogin) {
         AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
 
+        if (accountPO.getServiceType() != 2) {
+            throw new IllegalArgumentException("[updateAuthLogin] Only service accounts have authorize login");
+        }
+
+        KzManager.updateKzAccountWxLogin(accountPO.getSiteId(), openLogin == 1);
+
         JSONObject jsonObject;
         //检测数据库是否存在记录
         if ("".equals(accountPO.getAdvancedFuncInfoJson())) {
@@ -316,27 +317,12 @@ public class AccountServiceImpl implements AccountService {
         } else {
             jsonObject = new JSONObject(accountPO.getAdvancedFuncInfoJson());
         }
-        jsonObject.put("open_login", 0);
-
-        //如果是服务号，进行验证。通过则保持服务号授权登录状态，不通过则关闭授权登录
-        if (accountPO.getServiceType() == 2) {
-            try {
-                KzManager.kzAccountWxLoginCheck(accountPO.getSiteId());
-            } catch (KzApiException e) {
-
-                AccountPO record = new AccountPO();
-                record.setWeixinAppid(weixinAppId);
-                record.setAdvancedFuncInfoJson(jsonObject.toString());
-                accountMapper.updateByPrimaryKeySelective(record);
-
-                throw new BusinessException(ErrorCode.NOT_SERVICE_NUMBER);
-            }
-            jsonObject.put("open_login", openLogin);
-        }
+        jsonObject.put("open_login", openLogin);
 
         AccountPO record = new AccountPO();
         record.setWeixinAppid(weixinAppId);
         record.setAdvancedFuncInfoJson(jsonObject.toString());
+        record.setUpdateTime(DateUtil.curSeconds());
         accountMapper.updateByPrimaryKeySelective(record);
 
         // 清理缓存
