@@ -26,6 +26,6 @@ public class SyncWxPostListConsumer extends BaseConsumer {
         SyncWxPostListDTO dto = JsonUtil.string2Bean(message, SyncWxPostListDTO.class);
 
         // 获取不存在的微信图文
-        postService.calSyncWeixinPosts(dto.getWeixinAppid(), dto.getUserId());
+        postService.calSyncWeixinPosts(dto.getWeixinAppid());
     }
 }

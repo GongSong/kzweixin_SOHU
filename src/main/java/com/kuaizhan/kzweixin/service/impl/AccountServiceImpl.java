@@ -349,7 +349,7 @@ public class AccountServiceImpl implements AccountService {
         AccountPO accountPO = getAccountByWeixinAppId(weixinAppid);
         String qrcodeUrlKz;
         try {
-            qrcodeUrlKz = KzManager.uploadPicToKz(accountPO.getQrcodeUrl(), accountPO.getUserId());
+            qrcodeUrlKz = KzManager.uploadPicToKz(accountPO.getQrcodeUrl());
         } catch (KZPicUploadException e) {
             logger.error("[uploadQrcode2Kz] upload pic failed, weixinAppid:{}", weixinAppid);
             return;

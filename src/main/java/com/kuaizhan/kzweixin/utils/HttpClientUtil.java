@@ -1,6 +1,9 @@
 package com.kuaizhan.kzweixin.utils;
 
 import com.kuaizhan.kzweixin.exception.common.DownloadFileFailedException;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
@@ -75,6 +78,39 @@ public final class HttpClientUtil {
             doClose(httpClient);
         }
         return null;
+    }
+
+    /**
+     * 使用unirest下载文件
+     * @throws DownloadFileFailedException 下载文件失败
+     */
+    public static String downloadFile(String url) throws DownloadFileFailedException {
+
+        // 随机名
+        String filename = UUID.randomUUID().toString();
+
+        HttpResponse<InputStream> response;
+        try {
+            response = Unirest.get(url).asBinary();
+        } catch (UnirestException e) {
+            throw new DownloadFileFailedException("[downloadFile] failed", e);
+        }
+
+        OutputStream outputStream = null;
+        InputStream inputStream = response.getRawBody();
+        try {
+            outputStream = new FileOutputStream(filename);
+            int inByte;
+            while ((inByte = inputStream.read()) != -1) {
+                outputStream.write(inByte);
+            }
+        } catch (IOException e) {
+            throw new DownloadFileFailedException("[downloadFile] failed", e);
+        } finally {
+            doClose(inputStream);
+            doClose(outputStream);
+        }
+        return filename;
     }
 
     /**
