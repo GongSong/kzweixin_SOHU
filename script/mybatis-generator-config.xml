@@ -61,20 +61,21 @@
             <!--<table tableName="weixin_msg_0" domainObjectName="MsgPO" mapperName="MsgMapper">-->
             <!--</table>-->
 
-            <!--<table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">-->
+            <table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">
+                <columnOverride column="status" javaType="java.lang.Integer"/>
+            </table>
+
+            <!--<table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">-->
+                <!--<generatedKey column="id" sqlStatement="MySql" identity="true" />-->
+                <!--<columnOverride column="action_type" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="response_type" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
-            <table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">
-                <generatedKey column="id" sqlStatement="MySql" identity="true" />
-                <columnOverride column="action_type" javaType="java.lang.Integer"/>
-                <columnOverride column="response_type" javaType="java.lang.Integer"/>
-            </table>
-
-            <table tableName="weixin_fans_0" domainObjectName="FanPO" mapperName="FanMapper">
-                <columnOverride column="status" javaType="java.lang.Integer"/>
-                <columnOverride column="sex" javaType="java.lang.Integer"/>
-                <columnOverride column="in_blacklist" javaType="java.lang.Integer"/>
-            </table>
+            <!--<table tableName="weixin_fans_0" domainObjectName="FanPO" mapperName="FanMapper">-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="sex" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="in_blacklist" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
 
         </context>
 </generatorConfiguration>
