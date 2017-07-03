@@ -1,5 +1,6 @@
 package com.kuaizhan.constant;
 
+import com.kuaizhan.config.AppConfig;
 import com.kuaizhan.config.ApplicationConfig;
 
 /**
@@ -35,6 +36,7 @@ public class RedisConstant {
 
     // 上传过的图片资源
     public static final String KEY_IMAGE_WEIXIN_RUL = ApplicationConfig.REDIS_PREFIX + "kzweixin:origin_url:";
+    public static final String KEY_V2_IMAGE_UPLOADED = ApplicationConfig.REDIS_PREFIX + "kzweixin:image_uploaded:";
 
     // 图文模块
     public static final String KEY_COULD_SYNC_WX_POST = ApplicationConfig.REDIS_PREFIX + "kzweixin:could_sync_wx_post:";

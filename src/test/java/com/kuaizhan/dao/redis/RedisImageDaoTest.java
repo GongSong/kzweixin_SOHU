@@ -34,4 +34,9 @@ public class RedisImageDaoTest {
         redisUtil.delete(RedisConstant.KEY_IMAGE_WEIXIN_RUL + originUrl);
         assertEquals(redisImageDao.getImageUrl(originUrl), null);
     }
+
+    @Test
+    public void setImageUploaded() throws Exception {
+        redisImageDao.setImageUploaded("www.baidu.com");
+    }
 }
