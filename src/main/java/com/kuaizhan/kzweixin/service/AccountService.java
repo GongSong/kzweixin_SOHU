@@ -12,6 +12,9 @@ public interface AccountService {
 
     /**
      * 获取绑定公众号的url
+     * @param userId 绑定的userId
+     * @param siteId 绑定的siteId
+     * @param redirectUrl 授权成功后，跳转的url
      */
     String getBindUrl(Long userId, Long siteId, String redirectUrl);
 

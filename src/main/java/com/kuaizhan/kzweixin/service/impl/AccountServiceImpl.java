@@ -11,9 +11,6 @@ import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
-import com.kuaizhan.kzweixin.exception.kuaizhan.KzApiException;
-import com.kuaizhan.kzweixin.exception.weixin.WxIPNotInWhitelistException;
-import com.kuaizhan.kzweixin.exception.weixin.WxInvalidAppSecretException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxAccountManager;
 import com.kuaizhan.kzweixin.manager.WxThirdPartManager;
@@ -33,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -57,15 +53,20 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String getBindUrl(Long userId, Long siteId, String redirectUrl) {
-        StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append("http://").append(ApplicationConfig.KZ_DOMAIN_OUT).append(":8080").append("/v1/account/bind_redirect");
-        urlBuilder.append("?userId=").append(userId);
-        urlBuilder.append("&redirectUrl=").append(UrlUtil.encode(redirectUrl));
+
+        // 微信端完成授权后跳转的url
+        StringBuilder redirectUrlBuilder = new StringBuilder();
+        redirectUrlBuilder.append("http://").append(ApplicationConfig.KZ_DOMAIN_OUTSIDE).append(":8080").append("/public/v1/bind_redirect");
+        redirectUrlBuilder.append("?userId=").append(userId);
+        redirectUrlBuilder.append("&redirectUrl=").append(UrlUtil.encode(redirectUrl));
         if (siteId != null) {
-            urlBuilder.append("&siteId=").append(siteId);
+            redirectUrlBuilder.append("&siteId=").append(siteId);
         }
+        String wxRedirectUrl = UrlUtil.encode(redirectUrlBuilder.toString());
+
+        // 最终的绑定url
         String preAuthCode = WxThirdPartManager.getPreAuthCode(wxThirdPartService.getComponentAccessToken());
-        return WxApiConfig.getBindUrl(preAuthCode, UrlUtil.encode(urlBuilder.toString()));
+        return WxApiConfig.getBindUrl(preAuthCode, wxRedirectUrl);
     }
 
     @Override
