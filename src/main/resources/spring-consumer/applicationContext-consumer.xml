@@ -14,25 +14,31 @@
     <!--从快站文章导入消费者-->
     <bean id="kzArticleImportListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
         <constructor-arg name="delegate">
-            <bean class="com.kuaizhan.mq.consumer.ImportKzArticleConsumer"/>
+            <bean class="com.kuaizhan.kzweixin.mq.consumer.ImportKzArticleConsumer"/>
         </constructor-arg>
     </bean>
     <!-- 从微信导入文章消费者 -->
     <bean id="weixinPostListListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
         <constructor-arg name="delegate">
-            <bean class="com.kuaizhan.mq.consumer.SyncWxPostListConsumer"/>
+            <bean class="com.kuaizhan.kzweixin.mq.consumer.SyncWxPostListConsumer"/>
         </constructor-arg>
     </bean>
     <!-- 从微信导入单条文章的消费者 -->
     <bean id="weixinPostListenerAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter" >
         <constructor-arg name="delegate">
-            <bean class="com.kuaizhan.mq.consumer.SyncWxPostConsumer"/>
+            <bean class="com.kuaizhan.kzweixin.mq.consumer.SyncWxPostConsumer"/>
         </constructor-arg>
     </bean>
     <!--发送系统模板消息的消费者-->
     <bean id="sendSysTplMsgAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter">
         <constructor-arg name="delegate">
-            <bean class="com.kuaizhan.mq.consumer.SendTplMsgConsumer"/>
+            <bean class="com.kuaizhan.kzweixin.mq.consumer.SendTplMsgConsumer"/>
+        </constructor-arg>
+    </bean>
+    <!--公众号绑定后的操作-->
+    <bean id="afterBindAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter">
+        <constructor-arg name="delegate">
+            <bean class="com.kuaizhan.kzweixin.mq.consumer.AfterBindConsumer" />
         </constructor-arg>
     </bean>
 
@@ -41,6 +47,7 @@
         <rabbit:listener ref="weixinPostListListenerAdapter" queue-names="sys-kzweixin-import-weixin-post-list" />
         <rabbit:listener ref="weixinPostListenerAdapter" queue-names="sys-kzweixin-import-weixin-post" />
         <rabbit:listener ref="sendSysTplMsgAdapter" queue-names="sys-kzweixin-send-sys-tpl-msg" />
+        <rabbit:listener ref="afterBindAdapter" queue-names="sys-kzweixin-after-bind" />
     </rabbit:listener-container>
 
 </beans>

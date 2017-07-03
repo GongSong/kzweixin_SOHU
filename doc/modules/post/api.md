@@ -5,7 +5,7 @@
 * **方法**：GET
 * **URL**：/v1/posts
 * **参数**：
-    * weixinAppid 微信Appid 必传
+    * weixinAppid 公众号唯一识别 必需
     * title 按title模糊搜索 非必需
     * page 当前请求页码 必传
     * flat 是否展开多图文(1/0) 默认0
@@ -58,9 +58,7 @@
 * **协议**： HTTPS
 * **方法**： GET
 * **URL**： /v1/posts/`<pageId>`
-* **参数**：无
-
-        
+* **参数**：无  
 * **说明**：用于预览页面获取单个图文详情
 
 * **返回**：
@@ -90,8 +88,7 @@
 * **协议**：HTTPS
 * **方法**：GET
 * **URL**：/v1/multi_posts/`<pageId>`
-* **参数**：无
-    
+* **参数**：无  
 * **说明**: 用于图文编辑页面，一次性获取多图文所有图文详情的情况
 
 
@@ -126,7 +123,7 @@
 * **方法**：POST
 * **URL**：/v1/posts
 * **参数**：
-    * weixinAppid: 微信Appid
+    * weixinAppid 公众号唯一识别
     * posts: 
     
     ```
@@ -163,7 +160,7 @@
 * **方法**：PUT
 * **URL**：/v1/posts/`<pageId>`  // pageId传修改前第一篇图文的
 * **参数**：
-    * weixinAppid: 微信Appid
+    * weixinAppid 公众号唯一识别
     * posts: // 多图文列表，示例如下
     
     ```
@@ -203,7 +200,7 @@
 * **方法**： DELETE
 * **URL**： /v1/posts/`<pageId>`
 * **参数**：
-    * weixinAppid 微信Appid
+    * weixinAppid 公众号唯一识别
     
 * **返回**：
     * 获取成功时返回:
@@ -222,7 +219,7 @@
 * **方法**： POST
 * **URL**： /v1/post/wx_syncs
 * **参数**：
-    * weixinAppid 微信Appid
+    * weixinAppid 公众号唯一识别
     * uid 用户id
     
 
@@ -241,7 +238,7 @@
 * **方法**： POST
 * **URL**： /v1/posts/kz_imports
 * **参数**：
-    * weixinAppid 微信Appid
+    * weixinAppid 公众号唯一识别
     * pageIds 图文pageId的列表, 例如: `[1344344, 2323423543]`
 
     
@@ -260,7 +257,7 @@
 * **方法**： POST
 * **URL**： /v1/posts/kzweixin_syncs
 * **参数**：
-    * weixinAppid 微信Appid
+    * weixinAppid 公众号唯一识别
     * siteId  站点id
     * categoryId  要同步到的栏目id
     * pageIds 图文pageId的列表, 例如: `[1344344, 2323423543]`
@@ -284,7 +281,7 @@
 * **方法**： POST
 * **URL**： /v1/weixin_materials
 * **参数**：
-    * weixinAppid 微信Appid
+    * weixinAppid 公众号唯一识别
     * imgUrl 图片的地址
          
 * **返回**：
@@ -305,7 +302,7 @@
 * **方法**： GET
 * **URL**： /v1/posts/`<pageId>`/wx_url
 * **参数**：
-    * weixinAppid 微信Appid
+    * weixinAppid 公众号唯一识别
     
 * **返回**：
     * 获取成功时返回:
@@ -325,7 +322,7 @@
 * **方法**： POST
 * **URL**： /v1/weixin_pics
 * **参数**：
-    * weixinAppid 微信Appid
+    * weixinAppid 公众号唯一识别
     * imgUrl 图片的地址
          
 * **返回**：
@@ -340,3 +337,43 @@
     * 异常情况: 
         * 参数异常，返回码 101001 
 
+
+#### 12 新增引导关注图文
+* **协议**： HTTPS
+* **方法**： POST
+* **URL**： /v1/guide_follow_posts
+* **参数**：
+    * weixinAppid 公众号唯一识别
+* **说明**: 此接口为幂等操作，如果已存在可用的引导关注图文，不会重复添加
+         
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {
+          "url": "http://xxxxx"
+        }
+        ```
+      
+    * 异常情况: 
+        * 参数异常，返回码 101001 
+        
+        
+#### 13 获取引导关注图文
+* **协议**： HTTPS
+* **方法**： GET
+* **URL**： /v1/guide_follow_post
+* **参数**：
+    * weixinAppid 公众号唯一识别
+         
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {
+          "url": "http://xxxxx"
+        }
+        ```
+      
+    * 异常情况: 
+        * 参数异常，返回码 101001 

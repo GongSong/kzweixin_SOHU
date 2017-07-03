@@ -4,13 +4,15 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-        <classPathEntry location="/Users/zixiong/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar" />
+        <classPathEntry location="/Users/fty_07/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar" />
         <context id="mysql" targetRuntime="MyBatis3">
             <!--定义这些配置还得注意顺序-->
+            <!-- 分页插件 -->
+            <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
 
             <commentGenerator>
-                    <property name="suppressDate" value="false" />
-                    <property name="suppressAllComments" value="false" />
+                    <property name="suppressDate" value="true" />
+                    <property name="suppressAllComments" value="true" />
             </commentGenerator>
 
             <jdbcConnection driverClass="com.mysql.jdbc.Driver"
@@ -22,7 +24,7 @@
             </javaTypeResolver>
 
             <!-- 生成PO对象 -->
-            <javaModelGenerator targetPackage="com.kuaizhan.pojo.po.auto" targetProject="src/main/java">
+            <javaModelGenerator targetPackage="com.kuaizhan.kzweixin.dao.po.auto" targetProject="src/main/java">
                     <property name="enableSubPackages" value="false" />
             </javaModelGenerator>
 
@@ -32,24 +34,47 @@
             </sqlMapGenerator>
 
             <!-- 生成DAO的类文件 -->
-            <javaClientGenerator type="XMLMAPPER" targetPackage="com.kuaizhan.dao.mapper.auto"
+            <javaClientGenerator type="XMLMAPPER" targetPackage="com.kuaizhan.kzweixin.dao.mapper.auto"
                                  targetProject="src/main/java">
                     <property name="enableSubPackages" value="true" />
             </javaClientGenerator>
 
-            <!--<table tableName="weixin_msg_config">-->
+
+            <!--<table tableName="weixin_msg_config" domainObjectName="MsgConfigPO" mapperName="MsgConfigMapper">-->
                 <!--&lt;!&ndash;status没被使用&ndash;&gt;-->
                 <!--<ignoreColumn column="status" />-->
             <!--</table>-->
-            <!--<table tableName="weixin_menu_item">-->
+
+            <!--<table tableName="weixin_menu_item" domainObjectName="MenuItemPO" mapperName="MenuItemMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
-            <!--<table tableName="weixin_conditional_menu">-->
+
+            <!--<table tableName="weixin_conditional_menu" domainObjectName="ConditionMenuPO" mapperName="ConditionMenuMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
-            <table tableName="site_weixin">
-                <columnOverride column="service_type" javaType="java.lang.Integer"/>
-                <columnOverride column="is_del" javaType="java.lang.Integer"/>
+
+            <!--<table tableName="site_weixin" domainObjectName="AccountPO" mapperName="AccountMapper">-->
+                <!--<columnOverride column="service_type" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="is_del" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
+
+            <!--<table tableName="weixin_msg_0" domainObjectName="MsgPO" mapperName="MsgMapper">-->
+            <!--</table>-->
+
+            <!--<table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">-->
+            <!--</table>-->
+
+            <table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">
+                <generatedKey column="id" sqlStatement="MySql" identity="true" />
+                <columnOverride column="action_type" javaType="java.lang.Integer"/>
+                <columnOverride column="response_type" javaType="java.lang.Integer"/>
             </table>
+
+            <table tableName="weixin_fans_0" domainObjectName="FanPO" mapperName="FanMapper">
+                <columnOverride column="status" javaType="java.lang.Integer"/>
+                <columnOverride column="sex" javaType="java.lang.Integer"/>
+                <columnOverride column="in_blacklist" javaType="java.lang.Integer"/>
+            </table>
+
         </context>
 </generatorConfiguration>

@@ -44,7 +44,7 @@ java -Dcom.sun.management.jmxremote \
      -Dcom.sun.management.jmxremote.port=$JMX_PORT \
      -Dcom.sun.management.jmxremote.authenticate=false \
      -Dcom.sun.management.jmxremote.ssl=false \
-     -Djetty.port=$JETTY_PORT \
+     -Djetty.http.port=$JETTY_PORT \
      ${JVM_SIZE_ARG} \
      -jar start.jar &
 

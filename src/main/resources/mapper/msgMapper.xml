@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.kuaizhan.dao.mapper.MsgDao">
+<mapper namespace="com.kuaizhan.kzweixin.dao.mapper.MsgDao">
 
     <!--查询数目-->
     <select id="countMsgs" resultType="long">
@@ -31,7 +31,7 @@
     </select>
 
     <!--分页查询消息列表-->
-    <select id="listMsgsByPagination" resultType="com.kuaizhan.pojo.po.MsgPO">
+    <select id="listMsgsByPagination" resultType="com.kuaizhan.kzweixin.dao.po.MsgPO">
         SELECT *
         FROM ${tableName}
         WHERE
