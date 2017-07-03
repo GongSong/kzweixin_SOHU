@@ -11,4 +11,5 @@
 * [图文模块](post/api.md)
 * [扫码投票模块](vote/api.md)
 * [微信回调](weixin/api.md)
+* [微信Action](action/api.md)
 
