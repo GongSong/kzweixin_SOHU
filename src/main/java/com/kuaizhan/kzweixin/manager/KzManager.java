@@ -150,7 +150,6 @@ public class KzManager {
      * @param siteId 用户的快站ID
      * @param openLogin 授权登录状态，0关闭1开启
      * @throws KzApiException 社区登录验证失败
-     * @return
      * */
     public static boolean updateKzAccountWxLogin(long siteId, boolean openLogin) throws KzApiException {
         //指定Host
@@ -175,6 +174,10 @@ public class KzManager {
         return true;
     }
 
+    /**
+     * 调用php微信回调接口
+     * @return php处理的结果
+     */
     public static String kzResponseMsg(String appId, String timestamp, String nonce, String xmlStr) {
         Map<String, Object> param =  new HashMap<>();
         param.put("app_id", appId);
