@@ -4,6 +4,7 @@ import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 public interface ActionMapper {
     long countByExample(ActionPOExample example);
@@ -16,7 +17,11 @@ public interface ActionMapper {
 
     int insertSelective(ActionPO record);
 
+    List<ActionPO> selectByExampleWithBLOBsWithRowbounds(ActionPOExample example, RowBounds rowBounds);
+
     List<ActionPO> selectByExampleWithBLOBs(ActionPOExample example);
+
+    List<ActionPO> selectByExampleWithRowbounds(ActionPOExample example, RowBounds rowBounds);
 
     List<ActionPO> selectByExample(ActionPOExample example);
 

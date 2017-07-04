@@ -5,7 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="weixin_appid" jdbcType="BIGINT" property="weixinAppid" />
     <result column="biz_code" jdbcType="VARCHAR" property="bizCode" />
-    <result column="biz_data" jdbcType="VARCHAR" property="bizData" />
+    <result column="keyword" jdbcType="VARCHAR" property="keyword" />
     <result column="action_type" jdbcType="BIT" property="actionType" />
     <result column="response_type" jdbcType="BIT" property="responseType" />
     <result column="status" jdbcType="BIT" property="status" />
@@ -14,6 +14,7 @@
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.kuaizhan.kzweixin.dao.po.auto.ActionPO">
     <result column="response_json" jdbcType="LONGVARCHAR" property="responseJson" />
+    <result column="ext" jdbcType="LONGVARCHAR" property="ext" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -74,11 +75,11 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, weixin_appid, biz_code, biz_data, action_type, response_type, status, create_time, 
+    id, weixin_appid, biz_code, keyword, action_type, response_type, status, create_time, 
     update_time
   </sql>
   <sql id="Blob_Column_List">
-    response_json
+    response_json, ext
   </sql>
   <select id="selectByExampleWithBLOBs" parameterType="com.kuaizhan.kzweixin.dao.po.auto.ActionPOExample" resultMap="ResultMapWithBLOBs">
     select
@@ -132,14 +133,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into weixin_action (weixin_appid, biz_code, biz_data, 
+    insert into weixin_action (weixin_appid, biz_code, keyword, 
       action_type, response_type, status, 
-      create_time, update_time, response_json
-      )
-    values (#{weixinAppid,jdbcType=BIGINT}, #{bizCode,jdbcType=VARCHAR}, #{bizData,jdbcType=VARCHAR}, 
+      create_time, update_time, response_json, 
+      ext)
+    values (#{weixinAppid,jdbcType=BIGINT}, #{bizCode,jdbcType=VARCHAR}, #{keyword,jdbcType=VARCHAR}, 
       #{actionType,jdbcType=BIT}, #{responseType,jdbcType=BIT}, #{status,jdbcType=BIT}, 
-      #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, #{responseJson,jdbcType=LONGVARCHAR}
-      )
+      #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, #{responseJson,jdbcType=LONGVARCHAR}, 
+      #{ext,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.kuaizhan.kzweixin.dao.po.auto.ActionPO">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -153,8 +154,8 @@
       <if test="bizCode != null">
         biz_code,
       </if>
-      <if test="bizData != null">
-        biz_data,
+      <if test="keyword != null">
+        keyword,
       </if>
       <if test="actionType != null">
         action_type,
@@ -174,6 +175,9 @@
       <if test="responseJson != null">
         response_json,
       </if>
+      <if test="ext != null">
+        ext,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="weixinAppid != null">
@@ -182,8 +186,8 @@
       <if test="bizCode != null">
         #{bizCode,jdbcType=VARCHAR},
       </if>
-      <if test="bizData != null">
-        #{bizData,jdbcType=VARCHAR},
+      <if test="keyword != null">
+        #{keyword,jdbcType=VARCHAR},
       </if>
       <if test="actionType != null">
         #{actionType,jdbcType=BIT},
@@ -202,6 +206,9 @@
       </if>
       <if test="responseJson != null">
         #{responseJson,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ext != null">
+        #{ext,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -223,8 +230,8 @@
       <if test="record.bizCode != null">
         biz_code = #{record.bizCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.bizData != null">
-        biz_data = #{record.bizData,jdbcType=VARCHAR},
+      <if test="record.keyword != null">
+        keyword = #{record.keyword,jdbcType=VARCHAR},
       </if>
       <if test="record.actionType != null">
         action_type = #{record.actionType,jdbcType=BIT},
@@ -244,6 +251,9 @@
       <if test="record.responseJson != null">
         response_json = #{record.responseJson,jdbcType=LONGVARCHAR},
       </if>
+      <if test="record.ext != null">
+        ext = #{record.ext,jdbcType=LONGVARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -254,13 +264,14 @@
     set id = #{record.id,jdbcType=INTEGER},
       weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
       biz_code = #{record.bizCode,jdbcType=VARCHAR},
-      biz_data = #{record.bizData,jdbcType=VARCHAR},
+      keyword = #{record.keyword,jdbcType=VARCHAR},
       action_type = #{record.actionType,jdbcType=BIT},
       response_type = #{record.responseType,jdbcType=BIT},
       status = #{record.status,jdbcType=BIT},
       create_time = #{record.createTime,jdbcType=INTEGER},
       update_time = #{record.updateTime,jdbcType=INTEGER},
-      response_json = #{record.responseJson,jdbcType=LONGVARCHAR}
+      response_json = #{record.responseJson,jdbcType=LONGVARCHAR},
+      ext = #{record.ext,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -270,7 +281,7 @@
     set id = #{record.id,jdbcType=INTEGER},
       weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
       biz_code = #{record.bizCode,jdbcType=VARCHAR},
-      biz_data = #{record.bizData,jdbcType=VARCHAR},
+      keyword = #{record.keyword,jdbcType=VARCHAR},
       action_type = #{record.actionType,jdbcType=BIT},
       response_type = #{record.responseType,jdbcType=BIT},
       status = #{record.status,jdbcType=BIT},
@@ -289,8 +300,8 @@
       <if test="bizCode != null">
         biz_code = #{bizCode,jdbcType=VARCHAR},
       </if>
-      <if test="bizData != null">
-        biz_data = #{bizData,jdbcType=VARCHAR},
+      <if test="keyword != null">
+        keyword = #{keyword,jdbcType=VARCHAR},
       </if>
       <if test="actionType != null">
         action_type = #{actionType,jdbcType=BIT},
@@ -310,6 +321,9 @@
       <if test="responseJson != null">
         response_json = #{responseJson,jdbcType=LONGVARCHAR},
       </if>
+      <if test="ext != null">
+        ext = #{ext,jdbcType=LONGVARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -317,20 +331,21 @@
     update weixin_action
     set weixin_appid = #{weixinAppid,jdbcType=BIGINT},
       biz_code = #{bizCode,jdbcType=VARCHAR},
-      biz_data = #{bizData,jdbcType=VARCHAR},
+      keyword = #{keyword,jdbcType=VARCHAR},
       action_type = #{actionType,jdbcType=BIT},
       response_type = #{responseType,jdbcType=BIT},
       status = #{status,jdbcType=BIT},
       create_time = #{createTime,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=INTEGER},
-      response_json = #{responseJson,jdbcType=LONGVARCHAR}
+      response_json = #{responseJson,jdbcType=LONGVARCHAR},
+      ext = #{ext,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.kuaizhan.kzweixin.dao.po.auto.ActionPO">
     update weixin_action
     set weixin_appid = #{weixinAppid,jdbcType=BIGINT},
       biz_code = #{bizCode,jdbcType=VARCHAR},
-      biz_data = #{bizData,jdbcType=VARCHAR},
+      keyword = #{keyword,jdbcType=VARCHAR},
       action_type = #{actionType,jdbcType=BIT},
       response_type = #{responseType,jdbcType=BIT},
       status = #{status,jdbcType=BIT},
@@ -338,4 +353,34 @@
       update_time = #{updateTime,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectByExampleWithBLOBsWithRowbounds" parameterType="com.kuaizhan.kzweixin.dao.po.auto.ActionPOExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from weixin_action
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExampleWithRowbounds" parameterType="com.kuaizhan.kzweixin.dao.po.auto.ActionPOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from weixin_action
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
 </mapper>

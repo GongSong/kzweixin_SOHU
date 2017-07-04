@@ -7,7 +7,7 @@ public class ActionPO {
 
     private String bizCode;
 
-    private String bizData;
+    private String keyword;
 
     private Integer actionType;
 
@@ -20,6 +20,8 @@ public class ActionPO {
     private Integer updateTime;
 
     private String responseJson;
+
+    private String ext;
 
     public Integer getId() {
         return id;
@@ -45,12 +47,12 @@ public class ActionPO {
         this.bizCode = bizCode;
     }
 
-    public String getBizData() {
-        return bizData;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setBizData(String bizData) {
-        this.bizData = bizData;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     public Integer getActionType() {
@@ -99,5 +101,13 @@ public class ActionPO {
 
     public void setResponseJson(String responseJson) {
         this.responseJson = responseJson;
+    }
+
+    public String getExt() {
+        return ext;
+    }
+
+    public void setExt(String ext) {
+        this.ext = ext;
     }
 }

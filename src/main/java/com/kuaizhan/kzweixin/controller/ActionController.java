@@ -10,7 +10,6 @@ import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.ResponseType;
-import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,9 +32,9 @@ public class ActionController extends BaseController {
 
     @RequestMapping(value = "/actions", method = RequestMethod.POST)
     public JsonResponse addActions(@Valid @RequestBody AddActionParam param) {
-        if (param.getActionType() == ActionType.REPLY && param.getBizData() == null) {
+        if (param.getActionType() == ActionType.REPLY && param.getKeyword() == null) {
             return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(),
-                    "bizData can not be null",
+                    "keyword can not be null",
                     ImmutableMap.of());
         }
 

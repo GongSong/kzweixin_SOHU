@@ -29,7 +29,7 @@ public class ActionServiceTest {
         Assert.assertTrue(actionService.shouldAction(actionPO, null));
 
         actionPO.setActionType(ActionType.REPLY.getValue());
-        actionPO.setBizData(".*投票.*");
+        actionPO.setKeyword(".*投票.*");
         Assert.assertTrue(actionService.shouldAction(actionPO, "我们来投票啊"));
         Assert.assertFalse(actionService.shouldAction(actionPO, ""));
         Assert.assertFalse(actionService.shouldAction(actionPO, null));

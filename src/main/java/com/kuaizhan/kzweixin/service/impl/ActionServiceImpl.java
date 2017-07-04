@@ -1,12 +1,12 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.kuaizhan.kzweixin.dao.mapper.auto.ActionMapper;
+import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPOExample;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.ResponseType;
-import com.kuaizhan.kzweixin.dao.mapper.auto.ActionMapper;
-import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
@@ -34,6 +34,7 @@ public class ActionServiceImpl implements ActionService {
         accountService.getAccountByWeixinAppId(weixinAppid);
 
         action.setWeixinAppid(weixinAppid);
+        action.setExt(action.getExt() == null? "": action.getExt());
         action.setCreateTime(DateUtil.curSeconds());
         action.setUpdateTime(DateUtil.curSeconds());
         action.setStatus(true);
@@ -77,7 +78,7 @@ public class ActionServiceImpl implements ActionService {
         }
         // 回复类型，匹配bizData时触发
         if (actionPO.getActionType() == ActionType.REPLY.getValue()) {
-            return bizData != null && bizData.matches(actionPO.getBizData());
+            return bizData != null && bizData.matches(actionPO.getKeyword());
         }
         return false;
     }
