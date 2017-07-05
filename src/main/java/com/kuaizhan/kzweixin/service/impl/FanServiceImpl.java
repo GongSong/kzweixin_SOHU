@@ -309,8 +309,9 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public FanPO addFan(long weixinAppid, String appId, String openId) {
-        String accessToken = accountService.getAccessToken(weixinAppid);
+    public FanPO addFan(String appId, String openId) {
+        AccountPO accountPO = accountService.getAccountByAppId(appId);
+        String accessToken = accountService.getAccessToken(accountPO.getWeixinAppid());
         UserInfoDTO userInfoDTO = WxFanManager.getFanInfo(accessToken, openId);
         FanPO fanPO = new FanPO();
 

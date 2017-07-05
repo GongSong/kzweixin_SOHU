@@ -101,5 +101,5 @@ public interface FanService {
      * @param openId 粉丝openId
      * @return 粉丝信息
      * */
-    FanPO addFan(long weixinAppid, String appId, String openId);
+    FanPO addFan(String appId, String openId);
 }

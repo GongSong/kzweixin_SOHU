@@ -35,10 +35,9 @@ public class FanServiceImplTest {
 
     @Test
     public void addFan() throws Exception {
-        long weixinAppid = 8111772986L;
         String appId = "wx1a4ff9ec0e369bd1";
         String openId = "oBGGJt-_qLdxlawjs3CjGcb6xrlQ";
-        fanService.addFan(weixinAppid, appId, openId);
+        fanService.addFan(appId, openId);
     }
 
 }
