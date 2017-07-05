@@ -28,7 +28,7 @@ public interface ActionService {
 
 
     /**
-     * 根据bizData判断是否该触发action
+     * 根据actionType和keyword判断是否该触发action
      */
-    boolean shouldAction(ActionPO actionPO, String bizData);
+    boolean shouldAction(ActionPO actionPO, String keyword);
 }

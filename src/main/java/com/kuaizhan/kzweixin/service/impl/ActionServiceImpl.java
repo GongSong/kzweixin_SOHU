@@ -86,14 +86,14 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public boolean shouldAction(ActionPO actionPO, String bizData) {
+    public boolean shouldAction(ActionPO actionPO, String keyword) {
         // 订阅类型，都触发
         if (actionPO.getActionType() == ActionType.SUBSCRIBE.getValue()) {
             return true;
         }
-        // 回复类型，匹配bizData时触发
+        // 回复类型，正则匹配keyword时触发
         if (actionPO.getActionType() == ActionType.REPLY.getValue()) {
-            return bizData != null && bizData.matches(actionPO.getKeyword());
+            return keyword != null && keyword.matches(actionPO.getKeyword());
         }
         return false;
     }

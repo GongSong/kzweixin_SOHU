@@ -15,6 +15,7 @@ import com.kuaizhan.kzweixin.service.CommonService;
 import com.kuaizhan.kzweixin.service.WxPushService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -101,7 +102,7 @@ public class WxPushServiceImpl implements WxPushService {
         if ("subscribe".equals(wxData.getEvent())) {
 
             kzStat("a110", wxData.getAppId());
-            if (wxData.getEventKey() != null) {
+            if (StringUtils.isNotBlank(wxData.getEventKey())) {
                 // 带场景的参数二维码等操作
             } else {
                 // 处理Action

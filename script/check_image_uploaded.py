@@ -34,5 +34,6 @@ def check(date):
         if not is_uploaded(url):
             print("\n上传失败, 时间: %s, 图片: %s" % (datetime.fromtimestamp(score), url))
 
-
-check("2017-07-03")
+if __name__ == "__main__":
+    date_str = sys.argv[1]
+    check(date_str)
