@@ -42,9 +42,9 @@
         </constructor-arg>
     </bean>
     <!--粉丝订阅后的操作-->
-    <bean id="afterSubscribeAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter">
+    <bean id="subscribeAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter">
         <constructor-arg name="delegate">
-            <bean class="com.kuaizhan.kzweixin.mq.consumer.AfterSubscribeConsumer" />
+            <bean class="com.kuaizhan.kzweixin.mq.consumer.SubscribeConsumer" />
         </constructor-arg>
     </bean>
 
@@ -54,7 +54,7 @@
         <rabbit:listener ref="weixinPostListenerAdapter" queue-names="sys-kzweixin-import-weixin-post" />
         <rabbit:listener ref="sendSysTplMsgAdapter" queue-names="sys-kzweixin-send-sys-tpl-msg" />
         <rabbit:listener ref="afterBindAdapter" queue-names="sys-kzweixin-after-bind" />
-        <rabbit:listener ref="afterSubscribeAdapter" queue-names="sys-kzweixin-after-subscribe" />
+        <rabbit:listener ref="subscribeAdapter" queue-names="sys-kzweixin-subscribe" />
     </rabbit:listener-container>
 
 </beans>
