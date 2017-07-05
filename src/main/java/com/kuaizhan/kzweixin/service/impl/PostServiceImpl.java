@@ -855,7 +855,9 @@ public class PostServiceImpl implements PostService {
          kzPicUrl = kzPicUrl.replaceAll("&amp;.*$", "");
 
         try {
-            return KzManager.uploadPicToKz(kzPicUrl);
+            String url = KzManager.uploadPicToKz(kzPicUrl);
+            imageCache.setImageUploaded(url);
+            return url;
         } catch (KZPicUploadException e) {
             logger.warn("[getKzImageUrl] upload kz image failed, url: {}", kzPicUrl, e);
         }
