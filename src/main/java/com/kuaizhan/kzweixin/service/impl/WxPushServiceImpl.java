@@ -47,7 +47,7 @@ public class WxPushServiceImpl implements WxPushService {
     @Override
     public String handleEventPush(String appId, String signature, String timestamp, String nonce, String xmlStr) {
 
-        logger.info("xmlStr:" + xmlStr);
+        logger.debug("################## xmlStr:" + xmlStr);
         kzStat("a000", appId);
 
         //解析消息
@@ -78,7 +78,7 @@ public class WxPushServiceImpl implements WxPushService {
         }
         // 否则调用php处理请求
         String phpResult = KzManager.kzResponseMsg(appId, timestamp, nonce, xmlStr);
-        logger.info("phpResult:", phpResult);
+        logger.debug("############### phpResult:", phpResult);
 
         return phpResult;
     }
