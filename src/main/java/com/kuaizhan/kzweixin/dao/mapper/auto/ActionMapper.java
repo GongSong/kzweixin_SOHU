@@ -17,10 +17,6 @@ public interface ActionMapper {
 
     int insertSelective(ActionPO record);
 
-    List<ActionPO> selectByExampleWithBLOBsWithRowbounds(ActionPOExample example, RowBounds rowBounds);
-
-    List<ActionPO> selectByExampleWithBLOBs(ActionPOExample example);
-
     List<ActionPO> selectByExampleWithRowbounds(ActionPOExample example, RowBounds rowBounds);
 
     List<ActionPO> selectByExample(ActionPOExample example);
@@ -29,13 +25,9 @@ public interface ActionMapper {
 
     int updateByExampleSelective(@Param("record") ActionPO record, @Param("example") ActionPOExample example);
 
-    int updateByExampleWithBLOBs(@Param("record") ActionPO record, @Param("example") ActionPOExample example);
-
     int updateByExample(@Param("record") ActionPO record, @Param("example") ActionPOExample example);
 
     int updateByPrimaryKeySelective(ActionPO record);
-
-    int updateByPrimaryKeyWithBLOBs(ActionPO record);
 
     int updateByPrimaryKey(ActionPO record);
 }

@@ -37,6 +37,7 @@ public class ActionServiceImpl implements ActionService {
         action.setExt(action.getExt() == null? "": action.getExt());
         action.setCreateTime(DateUtil.curSeconds());
         action.setUpdateTime(DateUtil.curSeconds());
+        action.setExt("");
         action.setStatus(true);
 
         int responseType = action.getResponseType();
@@ -51,9 +52,23 @@ public class ActionServiceImpl implements ActionService {
         } else {
             throw new IllegalArgumentException("unsupported responseType:" + responseType);
         }
-        action.setResponseJson(JsonUtil.bean2String(responseObj));
+
+        String responseJson = JsonUtil.bean2String(responseObj);
+        checkResponseJson(responseJson);
+
+        action.setResponseJson(responseJson);
         actionMapper.insert(action);
         return action.getId();
+    }
+
+    /**
+     * 数据库字段限制，目前不能大于2000
+     */
+    private void checkResponseJson(String responseJson) {
+        if (responseJson == null || responseJson.length() > 2000) {
+            throw new RuntimeException("[checkResponseJson] invalid responseJson length:"
+                    + (responseJson == null? 0: responseJson.length()));
+        }
     }
 
     @Override
@@ -67,7 +82,7 @@ public class ActionServiceImpl implements ActionService {
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andActionTypeEqualTo(actionType.getValue())
                 .andStatusEqualTo(true);
-        return actionMapper.selectByExampleWithBLOBs(example);
+        return actionMapper.selectByExample(example);
     }
 
     @Override

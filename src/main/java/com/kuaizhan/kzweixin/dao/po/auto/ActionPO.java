@@ -13,15 +13,15 @@ public class ActionPO {
 
     private Integer responseType;
 
+    private String responseJson;
+
+    private String ext;
+
     private Boolean status;
 
     private Integer createTime;
 
     private Integer updateTime;
-
-    private String responseJson;
-
-    private String ext;
 
     public Integer getId() {
         return id;
@@ -71,6 +71,22 @@ public class ActionPO {
         this.responseType = responseType;
     }
 
+    public String getResponseJson() {
+        return responseJson;
+    }
+
+    public void setResponseJson(String responseJson) {
+        this.responseJson = responseJson;
+    }
+
+    public String getExt() {
+        return ext;
+    }
+
+    public void setExt(String ext) {
+        this.ext = ext;
+    }
+
     public Boolean getStatus() {
         return status;
     }
@@ -93,21 +109,5 @@ public class ActionPO {
 
     public void setUpdateTime(Integer updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public String getResponseJson() {
-        return responseJson;
-    }
-
-    public void setResponseJson(String responseJson) {
-        this.responseJson = responseJson;
-    }
-
-    public String getExt() {
-        return ext;
-    }
-
-    public void setExt(String ext) {
-        this.ext = ext;
     }
 }

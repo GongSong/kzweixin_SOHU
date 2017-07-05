@@ -484,6 +484,146 @@ public class ActionPOExample {
             return (Criteria) this;
         }
 
+        public Criteria andResponseJsonIsNull() {
+            addCriterion("response_json is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonIsNotNull() {
+            addCriterion("response_json is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonEqualTo(String value) {
+            addCriterion("response_json =", value, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonNotEqualTo(String value) {
+            addCriterion("response_json <>", value, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonGreaterThan(String value) {
+            addCriterion("response_json >", value, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonGreaterThanOrEqualTo(String value) {
+            addCriterion("response_json >=", value, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonLessThan(String value) {
+            addCriterion("response_json <", value, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonLessThanOrEqualTo(String value) {
+            addCriterion("response_json <=", value, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonLike(String value) {
+            addCriterion("response_json like", value, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonNotLike(String value) {
+            addCriterion("response_json not like", value, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonIn(List<String> values) {
+            addCriterion("response_json in", values, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonNotIn(List<String> values) {
+            addCriterion("response_json not in", values, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonBetween(String value1, String value2) {
+            addCriterion("response_json between", value1, value2, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andResponseJsonNotBetween(String value1, String value2) {
+            addCriterion("response_json not between", value1, value2, "responseJson");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtIsNull() {
+            addCriterion("ext is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtIsNotNull() {
+            addCriterion("ext is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtEqualTo(String value) {
+            addCriterion("ext =", value, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtNotEqualTo(String value) {
+            addCriterion("ext <>", value, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtGreaterThan(String value) {
+            addCriterion("ext >", value, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtGreaterThanOrEqualTo(String value) {
+            addCriterion("ext >=", value, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtLessThan(String value) {
+            addCriterion("ext <", value, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtLessThanOrEqualTo(String value) {
+            addCriterion("ext <=", value, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtLike(String value) {
+            addCriterion("ext like", value, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtNotLike(String value) {
+            addCriterion("ext not like", value, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtIn(List<String> values) {
+            addCriterion("ext in", values, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtNotIn(List<String> values) {
+            addCriterion("ext not in", values, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtBetween(String value1, String value2) {
+            addCriterion("ext between", value1, value2, "ext");
+            return (Criteria) this;
+        }
+
+        public Criteria andExtNotBetween(String value1, String value2) {
+            addCriterion("ext not between", value1, value2, "ext");
+            return (Criteria) this;
+        }
+
         public Criteria andStatusIsNull() {
             addCriterion("status is null");
             return (Criteria) this;
