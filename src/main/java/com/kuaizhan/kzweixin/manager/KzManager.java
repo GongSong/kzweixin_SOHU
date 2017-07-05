@@ -204,4 +204,32 @@ public class KzManager {
         return resultJson.getString("result");
     }
 
+    /**
+     * 调用php微信全网发布测试的接口
+     * @return php处理的结果
+     */
+    public static String kzResponseTest(String timestamp, String nonce, String xmlStr) {
+        Map<String, Object> param =  new HashMap<>();
+        param.put("timestamp", timestamp);
+        param.put("nonce", nonce);
+        param.put("post_str", xmlStr);
+
+        Map<String, String> header = ImmutableMap.of("Host", ApplicationConfig.KZ_SERVICE_HOST);
+
+        String result = HttpClientUtil.post(KzApiConfig.KZ_OLD_WX_TEST_CALLBACK, param, header);
+        if (result == null) {
+            throw new KzApiException("[Kz:responseMsg] result is null");
+        }
+
+        JSONObject resultJson;
+        try {
+            resultJson = new JSONObject(result);
+        } catch (JSONException e) {
+            throw new KzApiException("[Kz:responseMsg] Json Parse Error, result:" + result);
+        }
+        if (resultJson.optInt("ret") != 0) {
+            throw new KzApiException("[Kz:responseMsg] unexpected result, result:" + result);
+        }
+        return resultJson.getString("result");
+    }
 }

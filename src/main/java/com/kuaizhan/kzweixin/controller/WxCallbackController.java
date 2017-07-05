@@ -67,6 +67,11 @@ public class WxCallbackController extends BaseController {
                                   @RequestBody String postData) {
         String xmlStr = wxThirdPartService.decryptMsg(signature, timestamp, nonce, postData);
 
+        // 如果appId == "wx570bc396a51b8ff8"，则是配合微信的全网发布测试
+        if ("wx570bc396a51b8ff8".equals(appId)) {
+            return wxPushService.handleTestEventPush(timestamp, nonce, xmlStr);
+        }
+
         long startTime = System.currentTimeMillis();
         String resultStr = wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
 

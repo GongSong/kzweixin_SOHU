@@ -83,6 +83,11 @@ public class WxPushServiceImpl implements WxPushService {
         return phpResult;
     }
 
+    @Override
+    public String handleTestEventPush(String timestamp, String nonce, String xmlStr) {
+        return KzManager.kzResponseTest(timestamp, nonce, xmlStr);
+    }
+
     private String handleTextMsg(WxData wxData) {
 
         kzStat("a200", wxData.getAppId());
@@ -116,7 +121,7 @@ public class WxPushServiceImpl implements WxPushService {
     /**
      * 处理动作
      */
-    public String handleActions(long weixinAppid, WxData wxData, ActionType actionType) {
+    private String handleActions(long weixinAppid, WxData wxData, ActionType actionType) {
 
         List<ActionPO> actionPOS = actionService.getActions(weixinAppid, actionType);
 
