@@ -54,7 +54,7 @@
         <rabbit:listener ref="weixinPostListenerAdapter" queue-names="sys-kzweixin-import-weixin-post" />
         <rabbit:listener ref="sendSysTplMsgAdapter" queue-names="sys-kzweixin-send-sys-tpl-msg" />
         <rabbit:listener ref="afterBindAdapter" queue-names="sys-kzweixin-after-bind" />
-        <rabbit:listener ref="subscribeAdapter" queue-names="sys-kzweixin-subscribe" />
+        <rabbit:listener ref="subscribeAdapter" queue-names="sys-kzweixin-fan-subscribe" />
     </rabbit:listener-container>
 
 </beans>
