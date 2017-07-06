@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.cache.FanCache;
 import com.kuaizhan.kzweixin.dao.mapper.auto.FanMapper;
@@ -10,11 +11,13 @@ import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.entity.fan.UserInfoDTO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.manager.WxFanManager;
+import com.kuaizhan.kzweixin.mq.dto.SubscribeDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.utils.DBTableUtil;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import com.kuaizhan.kzweixin.utils.MqUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,6 +42,8 @@ public class FanServiceImpl implements FanService {
     private AccountService accountService;
     @Resource
     private OpenIdMapper openIdMapper;
+    @Resource
+    private MqUtil mqUtil;
 
 
     @Override
@@ -343,6 +348,7 @@ public class FanServiceImpl implements FanService {
         fanPO.setUpdateTime(DateUtil.curSeconds());
         fanPO.setInBlacklist(userInfoDTO.getGroupId() == 1 ? 1 : 0);
         fanPO.setLastInteractTime(DateUtil.curSeconds());
+        fanPO.setStatus(1);
 
         if (fanPOList.size() != 0) {
             fanPO.setFanId(fanPOList.get(0).getFanId());
@@ -353,6 +359,15 @@ public class FanServiceImpl implements FanService {
         }
 
         return fanPO;
+    }
+
+    @Override
+    public void asyncAddFan(String appId, String openId) {
+        SubscribeDTO subscribeDTO = new SubscribeDTO();
+        subscribeDTO.setAppId(appId);
+        subscribeDTO.setOpenId(openId);
+
+        mqUtil.publish(MqConstant.FAN_SUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
     }
 
 }

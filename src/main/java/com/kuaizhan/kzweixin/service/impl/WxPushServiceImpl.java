@@ -9,10 +9,7 @@ import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.ResponseType;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.manager.KzManager;
-import com.kuaizhan.kzweixin.service.AccountService;
-import com.kuaizhan.kzweixin.service.ActionService;
-import com.kuaizhan.kzweixin.service.CommonService;
-import com.kuaizhan.kzweixin.service.WxPushService;
+import com.kuaizhan.kzweixin.service.*;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +36,8 @@ public class WxPushServiceImpl implements WxPushService {
     private AccountService accountService;
     @Resource
     private ActionService actionService;
+    @Resource
+    private FanService fanService;
     @Resource
     private WxThirdPartServiceImpl wxThirdPartService;
 
@@ -111,6 +110,10 @@ public class WxPushServiceImpl implements WxPushService {
         if ("subscribe".equals(wxData.getEvent())) {
 
             kzStat("a110", wxData.getAppId());
+
+            // 添加粉丝信息
+            fanService.asyncAddFan(wxData.getAppId(), wxData.getOpenId());
+
             if (StringUtils.isNotBlank(wxData.getEventKey())) {
                 // 带场景的参数二维码等操作
             } else {
@@ -218,6 +221,7 @@ public class WxPushServiceImpl implements WxPushService {
         // 必有字段
         wxData.setAppId(appId);
         wxData.setFromUserName(root.elementText("FromUserName"));
+        wxData.setOpenId(wxData.getFromUserName());
         wxData.setToUserName(root.elementText("ToUserName"));
         wxData.setMsgType(root.elementText("MsgType"));
         wxData.setCreateTime(root.elementText("CreateTime"));

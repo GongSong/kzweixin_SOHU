@@ -30,6 +30,9 @@ public class WxCallbackController extends BaseController {
     @Resource
     private WxPushService wxPushService;
 
+    // 全网发布测试appid
+    private static final String wxTestAppid = "wx570bc396a51b8ff8";
+
     /**
      * 新增绑定，微信服务器跳转回来
      */
@@ -67,8 +70,8 @@ public class WxCallbackController extends BaseController {
                                   @RequestBody String postData) {
         String xmlStr = wxThirdPartService.decryptMsg(signature, timestamp, nonce, postData);
 
-        // 如果appId == "wx570bc396a51b8ff8"，则是配合微信的全网发布测试
-        if ("wx570bc396a51b8ff8".equals(appId)) {
+        // 判断是否是全网发布测试的appid
+        if (wxTestAppid.equals(appId)) {
             return wxPushService.handleTestEventPush(timestamp, nonce, xmlStr);
         }
 
