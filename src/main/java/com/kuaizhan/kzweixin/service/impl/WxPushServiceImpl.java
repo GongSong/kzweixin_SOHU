@@ -7,7 +7,6 @@ import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.ResponseType;
-import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
@@ -15,10 +14,9 @@ import com.kuaizhan.kzweixin.service.CommonService;
 import com.kuaizhan.kzweixin.service.WxPushService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import com.kuaizhan.kzweixin.utils.XmlUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,14 +49,8 @@ public class WxPushServiceImpl implements WxPushService {
         kzStat("a000", appId);
 
         //解析消息
-        Document document;
-        try {
-           document = DocumentHelper.parseText(xmlStr);
-        } catch (DocumentException e) {
-            throw new XMLParseException("[handleEventPush] xml parse failed, xmlStr:" + xmlStr, e);
-        }
-        Element root = document.getRootElement();
-        WxData wxData = getWxData(root, appId);
+        Document document = XmlUtil.parseXml(xmlStr);
+        WxData wxData = getWxDataFromXml(document, appId);
 
         String result = null;
         String msgType = wxData.getMsgType();
@@ -77,10 +69,7 @@ public class WxPushServiceImpl implements WxPushService {
             return result;
         }
         // 否则调用php处理请求
-        logger.debug("######### appId: {}", appId);
-        logger.debug("######### timestamp: {}", timestamp);
-        logger.debug("######### nonce: {}" + nonce);
-        logger.debug("######### xmlStr: {}" + xmlStr);
+        logger.debug("######### appId: {}, timestamp: {}, nonce: {}, xmlStr: {}", appId, timestamp, nonce, xmlStr);
         String phpResult = KzManager.kzResponseMsg(appId, timestamp, nonce, xmlStr);
         logger.debug("############### phpResult: {}", phpResult);
 
@@ -213,7 +202,8 @@ public class WxPushServiceImpl implements WxPushService {
     /**
      * 从xml解析出wxData
      */
-    private WxData getWxData(Element root, String appId) {
+    private WxData getWxDataFromXml(Document document, String appId) {
+        Element root = document.getRootElement();
         WxData wxData = new WxData();
         // 必有字段
         wxData.setAppId(appId);
