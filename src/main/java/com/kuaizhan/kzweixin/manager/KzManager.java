@@ -105,13 +105,17 @@ public class KzManager {
             throw new Export2KzException("[Kz:export2KzArticle] JsonParse error," +
                     " pageId: " + postPO.getPageId() +
                     " result: " + result +
-                    " param: " + param, e);
+                    " siteId: " + siteId +
+                    " category_id " + categoryId +
+                    " title " + postPO.getTitle(), e);
         }
         if (returnJson.getInt("ret") != 0) {
             throw new Export2KzException("[Kz:export2KzArticle] return code error," +
                     " pageId:" + postPO.getPageId() +
                     " result: " + result +
-                    " param: " + param);
+                    " siteId: " + siteId +
+                    " category_id " + categoryId +
+                    " title " + postPO.getTitle());
         }
     }
 
