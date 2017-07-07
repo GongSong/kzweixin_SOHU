@@ -80,7 +80,7 @@ public class WxCallbackController extends BaseController {
             resultStr = wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
         } catch (Exception e) {
             // 抛异常，返回success，记录错误日志
-            logger.error("[WxCallback] 回调处理失败", e);
+            logger.error("[WxCallback] 回调处理失败, appid: {}, xmlStr: {}", appId, xmlStr, e);
         }
 
         long delta = System.currentTimeMillis() - startTime;
