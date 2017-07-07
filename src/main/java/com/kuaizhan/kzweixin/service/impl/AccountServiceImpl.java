@@ -10,6 +10,7 @@ import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
+import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxAccountManager;
@@ -223,7 +224,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountPO getAccountByAppId(String appId) {
+    public AccountPO getAccountByAppId(String appId) throws AccountNotExistException {
         AccountPO accountPO = accountCache.getAccountByAppid(appId);
 
         if (accountPO == null) {
@@ -235,7 +236,7 @@ public class AccountServiceImpl implements AccountService {
             List<AccountPO> accountPOS = accountMapper.selectByExample(example);
 
             if (accountPOS.size() == 0) {
-                throw new BusinessException(ErrorCode.APP_ID_NOT_EXIST);
+                throw new AccountNotExistException();
             }
             accountPO = accountPOS.get(0);
             accountCache.setAccountByAppid(accountPO);

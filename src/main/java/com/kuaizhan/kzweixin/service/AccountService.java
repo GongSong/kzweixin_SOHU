@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
+import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 
 import java.util.List;
 
@@ -44,8 +45,9 @@ public interface AccountService {
 
     /**
      * 根据appId获取账号信息
+     * @throws AccountNotExistException 找不到对应的账号
      */
-    AccountPO getAccountByAppId(String appId);
+    AccountPO getAccountByAppId(String appId) throws AccountNotExistException;
 
     /**
      * 根据long型Id获取账号信息

@@ -7,6 +7,7 @@ import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.ResponseType;
+import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
@@ -40,12 +41,23 @@ public class WxPushServiceImpl implements WxPushService {
     @Resource
     private WxThirdPartServiceImpl wxThirdPartService;
 
+    private static final String SUCCESS_RESULT = "success";
+
     private static final Logger logger = LoggerFactory.getLogger(WxPushServiceImpl.class);
 
     @Override
     public String handleEventPush(String appId, String signature, String timestamp, String nonce, String xmlStr) {
 
         logger.debug("################## xmlStr: {}", xmlStr);
+
+        // 校验appId是否存在，大量解除绑定，但是授权还在的用户
+        AccountPO accountPO;
+        try {
+            accountPO = accountService.getAccountByAppId(appId);
+        } catch (AccountNotExistException e) {
+            return SUCCESS_RESULT;
+        }
+
         kzStat("a000", appId);
 
         //解析消息
@@ -57,11 +69,11 @@ public class WxPushServiceImpl implements WxPushService {
 
         // ************ Event 事件 *****************
         if ("event".equals(msgType)) {
-            result = handleEventMsg(wxData);
+            result = handleEventMsg(wxData, accountPO);
 
         // ************ Text 事件 *****************
         } else if ("text".equals(msgType)) {
-            result = handleTextMsg(wxData);
+            result = handleTextMsg(wxData, accountPO);
         }
 
         // java代码成功处理了则返回，否则继续调用php
@@ -82,10 +94,9 @@ public class WxPushServiceImpl implements WxPushService {
         return KzManager.kzResponseTest(timestamp, nonce, xmlStr);
     }
 
-    private String handleTextMsg(WxData wxData) {
+    private String handleTextMsg(WxData wxData, AccountPO accountPO) {
 
         kzStat("a200", wxData.getAppId());
-        AccountPO accountPO = accountService.getAccountByAppId(wxData.getAppId());
 
         return handleActions(accountPO.getWeixinAppid(), wxData, ActionType.REPLY);
     }
@@ -93,10 +104,9 @@ public class WxPushServiceImpl implements WxPushService {
     /**
      * 处理msgType == "event"
      */
-    private String handleEventMsg(WxData wxData) {
+    private String handleEventMsg(WxData wxData, AccountPO accountPO) {
 
         kzStat("a100", wxData.getAppId());
-        AccountPO accountPO = accountService.getAccountByAppId(wxData.getAppId());
 
         if ("subscribe".equals(wxData.getEvent())) {
 

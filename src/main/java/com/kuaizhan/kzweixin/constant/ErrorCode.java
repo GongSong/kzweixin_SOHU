@@ -29,7 +29,7 @@ public class ErrorCode {
 
     // 账号(02)
     public static final ErrorCode SITE_ID_NOT_EXIST = new ErrorCode(102002, "站点没有绑定公众号或siteId不存在");
-    public static final ErrorCode ACCOUNT_NOT_EXIST = new ErrorCode(102003, "账号不存在");
+    public static final ErrorCode ACCOUNT_NOT_EXIST = new ErrorCode(102003, "公众号不存在");
     public static final ErrorCode ACCOUNT_NOT_VERIFIED_SERVICE_TYPE = new ErrorCode(102004, "账号不是认证的服务号");
     public static final ErrorCode APP_ID_NOT_EXIST = new ErrorCode(102005, "公众号不存在");
     public static final ErrorCode IP_NOT_IN_WHITELIST = new ErrorCode(102006, "IP未设置白名单");
