@@ -102,15 +102,16 @@ public class KzManager {
         try {
             returnJson = new JSONObject(result);
         } catch (JSONException e) {
-            throw new Export2KzException("[Kz:export2KzArticle] JsonParse error, " +
-                    " pageId:" + postPO.getPageId() +
-                    " result:" + result +
-                    " siteId:" + siteId +
-                    " categoryId:" + categoryId +
-                    " title:" + postPO.getTitle(), e);
+            throw new Export2KzException("[Kz:export2KzArticle] JsonParse error," +
+                    " pageId: " + postPO.getPageId() +
+                    " result: " + result +
+                    " param: " + param, e);
         }
         if (returnJson.getInt("ret") != 0) {
-            throw new Export2KzException("[Kz:export2KzArticle] return code error, pageId:" + postPO.getPageId() + " result:" + result);
+            throw new Export2KzException("[Kz:export2KzArticle] return code error," +
+                    " pageId:" + postPO.getPageId() +
+                    " result: " + result +
+                    " param: " + param);
         }
     }
 
