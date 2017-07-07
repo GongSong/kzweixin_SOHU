@@ -72,17 +72,26 @@ public class WxCallbackController extends BaseController {
             return wxPushService.handleTestEventPush(timestamp, nonce, xmlStr);
         }
 
+        // 记录开始时间
         long startTime = System.currentTimeMillis();
-        String resultStr = wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
 
-        // 超过2秒warning日志
-        long delta = System.currentTimeMillis() - startTime;
-        if (delta > 2 * 1000) {
-            logger.warn("[Weixin:event] handle time up to 2 seconds, time:" + delta);
-       // 超过4秒error日志
-        } else if (delta > 4 * 1000) {
-            logger.error("[Weixin:event] handle time up to 4 seconds, time:" + delta);
+        String resultStr = "success";
+        try {
+            resultStr = wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
+        } catch (Exception e) {
+            // 抛异常，返回success，记录错误日志
+            logger.error("[WxCallback] 回调处理失败", e);
         }
+
+        long delta = System.currentTimeMillis() - startTime;
+        if (delta > 4 * 1000) {
+            // 超过4秒error日志
+            logger.error("[Weixin:event] handle time up to 4 seconds, time:" + delta);
+        } else if (delta > 2 * 1000) {
+            // 超过2秒warning日志
+            logger.warn("[Weixin:event] handle time up to 2 seconds, time:" + delta);
+        }
+
         return resultStr;
     }
 }

@@ -68,7 +68,8 @@ public class WxPushServiceImpl implements WxPushService {
         if (result != null) {
             return result;
         }
-        // 否则调用php处理请求
+
+        // 调用php处理请求
         logger.debug("######### appId: {}, timestamp: {}, nonce: {}, xmlStr: {}", appId, timestamp, nonce, xmlStr);
         String phpResult = KzManager.kzResponseMsg(appId, timestamp, nonce, xmlStr);
         logger.debug("############### phpResult: {}", phpResult);

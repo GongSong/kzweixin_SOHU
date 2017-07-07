@@ -201,10 +201,10 @@ public class KzManager {
         try {
             resultJson = new JSONObject(result);
         } catch (JSONException e) {
-            throw new KzApiException("[Kz:responseMsg] Json Parse Error, result:" + result);
+            throw new KzApiException("[Kz:responseMsg] Json Parse Error, result:" + result + " param: " + param, e);
         }
         if (resultJson.optInt("ret") != 0) {
-            throw new KzApiException("[Kz:responseMsg] unexpected result, result:" + result);
+            throw new KzApiException("[Kz:responseMsg] unexpected result, result:" + result + " param: " + param);
         }
         return resultJson.getString("result");
     }
