@@ -16,7 +16,7 @@ public class AfterBindConsumer extends  BaseConsumer{
     private AccountService accountService;
 
     @Override
-    void onMessage(String message) {
+    public void onMessage(String message) {
         AfterBindDTO dto = JsonUtil.string2Bean(message, AfterBindDTO.class);
         accountService.uploadQrcode2Kz(dto.getWeixinAppid());
     }

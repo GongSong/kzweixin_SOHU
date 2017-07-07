@@ -14,8 +14,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfoDTO {
 
-    @JsonProperty("subscribe")
-    private Integer status;
+    private Integer subscribe;
 
     @JsonProperty("openid")
     private String openId;

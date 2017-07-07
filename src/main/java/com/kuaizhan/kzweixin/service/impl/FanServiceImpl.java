@@ -318,7 +318,7 @@ public class FanServiceImpl implements FanService {
         //从微信服务器接收并转换的部分
         fanPO.setAppId(appId);
         fanPO.setOpenId(openId);
-        fanPO.setStatus(userInfoDTO.getStatus());
+        fanPO.setStatus(userInfoDTO.getSubscribe() == 1 ? 1 : 2);
         fanPO.setNickName(userInfoDTO.getNickName());
         fanPO.setCity(userInfoDTO.getCity());
         fanPO.setProvince(userInfoDTO.getProvince());
