@@ -264,6 +264,7 @@ public class FanServiceImpl implements FanService {
 
     @Override
     public void addFanOpenId(String appId, String openId) {
+
         OpenIdPOExample example = new OpenIdPOExample();
         example.createCriteria()
                 .andAppIdEqualTo(appId)
@@ -272,6 +273,7 @@ public class FanServiceImpl implements FanService {
         String table = DBTableUtil.getOpenIdTableName(appId);
         List<OpenIdPO> updateFans = openIdMapper.selectByExample(example, table);
 
+        // 新建
         if (updateFans.size() == 0) {
             OpenIdPO newUserPO = new OpenIdPO();
             newUserPO.setAppId(appId);
@@ -280,6 +282,7 @@ public class FanServiceImpl implements FanService {
             newUserPO.setCreateTime(DateUtil.curSeconds());
             newUserPO.setUpdateTime(DateUtil.curSeconds());
             openIdMapper.insertSelective(newUserPO, table);
+        // 已存在，修改
         } else {
             OpenIdPO oldUserPO = new OpenIdPO();
             oldUserPO.setId(updateFans.get(0).getId());
@@ -305,17 +308,22 @@ public class FanServiceImpl implements FanService {
         openIdMapper.updateByExampleSelective(oldUserPO, example, table);
 
         //TODO:删除Redis缓存
-
     }
 
     @Override
     public FanPO addFan(String appId, String openId) {
         AccountPO accountPO = accountService.getAccountByAppId(appId);
+
+        // 只有认证的公众号才能获取粉丝信息
+        if (accountPO == null || accountPO.getServiceType() != 0) {
+            return null;
+        }
+
         String accessToken = accountService.getAccessToken(accountPO.getWeixinAppid());
         UserInfoDTO userInfoDTO = WxFanManager.getFanInfo(accessToken, openId);
-        FanPO fanPO = new FanPO();
 
         //从微信服务器接收并转换的部分
+        FanPO fanPO = new FanPO();
         fanPO.setAppId(appId);
         fanPO.setOpenId(openId);
         fanPO.setStatus(userInfoDTO.getStatus());

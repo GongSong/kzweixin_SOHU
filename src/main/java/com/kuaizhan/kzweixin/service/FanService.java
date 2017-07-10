@@ -82,11 +82,20 @@ public interface FanService {
     Page<FanPO> listFansByPage(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist);
 
     /**
-     * 用户订阅
+     * 粉丝关注后，保存openId
+     * 因为未认证号不能获取粉丝信息，所以冗余了open_id表
      * @param appId 公众号Id
      * @param openId 粉丝openId
      * */
     void addFanOpenId(String appId, String openId);
+
+    /**
+     * 粉丝关注后，获取并保存粉丝信息
+     * @param appId 公众号Id
+     * @param openId 粉丝openId
+     * @return 粉丝信息
+     * */
+    FanPO addFan(String appId, String openId);
 
     /**
      * 用户取消订阅
@@ -94,12 +103,4 @@ public interface FanService {
      * @param openId 粉丝openId
      * */
     void delFanOpenId(String appId, String openId);
-
-    /**
-     * 更新用户个人信息
-     * @param appId 公众号Id
-     * @param openId 粉丝openId
-     * @return 粉丝信息
-     * */
-    FanPO addFan(String appId, String openId);
 }
