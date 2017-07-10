@@ -326,7 +326,7 @@ public class FanServiceImpl implements FanService {
         FanPO fanPO = new FanPO();
         fanPO.setAppId(appId);
         fanPO.setOpenId(openId);
-        fanPO.setStatus(userInfoDTO.getStatus());
+        fanPO.setStatus(userInfoDTO.getSubscribe() == 1 ? 1 : 2);
         fanPO.setNickName(userInfoDTO.getNickName());
         fanPO.setCity(userInfoDTO.getCity());
         fanPO.setProvince(userInfoDTO.getProvince());
