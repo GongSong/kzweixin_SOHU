@@ -34,7 +34,10 @@ import com.kuaizhan.kzweixin.utils.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -43,7 +46,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by zixiong on 2017/3/20.
  */
-@Service("postService")
+@Service
 public class PostServiceImpl implements PostService {
 
     private static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
@@ -68,8 +71,17 @@ public class PostServiceImpl implements PostService {
     @Resource
     private AccountService accountService;
 
-    @Override
-    public long genPageId() {
+    /**
+     * 获取PostServiceImpl的AOP代理类
+     */
+    private PostServiceImpl proxy() {
+        return (PostServiceImpl) AopContext.currentProxy();
+    }
+
+    /**
+     * 生成pageId主键
+     */
+    private long genPageId() {
         final long MIN = 1000000000L;
         final long MAX = 9999999999L;
         int count = 1;
@@ -85,7 +97,6 @@ public class PostServiceImpl implements PostService {
         }
         return pageId;
     }
-
 
     @Override
     public Page<PostPO> listPostsByPage(long weixinAppid, String title, Integer pageNum, Boolean flat) {
@@ -103,7 +114,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostPO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) {
+    public List<PostPO> getMultiPosts(long weixinAppid, String mediaId, Boolean withContent) {
 
         List<PostPO> multiPosts = postDao.listMultiPosts(weixinAppid, mediaId);
 
@@ -118,12 +129,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(long weixinAppid, long pageId, String accessToken) throws WxPostUsedException {
+    public void deletePost(long weixinAppid, long pageId) throws WxPostUsedException {
 
         PostPO postPO = getPostByPageId(pageId);
+
         if (postPO != null) {
             String mediaId = postPO.getMediaId();
             //微信删除
+            String accessToken = accountService.getAccessToken(weixinAppid);
             WxPostManager.deletePost(mediaId, accessToken);
             //数据库删除
             postDao.deletePost(weixinAppid, mediaId);
@@ -180,7 +193,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void importKzArticle(long weixinAppid, List<Long> pageIds) {
+    public void asyncImportKzArticles(long weixinAppid, List<Long> pageIds) {
         if (pageIds.size() > 0) {
             ArticleImportDTO dto = new ArticleImportDTO();
             dto.setWeixinAppid(weixinAppid);
@@ -215,7 +228,7 @@ public class PostServiceImpl implements PostService {
                     return urls.get(0);
                 // 多图文
                 } else {
-                    List<PostPO> multiPosts = listMultiPosts(weixinAppid, postPO.getMediaId(), false);
+                    List<PostPO> multiPosts = getMultiPosts(weixinAppid, postPO.getMediaId(), false);
                     if (urls.size() != multiPosts.size()) {
                         throw new BusinessException(ErrorCode.DIFFERENT_POSTS_NUM_ERROR);
                     }
@@ -249,7 +262,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void insertMultiPosts(long weixinAppid, List<PostPO> posts)  {
+    public void addMultiPosts(long weixinAppid, List<PostPO> posts)  {
 
         // 在方法执行过程中，有失效的风险
         String accessToken = accountService.getAccessToken(weixinAppid);
@@ -263,8 +276,8 @@ public class PostServiceImpl implements PostService {
             postPO.setMediaId(mediaId);
         }
 
-        // 入库
-        saveMultiPosts(weixinAppid, posts);
+        // 入库, 调用proxy类才能执行事务
+        proxy().saveMultiPosts(weixinAppid, posts);
     }
 
     @Override
@@ -280,7 +293,7 @@ public class PostServiceImpl implements PostService {
             oldPosts = new ArrayList<>();
             oldPosts.add(oldPost);
         } else {
-            oldPosts = listMultiPosts(weixinAppid, oldPost.getMediaId(), true);
+            oldPosts = getMultiPosts(weixinAppid, oldPost.getMediaId(), true);
         }
 
         // 数目不对应, 接口调用错误
@@ -367,8 +380,10 @@ public class PostServiceImpl implements PostService {
         for (PostPO postPO : posts) {
 
             postPO.setUpdateTime(updateTime);
-            postDao.updatePost(postPO, postPO.getPageId());
             mongoPostDao.upsertPost(postPO.getPageId(), postPO.getContent());
+            postDao.updatePost(postPO, postPO.getPageId());
+
+            // 拼接总图文title
             titleSum.append(postPO.getTitle());
         }
 
@@ -416,10 +431,6 @@ public class PostServiceImpl implements PostService {
     /**
      * 保存前，对图文数据做预处理
      * 上传内容中的图片到微信、上传封面图片；替换emoji, 替换js
-     *
-     * @param posts 多图文
-     * @return
-     * @parm accessToken 上传用的token
      */
     private List<PostPO> cleanPosts(List<PostPO> posts, String accessToken) {
 
@@ -525,7 +536,8 @@ public class PostServiceImpl implements PostService {
     /**
      * 把校验后的多图文新增到数据库, 必须先经过cleanPosts清洗数据
      */
-    private void saveMultiPosts(long weixinAppid, List<PostPO> posts) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void saveMultiPosts(long weixinAppid, List<PostPO> posts) {
 
         // 1. 单图文 2. 多图文总记录 3. 多图文中的一条
         short type = (short) (posts.size() > 1 ? 3 : 1);
@@ -708,7 +720,7 @@ public class PostServiceImpl implements PostService {
     public void importWeixinPost(long weixinAppid, String mediaId, long updateTime, List<WxPostDTO> wxPostDTOs) {
         List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, wxPostDTOs);
         // 入库
-        saveMultiPosts(weixinAppid, postPOList);
+        proxy().saveMultiPosts(weixinAppid, postPOList);
     }
 
     @Override
@@ -720,7 +732,7 @@ public class PostServiceImpl implements PostService {
         // 多图文情况
         List<PostPO> multiPosts = new ArrayList<>();
         if (postPO.getType() == 2) {
-            multiPosts = listMultiPosts(weixinAppid, mediaId, false);
+            multiPosts = getMultiPosts(weixinAppid, mediaId, false);
         }
 
         // 再次校验修改时间，以免覆盖在平台的修改

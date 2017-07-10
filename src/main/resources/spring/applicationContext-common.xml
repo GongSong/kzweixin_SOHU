@@ -15,8 +15,10 @@
     <context:component-scan base-package="com.kuaizhan.kzweixin.aspect"/>
     <context:component-scan base-package="com.kuaizhan.kzweixin.utils"/>
 
-    <!-- 开启自动切面代理,  proxy-target-class决定了是否使用CGLIB? -->
-    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <!-- 开启自动切面代理
+    proxy-target-class决定了是否使用CGLIB?
+    expose-proxy开启，才能通过AopContext获取代理类 -->
+    <aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/>
 
 
     <!--appConfig 一些配置-->

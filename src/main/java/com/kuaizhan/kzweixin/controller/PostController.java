@@ -2,7 +2,6 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.exception.common.DownloadFileFailedException;
 import com.kuaizhan.kzweixin.controller.param.PostsParam;
 import com.kuaizhan.kzweixin.controller.param.UploadPicParam;
 import com.kuaizhan.kzweixin.controller.param.WxSyncsPostParam;
@@ -26,7 +25,6 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +84,7 @@ public class PostController extends BaseController {
 
                     // 获取图文总记录下面的多图文
                     if (postPO.getType() == 2) {
-                        List<PostPO> multiPostPOList = postService.listMultiPosts(weixinAppid, postPO.getMediaId(), false);
+                        List<PostPO> multiPostPOList = postService.getMultiPosts(weixinAppid, postPO.getMediaId(), false);
                         if (multiPostPOList != null) {
                             for (PostPO multiPostPO : multiPostPOList) {
                                 PostVO multiPostVO = PojoSwitcher.postPOToVO(multiPostPO);
@@ -132,7 +130,7 @@ public class PostController extends BaseController {
         if (postPO != null) {
             // 如果图文type为3（多图文中的一条），根据mediaId找出多图文
             if (postPO.getType() == 3) {
-                List<PostPO> multiPostPOList = postService.listMultiPosts(postPO.getWeixinAppid(), postPO.getMediaId(), true);
+                List<PostPO> multiPostPOList = postService.getMultiPosts(postPO.getWeixinAppid(), postPO.getMediaId(), true);
                 for (PostPO multiPostPO : multiPostPOList) {
                     multiPostVOList.add(PojoSwitcher.postPOToVO(multiPostPO));
                 }
@@ -147,9 +145,9 @@ public class PostController extends BaseController {
      * 新增多图文
      */
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public JsonResponse insertPost(@Valid @RequestBody PostsParam postsParam) {
+    public JsonResponse addPost(@Valid @RequestBody PostsParam postsParam) {
 
-        postService.insertMultiPosts(postsParam.getWeixinAppid(), postsParam.getPostDOs());
+        postService.addMultiPosts(postsParam.getWeixinAppid(), postsParam.getPostDOs());
         return new JsonResponse(ImmutableMap.of());
     }
 
@@ -167,7 +165,7 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/posts/{pageId}", method = RequestMethod.DELETE)
     public JsonResponse deletePost(@RequestParam long weixinAppid, @PathVariable long pageId) {
-        postService.deletePost(weixinAppid, pageId, accountService.getAccessToken(weixinAppid));
+        postService.deletePost(weixinAppid, pageId);
         return new JsonResponse(ImmutableMap.of());
     }
 
@@ -207,7 +205,7 @@ public class PostController extends BaseController {
         Long weixinAppid = jsonObject.optLong("weixinAppid");
 
         List<Long> pageIds = JsonUtil.string2List(jsonObject.get("pageIds").toString(), Long.class);
-        postService.importKzArticle(weixinAppid, pageIds);
+        postService.asyncImportKzArticles(weixinAppid, pageIds);
         return new JsonResponse(ImmutableMap.of());
     }
 
