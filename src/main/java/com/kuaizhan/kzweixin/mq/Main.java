@@ -12,12 +12,12 @@ public class Main {
 
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext(
-                "classpath:spring/applicationContext-dao.xml",
+                "classpath:spring/applicationContext-common.xml",
+                "classpath:spring/applicationContext-mongo.xml",
                 "classpath:spring/applicationContext-mq.xml",
+                "classpath:spring/applicationContext-mysql.xml",
                 "classpath:spring/applicationContext-redis.xml",
-                "classpath:spring/applicationContext-service.xml",
-                "classpath:spring/applicationContext-util.xml",
-                "classpath:spring/springmvc.xml",
+                // mq container
                 "classpath:spring-consumer/applicationContext-consumer.xml");
     }
 }
