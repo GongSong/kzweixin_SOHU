@@ -2,6 +2,8 @@ package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
+import com.kuaizhan.kzweixin.dao.mapper.auto.TplMsgMapper;
+import com.kuaizhan.kzweixin.dao.po.auto.TplMsgPO;
 import com.kuaizhan.kzweixin.entity.WxData;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
@@ -39,6 +41,8 @@ public class WxPushServiceImpl implements WxPushService {
     private FanService fanService;
     @Resource
     private WxThirdPartServiceImpl wxThirdPartService;
+    @Resource
+    private TplMsgMapper tplMsgMapper;
 
     private static final String SUCCESS_RESULT = "success";
 
@@ -120,9 +124,65 @@ public class WxPushServiceImpl implements WxPushService {
                 // 处理Action
                 return handleActions(accountPO.getWeixinAppid(), wxData, ActionType.SUBSCRIBE);
             }
+        } else if ("unsubscribe".equals(wxData.getEvent())) {
+
+            kzStat("a120", wxData.getAppId());
+            fanService.asyncDeleteFan(wxData.getAppId(), wxData.getOpenId());
+
+        } else if ("SCAN".equals(wxData.getEvent())) {
+
+            kzStat("a130", wxData.getAppId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
+        } else if ("LOCATION".equals(wxData.getEvent())) {
+
+            kzStat("a140", wxData.getAppId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+            return SUCCESS_RESULT;
+
+        } else if ("CLICK".equals(wxData.getEvent())) {
+
+            kzStat("a150", wxData.getAppId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
+        } else if ("VIEW".equals(wxData.getEvent())) {
+
+            kzStat("a160", wxData.getAppId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+            return SUCCESS_RESULT;
+
+        } else if ("MASSSENDJOBFINISH".equals(wxData.getEvent())) {
+
+            kzStat("a170", wxData.getAppId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
+        } else if ("qualification_verify_success".equals(wxData.getEvent())) {
+
+            kzStat("a180", wxData.getAppId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
+        } else if ("verify_expired".equals(wxData.getEvent())) {
+
+            kzStat("a190", wxData.getAppId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
+        } else if ("TEMPLATESENDJOBFINISH".equals(wxData.getEvent())) {
+
+            kzStat("a1a0", wxData.getAppId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
+            Long msgId = wxData.getMsgId();
+            String status = wxData.getStatus();
+            if (msgId != null && status != null && status.length() > 0) {
+                handleTplMsgJob(msgId, status);
+            }
+            return SUCCESS_RESULT;
+
         }
 
-        return null;
+
+
+            return null;
     }
 
     /**
@@ -155,6 +215,28 @@ public class WxPushServiceImpl implements WxPushService {
             }
         }
         return null;
+    }
+
+    /**
+     * 处理模版消息
+     */
+    private void handleTplMsgJob(long msgId, String status) {
+        int statusCode = -1;
+
+        if (status.equals("success")) {
+            statusCode = 2;
+        } else if (status.equals("failed:user block")) {
+            statusCode = 3;
+        } else if (status.equals("failed: system failed")) {
+            statusCode = 4;
+        }
+
+        TplMsgPO tplMsgPO = new TplMsgPO();
+        tplMsgPO.setMsgId(msgId);
+        tplMsgPO.setStatus(statusCode);
+        tplMsgPO.setUpdateTime(DateUtil.curSeconds());
+        tplMsgMapper.updateByPrimaryKeySelective(tplMsgPO);
+
     }
 
     /**

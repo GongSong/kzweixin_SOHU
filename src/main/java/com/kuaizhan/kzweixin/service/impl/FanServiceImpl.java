@@ -365,7 +365,8 @@ public class FanServiceImpl implements FanService {
         String table = DBTableUtil.getOpenIdTableName(appId);
         openIdMapper.updateByExampleSelective(oldUserPO, example, table);
 
-        //TODO:删除Redis缓存
+        AccountPO accountPO = accountService.getAccountByAppId(appId);
+        fanCache.deleteFan(accountPO.getWeixinAppid());
     }
 
     @Override
@@ -395,11 +396,30 @@ public class FanServiceImpl implements FanService {
         return true;
     }
 
+    @Override
     public void asyncAddFan(String appId, String openId) {
         SubscribeDTO subscribeDTO = new SubscribeDTO();
         subscribeDTO.setAppId(appId);
         subscribeDTO.setOpenId(openId);
 
         mqUtil.publish(MqConstant.FAN_SUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
+    }
+
+    @Override
+    public void asyncUpdateFan(String appId, String openId) {
+        SubscribeDTO subscribeDTO = new SubscribeDTO();
+        subscribeDTO.setAppId(appId);
+        subscribeDTO.setOpenId(openId);
+
+        mqUtil.publish(MqConstant.WX_USER_SUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
+    }
+
+    @Override
+    public void asyncDeleteFan(String appId, String openId) {
+        SubscribeDTO subscribeDTO = new SubscribeDTO();
+        subscribeDTO.setAppId(appId);
+        subscribeDTO.setOpenId(openId);
+
+        mqUtil.publish(MqConstant.WX_USER_UNSUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
     }
 }

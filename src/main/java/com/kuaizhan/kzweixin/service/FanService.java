@@ -104,7 +104,6 @@ public interface FanService {
      * */
     void delFanOpenId(String appId, String openId);
 
-
     /**
      * 判断粉丝是否关注公众号
      */
@@ -114,4 +113,14 @@ public interface FanService {
      * 异步地添加粉丝信息，openId信息
      */
     void asyncAddFan(String appId, String openId);
+
+    /**
+     * 记录关注用户openId（php）
+     * */
+    void asyncUpdateFan(String appId, String openId);
+
+    /**
+     * 记录取消关注用户openId（php）
+     * */
+    void asyncDeleteFan(String appId, String openId);
 }

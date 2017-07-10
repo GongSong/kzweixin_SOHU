@@ -18,4 +18,11 @@ public class MqConstant {
     public static final String AFTER_BIND = "sys-kzweixin-after-bind";
     // 粉丝关注
     public static final String FAN_SUBSCRIBE = "sys-kzweixin-fan-subscribe";
+
+    // 以下为php消息队列
+    // 更新用户订阅
+    public static final String WX_USER_SUBSCRIBE = "sys-weixin-user-subscribe.direct";
+    // 用户取消订阅
+    public static final String WX_USER_UNSUBSCRIBE = "sys-weixin-user-unsubscribe.direct";
+
 }

@@ -60,4 +60,9 @@ public interface FanCache {
      * 设置缓存状态为true
      */
     void setSubscribeStatus(String appId, String openId);
+
+    /**
+     * 删除用户数据
+     * */
+    void deleteFan(long weixinAppid);
 }
