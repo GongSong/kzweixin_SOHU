@@ -322,7 +322,8 @@ public class FanServiceImpl implements FanService {
         fanPO.setGroupId(userInfoDTO.getGroupId());
         fanPO.setLanguage(userInfoDTO.getLanguage());
         fanPO.setRemark(userInfoDTO.getRemark());
-        fanPO.setUnionId(userInfoDTO.getUnionId());
+        String unionId = userInfoDTO.getUnionId() == null? "": userInfoDTO.getUnionId();
+        fanPO.setUnionId(unionId);
         fanPO.setSex(userInfoDTO.getSex());
         fanPO.setSubscribeTime(userInfoDTO.getSubscribeTime());
         fanPO.setTagIdsJson(userInfoDTO.getTagIdsList().toString());
