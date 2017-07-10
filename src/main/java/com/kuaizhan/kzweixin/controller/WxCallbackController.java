@@ -84,12 +84,12 @@ public class WxCallbackController extends BaseController {
         }
 
         long delta = System.currentTimeMillis() - startTime;
-        if (delta > 4 * 1000) {
-            // 超过4秒error日志
-            logger.error("[Weixin:event] handle time up to 4 seconds, time:" + delta);
-        } else if (delta > 2 * 1000) {
-            // 超过2秒warning日志
-            logger.warn("[Weixin:event] handle time up to 2 seconds, time:" + delta);
+        if (delta > 5 * 1000) {
+            // 超过5秒error日志
+            logger.error("[Weixin:event] handle time up to 5 seconds, time: {}, xmlStr: {}", delta, xmlStr);
+        } else if (delta > 3 * 1000) {
+            // 超过3秒warning日志
+            logger.warn("[Weixin:event] handle time up to 3 seconds, time: {}, xmlStr: {}", delta, xmlStr);
         }
 
         return resultStr;
