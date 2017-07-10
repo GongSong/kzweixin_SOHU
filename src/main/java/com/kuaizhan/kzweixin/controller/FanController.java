@@ -119,7 +119,7 @@ public class FanController extends BaseController {
     public JsonResponse isSubscribe(@PathVariable String openId,
                                     @RequestParam String appId) {
         boolean isSubscribe = fansService.isSubscribe(appId, openId);
-        return null;
+        return new JsonResponse(ImmutableMap.of("isSubscribe", isSubscribe));
     }
 
     /**
