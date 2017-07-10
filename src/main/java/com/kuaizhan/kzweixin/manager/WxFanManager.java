@@ -319,8 +319,11 @@ public class WxFanManager {
      * @throws WxApiException 微信接口返回结果为null, 不能json序列化，或返回未知错误码
      * @return 粉丝信息业务对象
      * */
-    public static UserInfoDTO getFanInfo(String accessToken, String openId) throws WxInvalidOpenIdException,
-            WxOpenIdMismatchException, WxApiException{
+    public static UserInfoDTO getFanInfo(String accessToken, String openId)
+            throws WxInvalidOpenIdException,
+            WxOpenIdMismatchException,
+            WxApiException {
+
         String result = HttpClientUtil.get(WxApiConfig.getFanInfoUrl(accessToken, openId));
         if (result == null) {
             throw new WxApiException("[WeiXin:getFanInfo] result is null");
@@ -331,8 +334,6 @@ public class WxFanManager {
             throw new WxApiException("[WeiXin:getFanInfo] unexpected result:" + result);
         }
 
-        System.out.println("-----------------------------------------------------------------");
-        System.out.println("[Manager]result:" + result);
         return JsonUtil.string2Bean(result, UserInfoDTO.class);
     }
 

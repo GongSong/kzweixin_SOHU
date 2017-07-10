@@ -109,4 +109,9 @@ public interface FanService {
      * 判断粉丝是否关注公众号
      */
     boolean isSubscribe(String appId, String openId);
+
+    /**
+     * 异步地添加粉丝信息，openId信息
+     */
+    void asyncAddFan(String appId, String openId);
 }
