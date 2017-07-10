@@ -103,4 +103,10 @@ public interface FanService {
      * @param openId 粉丝openId
      * */
     void delFanOpenId(String appId, String openId);
+
+
+    /**
+     * 判断粉丝是否关注公众号
+     */
+    boolean isSubscribe(String appId, String openId);
 }

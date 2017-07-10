@@ -293,24 +293,6 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void delFanOpenId(String appId, String openId) {
-        OpenIdPO oldUserPO = new OpenIdPO();
-        oldUserPO.setStatus(2);
-        oldUserPO.setUpdateTime(DateUtil.curSeconds());
-
-        OpenIdPOExample example = new OpenIdPOExample();
-        example.createCriteria()
-                .andAppIdEqualTo(appId)
-                .andOpenIdEqualTo(openId)
-                .andStatusEqualTo(1);
-
-        String table = DBTableUtil.getOpenIdTableName(appId);
-        openIdMapper.updateByExampleSelective(oldUserPO, example, table);
-
-        //TODO:删除Redis缓存
-    }
-
-    @Override
     public FanPO addFan(String appId, String openId) {
         AccountPO accountPO = accountService.getAccountByAppId(appId);
 
@@ -363,4 +345,48 @@ public class FanServiceImpl implements FanService {
         return fanPO;
     }
 
+    @Override
+    public void delFanOpenId(String appId, String openId) {
+        OpenIdPO oldUserPO = new OpenIdPO();
+        oldUserPO.setStatus(2);
+        oldUserPO.setUpdateTime(DateUtil.curSeconds());
+
+        OpenIdPOExample example = new OpenIdPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
+
+        String table = DBTableUtil.getOpenIdTableName(appId);
+        openIdMapper.updateByExampleSelective(oldUserPO, example, table);
+
+        //TODO:删除Redis缓存
+    }
+
+    @Override
+    public boolean isSubscribe(String appId, String openId) {
+        // 从缓存
+        if (fanCache.getSubscribeStatus(appId, openId) != null) {
+            return true;
+        }
+
+        // 从数据库
+        OpenIdPOExample example = new OpenIdPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
+        String table = DBTableUtil.getOpenIdTableName(appId);
+        List<OpenIdPO> openIdPOS = openIdMapper.selectByExample(example, table);
+
+        // 未关注
+        if (openIdPOS.size() == 0) {
+            // TODO: 量大了，小心缓存击穿
+            return false;
+        }
+
+        // 已关注，更新缓存
+        fanCache.setSubscribeStatus(appId, openId);
+        return true;
+    }
 }

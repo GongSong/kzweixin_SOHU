@@ -11,7 +11,6 @@ import com.kuaizhan.kzweixin.controller.vo.FanListVO;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
-import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
 import org.springframework.web.bind.annotation.*;
 import com.kuaizhan.kzweixin.utils.PojoSwitcher;
@@ -31,12 +30,10 @@ public class FanController extends BaseController {
 
     @Resource
     private FanService fansService;
-    @Resource
-    private AccountService accountService;
 
     /**
      * 创建标签
-     * */
+     */
     @RequestMapping(value = "/fan/tags", method = RequestMethod.POST)
     public JsonResponse createTag(@Valid @RequestBody TagNameParam param) {
         int tagId = fansService.createTag(param.getWeixinAppid(), param.getTagName());
@@ -45,7 +42,7 @@ public class FanController extends BaseController {
 
     /**
      * 获取已创建的标签列表
-     * */
+     */
     @RequestMapping(value = "/fan/tags", method = RequestMethod.GET)
     public JsonResponse getTags(@RequestParam long weixinAppid) {
         List<TagDTO> tagList = fansService.getTags(weixinAppid);
@@ -54,7 +51,7 @@ public class FanController extends BaseController {
 
     /**
      * 编辑（重命名）标签
-     * */
+     */
     @RequestMapping(value = "/fan/tags/{tagId}", method = RequestMethod.PUT)
     public JsonResponse updateTag(@PathVariable("tagId") int tagId, @Valid @RequestBody TagNameParam param) {
         fansService.updateTag(param.getWeixinAppid(), tagId, param.getTagName());
@@ -63,7 +60,7 @@ public class FanController extends BaseController {
 
     /**
      * 删除标签
-     * */
+     */
     @RequestMapping(value = "/fan/tags/{tagId}", method = RequestMethod.DELETE)
     public JsonResponse deleteTag(@PathVariable("tagId") int tagId, @RequestParam long weixinAppid) {
         fansService.deleteTag(weixinAppid, tagId);
@@ -72,7 +69,7 @@ public class FanController extends BaseController {
 
     /**
      * 给粉丝贴标签
-     * */
+     */
     @RequestMapping(value = "/fan/fan_tags", method = RequestMethod.PUT)
     public JsonResponse updateFanTag(@Valid @RequestBody UpdateFanTagParam param) {
         fansService.addFanTag(param.getWeixinAppid(), param.getFansOpenId(), param.getNewTagsId());
@@ -82,7 +79,7 @@ public class FanController extends BaseController {
 
     /**
      * 按标签搜索粉丝
-     * */
+     */
     @RequestMapping(value = "/fan/fans", method = RequestMethod.GET)
     public JsonResponse fanTagSearch(@RequestParam long weixinAppid, @RequestParam int pageNum,
                                      @RequestParam(required = false) List<Integer> tagIds,
@@ -115,4 +112,24 @@ public class FanController extends BaseController {
         return new JsonResponse(ImmutableMap.of());
     }
 
+    /**
+     * 根据openId判断粉丝是否关注
+     */
+    @RequestMapping(value = "/fans/{openId}/is_subscribe", method = RequestMethod.GET)
+    public JsonResponse isSubscribe(@PathVariable String openId,
+                                    @RequestParam String appId) {
+        boolean isSubscribe = fansService.isSubscribe(appId, openId);
+        return null;
+    }
+
+    /**
+     * 根据头像和昵称判断粉丝是否关注
+     */
+    @RequestMapping(value = "/fan/is_subscribe", method = RequestMethod.GET)
+    public JsonResponse isSubscribeByInfo(@RequestParam String appId,
+                                          @RequestParam String nickName,
+                                          @RequestParam String headImgUrl) {
+        // 先全部返回false, 待日后实现
+        return new JsonResponse(ImmutableMap.of("isSubscribe", false));
+    }
 }

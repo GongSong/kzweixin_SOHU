@@ -65,4 +65,16 @@ public class FanCacheImpl extends RedisBaseDaoImpl implements FanCache {
         String json = JsonUtil.list2Str(tagsList);
         setData(key, json, 10 * 60 * 60);
     }
+
+    @Override
+    public String getSubscribeStatus(String appId, String openId) {
+        String key = RedisConstant.KEY_FAN_SUBSCRIBE_STATUS + appId + "-" + openId;
+        return getData(key);
+    }
+
+    @Override
+    public void setSubscribeStatus(String appId, String openId) {
+        String key = RedisConstant.KEY_FAN_SUBSCRIBE_STATUS + appId + "-" + openId;
+        setData(key, "1", 24 * 60 * 60);
+    }
 }
