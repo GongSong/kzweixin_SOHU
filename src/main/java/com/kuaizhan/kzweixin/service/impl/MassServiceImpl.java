@@ -6,6 +6,7 @@ import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MassPOExample;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.service.MassService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 /**
  * Created by Chen on 17/7/11.
  */
+@Service("massService")
 public class MassServiceImpl implements MassService {
 
     @Resource
