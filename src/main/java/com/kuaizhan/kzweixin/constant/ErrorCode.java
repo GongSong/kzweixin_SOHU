@@ -68,6 +68,8 @@ public class ErrorCode {
     public static final ErrorCode TEMPLATE_INDUSTRY_CONFLICT_ERROR = new ErrorCode(108005, "公众号行业设置错误");
     public static final ErrorCode INVALID_OPEN_ID_ERROR = new ErrorCode(108006, "非法的openId或用户未关注公众号");
 
+    // 群发(09)
+    public static final ErrorCode MASS_NOT_EXIST = new ErrorCode(109001, "群发消息不存在");
 
     private final int code;
     private final String message;
