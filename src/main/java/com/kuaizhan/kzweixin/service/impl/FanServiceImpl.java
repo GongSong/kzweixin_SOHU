@@ -366,8 +366,7 @@ public class FanServiceImpl implements FanService {
         String table = DBTableUtil.getOpenIdTableName(appId);
         openIdMapper.updateByExampleSelective(oldUserPO, example, table);
 
-        AccountPO accountPO = accountService.getAccountByAppId(appId);
-        fanCache.deleteFan(accountPO.getWeixinAppid());
+        fanCache.deleteFan(appId, openId);
     }
 
     @Override

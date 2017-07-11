@@ -2,8 +2,6 @@ package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
-import com.kuaizhan.kzweixin.dao.mapper.auto.TplMsgMapper;
-import com.kuaizhan.kzweixin.dao.po.auto.TplMsgPO;
 import com.kuaizhan.kzweixin.entity.WxData;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
@@ -175,11 +173,11 @@ public class WxPushServiceImpl implements WxPushService {
             String status = wxData.getStatus();
 
             int statusCode = -1;
-            if (status.equals("success")) {
+            if ("success".equals(status)) {
                 statusCode = 2;
-            } else if (status.equals("failed:user block")) {
+            } else if ("failed:user block".equals(status)) {
                 statusCode = 3;
-            } else if (status.equals("failed: system failed")) {
+            } else if ("failed: system failed".equals(status)) {
                 statusCode = 4;
             }
 
@@ -296,6 +294,8 @@ public class WxPushServiceImpl implements WxPushService {
         wxData.setEvent(root.elementText("Event"));
         wxData.setEventKey(root.elementText("EventKey"));
         wxData.setContent(root.elementText("Content"));
+        wxData.setMsgId(root.elementText("MsgId"));
+        wxData.setStatus(root.elementText("Status"));
         return wxData;
     }
 

@@ -64,5 +64,5 @@ public interface FanCache {
     /**
      * 删除用户数据
      * */
-    void deleteFan(long weixinAppid);
+    void deleteFan(String appId, String openId);
 }
