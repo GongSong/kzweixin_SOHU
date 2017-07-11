@@ -71,6 +71,11 @@ public class WxCallbackController extends BaseController {
                                   @RequestParam(required = false) String nonce,
                                   @RequestBody(required = false) String postData) {
 
+        // 参数发现过非微信服务器ip, 用不规范的参数请求。过滤掉非法参数
+        if (signature == null || timestamp == null || nonce == null || postData == null) {
+            return SUCCESS_RESULT;
+        }
+
         String xmlStr = wxThirdPartService.decryptMsg(signature, timestamp, nonce, postData);
 
         // 判断是否是全网发布测试的appid
