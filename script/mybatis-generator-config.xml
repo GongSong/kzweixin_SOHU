@@ -77,10 +77,11 @@
                 <!--<columnOverride column="sex" javaType="java.lang.Integer"/>-->
                 <!--<columnOverride column="in_blacklist" javaType="java.lang.Integer"/>-->
             <!--</table>-->
-            <table tableName="weixin_mass" domainObjectName="MassPO" mapperName="MassMapper">
-                <columnOverride column="is_timing" javaType="java.lang.Integer"/>
-                <columnOverride column="status" javaType="java.lang.Integer" />
-            </table>
+
+            <!--<table tableName="weixin_mass" domainObjectName="MassPO" mapperName="MassMapper">-->
+                <!--<columnOverride column="is_timing" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer" />-->
+            <!--</table>-->
 
         </context>
 </generatorConfiguration>
