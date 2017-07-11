@@ -33,6 +33,8 @@ public class WxCallbackController extends BaseController {
     // 全网发布测试appid
     private static final String wxTestAppid = "wx570bc396a51b8ff8";
 
+    private static final String SUCCESS_RESULT = "success";
+
     /**
      * 新增绑定，微信服务器跳转回来
      */
@@ -64,10 +66,11 @@ public class WxCallbackController extends BaseController {
      */
     @RequestMapping(value = "/accounts/{appId}/events")
     public String handleEventPush(@PathVariable String appId,
-                                  @RequestParam("msg_signature") String signature,
-                                  @RequestParam String timestamp,
-                                  @RequestParam String nonce,
-                                  @RequestBody String postData) {
+                                  @RequestParam(required = false, value = "msg_signature") String signature,
+                                  @RequestParam(required = false) String timestamp,
+                                  @RequestParam(required = false) String nonce,
+                                  @RequestBody(required = false) String postData) {
+
         String xmlStr = wxThirdPartService.decryptMsg(signature, timestamp, nonce, postData);
 
         // 判断是否是全网发布测试的appid
@@ -78,7 +81,7 @@ public class WxCallbackController extends BaseController {
         // 记录开始时间
         long startTime = System.currentTimeMillis();
 
-        String resultStr = "success";
+        String resultStr = SUCCESS_RESULT;
         try {
             resultStr = wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
         } catch (Exception e) {
