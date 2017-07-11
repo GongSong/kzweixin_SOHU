@@ -40,9 +40,9 @@ public class WxPushServiceImpl implements WxPushService {
     @Resource
     private FanService fanService;
     @Resource
-    private WxThirdPartServiceImpl wxThirdPartService;
+    private WxThirdPartService wxThirdPartService;
     @Resource
-    private TplMsgMapper tplMsgMapper;
+    private TplService tplService;
 
     private static final String SUCCESS_RESULT = "success";
 
@@ -171,16 +171,22 @@ public class WxPushServiceImpl implements WxPushService {
             kzStat("a1a0", wxData.getAppId());
             fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
 
-            Long msgId = wxData.getMsgId();
+            Long msgId = Long.parseLong(wxData.getMsgId());
             String status = wxData.getStatus();
-            if (msgId != null && status != null && status.length() > 0) {
-                handleTplMsgJob(msgId, status);
+
+            int statusCode = -1;
+            if (status.equals("success")) {
+                statusCode = 2;
+            } else if (status.equals("failed:user block")) {
+                statusCode = 3;
+            } else if (status.equals("failed: system failed")) {
+                statusCode = 4;
             }
+
+            tplService.updateTplStatus(msgId, statusCode);
             return SUCCESS_RESULT;
 
         }
-
-
 
             return null;
     }
@@ -215,28 +221,6 @@ public class WxPushServiceImpl implements WxPushService {
             }
         }
         return null;
-    }
-
-    /**
-     * 处理模版消息
-     */
-    private void handleTplMsgJob(long msgId, String status) {
-        int statusCode = -1;
-
-        if (status.equals("success")) {
-            statusCode = 2;
-        } else if (status.equals("failed:user block")) {
-            statusCode = 3;
-        } else if (status.equals("failed: system failed")) {
-            statusCode = 4;
-        }
-
-        TplMsgPO tplMsgPO = new TplMsgPO();
-        tplMsgPO.setMsgId(msgId);
-        tplMsgPO.setStatus(statusCode);
-        tplMsgPO.setUpdateTime(DateUtil.curSeconds());
-        tplMsgMapper.updateByPrimaryKeySelective(tplMsgPO);
-
     }
 
     /**

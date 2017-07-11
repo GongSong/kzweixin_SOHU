@@ -28,7 +28,7 @@ public class WxData {
     // 消息text
     private String content;
     // 消息Id
-    private Long msgId;
+    private String msgId;
     // 用户状态
     private String status;
 }

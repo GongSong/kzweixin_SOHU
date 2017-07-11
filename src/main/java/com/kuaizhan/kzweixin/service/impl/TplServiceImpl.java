@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.TplDao;
+import com.kuaizhan.kzweixin.dao.mapper.auto.TplMsgMapper;
+import com.kuaizhan.kzweixin.dao.po.auto.TplMsgPO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.manager.WxTplManager;
@@ -11,6 +13,7 @@ import com.kuaizhan.kzweixin.mq.dto.SendTplMsgDTO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.TplService;
+import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.MqUtil;
 import org.slf4j.Logger;
@@ -35,6 +38,8 @@ public class TplServiceImpl implements TplService {
     private AccountService accountService;
     @Resource
     private MqUtil mqUtil;
+    @Resource
+    private TplMsgMapper tplMsgMapper;
 
     private Map<String, Object> sysTplMap;
 
@@ -135,5 +140,14 @@ public class TplServiceImpl implements TplService {
                 throw new BusinessException(ErrorCode.TPL_DATA_FORMAT_ERROR);
             }
         }
+    }
+
+    @Override
+    public void updateTplStatus(long msgId, int statusCode) {
+        TplMsgPO tplMsgPO = new TplMsgPO();
+        tplMsgPO.setMsgId(msgId);
+        tplMsgPO.setStatus(statusCode);
+        tplMsgPO.setUpdateTime(DateUtil.curSeconds());
+        tplMsgMapper.updateByPrimaryKeySelective(tplMsgPO);
     }
 }

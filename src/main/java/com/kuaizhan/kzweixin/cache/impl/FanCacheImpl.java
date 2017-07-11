@@ -80,7 +80,7 @@ public class FanCacheImpl extends RedisBaseDaoImpl implements FanCache {
 
     @Override
     public void deleteFan(long weixinAppid) {
-        String key = RedisConstant.KEY_FAN_LIST + weixinAppid;
+        String key = RedisConstant.KEY_FAN_SUBSCRIBE_STATUS + weixinAppid;
         deleteData(key);
     }
 }

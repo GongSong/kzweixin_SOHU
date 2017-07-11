@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.constant.KzExchange;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.cache.FanCache;
@@ -411,7 +412,7 @@ public class FanServiceImpl implements FanService {
         subscribeDTO.setAppId(appId);
         subscribeDTO.setOpenId(openId);
 
-        mqUtil.publish(MqConstant.WX_USER_SUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
+        mqUtil.publish(KzExchange.WX_USER_SUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
     }
 
     @Override
@@ -420,6 +421,6 @@ public class FanServiceImpl implements FanService {
         subscribeDTO.setAppId(appId);
         subscribeDTO.setOpenId(openId);
 
-        mqUtil.publish(MqConstant.WX_USER_UNSUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
+        mqUtil.publish(KzExchange.WX_USER_UNSUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
     }
 }
