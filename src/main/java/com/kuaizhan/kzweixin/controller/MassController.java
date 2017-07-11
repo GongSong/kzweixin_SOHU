@@ -31,7 +31,7 @@ public class MassController extends BaseController {
     protected PostService postService;
 
     @Resource
-    protected AccountService
+    protected AccountService accountService;
     /**
      * 是否有多图文 @url: mass
      * @param massId
@@ -64,7 +64,8 @@ public class MassController extends BaseController {
                                     @RequestParam(value = "pageNO", defaultValue = "1") int pageNO,
                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        AccountPO accountPO = acc
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+
         //List<MassPO> massPOList =
         return new JsonResponse(null);
     }
