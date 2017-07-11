@@ -19,8 +19,10 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import sun.security.ssl.Debug;
 
 import javax.annotation.Resource;
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -122,26 +124,11 @@ public class WxPushServiceImpl implements WxPushService {
                 // 处理Action
                 return handleActions(accountPO.getWeixinAppid(), wxData, ActionType.SUBSCRIBE);
             }
-        } else if ("unsubscribe".equals(wxData.getEvent())) {
-
-            kzStat("a120", wxData.getAppId());
-            fanService.asyncDeleteFan(wxData.getAppId(), wxData.getOpenId());
-
-        } else if ("SCAN".equals(wxData.getEvent())) {
-
-            kzStat("a130", wxData.getAppId());
-            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
-
         } else if ("LOCATION".equals(wxData.getEvent())) {
 
             kzStat("a140", wxData.getAppId());
             fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
             return SUCCESS_RESULT;
-
-        } else if ("CLICK".equals(wxData.getEvent())) {
-
-            kzStat("a150", wxData.getAppId());
-            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
 
         } else if ("VIEW".equals(wxData.getEvent())) {
 
@@ -149,25 +136,9 @@ public class WxPushServiceImpl implements WxPushService {
             fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
             return SUCCESS_RESULT;
 
-        } else if ("MASSSENDJOBFINISH".equals(wxData.getEvent())) {
-
-            kzStat("a170", wxData.getAppId());
-            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
-
-        } else if ("qualification_verify_success".equals(wxData.getEvent())) {
-
-            kzStat("a180", wxData.getAppId());
-            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
-
-        } else if ("verify_expired".equals(wxData.getEvent())) {
-
-            kzStat("a190", wxData.getAppId());
-            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
-
         } else if ("TEMPLATESENDJOBFINISH".equals(wxData.getEvent())) {
 
             kzStat("a1a0", wxData.getAppId());
-            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
 
             Long msgId = Long.parseLong(wxData.getMsgId());
             String status = wxData.getStatus();
@@ -294,7 +265,7 @@ public class WxPushServiceImpl implements WxPushService {
         wxData.setEvent(root.elementText("Event"));
         wxData.setEventKey(root.elementText("EventKey"));
         wxData.setContent(root.elementText("Content"));
-        wxData.setMsgId(root.elementText("MsgId"));
+        wxData.setMsgId(root.elementText("MsgID"));
         wxData.setStatus(root.elementText("Status"));
         return wxData;
     }
