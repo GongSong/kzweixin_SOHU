@@ -7,7 +7,7 @@ ENV DOCKER_ENV=${env}
 
 ENV PREFIX /opt/kuaizhan
 
-COPY ./target/kzweixin.jar $PREFIX/worker/
+COPY ./target/kzweixin-mq.jar $PREFIX/worker/
 COPY ./deploy/worker/export-tpl.sh /export-tpl.sh
 COPY ./deploy/worker/start.sh /start.sh
 

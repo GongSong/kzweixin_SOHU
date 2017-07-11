@@ -189,64 +189,64 @@
     insert into ${tableName}
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="record.fanId != null">
-        record.fan_id,
+        fan_id,
       </if>
       <if test="record.appId != null">
-        record.app_id,
+        app_id,
       </if>
       <if test="record.openId != null">
-        record.open_id,
+        open_id,
       </if>
       <if test="record.nickName != null">
-        record.nick_name,
+        nick_name,
       </if>
       <if test="record.sex != null">
-        record.sex,
+        sex,
       </if>
       <if test="record.city != null">
-        record.city,
+        city,
       </if>
       <if test="record.country != null">
-        record.country,
+        country,
       </if>
       <if test="record.province != null">
-        record.province,
+        province,
       </if>
       <if test="record.language != null">
-        record.language,
+        language,
       </if>
       <if test="record.headImgUrl != null">
-        record.head_img_url,
+        head_img_url,
       </if>
       <if test="record.subscribeTime != null">
-        record.subscribe_time,
+        subscribe_time,
       </if>
       <if test="record.unionId != null">
-        record.union_id,
+        union_id,
       </if>
       <if test="record.remark != null">
-        record.remark,
+        remark,
       </if>
       <if test="record.groupId != null">
-        record.group_id,
+        group_id,
       </if>
       <if test="record.tagIdsJson != null">
-        record.tag_ids_json,
+        tag_ids_json,
       </if>
       <if test="record.inBlacklist != null">
-        record.in_blacklist,
+        in_blacklist,
       </if>
       <if test="record.lastInteractTime != null">
-        record.last_interact_time,
+        last_interact_time,
       </if>
       <if test="record.status != null">
-        record.status,
+        status,
       </if>
       <if test="record.createTime != null">
-        record.create_time,
+        create_time,
       </if>
       <if test="record.updateTime != null">
-        record.update_time,
+        update_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">

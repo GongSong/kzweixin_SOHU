@@ -16,4 +16,6 @@ public class MqConstant {
     public static final String SEND_SYS_TPL_MSG = "sys-kzweixin-send-sys-tpl-msg";
     // 用户绑定后的操作
     public static final String AFTER_BIND = "sys-kzweixin-after-bind";
+    // 粉丝关注
+    public static final String FAN_SUBSCRIBE = "sys-kzweixin-fan-subscribe";
 }

@@ -1,8 +1,5 @@
 package com.kuaizhan.kzweixin.service;
 
-import com.kuaizhan.kzweixin.entity.WxData;
-import com.kuaizhan.kzweixin.enums.ActionType;
-
 /**
  * 处理微信事件推送
  * Created by zixiong on 2017/6/23.
@@ -16,5 +13,8 @@ public interface WxPushService {
      */
     String handleEventPush(String appId, String signature, String timestamp, String nonce, String xmlStr);
 
-    String handleActions(long weixinAppid, WxData wxData, ActionType actionType);
+    /**
+     * 配合微信做全网发布测试的时间推送
+     */
+    String handleTestEventPush(String timestamp, String nonce, String xmlStr);
 }

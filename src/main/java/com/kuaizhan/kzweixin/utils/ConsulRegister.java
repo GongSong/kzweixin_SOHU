@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
+ * consul服务自动注册
+ * 监听容器启动事件，注册服务
+ * 监听容器退出事件，注销服务
  * Created by zixiong on 2017/4/23.
  */
 public class ConsulRegister {

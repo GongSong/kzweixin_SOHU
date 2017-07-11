@@ -103,4 +103,15 @@ public final class RedisUtil {
     public String getHash(String key, String hashKey) {
         return (String) redisTemplate.opsForHash().get(key, hashKey);
     }
+
+
+    /**
+     * 新增一个zet元素
+     * @param key key
+     * @param value 值
+     * @param score 权值
+     */
+    public void addZset(String key, String value, Double score) {
+        redisTemplate.opsForZSet().add(key, value, score);
+    }
 }

@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.utils;
 
-import com.kuaizhan.kzweixin.config.WxApiConfig;
+import com.kuaizhan.kzweixin.manager.KzManager;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -30,12 +30,7 @@ public class HttpClientUtilTest {
 
     @Test
     public void postFile() throws Exception {
-        String fileUrl = "http://pic.kuaizhan.com/g2/M00/38/10/CgpQVFYawpuAYVC6AALqWSZDYzw3840099";
-        String fileHost = "pic.kuaizhan.com";
-        String token = "rSTqmdGkavwEabhhY4WIgtMA5hBE62yTsmtt8dAQq69DjZdIk331i-d454KSsXiM8laxd4InKHPLTjEWFzfWy_rRJsTWjktxKgsSLupdLDhKYu2YaV4TEVpsGYORF8GUPBCbAKDVHI";
-        String url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=" + token;
-        String res = HttpClientUtil.postFile(WxApiConfig.addMaterialUrl(token, "image"), fileUrl, fileHost);
-        System.out.println("---->" + res);
+        String url = KzManager.uploadPicToKz("http://mmbiz.qpic.cn/mmbiz_gif/FCTGre24cSMiaI01H2IgbkdG0B2FsqQGQ2No2ic19UPpbHTKnGVGgNDoDwbtwu06nxLialjBabNictLuGH05uocbEA/0?wx_fmt=gif");
+        System.out.println("---->" + url);
     }
-
 }

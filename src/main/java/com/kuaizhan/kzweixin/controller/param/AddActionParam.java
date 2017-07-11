@@ -18,7 +18,7 @@ public class AddActionParam {
     private Long weixinAppid;
     @NotNull(message = "bizCode can not be null")
     private BizCode bizCode;
-    private String bizData;
+    private String keyword;
     @NotNull(message = "actionType can not be null")
     private ActionType actionType;
     @NotNull(message = "responseType can not be null")
@@ -32,7 +32,7 @@ public class AddActionParam {
         ActionPO actionPO = new ActionPO();
         actionPO.setWeixinAppid(weixinAppid);
         actionPO.setBizCode(bizCode.getValue());
-        actionPO.setBizData(bizData);
+        actionPO.setKeyword(keyword);
         actionPO.setActionType(actionType.getValue());
         actionPO.setResponseType(responseType.getValue());
         actionPO.setStatus(status);

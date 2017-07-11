@@ -14,6 +14,12 @@ public class KzApiConfig {
     public static final String KZ_POST_ARTICLE_URL = "http://" + ApplicationConfig.KZ_SERVICE_HOST + "/post/service-sync-to-kz-post";
     // 微信回调，老的php处理
     public static final String KZ_OLD_WX_CALLBACK = "http://" + ApplicationConfig.KZ_SERVICE_IP + "/weixin/service-wx-callback-response-msg";
+    public static final String KZ_OLD_WX_TEST_CALLBACK = "http://" + ApplicationConfig.KZ_SERVICE_IP + "/weixin/service-wx-callback-response-test";
+
+    // 新版上传图片接口
+    public static final String KZ_UPLOAD_PIC_V2 = "http://cos.kuaizhan.sohuno.com/api/v2/upload";
+    // 新版图片访问域名
+    public static final String KZ_PIC_DOMAIN = "http://pic.kuaizhan.com";
 
 
     // 获取快文详情

@@ -473,7 +473,7 @@ public class PostServiceImpl implements PostService {
 
 
     /*** 清理微信返回的图文数据 ***/
-    private List<PostPO> cleanWxPosts(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
+    private List<PostPO> cleanWxPosts(long weixinAppid, String mediaId, long updateTime, List<WxPostDTO> wxPostDTOs) {
 
         List<PostPO> posts = new ArrayList<>();
 
@@ -496,14 +496,14 @@ public class PostServiceImpl implements PostService {
             postPO.setUpdateTime((int) updateTime);
 
             // 内容清理
-            postPO.setContent(cleanWxPostContent(wxPostDTO.getContent(), userId));
+            postPO.setContent(cleanWxPostContent(wxPostDTO.getContent()));
 
             // 缩略图链接替换
             String picUrl = wxPostDTO.getThumbUrl();
             if (picUrl == null || "".equals(picUrl)) {
                 picUrl = KzApiConfig.getResUrl("/res/weixin/images/post-default-cover-900-500.png");
             }
-            postPO.setThumbUrl(getKzImageUrl(picUrl, userId));
+            postPO.setThumbUrl(getKzImageUrl(picUrl));
 
             posts.add(postPO);
         }
@@ -669,19 +669,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void syncWeixinPosts(long weixinAppid, long userId) {
+    public void syncWeixinPosts(long weixinAppid) {
         if (! postCache.couldSyncWxPost(weixinAppid)) {
             throw new BusinessException(ErrorCode.SYNC_WX_POST_TOO_OFTEN_ERROR);
         }
 
         SyncWxPostListDTO dto = new SyncWxPostListDTO();
         dto.setWeixinAppid(weixinAppid);
-        dto.setUserId(userId);
         mqUtil.publish(MqConstant.IMPORT_WEIXIN_POST_LIST, JsonUtil.bean2String(dto));
     }
 
     @Override
-    public void calSyncWeixinPosts(long weixinAppid, long userId) {
+    public void calSyncWeixinPosts(long weixinAppid) {
         int fetchCount = 20;
         String accessToken = accountService.getAccessToken(weixinAppid);
 
@@ -691,7 +690,7 @@ public class PostServiceImpl implements PostService {
 
         for (WxPostListDTO.Item item: postListDTO.getItems()) {
             List<WxPostDTO> posts = item.getContent().getNewsItems();
-            publishSyncWeixinPost(posts, item.getMediaId(), item.getUpdateTime(), weixinAppid, userId);
+            publishSyncWeixinPost(posts, item.getMediaId(), item.getUpdateTime(), weixinAppid);
         }
 
         while (index < total) {
@@ -699,22 +698,22 @@ public class PostServiceImpl implements PostService {
             index += postListDTO.getItemCount();
             for (WxPostListDTO.Item item: postListDTO.getItems()) {
                 List<WxPostDTO> posts = item.getContent().getNewsItems();
-                publishSyncWeixinPost(posts, item.getMediaId(), item.getUpdateTime(), weixinAppid, userId);
+                publishSyncWeixinPost(posts, item.getMediaId(), item.getUpdateTime(), weixinAppid);
             }
         }
 
     }
 
     @Override
-    public void importWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
-        List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, userId, wxPostDTOs);
+    public void importWeixinPost(long weixinAppid, String mediaId, long updateTime, List<WxPostDTO> wxPostDTOs) {
+        List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, wxPostDTOs);
         // 入库
         saveMultiPosts(weixinAppid, postPOList);
     }
 
     @Override
-    public void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, long userId, List<WxPostDTO> wxPostDTOs) {
-        List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, userId, wxPostDTOs);
+    public void updateWeixinPost(long weixinAppid, String mediaId, long updateTime, List<WxPostDTO> wxPostDTOs) {
+        List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, wxPostDTOs);
 
         // 修改数据库
         PostPO postPO = getPostByMediaId(weixinAppid, mediaId);
@@ -799,14 +798,13 @@ public class PostServiceImpl implements PostService {
     /**
      *  判断是否应该同步微信图文，并发布mq消息
      */
-    private void publishSyncWeixinPost(List<WxPostDTO> wxPostDTOs, String mediaId, int updateTime, long weixinAppid, long userId) {
+    private void publishSyncWeixinPost(List<WxPostDTO> wxPostDTOs, String mediaId, int updateTime, long weixinAppid) {
         PostPO postPO = getPostByMediaId(weixinAppid, mediaId);
         // 需要新增或者需要更新
         if (postPO == null || updateTime - postPO.getUpdateTime() > 2) {
 
             SyncWxPostDTO dto = new SyncWxPostDTO();
             dto.setWeixinAppid(weixinAppid);
-            dto.setUserId(userId);
             dto.setMediaId(mediaId);
             dto.setUpdateTime(updateTime);
             dto.setWxPostDTOS(wxPostDTOs);
@@ -845,7 +843,7 @@ public class PostServiceImpl implements PostService {
 
 
     /*** 微信图片地址生成快站图片url，若失败则返回原url ***/
-     private String getKzImageUrl(String imgUrl, long userId) {
+     private String getKzImageUrl(String imgUrl) {
         // 若不是微信图片则返回原url
         if (!imgUrl.contains("mmbiz")) return imgUrl;
 
@@ -857,7 +855,9 @@ public class PostServiceImpl implements PostService {
          kzPicUrl = kzPicUrl.replaceAll("&amp;.*$", "");
 
         try {
-            return KzManager.uploadPicToKz(kzPicUrl, userId);
+            String url = KzManager.uploadPicToKz(kzPicUrl);
+            imageCache.setImageUploaded(url);
+            return url;
         } catch (KZPicUploadException e) {
             logger.warn("[getKzImageUrl] upload kz image failed, url: {}", kzPicUrl, e);
         }
@@ -871,7 +871,7 @@ public class PostServiceImpl implements PostService {
      * 替换微信内容中的微信图片链接为快站链接
      * 替换微信图文中视频链接
      */
-    private String cleanWxPostContent(String content, long userId) {
+    private String cleanWxPostContent(String content) {
         // 将文章中的图片的data-src替换为src
         content = content.replaceAll("(<img [^>]*)(data-src)", "$1src");
 
@@ -880,7 +880,7 @@ public class PostServiceImpl implements PostService {
         ReplaceCallbackMatcher replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         content = replaceCallbackMatcher.replaceMatches(content,
                 matcher -> matcher.group(1)
-                        + getKzImageUrl(matcher.group(2), userId)
+                        + getKzImageUrl(matcher.group(2))
                         + "\" wx_src=\""
                         + matcher.group(2)
                         + matcher.group(3)
@@ -890,7 +890,7 @@ public class PostServiceImpl implements PostService {
         regex = "url\\(\"?'?(?:&quot;)?(https?:\\/\\/mmbiz[^)]+?)(?:&quot;)?\"?'?\\)";
         replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         content = replaceCallbackMatcher.replaceMatches(content,
-                matcher -> "url(" + getKzImageUrl(matcher.group(1), userId) + ")"
+                matcher -> "url(" + getKzImageUrl(matcher.group(1)) + ")"
         );
 
         // 视频链接

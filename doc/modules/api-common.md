@@ -4,10 +4,11 @@
 
 ### 1.1 请求格式
 
-* 所有接口必须使用HTTPS协议访问
+* 所有接口使用HTTP协议访问
 * GET方法和DELETE方法，参数拼接到url
 * 其他方法请求, 参数写到body。
 * 请求body格式为application/json
+* 所有接口url加上`/kzweixin`前缀, 具体的接口文档中省略了此前缀。
 
 ## 2. 响应
 

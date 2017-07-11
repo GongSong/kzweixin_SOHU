@@ -12,9 +12,13 @@ public interface ImageCache {
      */
     void setImageUrl(String originUrl, String url);
 
-
     /**
      * 获取缓存的上传过的图片url
      */
     String getImageUrl(String originUrl);
+
+    /**
+     * 临时缓存使用v2版接口上传的image url
+     */
+    void setImageUploaded(String url);
 }

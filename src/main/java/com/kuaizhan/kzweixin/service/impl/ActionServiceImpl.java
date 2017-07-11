@@ -1,12 +1,12 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.kuaizhan.kzweixin.dao.mapper.auto.ActionMapper;
+import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPOExample;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.ResponseType;
-import com.kuaizhan.kzweixin.dao.mapper.auto.ActionMapper;
-import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
@@ -34,8 +34,10 @@ public class ActionServiceImpl implements ActionService {
         accountService.getAccountByWeixinAppId(weixinAppid);
 
         action.setWeixinAppid(weixinAppid);
+        action.setExt(action.getExt() == null? "": action.getExt());
         action.setCreateTime(DateUtil.curSeconds());
         action.setUpdateTime(DateUtil.curSeconds());
+        action.setExt("");
         action.setStatus(true);
 
         int responseType = action.getResponseType();
@@ -50,9 +52,23 @@ public class ActionServiceImpl implements ActionService {
         } else {
             throw new IllegalArgumentException("unsupported responseType:" + responseType);
         }
-        action.setResponseJson(JsonUtil.bean2String(responseObj));
+
+        String responseJson = JsonUtil.bean2String(responseObj);
+        checkResponseJson(responseJson);
+
+        action.setResponseJson(responseJson);
         actionMapper.insert(action);
         return action.getId();
+    }
+
+    /**
+     * 数据库字段限制，目前不能大于2000
+     */
+    private void checkResponseJson(String responseJson) {
+        if (responseJson == null || responseJson.length() > 2000) {
+            throw new RuntimeException("[checkResponseJson] invalid responseJson length:"
+                    + (responseJson == null? 0: responseJson.length()));
+        }
     }
 
     @Override
@@ -66,6 +82,19 @@ public class ActionServiceImpl implements ActionService {
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andActionTypeEqualTo(actionType.getValue())
                 .andStatusEqualTo(true);
-        return actionMapper.selectByExampleWithBLOBs(example);
+        return actionMapper.selectByExample(example);
+    }
+
+    @Override
+    public boolean shouldAction(ActionPO actionPO, String keyword) {
+        // 订阅类型，都触发
+        if (actionPO.getActionType() == ActionType.SUBSCRIBE.getValue()) {
+            return true;
+        }
+        // 回复类型，正则匹配keyword时触发
+        if (actionPO.getActionType() == ActionType.REPLY.getValue()) {
+            return keyword != null && keyword.matches(actionPO.getKeyword());
+        }
+        return false;
     }
 }

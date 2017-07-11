@@ -51,5 +51,13 @@ public interface FanCache {
      */
     void setTag(long weixinAppid, List<TagDTO> tagsList);
 
+    /**
+     * 获取缓存的关注状态
+     */
+    String getSubscribeStatus(String appId, String openId);
 
+    /**
+     * 设置缓存状态为true
+     */
+    void setSubscribeStatus(String appId, String openId);
 }

@@ -32,13 +32,14 @@ public class ApplicationConfig {
     public static final int KZ_PUSH_ACCESS_ID = PropertiesUtil.getInt(PROP, "kz.push.accessId");
     public static final String KZ_PUSH_ACCESS_KEY = PropertiesUtil.getString(PROP, "kz.push.accessKey");
     public static final String KZ_DOMAIN_MAIN = PropertiesUtil.getString(PROP, "kz.domain.main");
-    public static final String KZ_DOMAIN_OUT = PropertiesUtil.getString(PROP, "kz.domain.out");
+    public static final String KZ_DOMAIN_OUTSIDE = PropertiesUtil.getString(PROP, "kz.domain.outside");
     public static final String KZ_SERVICE_FORUM_IP = PropertiesUtil.getString(PROP, "kz.service.forum.ip");
     public static final String KZ_SERVICE_FORUM_HOST = PropertiesUtil.getString(PROP, "kz.service.forum.host");
 
     // 分表
     public static final int MSG_TABLE_NUM = PropertiesUtil.getInt(PROP, "table.num.msg");
     public static final int FAN_TABLE_NUM = PropertiesUtil.getInt(PROP, "table.num.fan");
+    public static final int OPEN_ID_TABLE_NUM = PropertiesUtil.getInt(PROP, "table.num.openId");
 
     //微信配置
     public static final String WEIXIN_TOKEN = PropertiesUtil.getString(PROP, "weixin.third.token");

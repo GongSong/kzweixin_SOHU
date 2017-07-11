@@ -10,10 +10,8 @@ import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
+import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
-import com.kuaizhan.kzweixin.exception.kuaizhan.KzApiException;
-import com.kuaizhan.kzweixin.exception.weixin.WxIPNotInWhitelistException;
-import com.kuaizhan.kzweixin.exception.weixin.WxInvalidAppSecretException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxAccountManager;
 import com.kuaizhan.kzweixin.manager.WxThirdPartManager;
@@ -56,15 +54,20 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String getBindUrl(Long userId, Long siteId, String redirectUrl) {
-        StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append("http://").append(ApplicationConfig.KZ_DOMAIN_OUT).append(":8080").append("/v1/account/bind_redirect");
-        urlBuilder.append("?userId=").append(userId);
-        urlBuilder.append("&redirectUrl=").append(UrlUtil.encode(redirectUrl));
+
+        // 微信端完成授权后跳转的url
+        StringBuilder redirectUrlBuilder = new StringBuilder();
+        redirectUrlBuilder.append("http://").append(ApplicationConfig.KZ_DOMAIN_OUTSIDE).append(":8080").append("/public/v1/bind_redirect");
+        redirectUrlBuilder.append("?userId=").append(userId);
+        redirectUrlBuilder.append("&redirectUrl=").append(UrlUtil.encode(redirectUrl));
         if (siteId != null) {
-            urlBuilder.append("&siteId=").append(siteId);
+            redirectUrlBuilder.append("&siteId=").append(siteId);
         }
+        String wxRedirectUrl = UrlUtil.encode(redirectUrlBuilder.toString());
+
+        // 最终的绑定url
         String preAuthCode = WxThirdPartManager.getPreAuthCode(wxThirdPartService.getComponentAccessToken());
-        return WxApiConfig.getBindUrl(preAuthCode, UrlUtil.encode(urlBuilder.toString()));
+        return WxApiConfig.getBindUrl(preAuthCode, wxRedirectUrl);
     }
 
     @Override
@@ -221,7 +224,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountPO getAccountByAppId(String appId) {
+    public AccountPO getAccountByAppId(String appId) throws AccountNotExistException {
         AccountPO accountPO = accountCache.getAccountByAppid(appId);
 
         if (accountPO == null) {
@@ -233,7 +236,7 @@ public class AccountServiceImpl implements AccountService {
             List<AccountPO> accountPOS = accountMapper.selectByExample(example);
 
             if (accountPOS.size() == 0) {
-                throw new BusinessException(ErrorCode.APP_ID_NOT_EXIST);
+                throw new AccountNotExistException();
             }
             accountPO = accountPOS.get(0);
             accountCache.setAccountByAppid(accountPO);
@@ -264,13 +267,7 @@ public class AccountServiceImpl implements AccountService {
         AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
 
         //调用WxAccountManager，把用户ID和app_secret发给微信服务器接口，获取access token并验证
-        try {
-            WxAccountManager.getUserAccessToken(accountPO.getAppId(), appSecret);
-        } catch (WxIPNotInWhitelistException e) {
-            throw new BusinessException(ErrorCode.IP_NOT_IN_WHITELIST);
-        } catch (WxInvalidAppSecretException e) {
-            throw new BusinessException(ErrorCode.INVALID_APP_SECRET);
-        }
+        WxAccountManager.getUserAccessToken(accountPO.getAppId(), appSecret);
 
         AccountPO record = new AccountPO();
         record.setWeixinAppid(weixinAppId);
@@ -309,6 +306,12 @@ public class AccountServiceImpl implements AccountService {
     public void updateAuthLogin(long weixinAppId, Integer openLogin) {
         AccountPO accountPO = getAccountByWeixinAppId(weixinAppId);
 
+        if (accountPO.getServiceType() != 2) {
+            throw new IllegalArgumentException("[updateAuthLogin] Only service accounts have authorize login");
+        }
+
+        KzManager.updateKzAccountWxLogin(accountPO.getSiteId(), openLogin == 1);
+
         JSONObject jsonObject;
         //检测数据库是否存在记录
         if ("".equals(accountPO.getAdvancedFuncInfoJson())) {
@@ -316,27 +319,12 @@ public class AccountServiceImpl implements AccountService {
         } else {
             jsonObject = new JSONObject(accountPO.getAdvancedFuncInfoJson());
         }
-        jsonObject.put("open_login", 0);
-
-        //如果是服务号，进行验证。通过则保持服务号授权登录状态，不通过则关闭授权登录
-        if (accountPO.getServiceType() == 2) {
-            try {
-                KzManager.kzAccountWxLoginCheck(accountPO.getSiteId());
-            } catch (KzApiException e) {
-
-                AccountPO record = new AccountPO();
-                record.setWeixinAppid(weixinAppId);
-                record.setAdvancedFuncInfoJson(jsonObject.toString());
-                accountMapper.updateByPrimaryKeySelective(record);
-
-                throw new BusinessException(ErrorCode.NOT_SERVICE_NUMBER);
-            }
-            jsonObject.put("open_login", openLogin);
-        }
+        jsonObject.put("open_login", openLogin);
 
         AccountPO record = new AccountPO();
         record.setWeixinAppid(weixinAppId);
         record.setAdvancedFuncInfoJson(jsonObject.toString());
+        record.setUpdateTime(DateUtil.curSeconds());
         accountMapper.updateByPrimaryKeySelective(record);
 
         // 清理缓存
@@ -349,7 +337,7 @@ public class AccountServiceImpl implements AccountService {
         AccountPO accountPO = getAccountByWeixinAppId(weixinAppid);
         String qrcodeUrlKz;
         try {
-            qrcodeUrlKz = KzManager.uploadPicToKz(accountPO.getQrcodeUrl(), accountPO.getUserId());
+            qrcodeUrlKz = KzManager.uploadPicToKz(accountPO.getQrcodeUrl());
         } catch (KZPicUploadException e) {
             logger.error("[uploadQrcode2Kz] upload pic failed, weixinAppid:{}", weixinAppid);
             return;

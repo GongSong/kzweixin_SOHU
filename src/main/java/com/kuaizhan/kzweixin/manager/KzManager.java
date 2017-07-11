@@ -13,6 +13,12 @@ import com.kuaizhan.kzweixin.utils.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,34 +57,27 @@ public class KzManager {
      * 把外部图片上传到主站，转换为快站链接
      * @throws KZPicUploadException 图片格式不对，以及各种未知原因导致的图片上传失败
      */
-    public static String uploadPicToKz(String url, long userId) throws KZPicUploadException {
-        Map<String, Object> params = new HashMap<>();
-        params.put("img_url", url);
-        params.put("uid", userId);
-        // 指定host
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Host", ApplicationConfig.KZ_SERVICE_HOST);
+    public static String uploadPicToKz(String url) throws KZPicUploadException {
 
-        String result = HttpClientUtil.post(KzApiConfig.KZ_UPLOAD_PIC_URL, params, headers);
-        if (result == null) {
-            String msg = "[上传图片到快站] 上传失败，url: " +  KzApiConfig.KZ_UPLOAD_PIC_URL + " param: " + params + "headers: " + headers;
-            throw new KZPicUploadException(msg);
-        }
+        String fileName = HttpClientUtil.downloadFile(url);
+        File file = new File(fileName);
 
-        JSONObject returnJson;
+        HttpResponse<JsonNode> jsonResponse;
         try {
-            returnJson = new JSONObject(result);
-        }catch (JSONException e){
-            String msg = "[上传图片到快站] 上传失败，url: " +  KzApiConfig.KZ_UPLOAD_PIC_URL + " param: " + params + "headers: " + headers + " result: " + result;
-            throw new KZPicUploadException(msg, e);
+             jsonResponse = Unirest.post(KzApiConfig.KZ_UPLOAD_PIC_V2)
+                    .field("file", file)
+                    .asJson();
+        } catch (UnirestException e) {
+            throw new KZPicUploadException("[uploadPicToKz] upload failed");
+        } finally {
+            file.delete();
         }
 
-        if (returnJson.getInt("ret") == 0) {
-            JSONObject data = returnJson.getJSONObject("data");
-            return UrlUtil.fixProtocol(data.getString("url"));
+        if (jsonResponse.getStatus() == 200) {
+            JSONObject jsonResult = jsonResponse.getBody().getObject();
+            return KzApiConfig.KZ_PIC_DOMAIN + jsonResult.getJSONObject("data").getString("url");
         } else {
-            String msg = "[上传图片到快站] 上传失败，url: " +  KzApiConfig.KZ_UPLOAD_PIC_URL + " param: " + params + "headers: " + headers + " result: " + result;
-            throw new KZPicUploadException(msg);
+            throw new KZPicUploadException("[uploadPicToKz] status code not 200, jsonResponse:" + jsonResponse);
         }
     }
 
@@ -103,10 +102,20 @@ public class KzManager {
         try {
             returnJson = new JSONObject(result);
         } catch (JSONException e) {
-            throw new Export2KzException("[Kz:export2KzArticle] JsonParse error, pageId:" + postPO.getPageId() + " result:" + result, e);
+            throw new Export2KzException("[Kz:export2KzArticle] JsonParse error," +
+                    " pageId: " + postPO.getPageId() +
+                    " result: " + result +
+                    " siteId: " + siteId +
+                    " category_id " + categoryId +
+                    " title " + postPO.getTitle(), e);
         }
         if (returnJson.getInt("ret") != 0) {
-            throw new Export2KzException("[Kz:export2KzArticle] return code error, pageId:" + postPO.getPageId() + " result:" + result);
+            throw new Export2KzException("[Kz:export2KzArticle] return code error," +
+                    " pageId:" + postPO.getPageId() +
+                    " result: " + result +
+                    " siteId: " + siteId +
+                    " category_id " + categoryId +
+                    " title " + postPO.getTitle());
         }
     }
 
@@ -149,36 +158,36 @@ public class KzManager {
     /**
      * 通过社区登录功能验证微信服务号是否开启授权登录
      * @param siteId 用户的快站ID
+     * @param openLogin 授权登录状态，0关闭1开启
      * @throws KzApiException 社区登录验证失败
-     * @return
      * */
-    public static boolean kzAccountWxLoginCheck(long siteId) throws KzApiException {
+    public static boolean updateKzAccountWxLogin(long siteId, boolean openLogin) throws KzApiException {
         //指定Host
         Map<String, String> headers = new HashMap<>();
         headers.put("Host", ApplicationConfig.KZ_SERVICE_FORUM_HOST);
 
         //传递参数
         Map<String, Object> params = new HashMap<>();
-        params.put("status", true);
+        params.put("status", openLogin);
 
         String result = HttpClientUtil.post(KzApiConfig.getKzServiceAuthLoginConfigUrl(siteId), params, headers);
         if (result == null) {
             throw new KzApiException("[Kz:applyPushToken] result is null");
         }
 
-        JSONObject resultJson;
-        try {
-            resultJson = new JSONObject(result);
-        } catch (JSONException e) {
-            throw new KzApiException("[Kz:kzAccountWxLoginCheck] Json Parse Error, result:" + result);
-        }
+        JSONObject resultJson = new JSONObject(result);
         int code = resultJson.optInt("code");
+
         if (code != 0) {
             throw new KzApiException("[Kz:kzAccountWxLoginCheck] Invalid Json result, result:" + result);
         }
         return true;
     }
 
+    /**
+     * 调用php微信回调接口
+     * @return php处理的结果
+     */
     public static String kzResponseMsg(String appId, String timestamp, String nonce, String xmlStr) {
         Map<String, Object> param =  new HashMap<>();
         param.put("app_id", appId);
@@ -197,6 +206,35 @@ public class KzManager {
         try {
             resultJson = new JSONObject(result);
         } catch (JSONException e) {
+            throw new KzApiException("[Kz:responseMsg] Json Parse Error, result:" + result + " param: " + param, e);
+        }
+        if (resultJson.optInt("ret") != 0) {
+            throw new KzApiException("[Kz:responseMsg] unexpected result, result:" + result + " param: " + param);
+        }
+        return resultJson.getString("result");
+    }
+
+    /**
+     * 调用php微信全网发布测试的接口
+     * @return php处理的结果
+     */
+    public static String kzResponseTest(String timestamp, String nonce, String xmlStr) {
+        Map<String, Object> param =  new HashMap<>();
+        param.put("timestamp", timestamp);
+        param.put("nonce", nonce);
+        param.put("post_str", xmlStr);
+
+        Map<String, String> header = ImmutableMap.of("Host", ApplicationConfig.KZ_SERVICE_HOST);
+
+        String result = HttpClientUtil.post(KzApiConfig.KZ_OLD_WX_TEST_CALLBACK, param, header);
+        if (result == null) {
+            throw new KzApiException("[Kz:responseMsg] result is null");
+        }
+
+        JSONObject resultJson;
+        try {
+            resultJson = new JSONObject(result);
+        } catch (JSONException e) {
             throw new KzApiException("[Kz:responseMsg] Json Parse Error, result:" + result);
         }
         if (resultJson.optInt("ret") != 0) {
@@ -204,5 +242,4 @@ public class KzManager {
         }
         return resultJson.getString("result");
     }
-
 }

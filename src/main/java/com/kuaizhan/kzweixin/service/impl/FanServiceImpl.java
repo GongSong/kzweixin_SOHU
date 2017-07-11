@@ -1,23 +1,23 @@
 package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.constant.ErrorCode;
+import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.cache.FanCache;
 import com.kuaizhan.kzweixin.dao.mapper.auto.FanMapper;
-import com.kuaizhan.kzweixin.dao.po.auto.FanPOExample;
+import com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper;
+import com.kuaizhan.kzweixin.dao.po.auto.*;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
+import com.kuaizhan.kzweixin.entity.fan.UserInfoDTO;
 import com.kuaizhan.kzweixin.entity.common.Page;
-import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
-import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
-import com.kuaizhan.kzweixin.exception.BusinessException;
-import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.manager.WxFanManager;
+import com.kuaizhan.kzweixin.mq.dto.SubscribeDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.utils.DBTableUtil;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import com.kuaizhan.kzweixin.utils.MqUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,19 +40,16 @@ public class FanServiceImpl implements FanService {
     private FanMapper fanMapper;
     @Resource
     private AccountService accountService;
+    @Resource
+    private OpenIdMapper openIdMapper;
+    @Resource
+    private MqUtil mqUtil;
 
 
     @Override
     public int createTag(long weixinAppid, String tagName) {
         String accessToken = accountService.getAccessToken(weixinAppid);
-        int tagId;
-        try {
-            tagId = WxFanManager.createTag(accessToken, tagName);
-        } catch (WxDuplicateTagException e) {
-            throw new BusinessException(ErrorCode.DUPLICATED_TAG);
-        } catch (WxTagNumExceedException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_NUM);
-        }
+        int tagId = WxFanManager.createTag(accessToken, tagName);
         fanCache.deleteTags(weixinAppid);
         return tagId;
     }
@@ -77,13 +74,7 @@ public class FanServiceImpl implements FanService {
     @Override
     public void updateTag(long weixinAppid, int tagId, String tagName) {
         String accessToken = accountService.getAccessToken(weixinAppid);
-        try {
-            WxFanManager.updateTag(accessToken, tagId, tagName);
-        } catch (WxDuplicateTagException e) {
-            throw new BusinessException(ErrorCode.DUPLICATED_TAG);
-        } catch (WxTagReservedModifiedException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_MODIFIED);
-        }
+        WxFanManager.updateTag(accessToken, tagId, tagName);
         fanCache.deleteTags(weixinAppid);
     }
 
@@ -91,13 +82,7 @@ public class FanServiceImpl implements FanService {
     public void deleteTag(long weixinAppid, int tagId) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountService.getAccessToken(weixinAppid);
-        try {
-            WxFanManager.deleteTag(accessToken, tagId);
-        } catch (WxTagReservedModifiedException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_MODIFIED);
-        } catch (WxFansNumExceedException e) {
-            throw new BusinessException(ErrorCode.DELETE_TAG_FANS_EXCEED_10W);
-        }
+        WxFanManager.deleteTag(accessToken, tagId);
         fanCache.deleteTags(weixinAppid);
 
         //删除数据库对应标签下的粉丝信息
@@ -147,20 +132,8 @@ public class FanServiceImpl implements FanService {
         }
 
         //发送给粉丝贴标签请求
-        try {
-            for (int tagId: newTagsId) {
-                WxFanManager.addFanTag(accessToken, fansOpenId, tagId);
-            }
-        } catch (WxOpenIdExceedException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_EXCEED);
-        } catch (WxInvalidTagException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_ERROR);
-        } catch (WxFansTagExceedException e) {
-            throw new BusinessException(ErrorCode.FANS_TAG_EXCEED);
-        } catch (WxInvalidOpenIdException e) {
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
-        } catch (WxOpenIdMismatchException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_MISMATCH_ERROR);
+        for (int tagId: newTagsId) {
+            WxFanManager.addFanTag(accessToken, fansOpenId, tagId);
         }
 
         //更新粉丝标签信息到本地数据库
@@ -193,18 +166,9 @@ public class FanServiceImpl implements FanService {
         if (deleteTagsId == null) {
             return;
         }
-        try {
-            for (int tagId: deleteTagsId) {
-                WxFanManager.deleteFanTag(accessToken, fansOpenId, tagId);
-            }
-        } catch (WxOpenIdExceedException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_EXCEED);
-        } catch (WxInvalidTagException e) {
-            throw new BusinessException(ErrorCode.INVALID_TAG_ERROR);
-        } catch (WxInvalidOpenIdException e) {
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
-        } catch (WxOpenIdMismatchException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_MISMATCH_ERROR);
+
+        for (int tagId: deleteTagsId) {
+            WxFanManager.deleteFanTag(accessToken, fansOpenId, tagId);
         }
 
         //更新粉丝标签信息到本地数据库
@@ -242,15 +206,7 @@ public class FanServiceImpl implements FanService {
     public void addFanBlacklist(long weixinAppid, List<String> fansOpenId) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountService.getAccessToken(weixinAppid);
-        try {
-            WxFanManager.addBlacklist(accessToken, fansOpenId);
-        } catch (WxInvalidOpenIdException e) {
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
-        } catch (WxOpenIdMismatchException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_MISMATCH_ERROR);
-        } catch (WxBlacklistExceedException e) {
-            throw new BusinessException(ErrorCode.ADD_BLACKLIST_EXCEED_LIMIT);
-        }
+        WxFanManager.addBlacklist(accessToken, fansOpenId);
 
         FanPOExample example = new FanPOExample();
         example.createCriteria()
@@ -275,15 +231,7 @@ public class FanServiceImpl implements FanService {
     public void removeFanBlacklist(long weixinAppid, List<String> fansOpenId) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountService.getAccessToken(weixinAppid);
-        try {
-            WxFanManager.removeBlacklist(accessToken, fansOpenId);
-        } catch (WxInvalidOpenIdException e) {
-            throw new BusinessException(ErrorCode.INVALID_OPEN_ID_ERROR);
-        } catch (WxOpenIdMismatchException e) {
-            throw new BusinessException(ErrorCode.OPEN_ID_MISMATCH_ERROR);
-        } catch (WxBlacklistExceedException e) {
-            throw new BusinessException(ErrorCode.ADD_BLACKLIST_EXCEED_LIMIT);
-        }
+        WxFanManager.removeBlacklist(accessToken, fansOpenId);
 
         FanPOExample example = new FanPOExample();
         example.createCriteria()
@@ -304,7 +252,6 @@ public class FanServiceImpl implements FanService {
         }
     }
 
-
     @Override
     public Page<FanPO> listFansByPage(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
@@ -318,5 +265,141 @@ public class FanServiceImpl implements FanService {
         fanPage.setResult(fanPOList);
 
         return fanPage;
+    }
+
+    @Override
+    public void addFanOpenId(String appId, String openId) {
+
+        OpenIdPOExample example = new OpenIdPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId);
+
+        String table = DBTableUtil.getOpenIdTableName(appId);
+        List<OpenIdPO> updateFans = openIdMapper.selectByExample(example, table);
+
+        // 新建
+        if (updateFans.size() == 0) {
+            OpenIdPO newUserPO = new OpenIdPO();
+            newUserPO.setAppId(appId);
+            newUserPO.setOpenId(openId);
+            newUserPO.setStatus(1);
+            newUserPO.setCreateTime(DateUtil.curSeconds());
+            newUserPO.setUpdateTime(DateUtil.curSeconds());
+            openIdMapper.insertSelective(newUserPO, table);
+        // 已存在，修改
+        } else {
+            OpenIdPO oldUserPO = new OpenIdPO();
+            oldUserPO.setId(updateFans.get(0).getId());
+            oldUserPO.setStatus(1);
+            oldUserPO.setUpdateTime(DateUtil.curSeconds());
+            openIdMapper.updateByPrimaryKeySelective(oldUserPO, table);
+        }
+    }
+
+    @Override
+    public FanPO addFan(String appId, String openId) {
+        AccountPO accountPO = accountService.getAccountByAppId(appId);
+
+        // 只有认证的公众号才能获取粉丝信息
+        if (accountPO == null || accountPO.getServiceType() != 0) {
+            return null;
+        }
+
+        String accessToken = accountService.getAccessToken(accountPO.getWeixinAppid());
+        UserInfoDTO userInfoDTO = WxFanManager.getFanInfo(accessToken, openId);
+
+        //从微信服务器接收并转换的部分
+        FanPO fanPO = new FanPO();
+        fanPO.setAppId(appId);
+        fanPO.setOpenId(openId);
+        fanPO.setStatus(userInfoDTO.getSubscribe() == 1 ? 1 : 2);
+        fanPO.setNickName(userInfoDTO.getNickName());
+        fanPO.setCity(userInfoDTO.getCity());
+        fanPO.setProvince(userInfoDTO.getProvince());
+        fanPO.setCountry(userInfoDTO.getCountry());
+        fanPO.setHeadImgUrl(userInfoDTO.getHeadImgUrl());
+        fanPO.setGroupId(userInfoDTO.getGroupId());
+        fanPO.setLanguage(userInfoDTO.getLanguage());
+        fanPO.setRemark(userInfoDTO.getRemark());
+        fanPO.setUnionId(userInfoDTO.getUnionId());
+        fanPO.setSex(userInfoDTO.getSex());
+        fanPO.setSubscribeTime(userInfoDTO.getSubscribeTime());
+        fanPO.setTagIdsJson(userInfoDTO.getTagIdsList().toString());
+
+        FanPOExample example = new FanPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId);
+        String table = DBTableUtil.getFanTableName(appId);
+        List<FanPO> fanPOList = fanMapper.selectByExample(example, table);
+
+        //自定义部分
+        fanPO.setUpdateTime(DateUtil.curSeconds());
+        fanPO.setInBlacklist(userInfoDTO.getGroupId() == 1 ? 1 : 0);
+        fanPO.setLastInteractTime(DateUtil.curSeconds());
+
+        if (fanPOList.size() != 0) {
+            fanPO.setFanId(fanPOList.get(0).getFanId());
+            fanMapper.updateByPrimaryKeySelective(fanPO, table);
+        } else {
+            fanPO.setCreateTime(DateUtil.curSeconds());
+            fanMapper.insertSelective(fanPO, table);
+        }
+
+        return fanPO;
+    }
+
+    @Override
+    public void delFanOpenId(String appId, String openId) {
+        OpenIdPO oldUserPO = new OpenIdPO();
+        oldUserPO.setStatus(2);
+        oldUserPO.setUpdateTime(DateUtil.curSeconds());
+
+        OpenIdPOExample example = new OpenIdPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
+
+        String table = DBTableUtil.getOpenIdTableName(appId);
+        openIdMapper.updateByExampleSelective(oldUserPO, example, table);
+
+        //TODO:删除Redis缓存
+    }
+
+    @Override
+    public boolean isSubscribe(String appId, String openId) {
+        // 从缓存
+        if (fanCache.getSubscribeStatus(appId, openId) != null) {
+            return true;
+        }
+
+        // 从数据库
+        OpenIdPOExample example = new OpenIdPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
+        String table = DBTableUtil.getOpenIdTableName(appId);
+        List<OpenIdPO> openIdPOS = openIdMapper.selectByExample(example, table);
+
+        // 未关注
+        if (openIdPOS.size() == 0) {
+            // TODO: 量大了，小心缓存击穿
+            return false;
+        }
+
+        // 已关注，更新缓存
+        fanCache.setSubscribeStatus(appId, openId);
+        return true;
+    }
+
+    public void asyncAddFan(String appId, String openId) {
+        SubscribeDTO subscribeDTO = new SubscribeDTO();
+        subscribeDTO.setAppId(appId);
+        subscribeDTO.setOpenId(openId);
+
+        mqUtil.publish(MqConstant.FAN_SUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
     }
 }

@@ -176,7 +176,7 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/posts/wx_syncs", method = RequestMethod.POST)
     public JsonResponse wxSyncsPost(@Valid @RequestBody WxSyncsPostParam wxSyncsPostParam) {
-        postService.syncWeixinPosts(wxSyncsPostParam.getWeixinAppid(), wxSyncsPostParam.getUid());
+        postService.syncWeixinPosts(wxSyncsPostParam.getWeixinAppid());
         return new JsonResponse(ImmutableMap.of());
     }
 

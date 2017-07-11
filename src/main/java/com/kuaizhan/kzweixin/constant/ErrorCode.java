@@ -25,10 +25,11 @@ public class ErrorCode {
     // 通用(01)
     public static final ErrorCode PARAM_ERROR = new ErrorCode(101001, "请求参数错误");
     public static final ErrorCode DOWNLOAD_FILE_FAILED = new ErrorCode(101002, "下载文件失败");
+    public static final ErrorCode API_UNAUTHORIZED = new ErrorCode(101003, "您没有授权此功能给快站");
 
     // 账号(02)
     public static final ErrorCode SITE_ID_NOT_EXIST = new ErrorCode(102002, "站点没有绑定公众号或siteId不存在");
-    public static final ErrorCode ACCOUNT_NOT_EXIST = new ErrorCode(102003, "账号不存在");
+    public static final ErrorCode ACCOUNT_NOT_EXIST = new ErrorCode(102003, "公众号不存在");
     public static final ErrorCode ACCOUNT_NOT_VERIFIED_SERVICE_TYPE = new ErrorCode(102004, "账号不是认证的服务号");
     public static final ErrorCode APP_ID_NOT_EXIST = new ErrorCode(102005, "公众号不存在");
     public static final ErrorCode IP_NOT_IN_WHITELIST = new ErrorCode(102006, "IP未设置白名单");
@@ -41,10 +42,10 @@ public class ErrorCode {
     public static final ErrorCode INVALID_TAG_NUM = new ErrorCode(104003, "标签数量过多，不能超过100个");
     public static final ErrorCode INVALID_TAG_MODIFIED = new ErrorCode(104004, "不能修改系统保留标签");
     public static final ErrorCode DELETE_TAG_FANS_EXCEED_10W = new ErrorCode(104005, "该标签下粉丝超过10万，不能直接删除");
-    public static final ErrorCode OPEN_ID_EXCEED = new ErrorCode(104006, "传入粉丝OpenId超过50个");
+    public static final ErrorCode OPEN_ID_EXCEED = new ErrorCode(104006, "传入粉丝openId超过50个");
     public static final ErrorCode INVALID_TAG_ERROR = new ErrorCode(104007, "非法标签错误");
     public static final ErrorCode FANS_TAG_EXCEED = new ErrorCode(104008, "粉丝标签超过20个");
-    public static final ErrorCode OPEN_ID_MISMATCH_ERROR = new ErrorCode(104009, "OpenId不属于此公众号");
+    public static final ErrorCode OPEN_ID_MISMATCH_ERROR = new ErrorCode(104009, "openId不属于此公众号");
     public static final ErrorCode ADD_BLACKLIST_EXCEED_LIMIT = new ErrorCode(104010, "一次只能拉黑/取消拉黑20个用户");
 
     // 图文(07)

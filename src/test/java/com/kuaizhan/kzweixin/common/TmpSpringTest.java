@@ -1,7 +1,6 @@
 package com.kuaizhan.kzweixin.common;
 
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
-import com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper;
 import com.kuaizhan.kzweixin.entity.WxData;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.service.AccountService;
@@ -68,7 +67,5 @@ public class TmpSpringTest {
         // 可能为空字段
         wxData.setEvent(root.elementText("Event"));
         wxData.setEventKey(root.elementText("EventKey"));
-
-        wxPushService.handleActions(8111772986L, wxData);
     }
 }

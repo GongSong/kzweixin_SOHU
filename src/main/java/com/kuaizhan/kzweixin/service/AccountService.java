@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
+import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 
 import java.util.List;
 
@@ -12,6 +13,9 @@ public interface AccountService {
 
     /**
      * 获取绑定公众号的url
+     * @param userId 绑定的userId
+     * @param siteId 绑定的siteId
+     * @param redirectUrl 授权成功后，跳转的url
      */
     String getBindUrl(Long userId, Long siteId, String redirectUrl);
 
@@ -41,8 +45,9 @@ public interface AccountService {
 
     /**
      * 根据appId获取账号信息
+     * @throws AccountNotExistException 找不到对应的账号
      */
-    AccountPO getAccountByAppId(String appId);
+    AccountPO getAccountByAppId(String appId) throws AccountNotExistException;
 
     /**
      * 根据long型Id获取账号信息

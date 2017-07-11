@@ -42,7 +42,7 @@ java -Dcom.sun.management.jmxremote \
      -Dcom.sun.management.jmxremote.authenticate=false \
      -Dcom.sun.management.jmxremote.ssl=false \
      ${JVM_SIZE_ARG} \
-     -jar $PREFIX/worker/kzweixin.jar &
+     -jar $PREFIX/worker/kzweixin-mq.jar &
 
 child=$!
 wait "$child"
