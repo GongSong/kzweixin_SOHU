@@ -3,6 +3,7 @@ package com.kuaizhan.kzweixin.cache.impl;
 import com.kuaizhan.kzweixin.constant.RedisConstant;
 import com.kuaizhan.kzweixin.cache.ImageCache;
 import com.kuaizhan.kzweixin.utils.DateUtil;
+import com.kuaizhan.kzweixin.utils.EncryptUtil;
 import com.kuaizhan.kzweixin.utils.RedisUtil;
 import org.springframework.stereotype.Repository;
 
@@ -22,14 +23,14 @@ public class ImageCacheImpl implements ImageCache {
 
     @Override
     public void setImageUrl(String originUrl, String url) {
-        String key = RedisConstant.KEY_IMAGE_WEIXIN_RUL + originUrl;
+        String key = RedisConstant.KEY_IMAGE_WEIXIN_RUL + EncryptUtil.md5(originUrl);
         // 先缓存30天
         redisUtil.setEx(key, 30 * 24 * 60 * 60, url);
     }
 
     @Override
     public String getImageUrl(String originUrl) {
-        String key = RedisConstant.KEY_IMAGE_WEIXIN_RUL + originUrl;
+        String key = RedisConstant.KEY_IMAGE_WEIXIN_RUL + EncryptUtil.md5(originUrl);
         return redisUtil.get(key);
     }
 

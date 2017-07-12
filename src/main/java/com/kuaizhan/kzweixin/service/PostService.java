@@ -6,6 +6,7 @@ import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.entity.post.ArticleDTO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.entity.post.WxPostDTO;
+import com.kuaizhan.kzweixin.exception.post.GuideFollowPostNotFoundException;
 import com.kuaizhan.kzweixin.exception.weixin.WxPostUsedException;
 
 import java.util.HashMap;
@@ -74,8 +75,9 @@ public interface PostService {
     /**
      * 新增一条多图文消息
      * @param posts 新增的post数据列表
+     * @return 图文的pageId
      */
-    void addMultiPosts(long weixinAppid, List<PostPO> posts);
+    long addMultiPosts(long weixinAppid, List<PostPO> posts);
 
     /**
      * 更新多图文
@@ -118,4 +120,17 @@ public interface PostService {
      * @return  图片url
      */
     String uploadWxImage(long weixinAppid, String imgUrl);
+
+    /**
+     * 获取引导关注图文
+     * @throws GuideFollowPostNotFoundException 引导关注图文不存在
+     */
+    String getGuideFollowPost(long weixinAppid) throws GuideFollowPostNotFoundException;
+
+    /**
+     * 新增引导关注图文
+     * 幂等操作，存在则不新增
+     * @return 新增的引导关注图文url
+     */
+    String addGuideFollowPost(long weixinAppid);
 }
