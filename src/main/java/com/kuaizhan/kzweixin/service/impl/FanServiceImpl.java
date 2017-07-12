@@ -1,7 +1,6 @@
 package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.constant.KzExchange;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.cache.FanCache;
@@ -12,7 +11,7 @@ import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.entity.fan.UserInfoDTO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.manager.WxFanManager;
-import com.kuaizhan.kzweixin.mq.dto.SubscribeDTO;
+import com.kuaizhan.kzweixin.mq.dto.FanDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.utils.DBTableUtil;
@@ -353,9 +352,9 @@ public class FanServiceImpl implements FanService {
 
     @Override
     public void delFanOpenId(String appId, String openId) {
-        OpenIdPO oldUserPO = new OpenIdPO();
-        oldUserPO.setStatus(2);
-        oldUserPO.setUpdateTime(DateUtil.curSeconds());
+        OpenIdPO record = new OpenIdPO();
+        record.setStatus(2);
+        record.setUpdateTime(DateUtil.curSeconds());
 
         OpenIdPOExample example = new OpenIdPOExample();
         example.createCriteria()
@@ -364,7 +363,24 @@ public class FanServiceImpl implements FanService {
                 .andStatusEqualTo(1);
 
         String table = DBTableUtil.getOpenIdTableName(appId);
-        openIdMapper.updateByExampleSelective(oldUserPO, example, table);
+        openIdMapper.updateByExampleSelective(record, example, table);
+
+        fanCache.deleteFan(appId, openId);
+    }
+
+    @Override
+    public void delFan(String appId, String openId) {
+        FanPO record = new FanPO();
+        record.setStatus(2);
+        record.setUpdateTime(DateUtil.curSeconds());
+
+        FanPOExample example = new FanPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
+        String table = DBTableUtil.getFanTableName(appId);
+        fanMapper.updateByExampleSelective(record, example, table);
 
         fanCache.deleteFan(appId, openId);
     }
@@ -398,28 +414,41 @@ public class FanServiceImpl implements FanService {
 
     @Override
     public void asyncAddFan(String appId, String openId) {
-        SubscribeDTO subscribeDTO = new SubscribeDTO();
-        subscribeDTO.setAppId(appId);
-        subscribeDTO.setOpenId(openId);
+        FanDTO fanDTO = new FanDTO();
+        fanDTO.setAppId(appId);
+        fanDTO.setOpenId(openId);
 
-        mqUtil.publish(MqConstant.FAN_SUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
+        mqUtil.publish(MqConstant.FAN_SUBSCRIBE, JsonUtil.bean2String(fanDTO));
     }
 
     @Override
     public void asyncUpdateFan(String appId, String openId) {
-        SubscribeDTO subscribeDTO = new SubscribeDTO();
-        subscribeDTO.setAppId(appId);
-        subscribeDTO.setOpenId(openId);
+        FanDTO fanDTO = new FanDTO();
+        fanDTO.setAppId(appId);
+        fanDTO.setOpenId(openId);
 
-        mqUtil.publish(KzExchange.WX_USER_SUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
+        mqUtil.publish(MqConstant.FAN_UPDATE, JsonUtil.bean2String(fanDTO));
     }
 
     @Override
     public void asyncDeleteFan(String appId, String openId) {
-        SubscribeDTO subscribeDTO = new SubscribeDTO();
-        subscribeDTO.setAppId(appId);
-        subscribeDTO.setOpenId(openId);
+        FanDTO fanDTO = new FanDTO();
+        fanDTO.setAppId(appId);
+        fanDTO.setOpenId(openId);
 
-        mqUtil.publish(KzExchange.WX_USER_UNSUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
+        mqUtil.publish(MqConstant.FAN_UNSUBSCRIBE, JsonUtil.bean2String(fanDTO));
+    }
+
+    @Override
+    public void refreshInteractionTime(String appId, String openId) {
+        AccountPO accountPO = accountService.getAccountByAppId(appId);
+        FanPO fanPO = getFanByOpenId(accountPO.getWeixinAppid(), openId);
+
+        FanPO record = new FanPO();
+        record.setFanId(fanPO.getFanId());
+        record.setLastInteractTime(DateUtil.curSeconds());
+
+        String table = DBTableUtil.getFanTableName(appId);
+        fanMapper.updateByPrimaryKeySelective(record, table);
     }
 }

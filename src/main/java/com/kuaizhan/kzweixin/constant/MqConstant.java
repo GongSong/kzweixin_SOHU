@@ -18,5 +18,9 @@ public class MqConstant {
     public static final String AFTER_BIND = "sys-kzweixin-after-bind";
     // 粉丝关注
     public static final String FAN_SUBSCRIBE = "sys-kzweixin-fan-subscribe";
+    // 用户订阅
+    public static final String FAN_UPDATE = "sys-kzweixin-fan-update";
+    // 用户取消订阅
+    public static final String FAN_UNSUBSCRIBE = "sys-kzweixin-fan-unsubscribe";
 
 }

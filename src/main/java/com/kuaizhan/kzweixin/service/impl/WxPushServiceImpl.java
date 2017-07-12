@@ -19,10 +19,8 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import sun.security.ssl.Debug;
 
 import javax.annotation.Resource;
-import javax.swing.*;
 import java.util.List;
 
 /**
@@ -124,19 +122,59 @@ public class WxPushServiceImpl implements WxPushService {
                 // 处理Action
                 return handleActions(accountPO.getWeixinAppid(), wxData, ActionType.SUBSCRIBE);
             }
-        } else if ("LOCATION".equals(wxData.getEvent())) {
+        }
+//        else if ("SCAN".equals(wxData.getEvent())) {
+//
+//            kzStat("a130", wxData.getAppId());
+//
+//            // 当公众号与粉丝在近一个小时内没有互动，请求微信服务器对粉丝信息进行更新
+//            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
+//            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+//
+//            if (StringUtils.isNotBlank(wxData.getEventKey())) {
+//                // 带场景的参数二维码等操作
+//
+//                // TODO:如果参数二维码操作重构完成，在这里返回结果；否则不做任何处理交给php代码
+//                return SUCCESS_RESULT;
+//            }
+//
+//        }
+        else if ("LOCATION".equals(wxData.getEvent())) {
 
             kzStat("a140", wxData.getAppId());
             fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
             return SUCCESS_RESULT;
 
-        } else if ("VIEW".equals(wxData.getEvent())) {
+        }
+//        else if ("CLICK".equals(wxData.getEvent())) {
+//
+//            kzStat("a150", wxData.getAppId());
+//            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+//
+//            String eventKey = wxData.getEventKey();
+//
+//            // TODO:菜单点击回复内容
+//
+//
+//        }
+        else if ("VIEW".equals(wxData.getEvent())) {
 
             kzStat("a160", wxData.getAppId());
             fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
             return SUCCESS_RESULT;
 
-        } else if ("TEMPLATESENDJOBFINISH".equals(wxData.getEvent())) {
+        }
+//        else if ("MASSSENDJOBFINISH".equals(wxData.getEvent())) {
+//
+//            kzStat("a170", wxData.getAppId());
+//            handleMass(wxData);
+//
+//            return SUCCESS_RESULT;
+//
+//        }
+        else if ("TEMPLATESENDJOBFINISH".equals(wxData.getEvent())) {
 
             kzStat("a1a0", wxData.getAppId());
 
@@ -190,6 +228,26 @@ public class WxPushServiceImpl implements WxPushService {
             }
         }
         return null;
+    }
+
+    /**
+     * 处理群发消息
+     * */
+    private void handleMass(WxData wxData) {
+        Long msgId = Long.parseLong(wxData.getMsgId());
+        String status = wxData.getStatus();
+        String totalCount = wxData.getTotalCount();
+        String filterCount = wxData.getFilterCount();
+        String sentCount = wxData.getSentCount();
+        String errorCount = wxData.getErrorCount();
+
+        AccountPO accountPO = accountService.getAccountByAppId(wxData.getAppId());
+
+        // TODO:修改weixin_mass数据库，需要在相应的service层操作
+        if ("send success".equals(status)) {
+
+        }
+
     }
 
     /**

@@ -13,8 +13,4 @@ public class KzExchange {
 
     // 统计
     public static final String KZ_STAT_INC = "sys-kz-stat-inc.direct";
-    // 更新用户订阅
-    public static final String WX_USER_SUBSCRIBE = "sys-weixin-user-subscribe.direct";
-    // 用户取消订阅
-    public static final String WX_USER_UNSUBSCRIBE = "sys-weixin-user-unsubscribe.direct";
 }

@@ -47,6 +47,18 @@
             <bean class="com.kuaizhan.kzweixin.mq.consumer.SubscribeConsumer" />
         </constructor-arg>
     </bean>
+    <!--粉丝信息更新操作queue-->
+    <bean id="fanUpdateAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter">
+        <constructor-arg name="delegate">
+            <bean class="com.kuaizhan.kzweixin.mq.consumer.FanUpdateConsumer" />
+        </constructor-arg>
+    </bean>
+    <!--粉丝取消订阅后的操作queue-->
+    <bean id="unsubscribeAdapter" class="org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter">
+        <constructor-arg name="delegate">
+            <bean class="com.kuaizhan.kzweixin.mq.consumer.UnsubscribeConsumer" />
+        </constructor-arg>
+    </bean>
 
     <rabbit:listener-container connection-factory="connectionFactory" concurrency="5">
         <rabbit:listener ref="kzArticleImportListenerAdapter" queue-names="sys-kzweixin-import-kuaizhan-post" />
@@ -55,6 +67,8 @@
         <rabbit:listener ref="sendSysTplMsgAdapter" queue-names="sys-kzweixin-send-sys-tpl-msg" />
         <rabbit:listener ref="afterBindAdapter" queue-names="sys-kzweixin-after-bind" />
         <rabbit:listener ref="subscribeAdapter" queue-names="sys-kzweixin-fan-subscribe" />
+        <rabbit:listener ref="fanUpdateAdapter" queue-names="sys-kzweixin-fan-update" />
+        <rabbit:listener ref="unsubscribeAdapter" queue-names="sys-kzweixin-fan-unsubscribe" />
     </rabbit:listener-container>
 
 </beans>

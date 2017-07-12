@@ -31,6 +31,10 @@
     <rabbit:queue id="queueAfterBind" name="sys-kzweixin-after-bind" durable="true" auto-delete="false" />
     <!--粉丝订阅后的操作queue-->
     <rabbit:queue id="queueSubscribe" name="sys-kzweixin-fan-subscribe" durable="true" auto-delete="false" />
+    <!--粉丝信息更新操作queue-->
+    <rabbit:queue id="queueFanUpdate" name="sys-kzweixin-fan-update" durable="true" auto-delete="false" />
+    <!--粉丝取消订阅后的操作queue-->
+    <rabbit:queue id="queueUnsubscribe" name="sys-kzweixin-fan-unsubscribe" durable="true" auto-delete="false" />
 
     <!-- Exchange的声明 -->
     <rabbit:direct-exchange id="directExchange" name="${rabbit.exchange}" durable="true" auto-delete="false">
@@ -41,6 +45,8 @@
             <rabbit:binding queue="queueSendSysTplMsg" key="sys-kzweixin-send-sys-tpl-msg" />
             <rabbit:binding queue="queueAfterBind" key="sys-kzweixin-after-bind" />
             <rabbit:binding queue="queueSubscribe" key="sys-kzweixin-fan-subscribe" />
+            <rabbit:binding queue="queueFanUpdate" key="sys-kzweixin-fan-update" />
+            <rabbit:binding queue="queueUnsubscribe" key="sys-kzweixin-fan-unsubscribe" />
         </rabbit:bindings>
     </rabbit:direct-exchange>
 
