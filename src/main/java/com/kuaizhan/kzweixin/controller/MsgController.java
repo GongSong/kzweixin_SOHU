@@ -3,6 +3,7 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.controller.vo.MsgListVO;
@@ -12,6 +13,7 @@ import com.kuaizhan.kzweixin.controller.param.UpdateQuickRepliesParam;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
+import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.service.MsgService;
 
@@ -36,6 +38,8 @@ public class MsgController extends BaseController {
     private MsgService msgService;
     @Resource
     private FanService fanService;
+    @Resource
+    private AccountService accountService;
 
     /**
      * 获取消息列表
@@ -76,7 +80,8 @@ public class MsgController extends BaseController {
         }
 
         // 获取粉丝的最后交互时间
-        FanPO fanPO = fanService.getFanByOpenId(weixinAppid, openId);
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+        FanPO fanPO = fanService.getFanByOpenId(accountPO.getAppId(), openId);
         msgListVO.setLastInteractTime(fanPO.getLastInteractTime());
 
         return new JsonResponse(msgListVO);

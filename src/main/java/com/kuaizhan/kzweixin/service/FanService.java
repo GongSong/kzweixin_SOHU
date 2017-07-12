@@ -42,7 +42,7 @@ public interface FanService {
      * @param openId 粉丝对公众号唯一ID
      * @return 粉丝信息
      * */
-    FanPO getFanByOpenId(long weixinAppid, String openId);
+    FanPO getFanByOpenId(String appId, String openId);
 
     /**
      * 增加粉丝标签

@@ -109,15 +109,15 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public FanPO getFanByOpenId(long weixinAppid, String openId) {
-        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
-        String appId = accountPO.getAppId();
+    public FanPO getFanByOpenId(String appId, String openId) {
         String table = DBTableUtil.getFanTableName(appId);
         FanPOExample example = new FanPOExample();
         example.createCriteria()
                 .andAppIdEqualTo(appId)
                 .andOpenIdEqualTo(openId);
-        return fanMapper.selectByExample(example, table).get(0);
+
+        List<FanPO> fanPOList = fanMapper.selectByExample(example, table);
+        return fanPOList.isEmpty() ? null : fanPOList.get(0);
     }
 
     @Override
@@ -439,9 +439,7 @@ public class FanServiceImpl implements FanService {
 
     @Override
     public void refreshInteractionTime(String appId, String openId) {
-        AccountPO accountPO = accountService.getAccountByAppId(appId);
-        FanPO fanPO = getFanByOpenId(accountPO.getWeixinAppid(), openId);
-
+        FanPO fanPO = getFanByOpenId(appId, openId);
         FanPO record = new FanPO();
         record.setFanId(fanPO.getFanId());
         record.setLastInteractTime(DateUtil.curSeconds());
