@@ -33,6 +33,8 @@ public class WxCallbackController extends BaseController {
     // 全网发布测试appid
     private static final String wxTestAppid = "wx570bc396a51b8ff8";
 
+    private static final String SUCCESS_RESULT = "success";
+
     /**
      * 新增绑定，微信服务器跳转回来
      */
@@ -48,7 +50,7 @@ public class WxCallbackController extends BaseController {
     /**
      * 获取微信推送的component_verify_ticket
      */
-    @RequestMapping(value = "/auth/tickets", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth/tickets")
     public String refreshTicket(@RequestParam("msg_signature") String signature,
                                 @RequestParam String timestamp,
                                 @RequestParam String nonce,
@@ -62,12 +64,18 @@ public class WxCallbackController extends BaseController {
     /**
      * 微信消息推送
      */
-    @RequestMapping(value = "/accounts/{appId}/events", method = RequestMethod.POST)
+    @RequestMapping(value = "/accounts/{appId}/events")
     public String handleEventPush(@PathVariable String appId,
-                                  @RequestParam("msg_signature") String signature,
-                                  @RequestParam String timestamp,
-                                  @RequestParam String nonce,
-                                  @RequestBody String postData) {
+                                  @RequestParam(required = false, value = "msg_signature") String signature,
+                                  @RequestParam(required = false) String timestamp,
+                                  @RequestParam(required = false) String nonce,
+                                  @RequestBody(required = false) String postData) {
+
+        // 参数发现过非微信服务器ip, 用不规范的参数请求。过滤掉非法参数
+        if (signature == null || timestamp == null || nonce == null || postData == null) {
+            return SUCCESS_RESULT;
+        }
+
         String xmlStr = wxThirdPartService.decryptMsg(signature, timestamp, nonce, postData);
 
         // 判断是否是全网发布测试的appid
@@ -78,7 +86,7 @@ public class WxCallbackController extends BaseController {
         // 记录开始时间
         long startTime = System.currentTimeMillis();
 
-        String resultStr = "success";
+        String resultStr = SUCCESS_RESULT;
         try {
             resultStr = wxPushService.handleEventPush(appId, signature, timestamp, nonce, xmlStr);
         } catch (Exception e) {
