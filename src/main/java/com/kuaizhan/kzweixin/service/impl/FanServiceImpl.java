@@ -14,10 +14,7 @@ import com.kuaizhan.kzweixin.manager.WxFanManager;
 import com.kuaizhan.kzweixin.mq.dto.FanDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
-import com.kuaizhan.kzweixin.utils.DBTableUtil;
-import com.kuaizhan.kzweixin.utils.DateUtil;
-import com.kuaizhan.kzweixin.utils.JsonUtil;
-import com.kuaizhan.kzweixin.utils.MqUtil;
+import com.kuaizhan.kzweixin.utils.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -314,7 +311,7 @@ public class FanServiceImpl implements FanService {
         fanPO.setAppId(appId);
         fanPO.setOpenId(openId);
         fanPO.setStatus(userInfoDTO.getSubscribe() == 1 ? 1 : 2);
-        fanPO.setNickName(userInfoDTO.getNickName());
+        fanPO.setNickName(StrUtil.removeEmojis(userInfoDTO.getNickName()));
         fanPO.setCity(userInfoDTO.getCity());
         fanPO.setProvince(userInfoDTO.getProvince());
         fanPO.setCountry(userInfoDTO.getCountry());
@@ -322,7 +319,8 @@ public class FanServiceImpl implements FanService {
         fanPO.setGroupId(userInfoDTO.getGroupId());
         fanPO.setLanguage(userInfoDTO.getLanguage());
         fanPO.setRemark(userInfoDTO.getRemark());
-        fanPO.setUnionId(userInfoDTO.getUnionId());
+        String unionId = userInfoDTO.getUnionId() == null? "": userInfoDTO.getUnionId();
+        fanPO.setUnionId(unionId);
         fanPO.setSex(userInfoDTO.getSex());
         fanPO.setSubscribeTime(userInfoDTO.getSubscribeTime());
         fanPO.setTagIdsJson(userInfoDTO.getTagIdsList().toString());
