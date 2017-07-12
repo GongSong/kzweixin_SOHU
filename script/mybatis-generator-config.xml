@@ -4,7 +4,8 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-        <classPathEntry location="/Users/zixiong/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar" />
+        <!--<classPathEntry location="/Users/zixiong/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar" />-->
+        <classPathEntry location="D:\Dev\repo\mysql\mysql-connector-java\5.1.32\mysql-connector-java-5.1.32.jar" />
         <context id="mysql" defaultModelType="flat" targetRuntime="MyBatis3">
 
             <!--定义这些配置还得注意顺序-->
@@ -82,6 +83,12 @@
                 <!--<columnOverride column="is_timing" javaType="java.lang.Integer"/>-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer" />-->
             <!--</table>-->
+
+            <table tableName="weixin_custom_mass" domainObjectName="CustomMassPO" mapperName="CustomMassMapper">
+                <columnOverride column="msg_type" javaType="java.lang.Integer"/>
+                <columnOverride column="is_timing" javaType="java.lang.Integer"/>
+                <columnOverride column="status" javaType="java.lang.Integer"/>
+            </table>
 
         </context>
 </generatorConfiguration>
