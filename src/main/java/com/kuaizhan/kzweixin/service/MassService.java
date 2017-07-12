@@ -1,6 +1,9 @@
 package com.kuaizhan.kzweixin.service;
 
+import com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
+
+import java.util.List;
 
 /**
  * 消息群发
@@ -14,4 +17,15 @@ public interface MassService {
      * @return
      */
     MassPO getMassById(long id);
+
+    /**
+     *
+     * @param wxAppId
+     * @return
+     */
+    List<MassPO> getMassByWxAppId(long wxAppId);
+
+
+    List<CustomMassPO> getCustomMassByWxAppId(long wxAppid);
+
 }

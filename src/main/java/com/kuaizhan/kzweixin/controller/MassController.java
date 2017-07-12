@@ -1,18 +1,23 @@
 package com.kuaizhan.kzweixin.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.dao.po.MassRespPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
-import com.kuaizhan.kzweixin.service.AccountService;
-import com.kuaizhan.kzweixin.service.MassService;
-import com.kuaizhan.kzweixin.service.PostService;
+import com.kuaizhan.kzweixin.entity.fan.TagDTO;
+import com.kuaizhan.kzweixin.enums.MsgType;
+import com.kuaizhan.kzweixin.service.*;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +37,13 @@ public class MassController extends BaseController {
 
     @Resource
     protected AccountService accountService;
+
+    @Resource
+    protected FanService fanService;
+
+    @Resource
+    protected MsgService msgService;
+
     /**
      * 是否有多图文 @url: mass
      * @param massId
@@ -64,45 +76,97 @@ public class MassController extends BaseController {
                                     @RequestParam(value = "pageNO", defaultValue = "1") int pageNO,
                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
+        List<MassPO> massPOList = null;
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-
-        //List<MassPO> massPOList =
-        return new JsonResponse(null);
+        if(accountPO != null && accountPO.getWeixinAppid() != 0) {
+            massPOList = massService.getMassByWxAppId(accountPO.getWeixinAppid());
+        }
+        return new JsonResponse(massPOList);
     }
 
     /**
-     * 获取群发对象分组 @url: ajax-mass-groups-get
+     * 获取群发对象tag分组 @url: ajax-mass-groups-get
      * @param siteId
      * @return
      */
-    @RequestMapping(value = "/mass/group/list", method = RequestMethod.POST)
+    @RequestMapping(value = "/mass/tags/list", method = RequestMethod.POST)
     public JsonResponse getMassGroup(@RequestParam int siteId) {
-        return new JsonResponse(null);
+
+        List<TagDTO> tagDTOList = null;
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        if(accountPO != null && accountPO.getWeixinAppid() != 0) {
+            tagDTOList = fanService.getTags(accountPO.getWeixinAppid());
+        }
+        return new JsonResponse(tagDTOList);
     }
 
     /**
      * 消息预览&群发 @url: ajax-mass-msg-new
-     * @param siteId
-     * @param respType
-     * @param respJson
-     * @param groupId
-     * @param publishTime
-     * @param isPreview
-     * @param isTiming
-     * @param hasMulti
-     * @param massId
+     * @param siteId 站点id
+     * @param respType 1文章列表2页面3文字4图片
+     * @param respJson 要发送的post, json, 兼容旧接口
+     * @param postIds 逗号分隔
+     * @param tagId 发送的目的标签id
+     * @param publishTime 发布时间，定时群发时才有意义
+     * @param isPreview 1表示预览 0表示群发
+     * @param isTiming 1表示定时发布，0不定时
+     * @param hasMulti 是否多图文
+     * @param massId 0
      * @return
      */
     @RequestMapping(value = "/mass/msg/send", method = RequestMethod.POST)
     public JsonResponse sendMassMsg(@RequestParam int siteId,
                                      @RequestParam(value = "response_type") int respType,
-                                     @RequestParam(value = "response_json") String respJson,
-                                     @RequestParam(value = "group_id") int groupId,
+                                     @RequestParam(value = "post_ids") String postIds,
+                                     @RequestParam(value = "response_json", required = false, defaultValue = "") String respJson,
+                                     @RequestParam(value = "tag_id") int tagId,
                                      @RequestParam(value = "publish_time") long publishTime,
                                      @RequestParam(value = "preview_or_not", defaultValue = "1") int isPreview,
                                      @RequestParam(value = "is_timing", defaultValue = "0") int isTiming,
                                      @RequestParam(value = "has_multi", defaultValue = "0") int hasMulti,
                                      @RequestParam(value = "mass_id", required = false, defaultValue = "0") long massId) {
+
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        if(accountPO == null) {
+            return new JsonResponse(ErrorCode.ACCOUNT_NOT_EXIST.getCode(),"", ImmutableMap.of());
+        }
+
+        if(isTiming != 0) {
+            if(new Date(publishTime).before(new Date())) {
+                return new JsonResponse(ErrorCode.MASS_TIMING_INVALID.getCode(),"", ImmutableMap.of());
+            }
+        }
+
+        if(isPreview != 0) {
+            if(accountPO.getPreviewOpenId() == null || StringUtils.isEmpty(accountPO.getPreviewOpenId())) {
+                return new JsonResponse(ErrorCode.MASS_OPENID_NOT_SET.getCode(),"", ImmutableMap.of());
+            }
+        }
+
+        String[] postIdArray = postIds.split(",");
+        if(postIdArray == null || postIdArray.length ==0 ) {
+            return new JsonResponse(ErrorCode.MASS_POSTID_NOT_SET);
+        }
+
+
+        List<PostPO> postPOList = new ArrayList<>();
+        for(String postId : postIdArray) {
+            postPOList.add(postService.getPostByPageId(Integer.valueOf(postId)));
+        }
+
+        // 合并多选post:
+        // postService.insertMultiPosts(accountPO.getWeixinAppid(), postPOList);
+
+        if(isPreview != 0) {
+            // 发送预览
+            msgService.sendCustomMsg(accountPO.getWeixinAppid(), accountPO.getPreviewOpenId(), MsgType.TEXT, null );
+        } else {
+            // 真正发送
+
+        }
+
+
+
         return new JsonResponse(null);
     }
 
@@ -139,6 +203,11 @@ public class MassController extends BaseController {
     public JsonResponse getCustomMassList(@RequestParam int siteId,
                                     @RequestParam(value = "pageNO", defaultValue = "1") int pageNO,
                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        if(accountPO != null) {
+            
+        }
 
         return new JsonResponse(null);
     }
