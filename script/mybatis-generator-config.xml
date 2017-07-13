@@ -4,8 +4,10 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-        <classPathEntry location="/Users/zixiong/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar" />
+        <!--<classPathEntry location="/Users/zixiong/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar" />-->
+        <classPathEntry location="D:\Dev\repo\mysql\mysql-connector-java\5.1.32\mysql-connector-java-5.1.32.jar" />
         <context id="mysql" defaultModelType="flat" targetRuntime="MyBatis3">
+
             <!--定义这些配置还得注意顺序-->
             <!-- 分页插件 -->
             <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
@@ -65,17 +67,28 @@
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
-            <table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">
-                <generatedKey column="id" sqlStatement="MySql" identity="true" />
-                <columnOverride column="action_type" javaType="java.lang.Integer"/>
-                <columnOverride column="response_type" javaType="java.lang.Integer"/>
-            </table>
+            <!--<table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">-->
+                <!--<generatedKey column="id" sqlStatement="MySql" identity="true" />-->
+                <!--<columnOverride column="action_type" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="response_type" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
 
             <!--<table tableName="weixin_fans_0" domainObjectName="FanPO" mapperName="FanMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
                 <!--<columnOverride column="sex" javaType="java.lang.Integer"/>-->
                 <!--<columnOverride column="in_blacklist" javaType="java.lang.Integer"/>-->
             <!--</table>-->
+
+            <!--<table tableName="weixin_mass" domainObjectName="MassPO" mapperName="MassMapper">-->
+                <!--<columnOverride column="is_timing" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer" />-->
+            <!--</table>-->
+
+            <table tableName="weixin_custom_mass" domainObjectName="CustomMassPO" mapperName="CustomMassMapper">
+                <columnOverride column="msg_type" javaType="java.lang.Integer"/>
+                <columnOverride column="is_timing" javaType="java.lang.Integer"/>
+                <columnOverride column="status" javaType="java.lang.Integer"/>
+            </table>
 
         </context>
 </generatorConfiguration>

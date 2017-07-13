@@ -68,6 +68,11 @@ public class ErrorCode {
     public static final ErrorCode TEMPLATE_INDUSTRY_CONFLICT_ERROR = new ErrorCode(108005, "公众号行业设置错误");
     public static final ErrorCode INVALID_OPEN_ID_ERROR = new ErrorCode(108006, "非法的openId或用户未关注公众号");
 
+    // 群发(09)
+    public static final ErrorCode MASS_NOT_EXIST = new ErrorCode(109001, "群发消息不存在");
+    public static final ErrorCode MASS_TIMING_INVALID = new ErrorCode(109002, "无效的定时时间");
+    public static final ErrorCode MASS_OPENID_NOT_SET = new ErrorCode(109003, "无效的OpenId");
+    public static final ErrorCode MASS_POSTID_NOT_SET = new ErrorCode(109004, "无效的PostId");
 
     private final int code;
     private final String message;
