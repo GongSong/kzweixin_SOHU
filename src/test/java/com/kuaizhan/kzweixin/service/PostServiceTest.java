@@ -23,11 +23,6 @@ public class PostServiceTest {
     private PostService postService;
 
     @Test
-    public void genPageId() {
-        System.out.println("---->" + postService.genPageId());
-    }
-
-    @Test
     public void export2KzArticle() throws Exception {
         postService.export2KzArticle(1900333742L,3911574514L,123456L);
     }
@@ -47,6 +42,6 @@ public class PostServiceTest {
         postPO.setThumbUrl("http://mmbiz.qpic.cn/mmbiz_jpg/UqZMrMwVpn3NhPSO38HJticpDwBv0du7Hpkia5icBVpNr8mwlzX01Y8hZUccYxmEHGRZBRA0XSIwj1ggJka8K6Jeg/0?wx_fmt=jpeg");
 
         posts.add(postPO);
-        postService.insertMultiPosts(weixinAppid, posts);
+        postService.addMultiPosts(weixinAppid, posts);
     }
 }

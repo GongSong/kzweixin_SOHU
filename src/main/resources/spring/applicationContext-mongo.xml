@@ -1,33 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
-    <!-- 扫描包加载Dao实现类 -->
-    <context:component-scan base-package="com.kuaizhan.kzweixin.dao.mapper,com.kuaizhan.kzweixin.cache.impl,com.kuaizhan.kzweixin.dao.mongo.impl"/>
-    <!-- 数据库连接池 -->
-    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
-        <property name="driverClassName" value="${jdbc.driver}"/>
-        <property name="maxActive" value="10"/>
-        <property name="minIdle" value="5"/>
-    </bean>
-    <!-- 配置sqlsessionFactory -->
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
-        <property name="dataSource" ref="dataSource"/>
-        <property name="mapperLocations" value="classpath:mapper/**/*.xml"/>
-        <property name="typeAliasesPackage" value="com.kuaizhan.kzweixin.dao.po"/>
-    </bean>
-
-    <!-- 配置扫描包，加载mapper代理对象 -->
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.kuaizhan.kzweixin.dao.mapper"/>
-    </bean>
-
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
     <!--配置mongoDB客户端集群版-->
     <mongo:mongo-client id="mongo" replica-set="${mongo.replicaSet}" credentials="${mongo.username}:${mongo.password}@${mongo.dbName}">
@@ -47,6 +22,7 @@
                 heartbeat-frequency="${mongo.heartbeatFrequency}"/>
     </mongo:mongo-client>
     <mongo:db-factory id="mongoDbFactory" dbname="${mongo.dbName}" mongo-ref="mongo"/>
+
     <!-- mongo模板操作对象 -->
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
@@ -54,8 +30,5 @@
 
     <!-- mongodb bean的仓库目录，会自动扫描扩展了MongoRepository接口的接口进行注入 -->
     <!--<mongo:repositories base-package="cn.joyven.web.repository" />-->
-
-    <!--激活注解-->
-    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
 
 </beans>

@@ -6,6 +6,7 @@ import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.entity.post.ArticleDTO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.entity.post.WxPostDTO;
+import com.kuaizhan.kzweixin.exception.post.GuideFollowPostNotFoundException;
 import com.kuaizhan.kzweixin.exception.weixin.WxPostUsedException;
 
 import java.util.HashMap;
@@ -19,11 +20,6 @@ import java.util.List;
 public interface PostService {
 
     /**
-     * 生成pageId
-     */
-    long genPageId();
-
-    /**
      * 获取图文消息列表
      * @param pageNum 页码
      */
@@ -33,17 +29,16 @@ public interface PostService {
      * 根据mediaId获取所有的多图文
      * @param withContent 是否获取content字段
      */
-    List<PostPO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent);
+    List<PostPO> getMultiPosts(long weixinAppid, String mediaId, Boolean withContent);
 
     /**
      * 删除图文
      * 根据pageId，删除多图文下面的所有图文, 同时删除在微信后台的图文
      */
-    void deletePost(long weixinAppid, long pageId, String accessToken) throws WxPostUsedException;
+    void deletePost(long weixinAppid, long pageId) throws WxPostUsedException;
 
     /**
      * 是否存在微信图文
-     * @return
      */
     Boolean existPost(long weixinAppid, String mediaId);
 
@@ -68,9 +63,9 @@ public interface PostService {
     ArticleDTO getKzArticle(long pageId) throws GetKzArticleException;
 
     /**
-     * 从快站文章导入
+     * 异步导入快文
      */
-    void importKzArticle(long weixinAppid, List<Long> pageIds);
+    void asyncImportKzArticles(long weixinAppid, List<Long> pageIds);
 
     /**
      * 快站微信文章导入快站文章
@@ -78,25 +73,24 @@ public interface PostService {
     void export2KzArticle(long pageId,long categoryId,long siteId);
 
     /**
-     * 新增一条多图文消息，并同步到微信服务器
+     * 新增一条多图文消息
      * @param posts 新增的post数据列表
+     * @return 图文的pageId
      */
-    void insertMultiPosts(long weixinAppid, List<PostPO> posts);
+    long addMultiPosts(long weixinAppid, List<PostPO> posts);
 
     /**
-     * 更新一条多图文消息，并同步到微信服务器
+     * 更新多图文
      */
     void updateMultiPosts(long weixinAppid, long pageId, List<PostPO> posts);
 
-
     /**
-     * 获取post在微信的url
+     * 获取图文的微信链接
      */
     String getPostWxUrl(long weixinAppid, long pageId);
 
     /**
      * 同步微信消息(异步)
-     * @return 是否可以同步
      */
     void syncWeixinPosts(long weixinAppid);
 
@@ -126,4 +120,17 @@ public interface PostService {
      * @return  图片url
      */
     String uploadWxImage(long weixinAppid, String imgUrl);
+
+    /**
+     * 获取引导关注图文
+     * @throws GuideFollowPostNotFoundException 引导关注图文不存在
+     */
+    String getGuideFollowPost(long weixinAppid) throws GuideFollowPostNotFoundException;
+
+    /**
+     * 新增引导关注图文
+     * 幂等操作，存在则不新增
+     * @return 新增的引导关注图文url
+     */
+    String addGuideFollowPost(long weixinAppid);
 }

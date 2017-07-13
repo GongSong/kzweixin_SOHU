@@ -264,8 +264,9 @@ public class WxPostManager {
 
     /**
      * 根据mediaId获取微信图文
+     * @throws WxPostDeletedException 微信图文已经被删除
      */
-    public static List<WxPostDTO> getWxPost(String mediaId, String accessToken) {
+    public static List<WxPostDTO> getWxPost(String mediaId, String accessToken) throws WxPostDeletedException {
         List<WxPostDTO> wxPostDTOS = new ArrayList<>();
 
         JSONObject params = new JSONObject();
@@ -274,7 +275,7 @@ public class WxPostManager {
         JSONObject returnJson = new JSONObject(result);
 
         if (returnJson.optInt("errcode") == 40007) {
-            throw new BusinessException(ErrorCode.WX_POST_DELETED_ERROR);
+            throw new WxPostDeletedException();
         }
 
         JSONArray postArray = returnJson.getJSONArray("news_item");
