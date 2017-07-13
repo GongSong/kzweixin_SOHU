@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- PostConstruct 和 PreDestroy 的支持 -->
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+
+    <!--各种component扫描-->
+    <context:component-scan base-package="com.kuaizhan.kzweixin.service"/>
+    <context:component-scan base-package="com.kuaizhan.kzweixin.dao"/>
+    <context:component-scan base-package="com.kuaizhan.kzweixin.cache"/>
+    <context:component-scan base-package="com.kuaizhan.kzweixin.aspect"/>
+    <context:component-scan base-package="com.kuaizhan.kzweixin.manager.db"/>
+    <context:component-scan base-package="com.kuaizhan.kzweixin.utils"/>
+
+    <!-- 开启自动切面代理
+    proxy-target-class决定了是否使用CGLIB?
+    expose-proxy开启，才能通过AopContext获取代理类 -->
+    <aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/>
+
+
+    <!--appConfig 一些配置-->
+    <bean id="appConfig" class="com.kuaizhan.kzweixin.config.AppConfig"/>
+
+</beans>

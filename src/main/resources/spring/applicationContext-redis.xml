@@ -5,9 +5,6 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- 扫描加载redis cache实现 -->
-    <context:component-scan base-package="com.kuaizhan.kzweixin.cache.impl"/>
-
     <!--集群连接-->
     <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" p:usePool="true">
         <constructor-arg name="clusterConfig">

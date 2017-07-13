@@ -72,7 +72,7 @@ public class ImportKzArticleConsumer extends BaseConsumer {
                 List<PostPO> postPOList = new ArrayList<>();
                 postPOList.add(postPO);
                 // 新增文章
-                postService.insertMultiPosts(weixinAppid, postPOList);
+                postService.addMultiPosts(weixinAppid, postPOList);
             }
         }
     }

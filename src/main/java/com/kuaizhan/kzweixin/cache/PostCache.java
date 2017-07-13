@@ -9,4 +9,11 @@ public interface PostCache {
      * @return 是否可以
      */
     boolean couldSyncWxPost(long weixinAppid);
+
+    /**
+     * 引导关注图文链接
+     */
+    void setGuideFollowPostUrl(long weixinAppid, String url);
+    String getGuideFollowPostUrl(long weixinAppid);
+    void deleteGuideFollowPostUrl(long weixinAppid);
 }
