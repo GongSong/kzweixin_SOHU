@@ -19,8 +19,25 @@ public class PostCacheImpl extends RedisBaseDaoImpl implements PostCache {
         if (val != null && ! "".equals(val)){
             return false;
         } else {
-            setData(key, "true", RedisConstant.EXPIRE_COULD_SYNC_WX_POST);
+            setData(key, "true", 10 * 60);
             return true;
         }
+    }
+
+    @Override
+    public void setGuideFollowPostUrl(long weixinAppid, String url) {
+        String key = RedisConstant.KEY_GUIDE_FOLLOW_POST + weixinAppid;
+        setData(key, url, 24 * 60 * 60);
+    }
+
+    @Override
+    public String getGuideFollowPostUrl(long weixinAppid) {
+        String key = RedisConstant.KEY_GUIDE_FOLLOW_POST + weixinAppid;
+        return getData(key);
+    }
+
+    @Override
+    public void deleteGuideFollowPostUrl(long weixinAppid) {
+        deleteData(RedisConstant.KEY_GUIDE_FOLLOW_POST + weixinAppid);
     }
 }

@@ -45,7 +45,7 @@ public class RedisConstant {
 
     // 图文模块
     public static final String KEY_COULD_SYNC_WX_POST = ApplicationConfig.REDIS_PREFIX + "kzweixin:could_sync_wx_post:";
-    public static final int EXPIRE_COULD_SYNC_WX_POST = 10 * 60;
+    public static final String KEY_GUIDE_FOLLOW_POST = ApplicationConfig.REDIS_PREFIX + "kzweixin:guide_follow_post:";
 
 
     /* ------------ php缓存key ------------*/

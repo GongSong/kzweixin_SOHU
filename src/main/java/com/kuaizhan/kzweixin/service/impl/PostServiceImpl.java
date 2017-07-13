@@ -1,25 +1,29 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.google.common.collect.ImmutableList;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.config.KzApiConfig;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.constant.PostConstant;
 import com.kuaizhan.kzweixin.dao.mapper.PostDao;
 import com.kuaizhan.kzweixin.cache.ImageCache;
 import com.kuaizhan.kzweixin.cache.PostCache;
+import com.kuaizhan.kzweixin.dao.mapper.auto.GuideFollowPostMapper;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.GuideFollowPostPO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.DownloadFileFailedException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.Export2KzException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.GetKzArticleException;
 import com.kuaizhan.kzweixin.dao.mongo.MongoPostDao;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
-import com.kuaizhan.kzweixin.exception.weixin.WxInvalidImageFormatException;
-import com.kuaizhan.kzweixin.exception.weixin.WxMediaIdNotExistException;
-import com.kuaizhan.kzweixin.exception.weixin.WxMediaSizeOutOfLimitException;
-import com.kuaizhan.kzweixin.exception.weixin.WxPostUsedException;
+import com.kuaizhan.kzweixin.exception.post.GuideFollowPostNotFoundException;
+import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxPostManager;
+import com.kuaizhan.kzweixin.manager.db.PostDBManager;
 import com.kuaizhan.kzweixin.mq.dto.ArticleImportDTO;
 import com.kuaizhan.kzweixin.mq.dto.SyncWxPostDTO;
 import com.kuaizhan.kzweixin.mq.dto.SyncWxPostListDTO;
@@ -38,54 +42,31 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by zixiong on 2017/3/20.
  */
-@Service("postService")
+@Service
 public class PostServiceImpl implements PostService {
 
     private static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
 
-    // 最长的title字符数
-    private static final int TITLE_MAX = 640;
-    // 最长的digest字符数
-    private static final int DIGEST_MAX = 512;
-    // 最长的content_source_url字符数
-    private static final int CONTENT_SOURCE_URL_MAX = 512;
-
     @Resource
     private PostDao postDao;
     @Resource
-    private ImageCache imageCache;
-    @Resource
     private PostCache postCache;
+    @Resource
+    private PostDBManager postDBManager;
+    @Resource
+    private ImageCache imageCache;
     @Resource
     private MqUtil mqUtil;
     @Resource
     private MongoPostDao mongoPostDao;
     @Resource
     private AccountService accountService;
-
-    @Override
-    public long genPageId() {
-        final long MIN = 1000000000L;
-        final long MAX = 9999999999L;
-        int count = 1;
-
-        long pageId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
-        while (postDao.isPageIdExist(pageId)) {
-            pageId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
-            count++;
-        }
-        // 随机三次及以上才随机到，报警
-        if (count >= 3) {
-            logger.warn("[genPageId] gen times reach {}", count);
-        }
-        return pageId;
-    }
-
+    @Resource
+    private GuideFollowPostMapper guideFollowPostMapper;
 
     @Override
     public Page<PostPO> listPostsByPage(long weixinAppid, String title, Integer pageNum, Boolean flat) {
@@ -103,7 +84,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostPO> listMultiPosts(long weixinAppid, String mediaId, Boolean withContent) {
+    public List<PostPO> getMultiPosts(long weixinAppid, String mediaId, Boolean withContent) {
 
         List<PostPO> multiPosts = postDao.listMultiPosts(weixinAppid, mediaId);
 
@@ -118,12 +99,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(long weixinAppid, long pageId, String accessToken) throws WxPostUsedException {
+    public void deletePost(long weixinAppid, long pageId) throws WxPostUsedException {
 
         PostPO postPO = getPostByPageId(pageId);
+
         if (postPO != null) {
             String mediaId = postPO.getMediaId();
             //微信删除
+            String accessToken = accountService.getAccessToken(weixinAppid);
             WxPostManager.deletePost(mediaId, accessToken);
             //数据库删除
             postDao.deletePost(weixinAppid, mediaId);
@@ -180,7 +163,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void importKzArticle(long weixinAppid, List<Long> pageIds) {
+    public void asyncImportKzArticles(long weixinAppid, List<Long> pageIds) {
         if (pageIds.size() > 0) {
             ArticleImportDTO dto = new ArticleImportDTO();
             dto.setWeixinAppid(weixinAppid);
@@ -215,7 +198,7 @@ public class PostServiceImpl implements PostService {
                     return urls.get(0);
                 // 多图文
                 } else {
-                    List<PostPO> multiPosts = listMultiPosts(weixinAppid, postPO.getMediaId(), false);
+                    List<PostPO> multiPosts = getMultiPosts(weixinAppid, postPO.getMediaId(), false);
                     if (urls.size() != multiPosts.size()) {
                         throw new BusinessException(ErrorCode.DIFFERENT_POSTS_NUM_ERROR);
                     }
@@ -249,7 +232,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void insertMultiPosts(long weixinAppid, List<PostPO> posts)  {
+    public long addMultiPosts(long weixinAppid, List<PostPO> posts)  {
 
         // 在方法执行过程中，有失效的风险
         String accessToken = accountService.getAccessToken(weixinAppid);
@@ -263,8 +246,8 @@ public class PostServiceImpl implements PostService {
             postPO.setMediaId(mediaId);
         }
 
-        // 入库
-        saveMultiPosts(weixinAppid, posts);
+        // 入库, 调用proxy类才能执行事务
+        return postDBManager.saveMultiPosts(weixinAppid, posts);
     }
 
     @Override
@@ -280,7 +263,7 @@ public class PostServiceImpl implements PostService {
             oldPosts = new ArrayList<>();
             oldPosts.add(oldPost);
         } else {
-            oldPosts = listMultiPosts(weixinAppid, oldPost.getMediaId(), true);
+            oldPosts = getMultiPosts(weixinAppid, oldPost.getMediaId(), true);
         }
 
         // 数目不对应, 接口调用错误
@@ -333,8 +316,7 @@ public class PostServiceImpl implements PostService {
             posts.get(index).setPageId(oldPosts.get(index).getPageId());
         }
 
-
-        updateMultiPostsDB(weixinAppid, oldPost.getMediaId(), posts);
+        postDBManager.updateMultiPosts(weixinAppid, oldPost.getMediaId(), posts);
     }
 
     /**
@@ -354,38 +336,6 @@ public class PostServiceImpl implements PostService {
     }
 
 
-    /**
-     * 修改图文的数据存储
-     * 此方法假设图文的数目不变
-     */
-    private void updateMultiPostsDB(long weixinAppid, String mediaId, List<PostPO> posts) {
-        // 更新每篇图文的数据库，修改内容
-        StringBuilder titleSum = new StringBuilder();
-
-        int updateTime = DateUtil.curSeconds();
-
-        for (PostPO postPO : posts) {
-
-            postPO.setUpdateTime(updateTime);
-            postDao.updatePost(postPO, postPO.getPageId());
-            mongoPostDao.upsertPost(postPO.getPageId(), postPO.getContent());
-            titleSum.append(postPO.getTitle());
-        }
-
-        // 修改图文总记录
-        if (posts.size() > 1) {
-            PostPO postSum = postDao.getPostByMediaId(weixinAppid, mediaId);
-            if (postSum.getType() != 2) {
-                logger.error("[图文垃圾数据], weixinAppid:{} mediaId:{}", weixinAppid, mediaId);
-            }
-
-            postSum.setUpdateTime(updateTime);
-            int endIndex = titleSum.length() < TITLE_MAX? titleSum.length(): TITLE_MAX;
-            postSum.setTitle(titleSum.toString().substring(0, endIndex));
-            postSum.setMediaId(posts.get(0).getMediaId());
-            postDao.updatePost(postSum, postSum.getPageId());
-        }
-    }
 
     /**
      * 把存数据库的多图文DO对象，封装成同步给微信的。
@@ -416,10 +366,6 @@ public class PostServiceImpl implements PostService {
     /**
      * 保存前，对图文数据做预处理
      * 上传内容中的图片到微信、上传封面图片；替换emoji, 替换js
-     *
-     * @param posts 多图文
-     * @return
-     * @parm accessToken 上传用的token
      */
     private List<PostPO> cleanPosts(List<PostPO> posts, String accessToken) {
 
@@ -438,12 +384,12 @@ public class PostServiceImpl implements PostService {
             /* 清理digest */
             String digest = postPO.getDigest();
             digest = StrUtil.removeEmojis(digest);
-            digest = StrUtil.chopStr(digest, DIGEST_MAX);
+            digest = StrUtil.chopStr(digest, PostConstant.DIGEST_MAX);
             postPO.setDigest(digest);
 
             /* 检查contentSourceUrl */
             String contentSourceUrl = postPO.getContentSourceUrl();
-            postPO.setContentSourceUrl(StrUtil.chopStr(contentSourceUrl, CONTENT_SOURCE_URL_MAX));
+            postPO.setContentSourceUrl(StrUtil.chopStr(contentSourceUrl, PostConstant.CONTENT_SOURCE_URL_MAX));
 
             /* 清理content */
             // 上传图片
@@ -483,14 +429,14 @@ public class PostServiceImpl implements PostService {
 
             String digest = wxPostDTO.getDigest();
             digest = StrUtil.removeEmojis(digest);
-            digest = StrUtil.chopStr(digest, DIGEST_MAX);
+            digest = StrUtil.chopStr(digest, PostConstant.DIGEST_MAX);
             postPO.setDigest(digest);
 
             postPO.setAuthor(wxPostDTO.getAuthor());
             postPO.setThumbMediaId(wxPostDTO.getThumbMediaId());
             postPO.setShowCoverPic(wxPostDTO.getShowCoverPic());
             postPO.setPostUrl(wxPostDTO.getUrl().replaceAll("&chksm=[^&]+", ""));
-            postPO.setContentSourceUrl(StrUtil.chopStr(wxPostDTO.getContentSourceUrl(), CONTENT_SOURCE_URL_MAX));
+            postPO.setContentSourceUrl(StrUtil.chopStr(wxPostDTO.getContentSourceUrl(), PostConstant.CONTENT_SOURCE_URL_MAX));
             postPO.setWeixinAppid(weixinAppid);
             postPO.setMediaId(mediaId);
             postPO.setUpdateTime((int) updateTime);
@@ -522,59 +468,6 @@ public class PostServiceImpl implements PostService {
     }
 
 
-    /**
-     * 把校验后的多图文新增到数据库, 必须先经过cleanPosts清洗数据
-     */
-    private void saveMultiPosts(long weixinAppid, List<PostPO> posts) {
-
-        // 1. 单图文 2. 多图文总记录 3. 多图文中的一条
-        short type = (short) (posts.size() > 1 ? 3 : 1);
-
-        int index = 0;
-        for (PostPO postPO : posts) {
-
-            // 生成pageId
-            postPO.setPageId(genPageId());
-            // 先把content保存到mongo
-            mongoPostDao.upsertPost(postPO.getPageId(), postPO.getContent());
-
-            postPO.setWeixinAppid(weixinAppid);
-            postPO.setType(type);
-            postPO.setIndex(index++);
-
-            postDao.insertPost(postPO);
-        }
-
-        // 如果是多图文，生成一条type为2的图文总记录
-        if (posts.size() > 1) {
-
-            PostPO sumPost = new PostPO();
-            // 有效数据
-            sumPost.setWeixinAppid(weixinAppid);
-            sumPost.setPageId(genPageId());
-            sumPost.setType((short) 2);
-            sumPost.setIndex(0);
-            sumPost.setMediaId(posts.get(0).getMediaId());
-            sumPost.setUpdateTime(posts.get(0).getUpdateTime());
-            // 把title拼接起来，保存多图文总记录里面
-            StringBuilder sumTitle = new StringBuilder();
-            for (PostPO postPO : posts) {
-                sumTitle.append(postPO.getTitle());
-            }
-            int endIndex = sumTitle.length() < TITLE_MAX? sumTitle.length(): TITLE_MAX;
-            sumPost.setTitle(sumTitle.toString().substring(0, endIndex));
-
-            // 无效数据
-            sumPost.setThumbMediaId("");
-            sumPost.setThumbUrl("");
-            sumPost.setAuthor("");
-            sumPost.setDigest("");
-            sumPost.setContentSourceUrl("");
-            sumPost.setShowCoverPic((short) 0);
-
-            postDao.insertPost(sumPost);
-        }
-    }
 
     /**
      * 删除html中的js标签，on_click事件
@@ -708,7 +601,7 @@ public class PostServiceImpl implements PostService {
     public void importWeixinPost(long weixinAppid, String mediaId, long updateTime, List<WxPostDTO> wxPostDTOs) {
         List<PostPO> postPOList = cleanWxPosts(weixinAppid, mediaId, updateTime, wxPostDTOs);
         // 入库
-        saveMultiPosts(weixinAppid, postPOList);
+        postDBManager.saveMultiPosts(weixinAppid, postPOList);
     }
 
     @Override
@@ -720,7 +613,7 @@ public class PostServiceImpl implements PostService {
         // 多图文情况
         List<PostPO> multiPosts = new ArrayList<>();
         if (postPO.getType() == 2) {
-            multiPosts = listMultiPosts(weixinAppid, mediaId, false);
+            multiPosts = getMultiPosts(weixinAppid, mediaId, false);
         }
 
         // 再次校验修改时间，以免覆盖在平台的修改
@@ -755,7 +648,7 @@ public class PostServiceImpl implements PostService {
                     }
                     // 不存在老图文则新建
                     else {
-                        newPost.setPageId(genPageId());
+                        newPost.setPageId(postDBManager.genPageId());
                         mongoPostDao.upsertPost(newPost.getPageId(), newPost.getContent());
                         postDao.insertPost(newPost);
                     }
@@ -794,6 +687,79 @@ public class PostServiceImpl implements PostService {
         return getWxImageUrl(accessToken, imgUrl);
     }
 
+    @Override
+    public String getGuideFollowPost(long weixinAppid) throws GuideFollowPostNotFoundException {
+        String url = postCache.getGuideFollowPostUrl(weixinAppid);
+
+        // 未命中缓存
+        if (url == null) {
+            GuideFollowPostPO guideFollowPost = guideFollowPostMapper.selectByPrimaryKey(weixinAppid);
+            if (guideFollowPost == null || guideFollowPost.getStatus() != 1) {
+                throw new GuideFollowPostNotFoundException();
+            }
+
+            url = guideFollowPost.getPostUrl();
+            postCache.setGuideFollowPostUrl(weixinAppid, url);
+        }
+
+        return url;
+    }
+
+    @Override
+    public String addGuideFollowPost(long weixinAppid) {
+        // 存在则不新建
+        GuideFollowPostPO guideFollowPost = guideFollowPostMapper.selectByPrimaryKey(weixinAppid);
+        if (guideFollowPost != null && isPostValid(guideFollowPost.getPageId())) {
+            return guideFollowPost.getPostUrl();
+        }
+
+        // 否则生成图文
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+
+        PostPO postPO = new PostPO();
+        postPO.setTitle("点击蓝字【\"" + accountPO.getNickName() + "\"】关注公众号，查看更多精彩内容");
+        postPO.setThumbUrl("http://pic.kuaizhan.com/g1/M01/57/DA/CgpQU1acTGWAHRwMAAFxhsY6vio7105783");
+        postPO.setContent("<p><img src=\"//pic.kuaizhan.com/g1/M00/5E/1E/wKjmqVagjMuAA0_hAAE8xMKaU1w2704850\" " +
+                "wx_src=\"https://mmbiz.qlogo.cn/mmbiz/" +
+                "V09zMGOnzfXdl2LXialUnjk0Av5LYjDlegrW1efMq63ibmmUd5nAoOia5lpicmEzibYMgIiccEMWse4cbreU234xhQkg/0" +
+                "?wx_fmt=png\"/></p>");
+
+        long pageId = addMultiPosts(weixinAppid, ImmutableList.of(postPO));
+        String postUrl = getPostWxUrl(weixinAppid, pageId);
+
+        // 保存引导关注图文
+        GuideFollowPostPO record = new GuideFollowPostPO();
+        record.setWeixinAppid(weixinAppid);
+        record.setPageId(pageId);
+        record.setPostUrl(postUrl);
+        record.setStatus(1);
+        record.setCreateTime(DateUtil.curSeconds());
+        record.setUpdateTime(DateUtil.curSeconds());
+        // 不知道当初设计存这两个字段的目的是什么
+        record.setNickName(accountPO.getNickName());
+        record.setHeadImg(accountPO.getHeadImg());
+        guideFollowPostMapper.upsert(record);
+
+        // 清理缓存
+        postCache.deleteGuideFollowPostUrl(weixinAppid);
+
+        return postUrl;
+    }
+
+
+    /**
+     * 判断一篇图文url是否有效
+     */
+    private boolean isPostValid(long pageId) {
+        PostPO postPO = postDao.getPost(pageId);
+        String accessToken = accountService.getAccessToken(postPO.getWeixinAppid());
+        try {
+            WxPostManager.getWxPost(postPO.getMediaId(), accessToken);
+        } catch (WxPostDeletedException e) {
+            return false;
+        }
+        return true;
+    }
 
     /**
      *  判断是否应该同步微信图文，并发布mq消息

@@ -59,6 +59,7 @@ public class ErrorCode {
     public static final ErrorCode MEDIA_COUNT_OUT_OF_LIMIT = new ErrorCode(107012, "微信图片素材数量超出限制，请前往微信公众平台查看");
     public static final ErrorCode CAN_NOT_CHANGE_POST_NUM = new ErrorCode(107013, "由于微信限制，不能修改多图文的数目");
     public static final ErrorCode INVALID_IMAGE_FORMAT = new ErrorCode(107014, "图片格式错误, 上传微信失败");
+    public static final ErrorCode GUIDE_FOLLOW_POST_NOT_FOUND = new ErrorCode(107015, "引导关注图文不存在，请重新创建");
 
     // 消息、模板消息(08)
     public static final ErrorCode TPL_DATA_FORMAT_ERROR = new ErrorCode(108001, "模板消息数据格式错误");
