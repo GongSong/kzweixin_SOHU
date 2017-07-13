@@ -18,6 +18,6 @@ public class SubscribeConsumer extends BaseConsumer{
     public void onMessage(String message) {
         FanDTO dto = JsonUtil.string2Bean(message, FanDTO.class);
         fanService.addFanOpenId(dto.getAppId(), dto.getOpenId());
-        fanService.addFan(dto.getAppId(), dto.getOpenId());
+        fanService.refreshFan(dto.getAppId(), dto.getOpenId());
     }
 }

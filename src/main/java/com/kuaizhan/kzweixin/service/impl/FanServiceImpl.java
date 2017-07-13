@@ -295,12 +295,12 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public FanPO addFan(String appId, String openId) {
+    public void refreshFan(String appId, String openId) {
         AccountPO accountPO = accountService.getAccountByAppId(appId);
 
         // 只有认证的公众号才能获取粉丝信息
         if (accountPO == null || accountPO.getServiceType() != 0) {
-            return null;
+            return;
         }
 
         String accessToken = accountService.getAccessToken(accountPO.getWeixinAppid());
@@ -344,8 +344,6 @@ public class FanServiceImpl implements FanService {
             fanPO.setCreateTime(DateUtil.curSeconds());
             fanMapper.insertSelective(fanPO, table);
         }
-
-        return fanPO;
     }
 
     @Override
@@ -439,12 +437,15 @@ public class FanServiceImpl implements FanService {
 
     @Override
     public void refreshInteractionTime(String appId, String openId) {
-        FanPO fanPO = getFanByOpenId(appId, openId);
         FanPO record = new FanPO();
-        record.setFanId(fanPO.getFanId());
         record.setLastInteractTime(DateUtil.curSeconds());
 
+        FanPOExample example = new FanPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
         String table = DBTableUtil.getFanTableName(appId);
-        fanMapper.updateByPrimaryKeySelective(record, table);
+        fanMapper.updateByExampleSelective(record, example, table);
     }
 }

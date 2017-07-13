@@ -95,7 +95,7 @@ public interface FanService {
      * @param openId 粉丝openId
      * @return 粉丝信息
      * */
-    FanPO addFan(String appId, String openId);
+    void refreshFan(String appId, String openId);
 
     /**
      * 用户取消订阅，删除open_id表里用户信息

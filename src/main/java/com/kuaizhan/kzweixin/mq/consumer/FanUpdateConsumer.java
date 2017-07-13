@@ -26,7 +26,7 @@ public class FanUpdateConsumer extends BaseConsumer{
         FanPO fanPO = fanService.getFanByOpenId(appId, openId);
 
         if (fanPO == null || DateUtil.curSeconds() - fanPO.getUpdateTime() > 3600) {
-            fanService.addFan(appId, openId);
+            fanService.refreshFan(appId, openId);
         }
     }
 }
