@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
 
+import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
@@ -54,10 +55,10 @@ public interface MsgService {
      * 发送客服消息
      * @param weixinAppid 微信appId
      * @param openId 用户openId
-     * @param msgType 发送消息类型
-     * @param content 消息数据
+     * @param customMsg 消息数据
+     * @throws IllegalArgumentException 客服消息数据有误
      */
-    void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, String content);
+    void sendCustomMsg(long weixinAppid, String openId, CustomMsg customMsg);
 
     /**
      * 获取快站推送token

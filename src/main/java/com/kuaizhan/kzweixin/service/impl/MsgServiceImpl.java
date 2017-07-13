@@ -5,14 +5,10 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.cache.MsgCache;
 import com.kuaizhan.kzweixin.config.KzApiConfig;
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.enums.MsgType;
-import com.kuaizhan.kzweixin.enums.WxMsgType;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.dao.mapper.MsgDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.MsgConfigMapper;
-import com.kuaizhan.kzweixin.exception.BusinessException;
-import com.kuaizhan.kzweixin.exception.common.DownloadFileFailedException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxCommonManager;
 import com.kuaizhan.kzweixin.manager.WxMsgManager;
@@ -140,88 +136,97 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, String content) {
+    public void sendCustomMsg(long weixinAppid, String openId, CustomMsg customMsg) throws IllegalArgumentException {
+
         String accessToken = accountService.getAccessToken(weixinAppid);
 
-        WxMsgType wxMsgType;
-        Object contentObj;
-        // TODO: 用dataMap传输json数据，实在是不是好方法。--- 不方便做数据校验, 经常面临强制转换，数据结构不那么"显而易见"。
-        switch (msgType) {
-            // 文本类型
-            case TEXT:
-                wxMsgType = WxMsgType.TEXT;
-                CustomMsg.Text text = JsonUtil.string2Bean(content, CustomMsg.Text.class);
-                String textContent = text.getContent();
-                if (textContent == null) {
-                    throw new BusinessException(ErrorCode.PARAM_ERROR, "content不能为空");
-                }
-                // 去除emoji
-                text.setContent(EmojiParser.removeAllEmojis(textContent));
-                contentObj = text;
-                break;
-            // 图片类型
-            case IMAGE:
-                wxMsgType = WxMsgType.IMAGE;
-                CustomMsg.Image image = JsonUtil.string2Bean(content, CustomMsg.Image.class);
-
-                String picUrl = UrlUtil.fixProtocol(image.getPicUrl());
-                if (picUrl == null) {
-                    throw new BusinessException(ErrorCode.PARAM_ERROR, "pic_url不能为空");
-                }
-                String mediaId = WxCommonManager.uploadTmpImage(accessToken, picUrl);
-                image.setMediaId(mediaId);
-                contentObj = image;
-                break;
-            // 多图文类型
-            case MP_NEWS:
-                // 保存为链接组类型
-                msgType = MsgType.NEWS;
-
-                wxMsgType = WxMsgType.NEWS;
-                CustomMsg.MpNews mpNews = JsonUtil.string2Bean(content, CustomMsg.MpNews.class);
-
-                CustomMsg.News news = new CustomMsg.News();
-
-                for(Long pageId: mpNews.getPosts()) {
-                    PostPO postPO = postService.getPostByPageId(pageId);
-
-                    CustomMsg.Article article = new CustomMsg.Article();
-                    article.setTitle(postPO.getTitle());
-                    article.setDescription(postPO.getDigest());
-                    article.setUrl(postService.getPostWxUrl(weixinAppid, pageId));
-                    article.setPicUrl(postPO.getThumbUrl());
-
-                    news.getArticles().add(article);
-                }
-
-                contentObj = news;
-                break;
-            // 链接组类型
-            case NEWS:
-                wxMsgType = WxMsgType.NEWS;
-                // TODO: 校验bean
-                news = JsonUtil.string2Bean(content, CustomMsg.News.class);
-                contentObj = news;
-                break;
-
-            default:
-                throw new BusinessException(ErrorCode.OPERATION_FAILED, "不允许的消息类型");
-        }
-
+        // 数据清理
+        customMsg = cleanCustomMsg(customMsg, accessToken);
         // 发送消息
-        WxMsgManager.sendCustomMsg(accessToken, openId, wxMsgType, contentObj);
+        WxMsgManager.sendCustomMsg(accessToken, openId, customMsg);
 
         // 存储消息
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String appId = accountPO.getAppId();
-
         MsgPO msgPO = new MsgPO();
         msgPO.setAppId(appId);
-        msgPO.setContent(JsonUtil.bean2String(contentObj));
+        msgPO.setContent(customMsg.getContentJsonStr());
         msgPO.setOpenId(openId);
         msgPO.setSendType(2);
-        msgPO.setType((int) msgType.getValue());
-        insertMsg(appId, msgPO);
+        msgPO.setType((int) customMsg.getMsgType().getValue());
+        String tableName = DBTableUtil.getMsgTableName(appId);
+        msgDao.insertMsg(tableName, msgPO);
+    }
+
+    /**
+     * 清理客服消息数据
+     * @throws IllegalArgumentException 客服消息数据有误
+     */
+    private CustomMsg cleanCustomMsg(CustomMsg customMsg, String accessToken) throws IllegalArgumentException {
+        switch (customMsg.getMsgType()) {
+            // 文本类型
+            case TEXT:
+                CustomMsg.Text text = customMsg.getText();
+                if (text == null || text.getContent() == null) {
+                    throw new IllegalArgumentException("content不能为空");
+                }
+                // 去除emoji
+                text.setContent(EmojiParser.removeAllEmojis(text.getContent()));
+                customMsg.setContentJsonStr(JsonUtil.bean2String(text));
+                break;
+            // 图片类型
+            case IMAGE:
+                CustomMsg.Image image = customMsg.getImage();
+
+                if (image == null || image.getPicUrl() == null) {
+                    throw new IllegalArgumentException("pic_url不能为空");
+                }
+
+                // 上传图片
+                if (image.getMediaId() == null) {
+                    String picUrl = UrlUtil.fixProtocol(image.getPicUrl());
+                    String mediaId = WxCommonManager.uploadTmpImage(accessToken, picUrl);
+                    image.setMediaId(mediaId);
+                }
+                customMsg.setContentJsonStr(JsonUtil.bean2String(image));
+                break;
+            // 多图文类型
+            case MP_NEWS:
+
+                CustomMsg.MpNews mpNews = customMsg.getMpNews();
+
+                if (mpNews == null || mpNews.getPosts().size() == 0) {
+                    throw new IllegalArgumentException("图文列表不能为空");
+                }
+
+                // 转换为链接组类型
+                CustomMsg.News newsFromMp = new CustomMsg.News();
+                for(Long pageId: mpNews.getPosts()) {
+
+                    PostPO postPO = postService.getPostByPageId(pageId);
+                    CustomMsg.Article article = new CustomMsg.Article();
+                    article.setTitle(postPO.getTitle());
+                    article.setDescription(postPO.getDigest());
+                    article.setUrl(postService.getPostWxUrl(pageId));
+                    article.setPicUrl(postPO.getThumbUrl());
+
+                    newsFromMp.getArticles().add(article);
+                }
+                customMsg.setMsgType(MsgType.NEWS);
+                customMsg.setNews(newsFromMp);
+                customMsg.setContentJsonStr(JsonUtil.bean2String(newsFromMp));
+                break;
+            // 链接组类型
+            case NEWS:
+                // TODO: 校验下参数
+                CustomMsg.News news = new CustomMsg.News();
+                customMsg.setContentJsonStr(JsonUtil.bean2String(news));
+                break;
+
+            default:
+                throw new IllegalArgumentException("不允许的消息类型:" + customMsg.getMsgType());
+        }
+        return customMsg;
     }
 
     @Override
@@ -250,12 +255,6 @@ public class MsgServiceImpl implements MsgService {
         msgCache.deletePushToken(accountPO.getAppId(), openId);
     }
 
-
-    /** 存储消息 **/
-    private void insertMsg(String appid, MsgPO msgPO) {
-        String tableName = DBTableUtil.getMsgTableName(appid);
-        msgDao.insertMsg(tableName, msgPO);
-    }
 
     /** 获取消息的最后阅读时间，不存在则新建 **/
     private int getLastReadTime(long weixinAppid) {

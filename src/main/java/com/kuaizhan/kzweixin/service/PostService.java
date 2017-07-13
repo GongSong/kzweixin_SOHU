@@ -87,7 +87,7 @@ public interface PostService {
     /**
      * 获取图文的微信链接
      */
-    String getPostWxUrl(long weixinAppid, long pageId);
+    String getPostWxUrl(long pageId);
 
     /**
      * 同步微信消息(异步)

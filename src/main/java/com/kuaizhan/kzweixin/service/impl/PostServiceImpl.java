@@ -173,9 +173,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public String getPostWxUrl(long weixinAppid, long pageId) {
+    public String getPostWxUrl(long pageId) {
         PostPO postPO = getPostByPageId(pageId);
+
         if (postPO != null) {
+            long weixinAppid = postPO.getWeixinAppid();
+
             String wxUrl = postPO.getPostUrl();
             if (wxUrl != null && wxUrl.contains("mp.weixin.qq.com")) {
                 return wxUrl;
@@ -725,7 +728,7 @@ public class PostServiceImpl implements PostService {
                 "?wx_fmt=png\"/></p>");
 
         long pageId = addMultiPosts(weixinAppid, ImmutableList.of(postPO));
-        String postUrl = getPostWxUrl(weixinAppid, pageId);
+        String postUrl = getPostWxUrl(pageId);
 
         // 保存引导关注图文
         GuideFollowPostPO record = new GuideFollowPostPO();

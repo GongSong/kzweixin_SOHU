@@ -105,7 +105,7 @@ public class MenuServiceImpl implements MenuService {
     public String updateMenuItem(long weixinAppid, long menuKey, int responseType, String responseJson, MenuDTO menuDTO){
         String linListResponseJson = responseJson;
         // 清理数据
-        responseJson = cleanResponseJson(weixinAppid, responseType, responseJson);
+        responseJson = cleanResponseJson(responseType, responseJson);
 
         // 修改menuItem
         MenuItemPO record = new MenuItemPO();
@@ -231,7 +231,7 @@ public class MenuServiceImpl implements MenuService {
      * 修正response json数据
      * @throws IllegalArgumentException: 未知的responseType
      */
-    private String cleanResponseJson(long weixinAppid, int responseType, String responseJson) throws IllegalArgumentException {
+    private String cleanResponseJson(int responseType, String responseJson) throws IllegalArgumentException {
         // 图文列表
         if (responseType == ResponseType.POST_LIST) {
 
@@ -249,7 +249,7 @@ public class MenuServiceImpl implements MenuService {
                     hasMulti = 1;
                 }
                 // TODO: 这个地方要加上异常处理
-                String wxUrl = postService.getPostWxUrl(weixinAppid, postId);
+                String wxUrl = postService.getPostWxUrl(postId);
                 ObjectNode node = new ObjectMapper().createObjectNode()
                         .put("post_id", postPO.getPageId())
                         .put("post_title", postPO.getTitle())

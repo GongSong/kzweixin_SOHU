@@ -3,6 +3,7 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.controller.vo.MsgListVO;
@@ -125,7 +126,22 @@ public class MsgController extends BaseController {
     @RequestMapping(value = "/msgs", method = RequestMethod.POST)
     public JsonResponse insertCustomMsg(@Valid @RequestBody SendCustomMsgParam param) {
         MsgType msgType = MsgType.fromValue(param.getMsgType());
-        msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), msgType, JsonUtil.bean2String(param.getContent()));
+        String contentJsonStr = JsonUtil.bean2String(param.getContent());
+
+        CustomMsg customMsg = new CustomMsg();
+        customMsg.setMsgType(msgType);
+
+        if (msgType == MsgType.TEXT) {
+            customMsg.setText(JsonUtil.string2Bean(contentJsonStr, CustomMsg.Text.class));
+        } else if (msgType == MsgType.IMAGE) {
+            customMsg.setImage(JsonUtil.string2Bean(contentJsonStr, CustomMsg.Image.class));
+        } else if (msgType == MsgType.MP_NEWS) {
+            customMsg.setMpNews(JsonUtil.string2Bean(contentJsonStr, CustomMsg.MpNews.class));
+        } else if (msgType == MsgType.NEWS) {
+            customMsg.setNews(JsonUtil.string2Bean(contentJsonStr, CustomMsg.News.class));
+        }
+
+        msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), customMsg);
         return new JsonResponse(ImmutableMap.of());
     }
 
