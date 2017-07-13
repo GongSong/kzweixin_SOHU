@@ -1,5 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
+import com.kuaizhan.kzweixin.dao.po.auto.TplMsgPO;
+
 import java.util.Map;
 
 /**
@@ -28,8 +30,14 @@ public interface TplService {
      * @param openId 用户的openId
      * @param url 模板消息的跳转链接
      * @param dataMap 模板消息的内容
+     * @return 微信生成的msgId
      */
-    void sendTplMsg(long weixinAppid, String tplId, String openId, String url, Map dataMap);
+    long sendTplMsg(long weixinAppid, String tplId, String openId, String url, Map dataMap);
+
+    /**
+     * 新增tplMsg
+     */
+    void addTplMsg(TplMsgPO tplMsgPO);
 
     /**
      * 判断公众号是否添加某模板

@@ -29,7 +29,7 @@
     <rabbit:queue id="queueSendSysTplMsg" name="sys-kzweixin-send-sys-tpl-msg" durable="true" auto-delete="false" />
     <!--绑定后的操作queue-->
     <rabbit:queue id="queueAfterBind" name="sys-kzweixin-after-bind" durable="true" auto-delete="false" />
-    <!--粉丝订阅后的操作queue-->
+    <!--粉丝订阅queue-->
     <rabbit:queue id="queueSubscribe" name="sys-kzweixin-fan-subscribe" durable="true" auto-delete="false" />
 
     <!-- Exchange的声明 -->

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.TplDao;
+import com.kuaizhan.kzweixin.dao.mapper.auto.TplMsgMapper;
+import com.kuaizhan.kzweixin.dao.po.auto.TplMsgPO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.weixin.*;
 import com.kuaizhan.kzweixin.manager.WxTplManager;
@@ -11,8 +13,10 @@ import com.kuaizhan.kzweixin.mq.dto.SendTplMsgDTO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.TplService;
+import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.MqUtil;
+import com.kuaizhan.kzweixin.utils.StrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,8 +39,11 @@ public class TplServiceImpl implements TplService {
     private AccountService accountService;
     @Resource
     private MqUtil mqUtil;
+    @Resource
+    private TplMsgMapper tplMsgMapper;
 
     private Map<String, Object> sysTplMap;
+    private static final int TPL_MSG_URL_MAX_LENGTH = 200;
 
     private static final Logger logger = LoggerFactory.getLogger(TplServiceImpl.class);
 
@@ -106,11 +113,24 @@ public class TplServiceImpl implements TplService {
     }
 
     @Override
-    public void sendTplMsg(long weixinAppid, String tplId, String openId, String url, Map dataMap)
+    public long sendTplMsg(long weixinAppid, String tplId, String openId, String url, Map dataMap)
             throws WxInvalidTemplateException, WxInvalidOpenIdException, WxDataFormatException, WxRequireSubscribeException {
         String accessToken = accountService.getAccessToken(weixinAppid);
-        WxTplManager.sendTplMsg(accessToken, tplId, openId, url, dataMap);
+        return WxTplManager.sendTplMsg(accessToken, tplId, openId, url, dataMap);
         // 发送过的模板消息有必要存起来吗？
+    }
+
+    @Override
+    public void addTplMsg(TplMsgPO tplMsgPO) {
+        if (tplMsgPO.getTplMassId() == null) {
+            tplMsgPO.setTplMassId(0L);
+        }
+        // 截取URL
+        tplMsgPO.setMsgUrl(StrUtil.chopStr(tplMsgPO.getMsgUrl(), TPL_MSG_URL_MAX_LENGTH));
+        tplMsgPO.setStatus(1);
+        tplMsgPO.setUpdateTime(DateUtil.curSeconds());
+        tplMsgPO.setCreateTime(DateUtil.curSeconds());
+        tplMsgMapper.insert(tplMsgPO);
     }
 
     @Override

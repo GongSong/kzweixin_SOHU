@@ -79,7 +79,11 @@
                 <!--<columnOverride column="in_blacklist" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
-            <table tableName="weixin_guide_follow" domainObjectName="GuideFollowPostPO" mapperName="GuideFollowPostMapper">
+            <!--<table tableName="weixin_guide_follow" domainObjectName="GuideFollowPostPO" mapperName="GuideFollowPostMapper">-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
+
+            <table tableName="weixin_tpl_msg" domainObjectName="TplMsgPO" mapperName="TplMsgMapper">
                 <columnOverride column="status" javaType="java.lang.Integer"/>
             </table>
 
