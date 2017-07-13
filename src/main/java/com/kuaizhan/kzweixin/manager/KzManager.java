@@ -68,7 +68,7 @@ public class KzManager {
                     .field("file", file)
                     .asJson();
         } catch (UnirestException e) {
-            throw new KZPicUploadException("[uploadPicToKz] upload failed");
+            throw new KZPicUploadException("[uploadPicToKz] upload failed", e);
         } finally {
             file.delete();
         }

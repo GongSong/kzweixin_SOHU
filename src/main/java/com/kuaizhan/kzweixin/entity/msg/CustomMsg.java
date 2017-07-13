@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.entity.msg;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.kuaizhan.kzweixin.enums.MsgType;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -13,7 +14,22 @@ import java.util.List;
  * 客服消息数据
  * Created by zixiong on 2017/5/31.
  */
+@Data
 public class CustomMsg {
+
+    // 消息类型
+    @NotNull
+    private MsgType msgType;
+
+    // 不同类型的消息数据
+    private Text text;
+    private Image image;
+    private MpNews mpNews;
+    private News news;
+
+    // 内容的json数据
+    private String contentJsonStr;
+
 
     /**
      * 文本类型

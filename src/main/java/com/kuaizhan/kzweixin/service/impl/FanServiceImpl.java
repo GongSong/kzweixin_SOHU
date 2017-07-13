@@ -300,7 +300,7 @@ public class FanServiceImpl implements FanService {
         AccountPO accountPO = accountService.getAccountByAppId(appId);
 
         // 只有认证的公众号才能获取粉丝信息
-        if (accountPO == null || accountPO.getServiceType() != 0) {
+        if (accountPO == null || accountPO.getVerifyType() != 0) {
             return;
         }
 

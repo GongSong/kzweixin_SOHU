@@ -9,4 +9,8 @@ public class WxApiException extends RuntimeException {
     public WxApiException(String msg) {
         super(msg);
     }
+
+    public WxApiException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 }

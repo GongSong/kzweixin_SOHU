@@ -233,7 +233,8 @@ public class PostController extends BaseController {
      */
     @RequestMapping(value = "/posts/{pageId}/wx_url", method = RequestMethod.GET)
     public JsonResponse getPostWxUrl(@PathVariable("pageId") long pageId, @RequestParam long weixinAppid) {
-        String wxUrl = postService.getPostWxUrl(weixinAppid, pageId);
+        accountService.getAccountByWeixinAppId(weixinAppid);
+        String wxUrl = postService.getPostWxUrl(pageId);
         return new JsonResponse(ImmutableMap.of("wxUrl", wxUrl));
     }
 

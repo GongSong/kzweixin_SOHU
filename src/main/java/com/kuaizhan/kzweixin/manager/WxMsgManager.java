@@ -2,12 +2,17 @@ package com.kuaizhan.kzweixin.manager;
 
 import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.WxErrCode;
-import com.kuaizhan.kzweixin.enums.WxMsgType;
+import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
+import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidOpenIdException;
 import com.kuaizhan.kzweixin.exception.weixin.WxOutOfResponseLimitException;
 import com.kuaizhan.kzweixin.utils.HttpClientUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -22,20 +27,34 @@ public class WxMsgManager {
     /**
      * 给用户发送客服消息
      * @param openId 用户的openId
-     * @param msgType 消息类型
-     * @param content 消息数据
+     * @param customMsg 消息数据
+     * @throws IllegalArgumentException 图文数据不合法
+     * @throws WxOutOfResponseLimitException 回复次数超过限制
      */
-    public static void sendCustomMsg(String accessToken, String openId, WxMsgType msgType, Object content) {
+    public static void sendCustomMsg(String accessToken, String openId, CustomMsg customMsg)
+            throws IllegalArgumentException, WxOutOfResponseLimitException {
+
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("touser", openId);
-        paramMap.put("msgtype", msgType.getValue());
-        paramMap.put(msgType.getValue(), content);
 
-        String paramStr = JsonUtil.bean2String(paramMap);
-        String result = HttpClientUtil.postJson(WxApiConfig.sendCustomMsgUrl(accessToken), paramStr);
+        MsgType msgType = customMsg.getMsgType();
+        if (msgType == MsgType.TEXT) {
+            paramMap.put("msgtype", "text");
+            paramMap.put("text", customMsg.getText());
+        } else if (msgType == MsgType.IMAGE) {
+            paramMap.put("msgtype", "image");
+            paramMap.put("image", customMsg.getImage());
+        } else if (msgType == MsgType.NEWS) {
+            paramMap.put("msgtype", "news");
+            paramMap.put("news", customMsg.getNews());
+        } else {
+            throw new IllegalArgumentException("[Weixin:sendCustomMsg]: msgType not allowed:" + msgType);
+        }
+
+        String result = HttpClientUtil.postJson(WxApiConfig.sendCustomMsgUrl(accessToken), JsonUtil.bean2String(paramMap));
 
         if (result == null) {
-            throw new WxApiException("[WeiXin:sendCustomMsg] result is null");
+            throw new WxApiException("[Weixin:sendCustomMsg] result is null");
         }
 
         JSONObject resultJson = new JSONObject(result);
@@ -49,7 +68,8 @@ public class WxMsgManager {
             throw new WxOutOfResponseLimitException();
         }
         if (errCode != 0) {
-            throw new WxApiException("[Weixin:sendCustomMsg] unexpected result:" + resultJson + " paramStr:" + paramStr);
+            throw new WxApiException("[Weixin:sendCustomMsg] unexpected result:" + resultJson +
+                    " content:" + customMsg.getContentJsonStr());
         }
     }
 }
