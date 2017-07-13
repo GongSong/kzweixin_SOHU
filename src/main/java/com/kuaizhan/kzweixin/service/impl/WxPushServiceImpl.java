@@ -114,6 +114,7 @@ public class WxPushServiceImpl implements WxPushService {
             kzStat("a110", wxData.getAppId());
 
             // 添加粉丝信息
+            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
             fanService.asyncAddFan(wxData.getAppId(), wxData.getOpenId());
 
             if (StringUtils.isNotBlank(wxData.getEventKey())) {
@@ -142,6 +143,7 @@ public class WxPushServiceImpl implements WxPushService {
         else if ("LOCATION".equals(wxData.getEvent())) {
 
             kzStat("a140", wxData.getAppId());
+            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
             fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
 
             return SUCCESS_RESULT;
@@ -161,6 +163,7 @@ public class WxPushServiceImpl implements WxPushService {
         else if ("VIEW".equals(wxData.getEvent())) {
 
             kzStat("a160", wxData.getAppId());
+            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
             fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
 
             return SUCCESS_RESULT;
