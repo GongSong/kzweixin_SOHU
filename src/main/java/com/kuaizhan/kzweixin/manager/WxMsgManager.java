@@ -9,10 +9,6 @@ import com.kuaizhan.kzweixin.exception.weixin.WxInvalidOpenIdException;
 import com.kuaizhan.kzweixin.exception.weixin.WxOutOfResponseLimitException;
 import com.kuaizhan.kzweixin.utils.HttpClientUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 
 import java.util.HashMap;

@@ -166,6 +166,12 @@
             <artifactId>mybatis-spring</artifactId>
             <version>${mybatis.spring.version}</version>
         </dependency>
+        <!--开源插件依赖-->
+        <dependency>
+            <groupId>com.itfsw</groupId>
+            <artifactId>mybatis-generator-plugin</artifactId>
+            <version>1.0.14</version>
+        </dependency>
         <!-- MySql -->
         <dependency>
             <groupId>mysql</groupId>
