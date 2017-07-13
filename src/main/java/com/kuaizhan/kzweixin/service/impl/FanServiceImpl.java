@@ -114,7 +114,8 @@ public class FanServiceImpl implements FanService {
         FanPOExample example = new FanPOExample();
         example.createCriteria()
                 .andAppIdEqualTo(appId)
-                .andOpenIdEqualTo(openId);
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
 
         List<FanPO> fanPOList = fanMapper.selectByExample(example, table);
         return fanPOList.isEmpty() ? null : fanPOList.get(0);
@@ -311,6 +312,8 @@ public class FanServiceImpl implements FanService {
         fanPO.setAppId(appId);
         fanPO.setOpenId(openId);
         fanPO.setStatus(userInfoDTO.getSubscribe() == 1 ? 1 : 2);
+        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+        System.out.println("StrUtil.removeEmojis(userInfoDTO.getNickName()):" + StrUtil.removeEmojis(userInfoDTO.getNickName()));
         fanPO.setNickName(StrUtil.removeEmojis(userInfoDTO.getNickName()));
         fanPO.setCity(userInfoDTO.getCity());
         fanPO.setProvince(userInfoDTO.getProvince());
