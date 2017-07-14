@@ -14,7 +14,8 @@ public enum MsgType {
     MP_NEWS((short) 9),
     NEWS((short) 10),
     KEYWORD_TEXT((short) 12),
-    TPL_MSG((short) 15);
+    TPL_MSG((short) 15),
+    RESERVE((short)99);
 
 
     private short value;

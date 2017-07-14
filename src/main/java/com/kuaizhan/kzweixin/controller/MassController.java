@@ -9,6 +9,7 @@ import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
+import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.service.*;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
@@ -138,36 +139,48 @@ public class MassController extends BaseController {
         }
 
         if(isPreview != 0) {
-            if(accountPO.getPreviewOpenId() == null || StringUtils.isEmpty(accountPO.getPreviewOpenId())) {
+            if(StringUtils.isEmpty(accountPO.getPreviewOpenId())) {
                 return new JsonResponse(ErrorCode.MASS_OPENID_NOT_SET.getCode(),"", ImmutableMap.of());
             }
         }
 
         String[] postIdArray = postIds.split(",");
         if(postIdArray == null || postIdArray.length ==0 ) {
-            return new JsonResponse(ErrorCode.MASS_POSTID_NOT_SET);
+            return new JsonResponse(ErrorCode.MASS_POSTID_NOT_SET.getCode(), "", ImmutableMap.of());
         }
-
 
         List<PostPO> postPOList = new ArrayList<>();
         for(String postId : postIdArray) {
             postPOList.add(postService.getPostByPageId(Integer.valueOf(postId)));
         }
 
-        // 合并多选post:
-        // postService.insertMultiPosts(accountPO.getWeixinAppid(), postPOList);
+        String content = null;
+        MsgType type = MsgType.RESERVE;
+        if(respType == 1) { // 文章列表
+            type = MsgType.MP_NEWS;
+            long postId;
+            if(postPOList.size() > 1 && hasMulti != 1) {
+                postId = postService.addMultiPosts(accountPO.getWeixinAppid(), postPOList);
+            } else {
+                postId = postPOList.get(0).getPageId();
+            }
+            PostPO post = postService.getPostByPageId(postId);
+            String mediaId = post.getMediaId();
+            // TODO
+        } else if(respType == 3) { // 文字
+            type = MsgType.TEXT;
 
-        if(isPreview != 0) {
-            // 发送预览
-            msgService.sendCustomMsg(accountPO.getWeixinAppid(), accountPO.getPreviewOpenId(), MsgType.TEXT, null );
-        } else {
-            // 真正发送
-
+        } else if(respType == 4) { // 图片
+            type = MsgType.IMAGE;
         }
 
+        if(isPreview != 0) {
+            msgService.sendCustomMsg(accountPO.getWeixinAppid(), accountPO.getPreviewOpenId(), type, content);
+        } else {
+            // TODO
+        }
 
-
-        return new JsonResponse(null);
+        return new JsonResponse(ErrorCode.SUCCESS.getCode(), "", ImmutableMap.of());
     }
 
 

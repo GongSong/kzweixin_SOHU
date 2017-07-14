@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
+import com.kuaizhan.kzweixin.enums.MsgType;
 
 import java.util.List;
 
@@ -27,5 +28,8 @@ public interface MassService {
 
 
     List<CustomMassPO> getCustomMassByWxAppId(long wxAppid);
+
+
+    void sendCustomMsg(long weixinAppid, MsgType msgType, String content);
 
 }
