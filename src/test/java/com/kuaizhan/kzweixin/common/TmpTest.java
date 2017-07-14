@@ -1,19 +1,9 @@
 package com.kuaizhan.kzweixin.common;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kuaizhan.kzweixin.entity.WxData;
-import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.util.Map;
 
 
 /**

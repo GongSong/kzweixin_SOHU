@@ -1,5 +1,7 @@
 package com.kuaizhan.kzweixin.config;
 
+import com.kuaizhan.kzweixin.utils.JsonUtil;
+import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,18 @@ public class AppConfig {
     @PostConstruct
     public void init() {
         Unirest.setTimeouts(1000, 6 * 1000);
+
+        Unirest.setObjectMapper(new ObjectMapper() {
+            @Override
+            public <T> T readValue(String value, Class<T> valueType) {
+                return JsonUtil.string2Bean(value, valueType);
+            }
+
+            @Override
+            public String writeValue(Object value) {
+                return JsonUtil.bean2String(value);
+            }
+        });
     }
 
     @EventListener

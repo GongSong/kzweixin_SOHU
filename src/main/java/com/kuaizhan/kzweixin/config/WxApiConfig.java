@@ -8,8 +8,8 @@ package com.kuaizhan.kzweixin.config;
 public class WxApiConfig {
 
     // 主域名
-    private static final String DOMAIN_WEIXIN_API = "https://api.weixin.qq.com";
-    private static final String DOMAIN_WEIXIN_MP = "https://mp.weixin.qq.com";
+    public static final String DOMAIN_WEIXIN_API = "https://api.weixin.qq.com";
+    public static final String DOMAIN_WEIXIN_MP = "https://mp.weixin.qq.com";
 
     // 账户
 
@@ -90,6 +90,13 @@ public class WxApiConfig {
     private static final String WEIXIN_UPDATE_POST = "/cgi-bin/material/update_news?access_token=";
     // 上传图文中的图片素材
     private static final String WEIXIN_ADD_POST_IMAGE = "/cgi-bin/media/uploadimg?access_token=";
+
+    // 授权登录
+
+    // 获取access_token
+    public static final String WEIXIN_AUTHORIZE_ACCESS_TOKEN = "/sns/oauth2/component/access_token";
+    // 获取授权登录的用户信息
+    public static final String WEIXIN_AUTHORIZE_USER_INFO = "/sns/userinfo";
 
     /**
      * 使用授权码换取公众号的接口调用凭据和授权信息
