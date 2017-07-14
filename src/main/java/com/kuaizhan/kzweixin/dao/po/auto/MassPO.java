@@ -23,7 +23,7 @@ public class MassPO {
 
     private Integer isTiming;
 
-    private Integer publishTime;
+    private Long publishTime;
 
     private Integer status;
 
@@ -121,11 +121,11 @@ public class MassPO {
         this.isTiming = isTiming;
     }
 
-    public Integer getPublishTime() {
+    public Long getPublishTime() {
         return publishTime;
     }
 
-    public void setPublishTime(Integer publishTime) {
+    public void setPublishTime(Long publishTime) {
         this.publishTime = publishTime;
     }
 

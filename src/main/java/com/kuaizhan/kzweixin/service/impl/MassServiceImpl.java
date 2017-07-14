@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.constant.ErrorCode;
+import com.kuaizhan.kzweixin.dao.mapper.auto.CustomMassMapper;
 import com.kuaizhan.kzweixin.dao.mapper.auto.MassMapper;
 import com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO;
 import com.kuaizhan.kzweixin.dao.po.auto.CustomMassPOExample;
@@ -50,12 +51,27 @@ public class MassServiceImpl implements MassService {
         }
         return massList;
     }
+    @Resource
+    protected CustomMassMapper CustomMassMapper;
+
 
     @Override
     public List<CustomMassPO> getCustomMassByWxAppId(long wxAppid) {
         CustomMassPOExample example = new CustomMassPOExample();
         //example.createCriteria()
+        example.or()
+                .andWeixinAppidEqualTo(wxAppid)
+                .andStatusNotEqualTo(0)
+                .andStatusNotEqualTo(4);
+        example.or()
+                .andWeixinAppidEqualTo(wxAppid)
+                .andStatusNotEqualTo(0)
+                .andIsTimingEqualTo(1) ;
         example.setOrderByClause("update_time desc");
-        return new ArrayList<CustomMassPO>();
+        List<CustomMassPO> customMassList = CustomMassMapper.selectByExample(example);
+        if (customMassList.size() == 0) {
+            throw new BusinessException(ErrorCode.CUSTOM_MASS_NOT_EXIST);
+        }
+        return customMassList;
     }
 }
