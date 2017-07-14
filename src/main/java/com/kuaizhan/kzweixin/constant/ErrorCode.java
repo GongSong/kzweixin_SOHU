@@ -74,7 +74,7 @@ public class ErrorCode {
     public static final ErrorCode MASS_TIMING_INVALID = new ErrorCode(109002, "无效的定时时间");
     public static final ErrorCode MASS_OPENID_NOT_SET = new ErrorCode(109003, "无效的OpenId");
     public static final ErrorCode MASS_POSTID_NOT_SET = new ErrorCode(109004, "无效的PostId");
-
+    public static final ErrorCode CUSTOM_MASS_NOT_EXIST = new ErrorCode(109005, "客服群发消息不存在");
     private final int code;
     private final String message;
     private ErrorCode(int code, String message) {

@@ -3,15 +3,19 @@ package com.kuaizhan.kzweixin.controller;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
+import com.kuaizhan.kzweixin.controller.vo.CustomMassVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
+import com.kuaizhan.kzweixin.controller.vo.MassVO;
 import com.kuaizhan.kzweixin.dao.po.MassRespPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
+import com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.service.*;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import com.kuaizhan.kzweixin.utils.PojoSwitcher;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 
 /**
  * 消息群发
@@ -72,16 +77,21 @@ public class MassController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/mass/list", method = RequestMethod.POST)
-    public JsonResponse getMassList(@RequestParam int siteId,
+    public JsonResponse getMassList(@RequestParam(value = "siteId") long siteId,
                                     @RequestParam(value = "pageNO", defaultValue = "1") int pageNO,
                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         List<MassPO> massPOList = null;
+        List<MassVO> massVOList = new ArrayList<MassVO>();
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
         if(accountPO != null && accountPO.getWeixinAppid() != 0) {
             massPOList = massService.getMassByWxAppId(accountPO.getWeixinAppid());
         }
-        return new JsonResponse(massPOList);
+        for (MassPO massPO: massPOList) {
+            MassVO massVo = PojoSwitcher.MassPOToVO(massPO);
+            massVOList.add(massVo);
+        }
+        return new JsonResponse(massVOList);
     }
 
     /**
@@ -90,7 +100,7 @@ public class MassController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/mass/tags/list", method = RequestMethod.POST)
-    public JsonResponse getMassGroup(@RequestParam int siteId) {
+    public JsonResponse getMassGroup(@RequestParam(value = "siteId")  long siteId) {
 
         List<TagDTO> tagDTOList = null;
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
@@ -115,7 +125,7 @@ public class MassController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/mass/msg/send", method = RequestMethod.POST)
-    public JsonResponse sendMassMsg(@RequestParam int siteId,
+    public JsonResponse sendMassMsg(@RequestParam(value = "siteId") long siteId,
                                      @RequestParam(value = "response_type") int respType,
                                      @RequestParam(value = "post_ids") String postIds,
                                      @RequestParam(value = "response_json", required = false, defaultValue = "") String respJson,
@@ -200,16 +210,25 @@ public class MassController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/mass/custom-list", method = RequestMethod.POST)
-    public JsonResponse getCustomMassList(@RequestParam int siteId,
+    public JsonResponse getCustomMassList(@RequestParam(value = "siteId") long siteId,
                                     @RequestParam(value = "pageNO", defaultValue = "1") int pageNO,
                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
+        List<CustomMassPO> customMassPOList = null;
+        List<CustomMassVO> customMassVOList = new ArrayList<CustomMassVO>();
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-        if(accountPO != null) {
-            
+        if(accountPO != null&& accountPO.getWeixinAppid() != 0) {
+            customMassPOList = massService.getCustomMassByWxAppId(accountPO.getWeixinAppid());
         }
 
-        return new JsonResponse(null);
+        for (CustomMassPO customMassPO: customMassPOList) {
+            CustomMassVO CustomMassVo = PojoSwitcher.CustomMassPOToVO(customMassPO);
+            customMassVOList.add(CustomMassVo);
+        }
+
+
+
+        return new JsonResponse(customMassVOList);
     }
 
     /**
@@ -226,7 +245,7 @@ public class MassController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/mass/custom-msg/send", method = RequestMethod.POST)
-    public JsonResponse sendCustomMassMsg(@RequestParam int siteId,
+    public JsonResponse sendCustomMassMsg(@RequestParam(value = "siteId")  long siteId,
                                      @RequestParam(value = "response_type") int respType,
                                      @RequestParam(value = "response_json") String respJson,
                                      @RequestParam(value = "group_id") int groupId,
