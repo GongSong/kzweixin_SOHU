@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-        <classPathEntry location="/Users/zixiong/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar" />
+        <classPathEntry location="/Users/changyan-dev/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar" />
         <context id="mysql" defaultModelType="flat" targetRuntime="MyBatis3">
 
             <!--定义这些配置还得注意顺序-->
@@ -81,8 +81,18 @@
                 <!--<columnOverride column="in_blacklist" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
-            <table tableName="weixin_guide_follow" domainObjectName="GuideFollowPostPO" mapperName="GuideFollowPostMapper">
+            <!--<table tableName="weixin_guide_follow" domainObjectName="GuideFollowPostPO" mapperName="GuideFollowPostMapper">-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
+
+            <table tableName="weixin_mass" domainObjectName="MassPO" mapperName="MassMapper">
+                <columnOverride column="response_type" javaType="java.lang.Integer"/>
+                <columnOverride column="group_id" javaType="java.lang.Integer"/>
+                <columnOverride column="is_timing" javaType="java.lang.Integer"/>
                 <columnOverride column="status" javaType="java.lang.Integer"/>
+                <columnOverride column="publish_time" javaType="java.lang.Long"/>
+                <columnOverride column="create_time" javaType="java.lang.Long"/>
+                <columnOverride column="update_time" javaType="java.lang.Long"/>
             </table>
 
         </context>

@@ -27,9 +27,9 @@ public class MassPO {
 
     private Integer status;
 
-    private Integer createTime;
+    private Long createTime;
 
-    private Integer updateTime;
+    private Long updateTime;
 
     private String responseJson;
 
@@ -137,19 +137,19 @@ public class MassPO {
         this.status = status;
     }
 
-    public Integer getCreateTime() {
+    public Long getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Integer createTime) {
+    public void setCreateTime(Long createTime) {
         this.createTime = createTime;
     }
 
-    public Integer getUpdateTime() {
+    public Long getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Integer updateTime) {
+    public void setUpdateTime(Long updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -161,10 +161,6 @@ public class MassPO {
         this.responseJson = responseJson;
     }
 
-
-    /**
-     * 1 文章列表，2 页面，3 文字，4 图片
-     */
     public enum RespType {
         ARTICLE_LIST(1),
         PAGE(2),
@@ -176,22 +172,17 @@ public class MassPO {
         RespType(int code) {
             this.code = code;
         }
-
         public int getCode() {
             return code;
         }
     }
 
-    /**
-     * 0 删除，1 发送成功，2 发送失败，3 已发送，4 未发送
-     */
     public enum Status {
         DELETED(0),
         SUCCESS(1),
         FAILED(2),
         SENDED(3),
         UNSEND(4);
-
         private int code;
 
         Status(int code) {

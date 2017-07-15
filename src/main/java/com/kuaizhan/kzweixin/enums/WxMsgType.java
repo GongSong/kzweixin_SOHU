@@ -10,7 +10,10 @@ public enum WxMsgType {
 
     TEXT("text"),
     IMAGE("image"),
-    NEWS("news");
+    NEWS("news"),
+    MP_NEWS("mpnews"),
+    MP_VIDEO("mpvideo"),
+    WXCARD("wxcard");
 
     private String value;
 

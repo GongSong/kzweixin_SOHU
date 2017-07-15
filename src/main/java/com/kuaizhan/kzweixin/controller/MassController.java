@@ -114,29 +114,28 @@ public class MassController extends BaseController {
     /**
      * 消息预览&群发 @url: ajax-mass-msg-new
      * @param siteId 站点id
-     * @param respType 1文章列表2页面3文字4图片
-     * @param respJson 要发送的post, json, 兼容旧接口
-     * @param postIds 逗号分隔
-     * @param tagId 发送的目的标签id
+     * @param respType 旧接口类型, 1图文 3文字 4图片, 新接口类型 9图文 1文字 2图片
+     * @param respJson 如果是图文应为PostId数组, 如果其他类型请参考 MassMsg和CustomMsg的内部类, 示例: 图文{[1,2,3]} 文字{"content":"sss.."} 图片{"media_id":"xxx"}
+     * @param tagId 发送用户的标签id, 0为发送给全部标签
      * @param publishTime 发布时间，定时群发时才有意义
      * @param isPreview 1表示预览 0表示群发
      * @param isTiming 1表示定时发布，0不定时
-     * @param hasMulti 是否多图文
+     * @param isMulti 是否多图文
      * @param massId 0
      * @return
      */
     @RequestMapping(value = "/mass/msg/send", method = RequestMethod.POST)
     public JsonResponse sendMassMsg(@RequestParam(value = "siteId") long siteId,
-                                     @RequestParam(value = "response_type") int respType,
-                                     @RequestParam(value = "post_ids") String postIds,
+                                     @RequestParam(value = "response_type") short respType,
                                      @RequestParam(value = "response_json", required = false, defaultValue = "") String respJson,
                                      @RequestParam(value = "tag_id") int tagId,
                                      @RequestParam(value = "publish_time") long publishTime,
                                      @RequestParam(value = "preview_or_not", defaultValue = "1") int isPreview,
                                      @RequestParam(value = "is_timing", defaultValue = "0") int isTiming,
-                                     @RequestParam(value = "has_multi", defaultValue = "0") int hasMulti,
+                                     @RequestParam(value = "has_multi", defaultValue = "0") int isMulti,
                                      @RequestParam(value = "mass_id", required = false, defaultValue = "0") long massId) {
 
+        // TODO: 定时发送, 创建新MassID
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
         if(accountPO == null) {
             return new JsonResponse(ErrorCode.ACCOUNT_NOT_EXIST.getCode(),"", ImmutableMap.of());
@@ -150,47 +149,24 @@ public class MassController extends BaseController {
 
         if(isPreview != 0) {
             if(StringUtils.isEmpty(accountPO.getPreviewOpenId())) {
-                return new JsonResponse(ErrorCode.MASS_OPENID_NOT_SET.getCode(),"", ImmutableMap.of());
+                return new JsonResponse(ErrorCode.MASS_OPENID_INVALID.getCode(),ErrorCode.MASS_OPENID_INVALID.getMessage(), ImmutableMap.of());
             }
         }
 
-        String[] postIdArray = postIds.split(",");
-        if(postIdArray == null || postIdArray.length ==0 ) {
-            return new JsonResponse(ErrorCode.MASS_POSTID_NOT_SET.getCode(), "", ImmutableMap.of());
-        }
-
-        List<PostPO> postPOList = new ArrayList<>();
-        for(String postId : postIdArray) {
-            postPOList.add(postService.getPostByPageId(Integer.valueOf(postId)));
-        }
-
-        String content = null;
-        MsgType type = MsgType.RESERVE;
-        if(respType == 1) { // 文章列表
-            type = MsgType.MP_NEWS;
-            long postId;
-            if(postPOList.size() > 1 && hasMulti != 1) {
-                postId = postService.addMultiPosts(accountPO.getWeixinAppid(), postPOList);
-            } else {
-                postId = postPOList.get(0).getPageId();
-            }
-            PostPO post = postService.getPostByPageId(postId);
-            String mediaId = post.getMediaId();
-            // TODO
-        } else if(respType == 3) { // 文字
-            type = MsgType.TEXT;
-
-        } else if(respType == 4) { // 图片
-            type = MsgType.IMAGE;
+        MsgType type = MsgType.fromValue(respType);
+        if(type == null) {
+            return new JsonResponse(ErrorCode.MASS_TYPE_INVALID.getCode(), ErrorCode.MASS_NOT_EXIST.getMessage(), ImmutableMap.of());
         }
 
         if(isPreview != 0) {
-            msgService.sendCustomMsg(accountPO.getWeixinAppid(), accountPO.getPreviewOpenId(), type, content);
+            String msg = massService.wrapPreviewMsg(accountPO.getWeixinAppid(), type, respJson, isMulti);
+            msgService.sendCustomMsg(accountPO.getWeixinAppid(), accountPO.getPreviewOpenId(), type, msg);
         } else {
-            // TODO
+            Object msg = massService.wrapMassMsg(accountPO.getWeixinAppid(), type, respJson, isMulti);
+            massService.sendMassMsg(accountPO.getWeixinAppid(), tagId, type, msg);
         }
 
-        return new JsonResponse(ErrorCode.SUCCESS.getCode(), "", ImmutableMap.of());
+        return new JsonResponse(ErrorCode.SUCCESS.getCode(), "success", ImmutableMap.of());
     }
 
 

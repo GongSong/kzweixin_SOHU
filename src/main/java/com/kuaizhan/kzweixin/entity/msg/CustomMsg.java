@@ -3,6 +3,8 @@ package com.kuaizhan.kzweixin.entity.msg;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -19,6 +21,8 @@ public class CustomMsg {
      * 文本类型
      */
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Text {
         @NotNull(message = "content can not be null")
@@ -29,6 +33,8 @@ public class CustomMsg {
      * 图片类型
      */
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Image {
         @JsonProperty("media_id")
@@ -43,6 +49,8 @@ public class CustomMsg {
      * 图文类型
      */
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class MpNews {
         @Size(min = 1, max = 8)
@@ -53,6 +61,8 @@ public class CustomMsg {
      * 链接组类型
      */
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class News {
         @Size(min = 1, max = 8)
@@ -63,6 +73,8 @@ public class CustomMsg {
      * 链接组中的子对象
      */
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Article {
         private String title;

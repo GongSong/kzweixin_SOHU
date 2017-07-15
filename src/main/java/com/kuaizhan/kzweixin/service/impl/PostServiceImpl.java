@@ -128,6 +128,18 @@ public class PostServiceImpl implements PostService {
         return postPO;
     }
 
+    @Override
+    public List<PostPO> getPostsByPageId(List<Long> pageIds) {
+        List<PostPO> postPOS = new ArrayList<>();
+        for(Long id : pageIds) {
+            PostPO postPO = postDao.getPost(id);
+            if (postPO != null) {
+                postPOS.add(postPO);
+            }
+        }
+        return postPOS;
+    }
+
     public PostPO getPostByMediaId(long weixinAppid, String mediaId) {
         return postDao.getPostByMediaId(weixinAppid, mediaId);
     }
@@ -170,6 +182,14 @@ public class PostServiceImpl implements PostService {
             dto.setPageIds(pageIds);
             mqUtil.publish(MqConstant.IMPORT_KUAIZHAN_POST, JsonUtil.bean2String(dto));
         }
+    }
+
+    public String getPostMediaId(long pageId) {
+        PostPO postPO = postDao.getPost(pageId);
+        if (postPO != null) {
+            return postPO.getMediaId();
+        }
+        return null;
     }
 
     @Override
