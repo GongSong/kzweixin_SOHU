@@ -222,6 +222,13 @@ public class WxApiConfig {
     }
 
     /**
+     * 根据accessToken发送群发消息
+     */
+    public static String sendMassMsgUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_SEND_MASS_MSG + accessToken;
+    }
+
+    /**
      * 发送模板消息
      */
     public static String getSendTplMsgUrl(String accessToken) {

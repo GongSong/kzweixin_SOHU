@@ -48,6 +48,11 @@ public interface PostService {
     PostPO getPostByPageId(long pageId);
 
     /**
+     * 获取多篇图文
+     */
+    List<PostPO> getPostsByPageId(List<Long> pageIds);
+
+    /**
      * 根据mediaId获取单篇图文(单图文，或者多图文的第一篇)
      */
     PostPO getPostByMediaId(long weixinAppid, String mediaId);
@@ -88,6 +93,12 @@ public interface PostService {
      * 获取图文的微信链接
      */
     String getPostWxUrl(long weixinAppid, long pageId);
+
+
+    /**
+     * 获取图文的微信MediaId
+     */
+    String getPostMediaId(long pageId);
 
     /**
      * 同步微信消息(异步)
