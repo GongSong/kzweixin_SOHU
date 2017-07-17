@@ -7,8 +7,8 @@ import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
 import com.kuaizhan.kzweixin.service.QrcodeService;
 import com.kuaizhan.kzweixin.service.*;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -25,6 +25,16 @@ public class QrcodeController {
 
     @Resource
     protected QrcodeService qrcodeService;
+
+
+    @RequestMapping(value = "/qr/new")
+    public JsonResponse newQrcode(@RequestParam(value = "site_id") long siteId,
+                                  @RequestParam(value = "response_type") int respType,
+                                  @RequestParam(value = "response_json") String respJson,
+                                  @RequestParam(value = "qrcode_name") String qrName) {
+
+        return new JsonResponse(null);
+    }
 
     @Resource
     protected AccountService accountService;
@@ -50,5 +60,5 @@ public class QrcodeController {
     }
 
 
-    
+
 }
