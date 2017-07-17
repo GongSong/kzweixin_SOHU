@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.aspect;
 
+import com.kuaizhan.kzweixin.exception.BusinessException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public class ControllerAspect {
     @AfterThrowing(value = "controllerMethod()", throwing = "e")
     public void afterThrowing(Throwable e) {
 
-        if (e instanceof com.kuaizhan.kzweixin.exception.BusinessException) {
+        if (e instanceof BusinessException) {
             // 业务异常只打info日志
             logger.info(e.toString());
         } else {
