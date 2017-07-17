@@ -1,5 +1,9 @@
 package com.kuaizhan.kzweixin.service;
 
+import com.kuaizhan.kzweixin.dao.po.auto.QrcodePO;
+
+import java.util.List;
+
 /**
  * 参数二维码service
  * Created by zixiong on 2017/6/1.
@@ -14,5 +18,5 @@ public interface QrcodeService {
     String getTmpQrcode(long weixinAppid, int sceneId);
 
 
-    String getQrcodeByWxAppId(long weixinAppid);
+    List<QrcodePO> getQrcodeByWxAppId(long weixinAppid, String query);
 }
