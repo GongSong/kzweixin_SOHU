@@ -38,7 +38,7 @@ public class QrcodeServiceImpl implements QrcodeService {
         QrcodePOExample example = new QrcodePOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
-                .andQrcodeNameLike(query)
+                .andQrcodeNameLike("%"+query+"%")
                 .andStatusEqualTo(1);
         example.setOrderByClause("update_time desc");
         List<QrcodePO> QrcodeList = qrcodeMapper.selectByExample(example);

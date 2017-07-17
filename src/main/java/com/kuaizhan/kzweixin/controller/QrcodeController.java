@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = AppConstant.VERSION, produces = "application/json")
-public class QrcodeController {
+public class QrcodeController  extends BaseController {
 
     @Resource
     protected QrcodeService qrcodeService;
