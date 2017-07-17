@@ -65,7 +65,7 @@ public class AuthorizeLoginServiceImpl implements AuthorizeLoginService {
                     accessToken.getAccessToken());
             return redirectUrl + paramSep + "status=1" +
                     "&openid=" + userInfo.getOpenid() +
-                    "&nickname=" + userInfo.getNickname() +
+                    "&nickname=" + UrlUtil.encode(userInfo.getNickname()) +
                     "&headImgUrl=" + userInfo.getHeadimgurl();
         }
     }

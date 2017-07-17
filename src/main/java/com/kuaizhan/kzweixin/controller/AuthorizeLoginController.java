@@ -1,5 +1,7 @@
 package com.kuaizhan.kzweixin.controller;
 
+import com.google.common.collect.ImmutableMap;
+import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.enums.AuthorizeScope;
 import com.kuaizhan.kzweixin.service.AuthorizeLoginService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +36,7 @@ public class AuthorizeLoginController extends BaseController {
     }
 
     @RequestMapping(value = "public/v1/authorize_test")
-    public String authorizeTest(@RequestParam String openid, @RequestParam String nickname) {
-        return "appid: " + openid + " nickname: " + nickname;
+    public JsonResponse authorizeTest(@RequestParam String openid, @RequestParam String nickname) {
+        return new JsonResponse(ImmutableMap.of("openid", openid, "nickname", nickname));
     }
 }
