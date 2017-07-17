@@ -23,7 +23,7 @@ public class AuthorizeLoginServiceImpl implements AuthorizeLoginService {
     private WxThirdPartService wxThirdPartService;
 
     // 微信授权完成后，回调的api
-    private static final String AUTHORIZE_REDIRECT_URL = "/kzweixin/public/v1/authorizeRedirect";
+    private static final String AUTHORIZE_REDIRECT_URL = "/kzweixin/public/v1/authorize_redirect";
 
     @Override
     public String getAuthorizeLoginUrl(String appId, String redirectUrl, AuthorizeScope scope) {

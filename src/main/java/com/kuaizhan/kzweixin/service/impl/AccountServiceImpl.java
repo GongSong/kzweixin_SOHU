@@ -57,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
 
         // 微信端完成授权后跳转的url
         StringBuilder redirectUrlBuilder = new StringBuilder();
-        redirectUrlBuilder.append("http://").append(ApplicationConfig.KZ_DOMAIN_OUTSIDE).append(":8080").append("/public/v1/bind_redirect");
+        redirectUrlBuilder.append("http://").append(ApplicationConfig.KZ_DOMAIN_OUTSIDE).append("/public/v1/bind_redirect");
         redirectUrlBuilder.append("?userId=").append(userId);
         redirectUrlBuilder.append("&redirectUrl=").append(UrlUtil.encode(redirectUrl));
         if (siteId != null) {

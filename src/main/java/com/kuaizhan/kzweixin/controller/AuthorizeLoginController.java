@@ -18,7 +18,7 @@ public class AuthorizeLoginController extends BaseController {
     @Resource
     private AuthorizeLoginService authorizeLoginService;
 
-    @RequestMapping(value = "v1/authorizeLogin")
+    @RequestMapping(value = "public/v1/authorize_login")
     public RedirectView authorizeLogin(@RequestParam String appid,
                                        @RequestParam String redirectUrl,
                                        @RequestParam String scope) {
@@ -27,9 +27,14 @@ public class AuthorizeLoginController extends BaseController {
         return new RedirectView(url);
     }
 
-    @RequestMapping(value = "public/v1/authorizeRedirect")
+    @RequestMapping(value = "public/v1/authorize_redirect")
     public RedirectView authorizeRedirect(@RequestParam String redirectUrl, @RequestParam String code, @RequestParam String appid) {
         String redirectUrlWithUserInfo = authorizeLoginService.getRedirectUrlWithUserInfo(appid, code, redirectUrl);
         return new RedirectView(redirectUrlWithUserInfo);
+    }
+
+    @RequestMapping(value = "public/v1/authorize_test")
+    public String authorizeTest(@RequestParam String openid, @RequestParam String nickname) {
+        return "appid: " + openid + " nickname: " + nickname;
     }
 }
