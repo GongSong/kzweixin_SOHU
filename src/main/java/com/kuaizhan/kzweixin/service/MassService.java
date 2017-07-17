@@ -61,4 +61,10 @@ public interface MassService {
      */
     void sendMassMsg(long weixinAppid, int tagId, MsgType msgType, Object contentObj);
 
+    /**
+     * 检查是否支持此type
+     * @param type
+     * @return
+     */
+    boolean checkSupportType(MsgType type);
 }

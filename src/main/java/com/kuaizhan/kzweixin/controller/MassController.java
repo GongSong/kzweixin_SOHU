@@ -154,7 +154,7 @@ public class MassController extends BaseController {
         }
 
         MsgType type = MsgType.fromValue(respType);
-        if(type == null) {
+        if(massService.checkSupportType(type) == false) {
             return new JsonResponse(ErrorCode.MASS_TYPE_INVALID.getCode(), ErrorCode.MASS_NOT_EXIST.getMessage(), ImmutableMap.of());
         }
 
@@ -208,7 +208,7 @@ public class MassController extends BaseController {
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
         if(accountPO != null&& accountPO.getWeixinAppid() != 0) {
             customMassPOList = massService.getCustomMassByWxAppId(accountPO.getWeixinAppid());
-        }
+        } else
 
         for (CustomMassPO customMassPO: customMassPOList) {
             CustomMassVO CustomMassVo = PojoSwitcher.CustomMassPOToVO(customMassPO);

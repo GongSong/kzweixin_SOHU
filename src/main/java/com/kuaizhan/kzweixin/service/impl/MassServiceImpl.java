@@ -168,5 +168,12 @@ public class MassServiceImpl implements MassService {
         massMapper.insert(massPO);
     }
 
+    @Override
+    public boolean checkSupportType(MsgType type){
+        if(type == null || type != MsgType.TEXT || type != MsgType.IMAGE || type != MsgType.MP_NEWS) {
+            return false;
+        }
+        return true;
+    }
 
 }
