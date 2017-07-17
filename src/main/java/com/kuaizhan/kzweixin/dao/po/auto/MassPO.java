@@ -161,6 +161,9 @@ public class MassPO {
         this.responseJson = responseJson;
     }
 
+    /*
+    * 兼容旧接口的response_type
+    * */
     public enum RespType {
         ARTICLE_LIST(1),
         PAGE(2),

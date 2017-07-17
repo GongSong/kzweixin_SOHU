@@ -124,7 +124,7 @@ public class MassServiceImpl implements MassService {
             }
         } else if(type == MsgType.IMAGE) {
             msg = JsonUtil.string2Bean(json, MassMsg.Image.class);
-        } else if(type == MsgType.TEXT){
+        } else if(type == MsgType.TEXT) {
             msg = JsonUtil.string2Bean(json, CustomMsg.Text.class);
         } else {
             throw new BusinessException(ErrorCode.MASS_TYPE_INVALID);
