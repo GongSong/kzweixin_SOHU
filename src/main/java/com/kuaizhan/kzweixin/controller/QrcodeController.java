@@ -52,7 +52,7 @@ public class QrcodeController  extends BaseController {
     @RequestMapping(value = "/qr/list", method = RequestMethod.POST)
     public JsonResponse getQrcodeList(@RequestParam(value = "siteId") long siteId,
                                     @RequestParam(value = "pageNO", defaultValue = "1") int pageNO,
-                                    @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                    @RequestParam(value = "pageSize", defaultValue = "5") int pageSize,
                                     @RequestParam(value = "query", required = false, defaultValue = "") String query) {
         List<QrcodePO> qrcodeList= null;
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
