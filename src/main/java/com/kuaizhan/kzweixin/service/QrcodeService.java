@@ -12,4 +12,7 @@ public interface QrcodeService {
      * @return 返回二维码图片地址
      */
     String getTmpQrcode(long weixinAppid, int sceneId);
+
+
+    String getQrcodeByWxAppId(long weixinAppid);
 }

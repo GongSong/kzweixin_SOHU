@@ -24,4 +24,21 @@ public class QrcodeServiceImpl implements QrcodeService {
         String ticket = WxCommonManager.genTmpQrcode(accessToken, sceneId);
         return WxApiConfig.qrcodeUrl(ticket);
     }
+    @Override
+    public String getQrcodeByWxAppId(long weixinAppid){
+
+
+
+        qrcodeListExample example = new MassPOExample();
+        example.createCriteria()
+                .andWeixinAppidEqualTo(wxAppId)
+                .andStatusNotEqualTo(0);
+        example.setOrderByClause("publish_time desc");
+        List<MassPO> massList = massMapper.selectByExample(example);
+        if (massList.size() == 0) {
+            throw new BusinessException(ErrorCode.MASS_NOT_EXIST);
+        }
+        return massList;
+
+    }
 }
