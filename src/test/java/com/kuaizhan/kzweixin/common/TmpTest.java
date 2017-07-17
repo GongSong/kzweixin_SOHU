@@ -43,6 +43,8 @@ public class TmpTest {
 
     @Test
     public void testXml() throws Exception {
+        Integer i = null;
+        System.out.println("---->" + (i == 1));
     }
 
     @Test
