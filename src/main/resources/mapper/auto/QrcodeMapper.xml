@@ -632,4 +632,20 @@
       </if>
     </trim>
   </insert>
+
+
+  <!--  add by manual -->
+  <select id="isSceneIdExist" resultType="Boolean">
+    SELECT COUNT(*)
+    FROM weixin_qrcode
+    WHERE `scene_id` = #{sceneId}
+  </select>
+  <select id="isQrcodeIdExist" resultType="Boolean">
+    SELECT COUNT(*)
+    FROM weixin_qrcode
+    WHERE `qrcode_id` = #{qrcodeId}
+  </select>
+
 </mapper>
+
+
