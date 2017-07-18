@@ -11,10 +11,13 @@ import com.kuaizhan.kzweixin.manager.WxCommonManager;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.QrcodeService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by zixiong on 2017/6/1.
@@ -27,6 +30,8 @@ public class QrcodeServiceImpl implements QrcodeService {
     @Resource
     protected QrcodeMapper qrcodeMapper;
 
+    private static final Logger logger = LoggerFactory.getLogger(QrcodeServiceImpl.class);
+
     @Override
     public String getTmpQrcode(long weixinAppid, long sceneId) {
         String accessToken = accountService.getAccessToken(weixinAppid);
@@ -38,11 +43,11 @@ public class QrcodeServiceImpl implements QrcodeService {
     @Override
     public String genQrcodeByWxAppId(long weixinAppid,int respType,String respJson,String qrName) {
         String accessToken = accountService.getAccessToken(weixinAppid);
-        long sceneId;
+        long sceneId = genSceneId();
         String ticket = WxCommonManager.genTmpQrcode(accessToken, sceneId);
         QrcodePO qrcodePO=new QrcodePO();
-        long qrId;
-        qrcodePO.setQrcodeId(qrId);
+        long qrcodeId = genQrcodeId();
+        qrcodePO.setQrcodeId(qrcodeId);
         qrcodePO.setWeixinAppid(weixinAppid);
         qrcodePO.setQrcodeName(qrName);
         qrcodePO.setSceneId(sceneId);
@@ -73,6 +78,41 @@ public class QrcodeServiceImpl implements QrcodeService {
         }
         return qrcodeList ;
 
+    }
+
+    @Override
+    public long genSceneId() {
+        final long MIN = 96000000L;
+        final long MAX = 99999999L;
+        int count = 1;
+
+        long sceneId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+        while (qrcodeMapper.isSceneIdExist(sceneId)) {
+            sceneId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+            count++;
+        }
+
+        if (count >= 3) {
+            logger.warn("[genPageId] gen times reach {}", count);
+        }
+        return sceneId;
+    }
+    @Override
+    public long genQrcodeId() {
+        final long MIN = 1000000000L;
+        final long MAX = 9999999999L;
+        int count = 1;
+
+        long qrcodeId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+        while (qrcodeMapper.isQrcodeIdExist(qrcodeId)){
+            qrcodeId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+            count++;
+        }
+
+        if (count >= 3) {
+            logger.warn("[genPageId] gen times reach {}", count);
+        }
+        return qrcodeId;
     }
 }
 

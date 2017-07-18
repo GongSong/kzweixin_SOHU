@@ -25,5 +25,16 @@ public interface QrcodeService {
 
     List<QrcodePO> getQrcodeByWxAppId(long weixinAppid, String query);
 
+    /**
+     * 生成SceneID
+     * @return
+     */
+    long genSceneId();
+
+    /**
+     * 生成QrcodeID
+     * @return
+     */
+    long genQrcodeId();
 
 }

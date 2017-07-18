@@ -74,4 +74,8 @@ public interface QrcodeMapper {
      * @project https://github.com/itfsw/mybatis-generator-plugin
      */
     int upsertSelectiveWithBLOBs(QrcodePO record);
+
+
+    Boolean isSceneIdExist(Long sceneId);
+    Boolean isQrcodeIdExist(Long qrcodeId);
 }
