@@ -15,7 +15,7 @@ public interface QrcodeService {
      * @param sceneId 场景id
      * @return 返回二维码图片地址
      */
-    String getTmpQrcode(long weixinAppid, int sceneId);
+    String getTmpQrcode(long weixinAppid, long sceneId);
 
     /**
      * 获取参数二维码

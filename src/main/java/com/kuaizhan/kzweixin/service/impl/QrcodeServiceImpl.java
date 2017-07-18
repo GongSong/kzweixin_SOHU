@@ -28,7 +28,7 @@ public class QrcodeServiceImpl implements QrcodeService {
     protected QrcodeMapper qrcodeMapper;
 
     @Override
-    public String getTmpQrcode(long weixinAppid, int sceneId) {
+    public String getTmpQrcode(long weixinAppid, long sceneId) {
         String accessToken = accountService.getAccessToken(weixinAppid);
 
         String ticket = WxCommonManager.genTmpQrcode(accessToken, sceneId);
@@ -38,8 +38,10 @@ public class QrcodeServiceImpl implements QrcodeService {
     @Override
     public String genQrcodeByWxAppId(long weixinAppid,int respType,String respJson,String qrName) {
         String accessToken = accountService.getAccessToken(weixinAppid);
+        long sceneId;
         String ticket = WxCommonManager.genTmpQrcode(accessToken, sceneId);
         QrcodePO qrcodePO=new QrcodePO();
+        long qrId;
         qrcodePO.setQrcodeId(qrId);
         qrcodePO.setWeixinAppid(weixinAppid);
         qrcodePO.setQrcodeName(qrName);
