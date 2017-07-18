@@ -79,7 +79,9 @@ public class ErrorCode {
 
     //
     // 二维码（10）
+
     public static final ErrorCode QRCODE_NOT_EXIST = new ErrorCode(110001, "二维码不存在");
+    public static final ErrorCode QRCODE_INSERT_ERROR = new ErrorCode(110002, "二维码创建失败");
     private final int code;
     private final String message;
     private ErrorCode(int code, String message) {

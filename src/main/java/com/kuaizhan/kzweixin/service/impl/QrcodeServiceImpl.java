@@ -10,6 +10,7 @@ import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.manager.WxCommonManager;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.QrcodeService;
+import com.kuaizhan.kzweixin.utils.DateUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -33,6 +34,29 @@ public class QrcodeServiceImpl implements QrcodeService {
         String ticket = WxCommonManager.genTmpQrcode(accessToken, sceneId);
         return WxApiConfig.qrcodeUrl(ticket);
     }
+
+    @Override
+    public String genQrcodeByWxAppId(long weixinAppid,int respType,String respJson,String qrName) {
+        String accessToken = accountService.getAccessToken(weixinAppid);
+        String ticket = WxCommonManager.genTmpQrcode(accessToken, sceneId);
+        QrcodePO qrcodePO=new QrcodePO();
+        qrcodePO.setQrcodeId(qrId);
+        qrcodePO.setWeixinAppid(weixinAppid);
+        qrcodePO.setQrcodeName(qrName);
+        qrcodePO.setSceneId(sceneId);
+        qrcodePO.setTicket(ticket);
+        qrcodePO.setResponseType(respType);
+        qrcodePO.setResponseJson(respJson);
+        qrcodePO.setStatus(1);
+        qrcodePO.setCreateTime(DateUtil.curSeconds());
+        qrcodePO.setUpdateTime(DateUtil.curSeconds());
+        int insertResult =qrcodeMapper.insert(qrcodePO);
+        if (insertResult <= 0) {
+            throw new BusinessException(ErrorCode.QRCODE_INSERT_ERROR);
+        }
+        return WxApiConfig.qrcodeUrl(ticket);
+    }
+
     @Override
     public List<QrcodePO> getQrcodeByWxAppId(long weixinAppid,String query){
         QrcodePOExample example = new QrcodePOExample();
@@ -41,11 +65,12 @@ public class QrcodeServiceImpl implements QrcodeService {
                 .andQrcodeNameLike("%"+query+"%")
                 .andStatusEqualTo(1);
         example.setOrderByClause("update_time desc");
-        List<QrcodePO> QrcodeList = qrcodeMapper.selectByExample(example);
-        if ( QrcodeList.size() == 0) {
+        List<QrcodePO> qrcodeList = qrcodeMapper.selectByExample(example);
+        if ( qrcodeList.size() == 0) {
             throw new BusinessException(ErrorCode.QRCODE_NOT_EXIST);
         }
-        return QrcodeList ;
+        return qrcodeList ;
 
     }
 }
+

@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
@@ -35,8 +36,12 @@ public class QrcodeController  extends BaseController {
                                   @RequestParam(value = "response_type") int respType,
                                   @RequestParam(value = "response_json") String respJson,
                                   @RequestParam(value = "qrcode_name") String qrName) {
-
-        return new JsonResponse(null);
+        String qrcodeUrl = null;
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        if(accountPO != null && accountPO.getWeixinAppid() != 0) {
+           qrcodeUrl = qrcodeService.genQrcodeByWxAppId(accountPO.getWeixinAppid(),respType, respJson,qrName);
+        }
+        return new JsonResponse(ImmutableMap.of("qrcode_url", qrcodeUrl));
     }
 
 
