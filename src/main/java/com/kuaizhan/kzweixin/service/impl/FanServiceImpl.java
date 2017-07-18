@@ -309,7 +309,7 @@ public class FanServiceImpl implements FanService {
 
         // 未关注状态
         if (userInfoDTO.getSubscribe() != 1) {
-            return null;
+            return;
         }
 
         //从微信服务器接收并转换的部分
