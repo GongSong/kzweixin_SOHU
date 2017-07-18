@@ -114,7 +114,6 @@ public class WxPushServiceImpl implements WxPushService {
             kzStat("a110", wxData.getAppId());
 
             // 添加粉丝信息
-            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
             fanService.asyncAddFan(wxData.getAppId(), wxData.getOpenId());
 
             if (StringUtils.isNotBlank(wxData.getEventKey())) {
