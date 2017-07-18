@@ -27,6 +27,8 @@ public interface MassMapper {
 
     MassPO selectByPrimaryKey(Long massId);
 
+    Boolean isMassIdExist(Long massId);
+
     int updateByExampleSelective(@Param("record") MassPO record, @Param("example") MassPOExample example);
 
     int updateByExampleWithBLOBs(@Param("record") MassPO record, @Param("example") MassPOExample example);
