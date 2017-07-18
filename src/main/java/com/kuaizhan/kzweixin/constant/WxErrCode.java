@@ -28,6 +28,8 @@ public class WxErrCode {
 
     // 需要关注
     public static final int REQUIRE_SUBSCRIBE = 43004;
+    // 需要从黑名单移除
+    public static final int REQUIRE_REMOVE_FROM_BLACKLIST = 43019;
 
     // App Secret错误或App Secret不属于此公众号
     public static final int INVALID_APP_SECRET_1 = 40001;  // 文档是这个

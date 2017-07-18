@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.mq.consumer;
 
 import com.kuaizhan.kzweixin.dao.mapper.TplDao;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidTemplateException;
+import com.kuaizhan.kzweixin.exception.weixin.WxRequireRemoveBlackListException;
 import com.kuaizhan.kzweixin.exception.weixin.WxRequireSubscribeException;
 import com.kuaizhan.kzweixin.mq.dto.SendTplMsgDTO;
 import com.kuaizhan.kzweixin.service.TplService;
@@ -44,9 +45,9 @@ public class SendTplMsgConsumer extends BaseConsumer {
             if (deleted) {
                 logger.warn("[deleteTpl][报错量太多时需要处理] weixinAppid:{} tplIdShort:{}", weixinAppid, tplIdShort);
             }
-        } catch (WxRequireSubscribeException e) {
+        } catch (WxRequireSubscribeException | WxRequireRemoveBlackListException e) {
             // 社区可能给未关注的人发消息，先忽略错误
-            logger.info("[mq:sendTplMsg] send msg to not subscribed openI, e.getMessage: {}", e.getMessage());
+            logger.debug("[mq:sendTplMsg] send msg to not subscribed fan or fan in blacklist, e.getMessage: {}", e.getMessage());
         }
     }
 }

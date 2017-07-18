@@ -1,9 +1,12 @@
 package com.kuaizhan.kzweixin.mq.consumer;
 
 import com.kuaizhan.kzweixin.dao.po.auto.TplMsgPO;
+import com.kuaizhan.kzweixin.exception.weixin.WxRequireRemoveBlackListException;
 import com.kuaizhan.kzweixin.mq.dto.SendTplMsgForMassDTO;
 import com.kuaizhan.kzweixin.service.TplService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 
@@ -16,11 +19,19 @@ public class SendTplMsgForMassConsumer extends BaseConsumer {
     @Resource
     private TplService tplService;
 
+    private static final Logger logger = LoggerFactory.getLogger(SendTplMsgForMassConsumer.class);
+
     @Override
     void onMessage(String message) {
         SendTplMsgForMassDTO dto = JsonUtil.string2Bean(message, SendTplMsgForMassDTO.class);
 
-        long msgId = tplService.sendTplMsg(dto.getWeixinAppid(), dto.getTplId(), dto.getOpenId(), dto.getMsgUrl(), dto.getDataMap());
+        long msgId;
+        try {
+            msgId = tplService.sendTplMsg(dto.getWeixinAppid(), dto.getTplId(), dto.getOpenId(), dto.getMsgUrl(), dto.getDataMap());
+        } catch (WxRequireRemoveBlackListException e) {
+            logger.debug("[mq] openid in blacklist, abandon. appId: {} openId: {}", dto.getAppId(), dto.getOpenId());
+            return;
+        }
 
         TplMsgPO tplMsgPO = new TplMsgPO();
         tplMsgPO.setMsgId(msgId);

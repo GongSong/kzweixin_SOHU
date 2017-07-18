@@ -51,13 +51,15 @@ public class AccountServiceImpl implements AccountService {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
+    private static final String API_BIND_REDIRECT = "/kzweixin/public/v1/bind_redirect";
+
 
     @Override
     public String getBindUrl(Long userId, Long siteId, String redirectUrl) {
 
         // 微信端完成授权后跳转的url
         StringBuilder redirectUrlBuilder = new StringBuilder();
-        redirectUrlBuilder.append("http://").append(ApplicationConfig.KZ_DOMAIN_OUTSIDE).append("/public/v1/bind_redirect");
+        redirectUrlBuilder.append("http://").append(ApplicationConfig.KZ_DOMAIN_OUTSIDE).append(API_BIND_REDIRECT);
         redirectUrlBuilder.append("?userId=").append(userId);
         redirectUrlBuilder.append("&redirectUrl=").append(UrlUtil.encode(redirectUrl));
         if (siteId != null) {
