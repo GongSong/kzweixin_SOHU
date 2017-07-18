@@ -206,7 +206,7 @@ public class MassController extends BaseController {
         List<CustomMassPO> customMassPOList = null;
         List<CustomMassVO> customMassVOList = new ArrayList<CustomMassVO>();
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
-        if(accountPO != null&& accountPO.getWeixinAppid() != 0) {
+        if(accountPO != null && accountPO.getWeixinAppid() != 0) {
             customMassPOList = massService.getCustomMassByWxAppId(accountPO.getWeixinAppid());
         }
 
@@ -215,35 +215,7 @@ public class MassController extends BaseController {
             customMassVOList.add(CustomMassVo);
         }
 
-
-
         return new JsonResponse(customMassVOList);
-    }
-
-    /**
-     * 客服消息预览&群发 @url: ajax-custom-mass-preview ajax-custom-mass-new
-     * @param siteId
-     * @param respType
-     * @param respJson
-     * @param groupId
-     * @param publishTime
-     * @param isPreview
-     * @param isTiming
-     * @param hasMulti
-     * @param massId
-     * @return
-     */
-    @RequestMapping(value = "/mass/custom-msg/send", method = RequestMethod.POST)
-    public JsonResponse sendCustomMassMsg(@RequestParam(value = "siteId")  long siteId,
-                                     @RequestParam(value = "response_type") int respType,
-                                     @RequestParam(value = "response_json") String respJson,
-                                     @RequestParam(value = "group_id") int groupId,
-                                     @RequestParam(value = "publish_time") long publishTime,
-                                     @RequestParam(value = "preview_or_not", defaultValue = "1") int isPreview,
-                                     @RequestParam(value = "is_timing", defaultValue = "0") int isTiming,
-                                     @RequestParam(value = "has_multi", defaultValue = "0") int hasMulti,
-                                     @RequestParam(value = "mass_id", required = false, defaultValue = "0") long massId) {
-        return new JsonResponse(null);
     }
 
 }
