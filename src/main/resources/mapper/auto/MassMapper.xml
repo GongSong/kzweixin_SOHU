@@ -865,4 +865,11 @@
       </if>
     </trim>
   </insert>
+
+  <!--  add by manual -->
+  <select id="isMassIdExist" resultType="Boolean">
+    SELECT COUNT(*)
+    FROM weixin_mass
+    WHERE `mass_id` = #{massId}
+  </select>
 </mapper>

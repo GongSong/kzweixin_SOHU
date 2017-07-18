@@ -62,6 +62,12 @@ public interface MassService {
     void sendMassMsg(long weixinAppid, int tagId, MsgType msgType, Object contentObj);
 
     /**
+     * 生成MassID
+      * @return
+     */
+    long genMassId();
+
+    /**
      * 检查是否支持此type
      * @param type
      * @return
