@@ -86,6 +86,20 @@ public class AccountController extends BaseController {
         return new JsonResponse(ImmutableMap.of("accounts", accountVOS));
     }
 
+    @RequestMapping(value = "/accounts/{id}/access_token")
+    public JsonResponse getAccessToken(@PathVariable String id) {
+        // TODO: 从id获取weixinAppid的逻辑，考虑用guava做本地缓存
+        long weixinAppid;
+        try {
+            weixinAppid = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            AccountPO accountPO = accountService.getAccountByAppId(id);
+            weixinAppid = accountPO.getWeixinAppid();
+        }
+        String access_token = accountService.getAccessToken(weixinAppid);
+        return new JsonResponse(ImmutableMap.of("access_token", access_token));
+    }
+
     /**
      * 修改app_secret
      */
