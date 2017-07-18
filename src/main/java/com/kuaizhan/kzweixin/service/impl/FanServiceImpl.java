@@ -307,6 +307,11 @@ public class FanServiceImpl implements FanService {
         String accessToken = accountService.getAccessToken(accountPO.getWeixinAppid());
         UserInfoDTO userInfoDTO = WxFanManager.getFanInfo(accessToken, openId);
 
+        // 未关注状态
+        if (userInfoDTO.getSubscribe() != 1) {
+            return null;
+        }
+
         //从微信服务器接收并转换的部分
         FanPO fanPO = new FanPO();
         fanPO.setAppId(appId);

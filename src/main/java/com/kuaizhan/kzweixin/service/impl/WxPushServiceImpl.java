@@ -279,7 +279,12 @@ public class WxPushServiceImpl implements WxPushService {
      * 统计事件
      */
     private void kzStat(String traceKey, String appId) {
-        commonService.kzStat("weixin", traceKey);
-        commonService.kzStat("weixin", traceKey + appId);
+        try {
+            commonService.kzStat("weixin", traceKey);
+            commonService.kzStat("weixin", traceKey + appId);
+        } catch (Exception e) {
+            // 遇到过mq挂了的情况，不能因为统计信息，影响到不需要mq的回调业务
+            logger.error("[WxPush] kzStat failed", e);
+        }
     }
 }

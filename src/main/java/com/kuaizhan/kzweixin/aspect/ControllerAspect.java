@@ -1,8 +1,10 @@
 package com.kuaizhan.kzweixin.aspect;
 
-import com.kuaizhan.kzweixin.utils.LogUtil;
+import com.kuaizhan.kzweixin.exception.BusinessException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 public class ControllerAspect {
+
+    private static final Logger logger = LoggerFactory.getLogger(ControllerAspect.class);
 
     @Pointcut("execution(* com.kuaizhan.kzweixin.controller.*.*(..))")
     private void controllerMethod() {
@@ -33,6 +37,13 @@ public class ControllerAspect {
      */
     @AfterThrowing(value = "controllerMethod()", throwing = "e")
     public void afterThrowing(Throwable e) {
-        LogUtil.logMsg(e);
+
+        if (e instanceof BusinessException) {
+            // 业务异常只打info日志
+            logger.info(e.toString());
+        } else {
+            logger.error("[Unknown Exception]", e);
+        }
+
     }
 }
