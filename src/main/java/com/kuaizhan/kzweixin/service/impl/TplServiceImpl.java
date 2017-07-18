@@ -156,4 +156,13 @@ public class TplServiceImpl implements TplService {
             }
         }
     }
+
+    @Override
+    public void updateTplStatus(long msgId, int statusCode) {
+        TplMsgPO record = new TplMsgPO();
+        record.setMsgId(msgId);
+        record.setStatus(statusCode);
+        record.setUpdateTime(DateUtil.curSeconds());
+        tplMsgMapper.updateByPrimaryKeySelective(record);
+    }
 }

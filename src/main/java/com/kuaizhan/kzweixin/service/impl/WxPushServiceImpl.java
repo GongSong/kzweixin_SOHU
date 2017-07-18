@@ -38,7 +38,9 @@ public class WxPushServiceImpl implements WxPushService {
     @Resource
     private FanService fanService;
     @Resource
-    private WxThirdPartServiceImpl wxThirdPartService;
+    private WxThirdPartService wxThirdPartService;
+    @Resource
+    private TplService tplService;
 
     private static final String SUCCESS_RESULT = "success";
 
@@ -112,6 +114,7 @@ public class WxPushServiceImpl implements WxPushService {
             kzStat("a110", wxData.getAppId());
 
             // 添加粉丝信息
+            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
             fanService.asyncAddFan(wxData.getAppId(), wxData.getOpenId());
 
             if (StringUtils.isNotBlank(wxData.getEventKey())) {
@@ -121,8 +124,46 @@ public class WxPushServiceImpl implements WxPushService {
                 return handleActions(accountPO.getWeixinAppid(), wxData, ActionType.SUBSCRIBE);
             }
         }
+        else if ("LOCATION".equals(wxData.getEvent())) {
 
-        return null;
+            kzStat("a140", wxData.getAppId());
+            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
+            return SUCCESS_RESULT;
+
+        }
+        else if ("VIEW".equals(wxData.getEvent())) {
+
+            kzStat("a160", wxData.getAppId());
+            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
+            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+
+            return SUCCESS_RESULT;
+
+        }
+        else if ("TEMPLATESENDJOBFINISH".equals(wxData.getEvent())) {
+
+            kzStat("a1a0", wxData.getAppId());
+
+            Long msgId = Long.parseLong(wxData.getMsgId());
+            String status = wxData.getStatus();
+
+            int statusCode = -1;
+            if ("success".equals(status)) {
+                statusCode = 2;
+            } else if ("failed:user block".equals(status)) {
+                statusCode = 3;
+            } else if ("failed: system failed".equals(status)) {
+                statusCode = 4;
+            }
+
+            tplService.updateTplStatus(msgId, statusCode);
+            return SUCCESS_RESULT;
+
+        }
+
+            return null;
     }
 
     /**
@@ -230,6 +271,8 @@ public class WxPushServiceImpl implements WxPushService {
         wxData.setEvent(root.elementText("Event"));
         wxData.setEventKey(root.elementText("EventKey"));
         wxData.setContent(root.elementText("Content"));
+        wxData.setMsgId(root.elementText("MsgID"));
+        wxData.setStatus(root.elementText("Status"));
         return wxData;
     }
 

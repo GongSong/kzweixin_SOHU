@@ -42,7 +42,7 @@ public interface FanService {
      * @param openId 粉丝对公众号唯一ID
      * @return 粉丝信息
      * */
-    FanPO getFanByOpenId(long weixinAppid, String openId);
+    FanPO getFanByOpenId(String appId, String openId);
 
     /**
      * 增加粉丝标签
@@ -95,15 +95,21 @@ public interface FanService {
      * @param openId 粉丝openId
      * @return 粉丝信息
      * */
-    FanPO addFan(String appId, String openId);
+    void refreshFan(String appId, String openId);
 
     /**
-     * 用户取消订阅
+     * 用户取消订阅，删除open_id表里用户信息
      * @param appId 公众号Id
      * @param openId 粉丝openId
      * */
     void delFanOpenId(String appId, String openId);
 
+    /**
+     * 用户取消订阅，删除fans表里用户信息
+     * @param appId 公众号Id
+     * @param openId 粉丝openId
+     * */
+    void delFan(String appId, String openId);
 
     /**
      * 判断粉丝是否关注公众号
@@ -114,4 +120,19 @@ public interface FanService {
      * 异步地添加粉丝信息，openId信息
      */
     void asyncAddFan(String appId, String openId);
+
+    /**
+     * 记录关注用户openId（php）
+     * */
+    void asyncUpdateFan(String appId, String openId);
+
+    /**
+     * 记录取消关注用户openId（php）
+     * */
+    void asyncDeleteFan(String appId, String openId);
+
+    /**
+     * 更新粉丝与公众号最近一次交互时间
+     * */
+    void refreshInteractionTime(String appId, String openId);
 }

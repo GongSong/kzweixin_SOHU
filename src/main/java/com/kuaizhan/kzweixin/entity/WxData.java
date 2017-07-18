@@ -27,4 +27,16 @@ public class WxData {
     private String eventKey;
     // 消息text
     private String content;
+    // 消息Id
+    private String msgId;
+    // 用户状态
+    private String status;
+    // 群发总数
+    private String totalCount;
+    // 过滤器总数
+    private String filterCount;
+    // 已成功群发总数
+    private String sentCount;
+    // 群发失败总数
+    private String errorCount;
 }

@@ -44,4 +44,11 @@ public interface TplService {
      * 如果用户在公众后台删除模板，此状态只有在某一次发送消息失败时才会更新
      */
     boolean isTplAdded(long weixinAppid, String tplIdShort);
+
+    /**
+     * 更新模版消息状态
+     * @param msgId 模版消息Id
+     * @param statusCode 消息状态码
+     */
+    void updateTplStatus(long msgId, int statusCode);
 }

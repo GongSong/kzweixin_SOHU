@@ -11,7 +11,7 @@ import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.entity.fan.UserInfoDTO;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.manager.WxFanManager;
-import com.kuaizhan.kzweixin.mq.dto.SubscribeDTO;
+import com.kuaizhan.kzweixin.mq.dto.FanDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.utils.*;
@@ -109,15 +109,16 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public FanPO getFanByOpenId(long weixinAppid, String openId) {
-        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
-        String appId = accountPO.getAppId();
+    public FanPO getFanByOpenId(String appId, String openId) {
         String table = DBTableUtil.getFanTableName(appId);
         FanPOExample example = new FanPOExample();
         example.createCriteria()
                 .andAppIdEqualTo(appId)
-                .andOpenIdEqualTo(openId);
-        return fanMapper.selectByExample(example, table).get(0);
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
+
+        List<FanPO> fanPOList = fanMapper.selectByExample(example, table);
+        return fanPOList.isEmpty() ? null : fanPOList.get(0);
     }
 
     @Override
@@ -295,12 +296,12 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public FanPO addFan(String appId, String openId) {
+    public void refreshFan(String appId, String openId) {
         AccountPO accountPO = accountService.getAccountByAppId(appId);
 
         // 只有认证的公众号才能获取粉丝信息
-        if (accountPO == null || accountPO.getServiceType() != 0) {
-            return null;
+        if (accountPO == null || accountPO.getVerifyType() != 0) {
+            return;
         }
 
         String accessToken = accountService.getAccessToken(accountPO.getWeixinAppid());
@@ -344,15 +345,13 @@ public class FanServiceImpl implements FanService {
             fanPO.setCreateTime(DateUtil.curSeconds());
             fanMapper.insertSelective(fanPO, table);
         }
-
-        return fanPO;
     }
 
     @Override
     public void delFanOpenId(String appId, String openId) {
-        OpenIdPO oldUserPO = new OpenIdPO();
-        oldUserPO.setStatus(2);
-        oldUserPO.setUpdateTime(DateUtil.curSeconds());
+        OpenIdPO record = new OpenIdPO();
+        record.setStatus(2);
+        record.setUpdateTime(DateUtil.curSeconds());
 
         OpenIdPOExample example = new OpenIdPOExample();
         example.createCriteria()
@@ -361,9 +360,26 @@ public class FanServiceImpl implements FanService {
                 .andStatusEqualTo(1);
 
         String table = DBTableUtil.getOpenIdTableName(appId);
-        openIdMapper.updateByExampleSelective(oldUserPO, example, table);
+        openIdMapper.updateByExampleSelective(record, example, table);
 
-        //TODO:删除Redis缓存
+        fanCache.deleteFan(appId, openId);
+    }
+
+    @Override
+    public void delFan(String appId, String openId) {
+        FanPO record = new FanPO();
+        record.setStatus(2);
+        record.setUpdateTime(DateUtil.curSeconds());
+
+        FanPOExample example = new FanPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
+        String table = DBTableUtil.getFanTableName(appId);
+        fanMapper.updateByExampleSelective(record, example, table);
+
+        fanCache.deleteFan(appId, openId);
     }
 
     @Override
@@ -393,11 +409,44 @@ public class FanServiceImpl implements FanService {
         return true;
     }
 
+    @Override
     public void asyncAddFan(String appId, String openId) {
-        SubscribeDTO subscribeDTO = new SubscribeDTO();
-        subscribeDTO.setAppId(appId);
-        subscribeDTO.setOpenId(openId);
+        FanDTO fanDTO = new FanDTO();
+        fanDTO.setAppId(appId);
+        fanDTO.setOpenId(openId);
 
-        mqUtil.publish(MqConstant.FAN_SUBSCRIBE, JsonUtil.bean2String(subscribeDTO));
+        mqUtil.publish(MqConstant.FAN_SUBSCRIBE, JsonUtil.bean2String(fanDTO));
+    }
+
+    @Override
+    public void asyncUpdateFan(String appId, String openId) {
+        FanDTO fanDTO = new FanDTO();
+        fanDTO.setAppId(appId);
+        fanDTO.setOpenId(openId);
+
+        mqUtil.publish(MqConstant.FAN_UPDATE, JsonUtil.bean2String(fanDTO));
+    }
+
+    @Override
+    public void asyncDeleteFan(String appId, String openId) {
+        FanDTO fanDTO = new FanDTO();
+        fanDTO.setAppId(appId);
+        fanDTO.setOpenId(openId);
+
+        mqUtil.publish(MqConstant.FAN_UNSUBSCRIBE, JsonUtil.bean2String(fanDTO));
+    }
+
+    @Override
+    public void refreshInteractionTime(String appId, String openId) {
+        FanPO record = new FanPO();
+        record.setLastInteractTime(DateUtil.curSeconds());
+
+        FanPOExample example = new FanPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(appId)
+                .andOpenIdEqualTo(openId)
+                .andStatusEqualTo(1);
+        String table = DBTableUtil.getFanTableName(appId);
+        fanMapper.updateByExampleSelective(record, example, table);
     }
 }

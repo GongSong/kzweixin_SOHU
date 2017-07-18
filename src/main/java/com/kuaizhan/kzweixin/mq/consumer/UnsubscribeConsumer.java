@@ -7,17 +7,18 @@ import com.kuaizhan.kzweixin.utils.JsonUtil;
 import javax.annotation.Resource;
 
 /**
- * Created by fangtianyu on 7/5/17.
+ * Created by fangtianyu on 7/12/17.
  */
-public class SubscribeConsumer extends BaseConsumer{
+public class UnsubscribeConsumer extends BaseConsumer{
 
     @Resource
     private FanService fanService;
 
     @Override
     public void onMessage(String message) {
-        FanDTO dto = JsonUtil.string2Bean(message, FanDTO.class);
-        fanService.addFanOpenId(dto.getAppId(), dto.getOpenId());
-        fanService.refreshFan(dto.getAppId(), dto.getOpenId());
+        FanDTO fanDTO = JsonUtil.string2Bean(message, FanDTO.class);
+        fanService.delFanOpenId(fanDTO.getAppId(), fanDTO.getOpenId());
+        fanService.delFan(fanDTO.getAppId(), fanDTO.getOpenId());
     }
 }
+
