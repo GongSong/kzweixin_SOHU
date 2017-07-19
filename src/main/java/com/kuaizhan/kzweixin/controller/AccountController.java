@@ -129,7 +129,7 @@ public class AccountController extends BaseController {
             weixinAppid = accountPO.getWeixinAppid();
         }
         String access_token = accountService.getAccessToken(weixinAppid);
-        return new JsonResponse(ImmutableMap.of("access_token", access_token));
+        return new JsonResponse(ImmutableMap.of("accessToken", access_token));
     }
 
     /**
