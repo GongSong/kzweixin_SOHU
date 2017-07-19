@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.controller.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Data;
  * Created by liangjiateng on 2017/3/16.
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountVO {
 
     private Long weixinAppid;
@@ -17,4 +19,9 @@ public class AccountVO {
     private String name;
     private Integer serviceType;
     private Integer verifyType;
+
+    private Boolean isAuthorized;
+    private Long newUserCount;
+    private Long newMsgCount;
+    private Long userCount;
 }

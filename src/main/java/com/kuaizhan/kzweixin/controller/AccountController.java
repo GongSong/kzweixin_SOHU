@@ -8,6 +8,7 @@ import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.controller.vo.AccountSettingVO;
 import com.kuaizhan.kzweixin.controller.vo.AccountVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
+import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.utils.PojoSwitcher;
 import org.springframework.web.bind.annotation.*;
@@ -67,6 +68,9 @@ public class AccountController extends BaseController {
         return new RedirectView(bindUrl);
     }
 
+    /**
+     * 获取绑定的url
+     */
     @RequestMapping(value = "/account/bind_url", method = RequestMethod.GET)
     public JsonResponse addBindAccount(@RequestParam Long userId,
                                        @RequestParam(required = false) Long siteId,
@@ -75,6 +79,9 @@ public class AccountController extends BaseController {
         return new JsonResponse(ImmutableMap.of("url", bindUrl));
     }
 
+    /**
+     * 获取user的所有公众号信息
+     */
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
     public JsonResponse getAccounts(@RequestParam long userId) {
         List<AccountPO> accountPOS = accountService.getAccounts(userId);
@@ -86,6 +93,31 @@ public class AccountController extends BaseController {
         return new JsonResponse(ImmutableMap.of("accounts", accountVOS));
     }
 
+    /**
+     * 列表页获取公众号列表
+     */
+    @RequestMapping(value = "/account_list", method = RequestMethod.GET)
+    public JsonResponse getAccountsByPage(@RequestParam long userId,
+                                          @RequestParam(defaultValue = "0") int offset,
+                                          @RequestParam(defaultValue = "5") int limit) {
+        PageV2<AccountPO> page = accountService.listAccountByPage(userId, offset, limit);
+
+        List<AccountVO> accountVOS = new ArrayList<>();
+        for (AccountPO accountPO: page.getDataSet()) {
+            AccountVO accountVO = PojoSwitcher.accountPOToVO(accountPO);
+            accountVO.setIsAuthorized(accountPO.getIsDel() == 0);
+            accountVO.setNewMsgCount(100L);
+            accountVO.setNewMsgCount(100L);
+            accountVO.setUserCount(101243220L);
+            accountVOS.add(accountVO);
+        }
+        return new JsonResponse(ImmutableMap.of("total", page.getTotal(), "account", accountVOS));
+    }
+
+    /**
+     * 获取公众号的access_token
+     * @param id appId或者weixinAppid
+     */
     @RequestMapping(value = "/accounts/{id}/access_token")
     public JsonResponse getAccessToken(@PathVariable String id) {
         // TODO: 从id获取weixinAppid的逻辑，考虑用guava做本地缓存

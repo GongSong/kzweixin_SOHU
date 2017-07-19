@@ -9,6 +9,7 @@ import com.kuaizhan.kzweixin.constant.KzExchange;
 import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
+import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
@@ -25,6 +26,7 @@ import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.MqUtil;
 import com.kuaizhan.kzweixin.utils.UrlUtil;
+import org.apache.ibatis.session.RowBounds;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,6 +180,19 @@ public class AccountServiceImpl implements AccountService {
                 .andUserIdEqualTo(userId)
                 .andIsDelEqualTo(0);
         return accountMapper.selectByExample(example);
+    }
+
+    @Override
+    public PageV2<AccountPO> listAccountByPage(long userId, int offset, int limit) {
+        AccountPOExample example = new AccountPOExample();
+        example.createCriteria()
+                .andUserIdEqualTo(userId);
+        example.setOrderByClause("is_del ASC, bind_time DESC");
+
+        List<AccountPO> accountPOS = accountMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, limit));
+        long total = accountMapper.countByExample(example);
+
+        return new PageV2<>(total, accountPOS);
     }
 
     @Override

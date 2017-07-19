@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
+import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 
 import java.util.List;
@@ -32,6 +33,11 @@ public interface AccountService {
      */
     // TODO: 需要加索引
     List<AccountPO> getAccounts(long userId);
+
+    /**
+     * 分页获取用户公众号列表
+     */
+    PageV2<AccountPO> listAccountByPage(long userId, int offset, int limit);
 
     /**
      * 获取accessToken
