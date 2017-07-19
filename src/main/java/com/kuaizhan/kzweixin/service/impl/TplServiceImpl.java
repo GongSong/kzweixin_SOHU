@@ -130,6 +130,7 @@ public class TplServiceImpl implements TplService {
         tplMsgPO.setStatus(1);
         tplMsgPO.setUpdateTime(DateUtil.curSeconds());
         tplMsgPO.setCreateTime(DateUtil.curSeconds());
+        // 惊人的是，微信返回的msgid有可能重复
         tplMsgMapper.upsert(tplMsgPO);
     }
 
