@@ -134,7 +134,7 @@
                 "sex": 1,
                 "openId": "oBGGJt1hO7E-HVpveyJNRpW3xc9Q",
                 "address": "中国 四川",
-                "focusTime": 1490091579,
+                "subscribeTime": 1490091579,
                 "tagIds": [
                     199,
                     201,

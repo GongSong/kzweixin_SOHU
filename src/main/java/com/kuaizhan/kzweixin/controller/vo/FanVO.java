@@ -16,7 +16,7 @@ public class FanVO {
     private Integer sex;
     private String openId;
     private String address;
-    private Integer focusTime;
+    private Integer subscribeTime;
 
     private List<Integer> tagIds;
 }

@@ -157,7 +157,7 @@ public class PojoSwitcher {
         fanVO.setSex(fanPO.getSex());
         fanVO.setOpenId(fanPO.getOpenId());
         fanVO.setAddress(fanPO.getCountry() + " " + fanPO.getProvince());
-        fanVO.setFocusTime(fanPO.getSubscribeTime());
+        fanVO.setSubscribeTime(fanPO.getSubscribeTime());
 
         if ("".equals(fanPO.getTagIdsJson())) {
             fanVO.setTagIds(new ArrayList<>());
