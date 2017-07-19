@@ -317,7 +317,9 @@ public class FanServiceImpl implements FanService {
         fanPO.setAppId(appId);
         fanPO.setOpenId(openId);
         fanPO.setStatus(userInfoDTO.getSubscribe() == 1 ? 1 : 2);
-        fanPO.setNickName(StrUtil.removeEmojis(userInfoDTO.getNickName()));
+        String nickname = StrUtil.removeEmojis(userInfoDTO.getNickName());
+        nickname = StrUtil.chopStr(nickname, 45);
+        fanPO.setNickName(nickname);
         fanPO.setCity(userInfoDTO.getCity());
         fanPO.setProvince(userInfoDTO.getProvince());
         fanPO.setCountry(userInfoDTO.getCountry());
