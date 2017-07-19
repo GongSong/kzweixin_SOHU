@@ -17,12 +17,15 @@ import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.MassService;
 import com.kuaizhan.kzweixin.service.PostService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Chen on 17/7/11.
@@ -41,6 +44,8 @@ public class MassServiceImpl implements MassService {
 
     @Resource
     protected PostService postService;
+
+    private static final Logger logger = LoggerFactory.getLogger(MassServiceImpl.class);
 
     @Override
     public MassPO getMassById(long id) {
@@ -166,6 +171,24 @@ public class MassServiceImpl implements MassService {
         massPO.setPublishTime(); */
         massPO.setCreateTime(new Date().getTime()/1000);
         massMapper.insert(massPO);
+    }
+
+    @Override
+    public long genMassId() {
+        final long MIN = 1000000000L;
+        final long MAX = 9999999999L;
+        int count = 1;
+
+        long massId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+        while (massMapper.isMassIdExist(massId)) {
+            massId = ThreadLocalRandom.current().nextLong(MIN, MAX + 1);
+            count++;
+        }
+
+        if (count >= 3) {
+            logger.warn("[genPageId] gen times reach {}", count);
+        }
+        return massId;
     }
 
     @Override

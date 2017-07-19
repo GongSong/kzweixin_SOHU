@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
@@ -35,8 +36,12 @@ public class QrcodeController  extends BaseController {
                                   @RequestParam(value = "response_type") int respType,
                                   @RequestParam(value = "response_json") String respJson,
                                   @RequestParam(value = "qrcode_name") String qrName) {
-
-        return new JsonResponse(null);
+        String qrcodeUrl = null;
+        AccountPO accountPO = accountService.getAccountBySiteId(siteId);
+        if(accountPO != null && accountPO.getWeixinAppid() != 0) {
+           qrcodeUrl = qrcodeService.genQrcodeByWxAppId(accountPO.getWeixinAppid(),respType, respJson,qrName);
+        }
+        return new JsonResponse(ImmutableMap.of("qrcode_url", qrcodeUrl));
     }
 
 
@@ -52,7 +57,7 @@ public class QrcodeController  extends BaseController {
     @RequestMapping(value = "/qr/list", method = RequestMethod.POST)
     public JsonResponse getQrcodeList(@RequestParam(value = "siteId") long siteId,
                                     @RequestParam(value = "pageNO", defaultValue = "1") int pageNO,
-                                    @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                    @RequestParam(value = "pageSize", defaultValue = "5") int pageSize,
                                     @RequestParam(value = "query", required = false, defaultValue = "") String query) {
         List<QrcodePO> qrcodeList= null;
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);

@@ -54,7 +54,7 @@ public class WxCommonManager {
      * @param sceneId 场景id
      * @return
      */
-    public static String genTmpQrcode(String accessToken, int sceneId) {
+    public static String genTmpQrcode(String accessToken, long sceneId) {
         Map<String, Object> param = new HashMap<>();
         // 临时二维码最大30天
         param.put("expire_seconds", 30 * 24 * 60 * 60);
