@@ -210,3 +210,20 @@
             }
          ]
         ```
+
+#### 11 获取公众号access_token
+* **协议**：HTTP
+* **方法**：GET
+* **URL**：/v1/accounts/`<account_id>`/access_token
+* **参数**： 
+    * account_id weixinAppid或者appId
+    
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {
+            "access_token": "fda3fdavdw3fdafv3rdfadfa3fdadfa=="
+        }
+        ```

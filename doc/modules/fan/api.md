@@ -114,38 +114,35 @@
 * **URL**：/v1/fan/fans
 * **参数**：
     * weixinAppid 主键
-    * pageNum 当前页码
     * tagIds 要查找的标签id
     * queryStr 要查找的昵称字符串
     * isBlacklist 是否在黑名单里查找
+    * offset 分页偏移量
+    * limit 分页的每页大小
 
 * **返回**：
     * 获取成功时返回:
        
         ```
-         "totalNum": 2,
-                "currentPage": 1,
-                "totalPage": 1,
-                "fans": [
-                    {
-                        "id": 4337,
-                        "name": "Fe.y.z",
-                        "headImgUrl": "http://wx.qlogo.cn/mmopen/1XRNasCU4H4YUNfib1b8rpK0L61c3sU7iaQZ7y9IcRpNWlD5ctNbzMKKWNIRqyxKo0dMmVaoqBat4Cyvum3KLbrzL2XvPrJibdp/0",
-                        "sex": 1,
-                        "openId": "oBGGJt1hO7E-HVpveyJNRpW3xc9Q",
-                        "address": "中国 四川",
-                        "focusTime": 1490091579,
-                        "tagIds": [
-                            199,
-                            201,
-                            202
-                        ]
-                    },
-                    {
-                        ......
-                    },
-                    ......
+        {
+         "total": 200,
+         "fans": [
+            {
+                "id": 4337,
+                "name": "Fe.y.z",
+                "headImgUrl": "http://wx.qlogo.cn/mmopen/1XRNasCU4H4YUNfib1b8rpK0L61c3sU7iaQZ7y9IcRpNWlD5ctNbzMKKWNIRqyxKo0dMmVaoqBat4Cyvum3KLbrzL2XvPrJibdp/0",
+                "sex": 1,
+                "openId": "oBGGJt1hO7E-HVpveyJNRpW3xc9Q",
+                "address": "中国 四川",
+                "focusTime": 1490091579,
+                "tagIds": [
+                    199,
+                    201,
+                    202
                 ]
+            }
+           ]
+        }
         ```
 
 #### 7 更新黑名单用户信息
