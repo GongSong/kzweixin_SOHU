@@ -80,7 +80,7 @@ public class FanController extends BaseController {
     /**
      * 按标签搜索粉丝
      */
-    @RequestMapping(value = "/fan/fans", method = RequestMethod.GET)
+    @RequestMapping(value = "/fans", method = RequestMethod.GET)
     public JsonResponse fanTagSearch(@RequestParam long weixinAppid, @RequestParam int pageNum,
                                      @RequestParam(required = false) List<Integer> tagIds,
                                      @RequestParam(required = false) String queryStr,

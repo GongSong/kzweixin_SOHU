@@ -50,7 +50,7 @@
 #### 3 重命名标签
 * **协议**：HTTP
 * **方法**：PUT
-* **URL**：/v1/fan/tag/`{tagId}`
+* **URL**：/v1/fan/tags/`{tagId}`
 * **参数**：
     * tagId 要修改的标签id
     * weixinAppid 主键
@@ -70,7 +70,7 @@
 #### 4 删除标签
 * **协议**：HTTP
 * **方法**：DELETE
-* **URL**：/v1/fan/tag/`{tagId}`
+* **URL**：/v1/fan/tags/`{tagId}`
 * **参数**：
     * tagId 要删除的标签id
     * weixinAppid 主键
@@ -108,10 +108,10 @@
         * openId不属于此公众号，返回码 104009
         * 非法的openId或用户未关注公众号，返回码 108006
         
-#### 6 按标签搜索粉丝
+#### 6 获取粉丝
 * **协议**：HTTP
 * **方法**：GET
-* **URL**：/v1/fan/fans
+* **URL**：/v1/fans
 * **参数**：
     * weixinAppid 主键
     * tagIds 要查找的标签id
