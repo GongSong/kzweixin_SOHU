@@ -130,7 +130,7 @@ public class TplServiceImpl implements TplService {
         tplMsgPO.setStatus(1);
         tplMsgPO.setUpdateTime(DateUtil.curSeconds());
         tplMsgPO.setCreateTime(DateUtil.curSeconds());
-        tplMsgMapper.insert(tplMsgPO);
+        tplMsgMapper.upsert(tplMsgPO);
     }
 
     @Override
