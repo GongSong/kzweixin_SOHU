@@ -11,7 +11,7 @@ import java.util.Map;
 @Data
 public class SendCustomMsgParam {
     @NotNull(message = "weixinAppid can not be null")
-    private long weixinAppid;
+    private Long weixinAppid;
     @NotNull(message = "openId can not be null")
     private String openId;
     @NotNull(message = "msgType can not be null")
