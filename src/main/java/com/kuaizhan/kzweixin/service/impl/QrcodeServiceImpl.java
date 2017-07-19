@@ -44,7 +44,7 @@ public class QrcodeServiceImpl implements QrcodeService {
     public String genQrcodeByWxAppId(long weixinAppid,int respType,String respJson,String qrName) {
         String accessToken = accountService.getAccessToken(weixinAppid);
         long sceneId = genSceneId();
-        String ticket = WxCommonManager.genTmpQrcode(accessToken, sceneId);
+        String ticket = WxCommonManager.genLimitQrcode(accessToken, sceneId);
         QrcodePO qrcodePO=new QrcodePO();
         long qrcodeId = genQrcodeId();
         qrcodePO.setQrcodeId(qrcodeId);

@@ -34,7 +34,7 @@ public class QrcodeController  extends BaseController {
     @RequestMapping(value = "/qr/new")
     public JsonResponse newQrcode(@RequestParam(value = "site_id") long siteId,
                                   @RequestParam(value = "response_type") int respType,
-                                  @RequestParam(value = "response_json") String respJson,
+                                  @RequestParam(value = "response_json",required = false) String respJson,
                                   @RequestParam(value = "qrcode_name") String qrName) {
         String qrcodeUrl = null;
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
