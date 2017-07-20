@@ -29,6 +29,13 @@ public interface MassService {
 
     /**
      * 获取客服群发
+     * @param wxAppId
+     * @return
+     */
+    CustomMassPO getCustomMassById(long wxAppId);
+
+    /**
+     * 获取客服群发
      * @param wxAppid
      * @return
      */

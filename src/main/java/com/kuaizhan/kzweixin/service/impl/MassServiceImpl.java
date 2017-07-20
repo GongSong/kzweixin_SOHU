@@ -37,7 +37,7 @@ public class MassServiceImpl implements MassService {
     protected MassMapper massMapper;
 
     @Resource
-    protected CustomMassMapper CustomMassMapper;
+    protected CustomMassMapper customMassMapper;
 
     @Resource
     protected AccountService accountService;
@@ -52,9 +52,21 @@ public class MassServiceImpl implements MassService {
         MassPOExample example = new MassPOExample();
         example.createCriteria()
                 .andMassIdEqualTo(id)
-                .andIsTimingEqualTo(1)
                 .andStatusNotEqualTo(0);
         List<MassPO> massList = massMapper.selectByExample(example);
+        if (massList.size() == 0) {
+            throw new BusinessException(ErrorCode.MASS_NOT_EXIST);
+        }
+        return massList.get(0);
+    }
+
+
+    @Override
+    public CustomMassPO getCustomMassById(long id) {
+        CustomMassPOExample example = new CustomMassPOExample();
+        example.createCriteria()
+                .andCustomMassIdEqualTo(id);
+        List<CustomMassPO> massList = customMassMapper.selectByExample(example);
         if (massList.size() == 0) {
             throw new BusinessException(ErrorCode.MASS_NOT_EXIST);
         }
@@ -87,7 +99,7 @@ public class MassServiceImpl implements MassService {
                 .andStatusNotEqualTo(0)
                 .andIsTimingEqualTo(1) ;
         example.setOrderByClause("update_time desc");
-        List<CustomMassPO> customMassList = CustomMassMapper.selectByExample(example);
+        List<CustomMassPO> customMassList = customMassMapper.selectByExample(example);
         if (customMassList.size() == 0) {
             throw new BusinessException(ErrorCode.CUSTOM_MASS_NOT_EXIST);
         }

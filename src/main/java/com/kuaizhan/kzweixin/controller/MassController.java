@@ -6,6 +6,7 @@ import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.controller.vo.CustomMassVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.controller.vo.MassVO;
+import com.kuaizhan.kzweixin.dao.po.MassArticlePO;
 import com.kuaizhan.kzweixin.dao.po.MassRespPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
@@ -58,7 +59,7 @@ public class MassController extends BaseController {
     @RequestMapping(value = "/mass/hasMulti/{massId}", method = RequestMethod.GET)
     public JsonResponse hasMulti (@PathVariable long massId) {
         MassPO massPO = massService.getMassById(massId);
-        if(massPO.getResponseType() == MassPO.RespType.ARTICLE_LIST.getCode()) {
+        if(massPO != null && massPO.getResponseType() == MassPO.RespType.ARTICLE_LIST.getCode()) {
             List<MassRespPO> massRespPOS = JsonUtil.string2List(massPO.getResponseJson(), MassRespPO.class);
             if(massRespPOS != null && massRespPOS.size() > 0) {
                 PostPO postPO = postService.getPostByPageId(massRespPOS.get(0).getPostId());
@@ -162,8 +163,22 @@ public class MassController extends BaseController {
             String msg = massService.wrapPreviewMsg(accountPO.getWeixinAppid(), type, respJson, isMulti);
             msgService.sendCustomMsg(accountPO.getWeixinAppid(), accountPO.getPreviewOpenId(), type, msg);
         } else {
-            Object msg = massService.wrapMassMsg(accountPO.getWeixinAppid(), type, respJson, isMulti);
-            massService.sendMassMsg(accountPO.getWeixinAppid(), tagId, type, msg);
+            if(isTiming != 0) {
+
+            } else {
+                if(massId != 0) {
+                    MassPO massPO = massService.getMassById(massId);
+                    if(massPO != null && massPO.getIsTiming() ==1) {
+                        // 删除旧任务
+                        Long oldPublishTime = massPO.getPublishTime();
+
+
+                    }
+                }
+
+                Object msg = massService.wrapMassMsg(accountPO.getWeixinAppid(), type, respJson, isMulti);
+                massService.sendMassMsg(accountPO.getWeixinAppid(), tagId, type, msg);
+            }
         }
 
         return new JsonResponse(ErrorCode.SUCCESS.getCode(), "success", ImmutableMap.of());
@@ -178,14 +193,11 @@ public class MassController extends BaseController {
      */
     @RequestMapping(value = "/mass/hasCustomMulti/{massId}", method = RequestMethod.GET)
     public JsonResponse hasCustomMulti (@PathVariable long massId) {
-        MassPO massPO = massService.getMassById(massId);
-        if(massPO.getResponseType() == MassPO.RespType.ARTICLE_LIST.getCode()) {
-            List<MassRespPO> massRespPOList = JsonUtil.string2List(massPO.getResponseJson(), MassRespPO.class);
-            if(massRespPOList != null && massRespPOList.size() > 0) {
-                PostPO postPO = postService.getPostByPageId(massRespPOList.get(0).getPostId());
-                if(postPO != null && postPO.getType() == PostPO.Type.Multi_One.getCode()) {
-                    return new JsonResponse(true);
-                }
+        CustomMassPO massPO = massService.getCustomMassById(massId);
+        if(massPO != null && massPO.getTagId() == 2) {
+            List<MassArticlePO> massArticleList = JsonUtil.string2List(massPO.getMsgJson(), MassArticlePO.class);
+            if(massArticleList != null && massArticleList.size() > 0) {
+                // TODO
             }
         }
         return new JsonResponse(false);
