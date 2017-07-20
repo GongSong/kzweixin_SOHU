@@ -10,6 +10,7 @@ public class KzExchange {
     public static final String USER_IMPORT = "sys-weixin-user-import.direct";
     public static final String GUIDE_FOLLOW_ADD = "sys-weixin-guide-follow-add.direct";
     public static final String OTHER_SETTINGS_AFTER_BIND = "sys-weixin-other-settings-after-bind.direct";
+    public static final String ADD_MSG = "sys-weixin-msg-add.direct";
 
     // 统计
     public static final String KZ_STAT_INC = "sys-kz-stat-inc.direct";

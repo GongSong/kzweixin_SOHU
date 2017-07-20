@@ -10,6 +10,11 @@ public enum WxMsgType {
 
     TEXT("text"),
     IMAGE("image"),
+    VOICE("voice"),
+    VIDEO("video"),
+    SHORT_VIDEO("shortvideo"),
+    LOCATION("location"),
+    LINK("link"),
     NEWS("news");
 
     private String value;

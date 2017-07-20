@@ -1,17 +1,21 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.kuaizhan.kzweixin.constant.KzExchange;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.entity.XmlData;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
+import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.enums.ResponseType;
+import com.kuaizhan.kzweixin.enums.WxMsgType;
 import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.service.*;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import com.kuaizhan.kzweixin.utils.MqUtil;
 import com.kuaizhan.kzweixin.utils.XmlUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -21,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zixiong on 2017/6/23.
@@ -41,6 +47,8 @@ public class WxPushServiceImpl implements WxPushService {
     private WxThirdPartService wxThirdPartService;
     @Resource
     private TplService tplService;
+    @Resource
+    private MqUtil mqUtil;
 
     private static final String SUCCESS_RESULT = "success";
 
@@ -72,11 +80,23 @@ public class WxPushServiceImpl implements WxPushService {
         // ************ Event 事件 *****************
         if ("event".equals(msgType)) {
             result = handleEventMsg(xmlData, accountPO);
-
+        }
         // ************ Text 事件 *****************
-        } else if ("text".equals(msgType)) {
+        else if ("text".equals(msgType)) {
             result = handleTextMsg(xmlData, accountPO);
         }
+        // ************ 其他消息存储的事件 *****************
+        else if ("image".equals(msgType)
+                || "voice".equals(msgType)
+                || "video".equals(msgType)
+                || "shortvideo".equals(msgType)
+                || "location".equals(msgType)
+                || "link".equals(msgType)) {
+
+            WxMsgType wxMsgType = WxMsgType.fromValue(msgType);
+            result = handleOtherMsg(xmlData, accountPO, wxMsgType);
+        }
+
 
         // java代码成功处理了则返回，否则继续调用php
         if (result != null) {
@@ -99,6 +119,8 @@ public class WxPushServiceImpl implements WxPushService {
     private String handleTextMsg(XmlData xmlData, AccountPO accountPO) {
 
         kzStat("a200", xmlData.getAppId());
+        fanService.refreshInteractionTime(xmlData.getAppId(), xmlData.getOpenId());
+        fanService.asyncUpdateFan(xmlData.getAppId(), xmlData.getOpenId());
 
         return handleActions(accountPO.getWeixinAppid(), xmlData, ActionType.REPLY);
     }
@@ -202,6 +224,87 @@ public class WxPushServiceImpl implements WxPushService {
             }
         }
         return null;
+    }
+
+    /**
+     * 处理几个需要存储在消息表的事件
+     */
+    private String handleOtherMsg(XmlData xmlData, AccountPO accountPO, WxMsgType wxMsgType) {
+
+        fanService.refreshInteractionTime(xmlData.getAppId(), xmlData.getOpenId());
+        fanService.asyncUpdateFan(xmlData.getAppId(), xmlData.getOpenId());
+
+        String appId = xmlData.getAppId();
+        Element xmlRoot = xmlData.getXmlRoot();
+
+        MsgType msgType;
+        Map<String, Object> content = new HashMap<>();
+
+        switch (wxMsgType) {
+
+            case IMAGE:
+                msgType = MsgType.IMAGE;
+                kzStat("a300", appId);
+                content.put("media_id", xmlRoot.elementText("MediaId"));
+                content.put("pic_url", xmlRoot.elementText("PicUrl"));
+                break;
+
+            case VOICE:
+                msgType = MsgType.VOICE;
+                kzStat("a400", appId);
+                content.put("media_id", xmlRoot.elementText("MediaId"));
+                content.put("format", xmlRoot.elementText("Format"));
+                break;
+
+            case VIDEO:
+                msgType = MsgType.VIDEO;
+                kzStat("a500", appId);
+                content.put("media_id", xmlRoot.elementText("MediaId"));
+                content.put("thumb_media_id", xmlRoot.elementText("ThumbMediaId"));
+                break;
+
+            case SHORT_VIDEO:
+                msgType = MsgType.SHORT_VIDEO;
+                kzStat("a800", appId);
+                content.put("media_id", xmlRoot.elementText("MediaId"));
+                content.put("thumb_media_id", xmlRoot.elementText("ThumbMediaId"));
+                break;
+
+            case LOCATION:
+                msgType = MsgType.LOCATION;
+                kzStat("a600", appId);
+                content.put("location_x", xmlRoot.elementText("Location_X"));
+                content.put("location_y", xmlRoot.elementText("Location_Y"));
+                content.put("scale", xmlRoot.elementText("Scale"));
+                content.put("label", xmlRoot.elementText("Label"));
+                break;
+
+            case LINK:
+                msgType = MsgType.LINK;
+                kzStat("a700", appId);
+                content.put("title", xmlRoot.elementText("Title"));
+                content.put("description", xmlRoot.elementText("Description"));
+                content.put("url", xmlRoot.elementText("url"));
+                break;
+
+            default:
+                throw new IllegalArgumentException("[handleOtherMsg] unknown msgType:" + wxMsgType);
+        }
+
+        // 异步添加消息
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("app_id", appId);
+        resultMap.put("open_id", xmlData.getOpenId());
+        resultMap.put("type", msgType.getValue());
+        resultMap.put("content", content);
+        resultMap.put("send_type", 1);
+        resultMap.put("create_time", xmlData.getCreateTime());
+        resultMap.put("verify_type", accountPO.getVerifyType());
+        String msg= JsonUtil.bean2String(resultMap);
+        logger.debug("####################### msg: {}", msg);
+        mqUtil.publish(KzExchange.ADD_MSG, "", msg);
+
+        return SUCCESS_RESULT;
     }
 
     /**
