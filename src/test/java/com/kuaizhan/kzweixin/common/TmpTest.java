@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.common;
 
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
+import com.kuaizhan.kzweixin.utils.StrUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,8 @@ public class TmpTest {
 
     @Test
     public void testXml() throws Exception {
-        Integer i = null;
-        System.out.println("---->" + (i == 1));
+        String str = "da\uD83E\uDD17fa";
+        System.out.println("---->" + StrUtil.removeEmojis(str));
     }
 
     @Test

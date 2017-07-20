@@ -320,13 +320,13 @@ public class FanServiceImpl implements FanService {
         String nickname = StrUtil.removeEmojis(userInfoDTO.getNickName());
         nickname = StrUtil.chopStr(nickname, 45);
         fanPO.setNickName(nickname);
-        fanPO.setCity(userInfoDTO.getCity());
-        fanPO.setProvince(userInfoDTO.getProvince());
-        fanPO.setCountry(userInfoDTO.getCountry());
+        fanPO.setCity(StrUtil.removeEmojis(userInfoDTO.getCity()));
+        fanPO.setProvince(StrUtil.removeEmojis(userInfoDTO.getProvince()));
+        fanPO.setCountry(StrUtil.removeEmojis(userInfoDTO.getCountry()));
         fanPO.setHeadImgUrl(userInfoDTO.getHeadImgUrl());
         fanPO.setGroupId(userInfoDTO.getGroupId());
         fanPO.setLanguage(userInfoDTO.getLanguage());
-        fanPO.setRemark(userInfoDTO.getRemark());
+        fanPO.setRemark(StrUtil.removeEmojis(userInfoDTO.getRemark()));
         String unionId = userInfoDTO.getUnionId() == null? "": userInfoDTO.getUnionId();
         fanPO.setUnionId(unionId);
         fanPO.setSex(userInfoDTO.getSex());
