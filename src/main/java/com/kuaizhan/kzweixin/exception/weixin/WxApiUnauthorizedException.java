@@ -9,6 +9,10 @@ import com.kuaizhan.kzweixin.exception.BusinessException;
 public class WxApiUnauthorizedException extends BusinessException {
     private static final ErrorCode errorCode = ErrorCode.API_UNAUTHORIZED;
 
+    public WxApiUnauthorizedException() {
+        super(WxApiUnauthorizedException.errorCode);
+    }
+
     public WxApiUnauthorizedException(String msg) {
         super(WxApiUnauthorizedException.errorCode, msg);
     }

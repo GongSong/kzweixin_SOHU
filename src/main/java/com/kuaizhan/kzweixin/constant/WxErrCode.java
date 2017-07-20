@@ -65,5 +65,6 @@ public class WxErrCode {
 
 
     // 公众号没有授权此功能
-    public static final int API_IS_UNAUTHORIZED = 61007;
+    public static final int API_UNAUTHORIZED_TO_COMPONENT= 61007;
+    public static final int API_UNAUTHORIZED = 48001;
 }

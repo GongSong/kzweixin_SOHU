@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.mq.consumer;
 
 import com.kuaizhan.kzweixin.dao.po.auto.TplMsgPO;
 import com.kuaizhan.kzweixin.exception.weixin.WxRequireRemoveBlackListException;
+import com.kuaizhan.kzweixin.exception.weixin.WxRequireSubscribeException;
 import com.kuaizhan.kzweixin.mq.dto.SendTplMsgForMassDTO;
 import com.kuaizhan.kzweixin.service.TplService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
@@ -30,6 +31,9 @@ public class SendTplMsgForMassConsumer extends BaseConsumer {
             msgId = tplService.sendTplMsg(dto.getWeixinAppid(), dto.getTplId(), dto.getOpenId(), dto.getMsgUrl(), dto.getDataMap());
         } catch (WxRequireRemoveBlackListException e) {
             logger.debug("[mq] openid in blacklist, abandon. appId: {} openId: {}", dto.getAppId(), dto.getOpenId());
+            return;
+        } catch (WxRequireSubscribeException e) {
+            logger.debug("[mq] fan not subscribe, abandon. appId: {} openId: {}", dto.getAppId(), dto.getOpenId());
             return;
         }
 

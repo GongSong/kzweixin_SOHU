@@ -35,9 +35,6 @@ public class FanServiceImplTest {
 
     @Test
     public void refreshFan() throws Exception {
-        String appId = "wx1a4ff9ec0e369bd1";
-        String openId = "oBGGJt-_qLdxlawjs3CjGcb6xrlQ";
-        fanService.refreshFan(appId, openId);
     }
 
 }

@@ -330,7 +330,13 @@ public class WxFanManager {
         }
 
         JSONObject resultJson = new JSONObject(result);
-        if (resultJson.optInt("errcode") != 0) {
+
+        int errCode = resultJson.optInt("errcode");
+        if (errCode == WxErrCode.API_UNAUTHORIZED) {
+            throw new WxApiUnauthorizedException();
+        } else if (errCode == WxErrCode.API_UNAUTHORIZED_TO_COMPONENT) {
+            throw new WxApiUnauthorizedToKzException();
+        } else if (errCode != 0) {
             throw new WxApiException("[WeiXin:getFanInfo] unexpected result:" + result);
         }
 
