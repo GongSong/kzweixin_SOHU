@@ -6,10 +6,10 @@ import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.param.TagNameParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateFanTagParam;
 import com.kuaizhan.kzweixin.controller.param.UserBlacklistParam;
+import com.kuaizhan.kzweixin.controller.vo.FanVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
-import com.kuaizhan.kzweixin.controller.vo.FanListVO;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
-import com.kuaizhan.kzweixin.entity.common.Page;
+import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.service.FanService;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +17,7 @@ import com.kuaizhan.kzweixin.utils.PojoSwitcher;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -81,22 +82,19 @@ public class FanController extends BaseController {
      * 按标签搜索粉丝
      */
     @RequestMapping(value = "/fans", method = RequestMethod.GET)
-    public JsonResponse fanTagSearch(@RequestParam long weixinAppid, @RequestParam int pageNum,
+    public JsonResponse fanTagSearch(@RequestParam long weixinAppid,
+                                     @RequestParam(defaultValue = "0") int offset,
+                                     @RequestParam(defaultValue = "20") int limit,
                                      @RequestParam(required = false) List<Integer> tagIds,
                                      @RequestParam(required = false) String queryStr,
-                                     @RequestParam(required = false, defaultValue = "0") int isBlacklist) {
-        Page<FanPO> fanPage = fansService.listFansByPage(weixinAppid, pageNum, AppConstant.PAGE_SIZE_LARGE, tagIds, queryStr, isBlacklist);
-        List<FanPO> fanPOList = fanPage.getResult();
+                                     @RequestParam(defaultValue = "0") int isBlacklist) {
+        PageV2<FanPO> fanPage = fansService.listFansByPage(weixinAppid, offset, limit, tagIds, queryStr, isBlacklist);
+        List<FanVO> fanVOList = new ArrayList<>();
 
-        FanListVO fanListVO = new FanListVO();
-        fanListVO.setTotalNum(fanPage.getTotalCount());
-        fanListVO.setTotalPage(fanPage.getTotalPages());
-        fanListVO.setCurrentPage(fanPage.getPageNo());
-
-        for(FanPO fanPO: fanPOList) {
-            fanListVO.getFans().add(PojoSwitcher.fanPOToVO(fanPO));
+        for(FanPO fanPO: fanPage.getDataSet()) {
+            fanVOList.add(PojoSwitcher.fanPOToVO(fanPO));
         }
-        return new JsonResponse(fanListVO);
+        return new JsonResponse(ImmutableMap.of("total", fanPage.getTotal(), "fans", fanVOList));
     }
 
     /**

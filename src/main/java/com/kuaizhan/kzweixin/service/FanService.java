@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
-import com.kuaizhan.kzweixin.entity.common.Page;
+import com.kuaizhan.kzweixin.entity.common.PageV2;
 import java.util.List;
 
 /**
@@ -72,14 +72,14 @@ public interface FanService {
 
     /**
      * 按标签搜索粉丝
-     * @param pageNum 当前页页码
-     * @param pageSize 每页显示结果条数
+     * @param offset 当前查询偏移量
+     * @param limit 每页最多显示结果条数
      * @param tagIds 粉丝所在的标签组
      * @param queryStr 关键字搜索字符串
      * @param isBlacklist 是否在黑名单里查找
      * @return 粉丝信息列表
      * */
-    Page<FanPO> listFansByPage(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist);
+    PageV2<FanPO> listFansByPage(long weixinAppid, int offset, int limit, List<Integer> tagIds, String queryStr, int isBlacklist);
 
     /**
      * 粉丝关注后，保存openId
