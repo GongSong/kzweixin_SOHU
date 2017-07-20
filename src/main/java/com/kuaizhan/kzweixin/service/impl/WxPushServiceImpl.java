@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
-import com.kuaizhan.kzweixin.entity.WxData;
+import com.kuaizhan.kzweixin.entity.XmlData;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
@@ -54,6 +54,7 @@ public class WxPushServiceImpl implements WxPushService {
         // 校验appId是否存在，大量解除绑定，但是授权还在的用户
         AccountPO accountPO;
         try {
+            // 量大了会有缓存击穿的问题
             accountPO = accountService.getAccountByAppId(appId);
         } catch (AccountNotExistException e) {
             return SUCCESS_RESULT;
@@ -63,18 +64,18 @@ public class WxPushServiceImpl implements WxPushService {
 
         //解析消息
         Document document = XmlUtil.parseXml(xmlStr);
-        WxData wxData = getWxDataFromXml(document, appId);
+        XmlData xmlData = getWxDataFromXml(document, appId);
 
         String result = null;
-        String msgType = wxData.getMsgType();
+        String msgType = xmlData.getMsgType();
 
         // ************ Event 事件 *****************
         if ("event".equals(msgType)) {
-            result = handleEventMsg(wxData, accountPO);
+            result = handleEventMsg(xmlData, accountPO);
 
         // ************ Text 事件 *****************
         } else if ("text".equals(msgType)) {
-            result = handleTextMsg(wxData, accountPO);
+            result = handleTextMsg(xmlData, accountPO);
         }
 
         // java代码成功处理了则返回，否则继续调用php
@@ -95,58 +96,62 @@ public class WxPushServiceImpl implements WxPushService {
         return KzManager.kzResponseTest(timestamp, nonce, xmlStr);
     }
 
-    private String handleTextMsg(WxData wxData, AccountPO accountPO) {
+    private String handleTextMsg(XmlData xmlData, AccountPO accountPO) {
 
-        kzStat("a200", wxData.getAppId());
+        kzStat("a200", xmlData.getAppId());
 
-        return handleActions(accountPO.getWeixinAppid(), wxData, ActionType.REPLY);
+        return handleActions(accountPO.getWeixinAppid(), xmlData, ActionType.REPLY);
     }
 
     /**
      * 处理msgType == "event"
      */
-    private String handleEventMsg(WxData wxData, AccountPO accountPO) {
+    private String handleEventMsg(XmlData xmlData, AccountPO accountPO) {
 
-        kzStat("a100", wxData.getAppId());
+        kzStat("a100", xmlData.getAppId());
 
-        if ("subscribe".equals(wxData.getEvent())) {
+        Element xmlRoot = xmlData.getXmlRoot();
+        String eventType = xmlRoot.elementText("Event");
+        String eventKey = xmlRoot.elementText("EventKey");
 
-            kzStat("a110", wxData.getAppId());
+        if ("subscribe".equals(eventType)) {
+
+            kzStat("a110", xmlData.getAppId());
 
             // 添加粉丝信息
-            fanService.asyncAddFan(wxData.getAppId(), wxData.getOpenId());
+            fanService.asyncAddFan(xmlData.getAppId(), xmlData.getOpenId());
 
-            if (StringUtils.isNotBlank(wxData.getEventKey())) {
+            if (StringUtils.isNotBlank(eventKey)) {
                 // 带场景的参数二维码等操作
             } else {
                 // 处理Action
-                return handleActions(accountPO.getWeixinAppid(), wxData, ActionType.SUBSCRIBE);
+                return handleActions(accountPO.getWeixinAppid(), xmlData, ActionType.SUBSCRIBE);
             }
         }
-        else if ("LOCATION".equals(wxData.getEvent())) {
+        else if ("LOCATION".equals(eventType)) {
 
-            kzStat("a140", wxData.getAppId());
-            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
-            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
-
-            return SUCCESS_RESULT;
-
-        }
-        else if ("VIEW".equals(wxData.getEvent())) {
-
-            kzStat("a160", wxData.getAppId());
-            fanService.refreshInteractionTime(wxData.getAppId(), wxData.getOpenId());
-            fanService.asyncUpdateFan(wxData.getAppId(), wxData.getOpenId());
+            kzStat("a140", xmlData.getAppId());
+            fanService.refreshInteractionTime(xmlData.getAppId(), xmlData.getOpenId());
+            fanService.asyncUpdateFan(xmlData.getAppId(), xmlData.getOpenId());
 
             return SUCCESS_RESULT;
 
         }
-        else if ("TEMPLATESENDJOBFINISH".equals(wxData.getEvent())) {
+        else if ("VIEW".equals(eventType)) {
 
-            kzStat("a1a0", wxData.getAppId());
+            kzStat("a160", xmlData.getAppId());
+            fanService.refreshInteractionTime(xmlData.getAppId(), xmlData.getOpenId());
+            fanService.asyncUpdateFan(xmlData.getAppId(), xmlData.getOpenId());
 
-            Long msgId = Long.parseLong(wxData.getMsgId());
-            String status = wxData.getStatus();
+            return SUCCESS_RESULT;
+
+        }
+        else if ("TEMPLATESENDJOBFINISH".equals(eventType)) {
+
+            kzStat("a1a0", xmlData.getAppId());
+
+            Long msgId = Long.parseLong(xmlRoot.elementText("MsgID"));
+            String status = xmlRoot.elementText("Status");
 
             int statusCode = -1;
             if ("success".equals(status)) {
@@ -168,21 +173,23 @@ public class WxPushServiceImpl implements WxPushService {
     /**
      * 处理动作
      */
-    private String handleActions(long weixinAppid, WxData wxData, ActionType actionType) {
+    private String handleActions(long weixinAppid, XmlData xmlData, ActionType actionType) {
 
+        Element xmlRoot = xmlData.getXmlRoot();
         List<ActionPO> actionPOS = actionService.getActions(weixinAppid, actionType);
 
         //TODO: 先按业务排序
         for (ActionPO actionPO: actionPOS) {
 
             // 判断是否触发action
-            if (! actionService.shouldAction(actionPO, wxData.getContent())) {
+            String keyword = xmlRoot.elementText("Content");
+            if (! actionService.shouldAction(actionPO, keyword)) {
                 continue;
             }
 
             int responseType = actionPO.getResponseType();
-            String fromUserName = wxData.getFromUserName();
-            String toUserName = wxData.getToUserName();
+            String fromUserName = xmlData.getFromUserName();
+            String toUserName = xmlData.getToUserName();
 
             if (responseType == ResponseType.TEXT.getValue()) {
 
@@ -256,23 +263,21 @@ public class WxPushServiceImpl implements WxPushService {
     /**
      * 从xml解析出wxData
      */
-    private WxData getWxDataFromXml(Document document, String appId) {
-        Element root = document.getRootElement();
-        WxData wxData = new WxData();
+    private XmlData getWxDataFromXml(Document document, String appId) {
+        Element xmlRoot = document.getRootElement();
+
+        XmlData xmlData = new XmlData();
         // 必有字段
-        wxData.setAppId(appId);
-        wxData.setFromUserName(root.elementText("FromUserName"));
-        wxData.setOpenId(wxData.getFromUserName());
-        wxData.setToUserName(root.elementText("ToUserName"));
-        wxData.setMsgType(root.elementText("MsgType"));
-        wxData.setCreateTime(root.elementText("CreateTime"));
-        // 可能为空字段
-        wxData.setEvent(root.elementText("Event"));
-        wxData.setEventKey(root.elementText("EventKey"));
-        wxData.setContent(root.elementText("Content"));
-        wxData.setMsgId(root.elementText("MsgID"));
-        wxData.setStatus(root.elementText("Status"));
-        return wxData;
+        xmlData.setAppId(appId);
+        xmlData.setFromUserName(xmlRoot.elementText("FromUserName"));
+        xmlData.setOpenId(xmlData.getFromUserName());
+        xmlData.setToUserName(xmlRoot.elementText("ToUserName"));
+        xmlData.setMsgType(xmlRoot.elementText("MsgType"));
+        xmlData.setCreateTime(xmlRoot.elementText("CreateTime"));
+
+        xmlData.setXmlRoot(xmlRoot);
+
+        return xmlData;
     }
 
     /**

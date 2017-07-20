@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.common;
 
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
-import com.kuaizhan.kzweixin.entity.WxData;
+import com.kuaizhan.kzweixin.entity.XmlData;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.WxPushService;
@@ -57,15 +57,12 @@ public class TmpSpringTest {
         }
         Element root = document.getRootElement();
 
-        WxData wxData = new WxData();
+        XmlData xmlData = new XmlData();
         // 必有字段
-        wxData.setAppId("wx1a4ff9ec0e369bd1");
-        wxData.setFromUserName(root.elementText("FromUserName"));
-        wxData.setToUserName(root.elementText("ToUserName"));
-        wxData.setMsgType(root.elementText("MsgType"));
-        wxData.setCreateTime(root.elementText("CreateTime"));
-        // 可能为空字段
-        wxData.setEvent(root.elementText("Event"));
-        wxData.setEventKey(root.elementText("EventKey"));
+        xmlData.setAppId("wx1a4ff9ec0e369bd1");
+        xmlData.setFromUserName(root.elementText("FromUserName"));
+        xmlData.setToUserName(root.elementText("ToUserName"));
+        xmlData.setMsgType(root.elementText("MsgType"));
+        xmlData.setCreateTime(root.elementText("CreateTime"));
     }
 }
