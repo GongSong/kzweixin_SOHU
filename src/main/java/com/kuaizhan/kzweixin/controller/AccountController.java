@@ -107,7 +107,7 @@ public class AccountController extends BaseController {
             AccountVO accountVO = PojoSwitcher.accountPOToVO(accountPO);
             accountVO.setIsAuthorized(accountPO.getIsDel() == 0);
             accountVO.setNewMsgCount(100L);
-            accountVO.setNewMsgCount(100L);
+            accountVO.setNewUserCount(100L);
             accountVO.setUserCount(101243220L);
             accountVOS.add(accountVO);
         }

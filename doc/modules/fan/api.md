@@ -108,17 +108,17 @@
         * openId不属于此公众号，返回码 104009
         * 非法的openId或用户未关注公众号，返回码 108006
         
-#### 6 获取粉丝
+#### 6 获取粉丝列表
 * **协议**：HTTP
 * **方法**：GET
 * **URL**：/v1/fans
 * **参数**：
     * weixinAppid 主键
-    * tagIds 要查找的标签id
-    * queryStr 要查找的昵称字符串
-    * isBlacklist 是否在黑名单里查找
     * offset 分页偏移量
     * limit 分页的每页大小
+    * tagIds 要查找的标签id
+    * queryStr 要查找的昵称字符串
+    * isBlacklist 是否在黑名单里查找 
 
 * **返回**：
     * 获取成功时返回:

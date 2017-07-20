@@ -58,7 +58,7 @@
             AND `nick_name` LIKE CONCAT('%', #{queryStr} ,'%')
         </if>
         ORDER BY `create_time` DESC
-        limit #{pageEntity.offset}, #{pageEntity.limit}
+        limit #{offset}, #{limit}
     </select>
 
 </mapper>
