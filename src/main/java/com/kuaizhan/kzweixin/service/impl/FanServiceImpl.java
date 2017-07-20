@@ -9,7 +9,7 @@ import com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper;
 import com.kuaizhan.kzweixin.dao.po.auto.*;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.entity.fan.UserInfoDTO;
-import com.kuaizhan.kzweixin.entity.common.Page;
+import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.manager.WxFanManager;
 import com.kuaizhan.kzweixin.mq.dto.FanDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
@@ -251,18 +251,14 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public Page<FanPO> listFansByPage(long weixinAppid, int pageNum, int pageSize, List<Integer> tagIds, String queryStr, int isBlacklist) {
+    public PageV2<FanPO> listFansByPage(long weixinAppid, int offset, int limit, List<Integer> tagIds, String queryStr, int isBlacklist) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
-        Page<FanPO> fanPage = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());
 
         long totalCount = fanDao.countFan(accountPO.getAppId(), isBlacklist, tagIds, queryStr, table);
-        List<FanPO> fanPOList = fanDao.listFansByPage(accountPO.getAppId(), fanPage, isBlacklist, tagIds, queryStr, table);
+        List<FanPO> fanPOList = fanDao.listFansByPage(accountPO.getAppId(), offset, limit, isBlacklist, tagIds, queryStr, table);
 
-        fanPage.setTotalCount(totalCount);
-        fanPage.setResult(fanPOList);
-
-        return fanPage;
+        return new PageV2<>(totalCount, fanPOList);
     }
 
     @Override

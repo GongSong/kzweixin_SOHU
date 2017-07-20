@@ -1,7 +1,6 @@
 package com.kuaizhan.kzweixin.dao.mapper;
 
 
-import com.kuaizhan.kzweixin.entity.common.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
@@ -94,7 +93,8 @@ public interface FanDao {
     /**
      * 分页查询
      *
-     * @param pageEntity  分页封装类
+     * @param offset      查询偏移量
+     * @param limit       最大查询数量
      * @param isBlacklist 0白1黑
      * @param tagIds      标签id列表
      * @param queryStr    搜索关键词
@@ -102,7 +102,8 @@ public interface FanDao {
      * @return 粉丝列表
      */
     List<FanPO> listFansByPage(@Param("appId") String appId,
-                               @Param("pageEntity") Page pageEntity,
+                               @Param("offset") int offset,
+                               @Param("limit") int limit,
                                @Param("isBlacklist") Integer isBlacklist,
                                @Param("tagIds") List<Integer> tagIds,
                                @Param("queryStr") String queryStr,
