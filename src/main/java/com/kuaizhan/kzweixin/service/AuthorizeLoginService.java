@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.service;
 
+import com.kuaizhan.kzweixin.cache.model.AuthLoginInfo;
 import com.kuaizhan.kzweixin.enums.AuthorizeScope;
 
 /**
@@ -25,5 +26,11 @@ public interface AuthorizeLoginService {
      * @param redirectUrl
      * @return
      */
-    String getRedirectUrlWithUserInfo(String appId, String code, String redirectUrl);
+    String getRedirectUrlWithToken(String appId, String code, String redirectUrl);
+
+
+    /**
+     * 根据token获取用户信息
+     */
+    AuthLoginInfo getAuthLoginInfoByToken(String token);
 }

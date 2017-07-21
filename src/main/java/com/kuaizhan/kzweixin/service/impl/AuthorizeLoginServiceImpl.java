@@ -1,5 +1,7 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.kuaizhan.kzweixin.cache.AuthLoginCache;
+import com.kuaizhan.kzweixin.cache.model.AuthLoginInfo;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.entity.api.response.AccessTokenResponse;
 import com.kuaizhan.kzweixin.entity.api.response.UserInfoResponse;
@@ -21,6 +23,8 @@ public class AuthorizeLoginServiceImpl implements AuthorizeLoginService {
 
     @Resource
     private WxThirdPartService wxThirdPartService;
+    @Resource
+    private AuthLoginCache authLoginCache;
 
     // 微信授权完成后，回调的api
     private static final String AUTHORIZE_REDIRECT_URL = "/kzweixin/public/v1/authorize_redirect";
@@ -41,7 +45,7 @@ public class AuthorizeLoginServiceImpl implements AuthorizeLoginService {
     }
 
     @Override
-    public String getRedirectUrlWithUserInfo(String appId, String code, String redirectUrl) {
+    public String getRedirectUrlWithToken(String appId, String code, String redirectUrl) {
 
         // 参数分隔符
         String paramSep = redirectUrl.contains("?")? "&" : "?";
@@ -54,19 +58,26 @@ public class AuthorizeLoginServiceImpl implements AuthorizeLoginService {
         AccessTokenResponse accessToken = WxAuthorizeLoginManager.getAccessToken(appId, code,
                 ApplicationConfig.WEIXIN_APPID_THIRD, wxThirdPartService.getComponentAccessToken());
 
-
+        AuthLoginInfo authLoginInfo;
         // snsapi_base授权
         if (Objects.equals(accessToken.getScope(), AuthorizeScope.SNSAPI_BASE.getValue())) {
-            return redirectUrl + paramSep + "status=1" + "&openid=" + accessToken.getOpenId();
+            authLoginInfo = new AuthLoginInfo();
+            authLoginInfo.setAppid(appId);
+            authLoginInfo.setOpenid(accessToken.getOpenId());
 
         // snsapi_userinfo授权
         } else {
             UserInfoResponse userInfo = WxAuthorizeLoginManager.getUserInfo(accessToken.getOpenId(),
                     accessToken.getAccessToken());
-            return redirectUrl + paramSep + "status=1" +
-                    "&openid=" + userInfo.getOpenid() +
-                    "&nickname=" + UrlUtil.encode(userInfo.getNickname()) +
-                    "&headImgUrl=" + userInfo.getHeadimgurl();
+            authLoginInfo = userInfo.toAuthLogoinInfo();
+            authLoginInfo.setAppid(appId);
         }
+        String token = authLoginCache.setAuthLoginInfo(authLoginInfo);
+        return redirectUrl + paramSep + "status=1&token=" + token;
+    }
+
+    @Override
+    public AuthLoginInfo getAuthLoginInfoByToken(String token) {
+        return authLoginCache.getAuthLoginInfo(token);
     }
 }
