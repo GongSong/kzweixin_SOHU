@@ -18,10 +18,8 @@ public class WxInternalManager {
         return "http://" + KZCRON_SERVICE_IP + "/cron/jobs";
     }
 
-    public static void deleteTimingJob(String jobName, String jobUrl, long startTime) {
+    public static void deleteTimingJob(String jobName) {
         Map<String, String> param = new HashMap<>();
         param.put("name", jobName);
-        param.put("url", jobUrl);
-        param.put("start", String.valueOf(startTime * 1000));
     }
 }

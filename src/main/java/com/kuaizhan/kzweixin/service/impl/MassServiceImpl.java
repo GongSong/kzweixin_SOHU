@@ -12,6 +12,7 @@ import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.enums.WxMsgType;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.common.JsonConvertException;
+import com.kuaizhan.kzweixin.manager.WxInternalManager;
 import com.kuaizhan.kzweixin.manager.WxMsgManager;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.MassService;
@@ -183,6 +184,17 @@ public class MassServiceImpl implements MassService {
         massPO.setPublishTime(); */
         massPO.setCreateTime(new Date().getTime()/1000);
         massMapper.insert(massPO);
+    }
+
+    @Override
+    public void deleteTimingJob(long pubTime, long massId){
+        String jobName = "mass-" + massId + "-" + pubTime;
+        WxInternalManager.deleteTimingJob(jobName);
+    }
+
+    @Override
+    public void CreateTimingJob(long time){
+
     }
 
     @Override

@@ -160,19 +160,24 @@ public class MassController extends BaseController {
         }
 
         if(isPreview != 0) {
+            // 预览群发
             String msg = massService.wrapPreviewMsg(accountPO.getWeixinAppid(), type, respJson, isMulti);
             msgService.sendCustomMsg(accountPO.getWeixinAppid(), accountPO.getPreviewOpenId(), type, msg);
         } else {
+            boolean isNew = (massId == 0)?true:false;
+            if(isNew) {
+                massId = massService.genMassId();
+            }
             if(isTiming != 0) {
-
+                // 定时群发
+                // TODO
             } else {
-                if(massId != 0) {
+                if(isNew != true) {
                     MassPO massPO = massService.getMassById(massId);
                     if(massPO != null && massPO.getIsTiming() ==1) {
                         // 删除旧任务
                         Long oldPublishTime = massPO.getPublishTime();
-
-
+                        massService.deleteTimingJob(oldPublishTime, massId);
                     }
                 }
 

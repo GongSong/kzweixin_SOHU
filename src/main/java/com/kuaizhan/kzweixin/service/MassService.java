@@ -69,6 +69,18 @@ public interface MassService {
     void sendMassMsg(long weixinAppid, int tagId, MsgType msgType, Object contentObj);
 
     /**
+     * 删除定时任务
+     * @param pubTime
+     */
+    void deleteTimingJob(long pubTime, long massId);
+
+    /**
+     * 创建定时任务
+     * @param pubTime
+     */
+    void CreateTimingJob(long pubTime);
+
+    /**
      * 生成MassID
       * @return
      */
