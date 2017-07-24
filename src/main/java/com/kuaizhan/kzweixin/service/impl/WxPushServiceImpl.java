@@ -296,7 +296,7 @@ public class WxPushServiceImpl implements WxPushService {
         resultMap.put("app_id", appId);
         resultMap.put("open_id", xmlData.getOpenId());
         resultMap.put("type", msgType.getValue());
-        resultMap.put("content", content);
+        resultMap.put("content", JsonUtil.bean2String(content));
         resultMap.put("send_type", 1);
         resultMap.put("create_time", xmlData.getCreateTime());
         resultMap.put("verify_type", accountPO.getVerifyType());
