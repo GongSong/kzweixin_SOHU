@@ -14,6 +14,6 @@ public class FuncInfo {
 
     @Data
     public class Id {
-        private String id;
+        private Integer id;
     }
 }

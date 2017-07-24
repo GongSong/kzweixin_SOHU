@@ -10,6 +10,7 @@ import com.kuaizhan.kzweixin.dao.mapper.auto.AccountMapper;
 import com.kuaizhan.kzweixin.cache.AccountCache;
 import com.kuaizhan.kzweixin.entity.account.AccessTokenDTO;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
+import com.kuaizhan.kzweixin.enums.WxAuthority;
 import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
@@ -373,6 +374,23 @@ public class AccountServiceImpl implements AccountService {
         record.setWeixinAppid(weixinAppid);
         record.setQrcodeUrlKz(qrcodeUrlKz);
         accountMapper.updateByPrimaryKeySelective(record);
+    }
+
+    @Override
+    public boolean hasAuthority(WxAuthority authority, AccountPO accountPO) {
+        switch (authority) {
+            case USER_MANAGEMENT:
+                // 条件: 认证、不能是升级后的订阅号、已经授权给快站
+                return accountPO.getVerifyType() == 0
+                        && accountPO.getServiceType() != 1
+                        && isAuthorizedToKz(accountPO.getFuncInfoJson(), authority);
+        }
+        return false;
+    }
+
+    private boolean isAuthorizedToKz(String funcInfoJson, WxAuthority authority) {
+        // 授权给快站的信息存储在json序列化后的字符串中，这种比对字符串的方式，也许还是效率最高的
+        return funcInfoJson.contains(":" + authority.getValue() + "}");
     }
 
     private void setAccountRecord(AccountPO record,

@@ -1,7 +1,9 @@
 package com.kuaizhan.kzweixin.common;
 
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
+import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.entity.XmlData;
+import com.kuaizhan.kzweixin.enums.WxAuthority;
 import com.kuaizhan.kzweixin.exception.common.XMLParseException;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.WxPushService;
@@ -39,30 +41,7 @@ public class TmpSpringTest {
 
     @Test
     public void tmp() throws Exception {
-
-        String xmlStr = "" +
-                "<xml><ToUserName><![CDATA[gh_c480b0a49842]]></ToUserName>\n" +
-                "<FromUserName><![CDATA[oBGGJt5SLU9P_wGu71Xo82m_Zq1s]]></FromUserName>\n" +
-                "<CreateTime>1498632800</CreateTime>\n" +
-                "<MsgType><![CDATA[text]]></MsgType>\n" +
-                "<Content><![CDATA[aaa]]></Content>\n" +
-                "<MsgId>6436578865132716922</MsgId>\n" +
-                "</xml>"
-                ;
-        Document document;
-        try {
-            document = DocumentHelper.parseText(xmlStr);
-        } catch (DocumentException e) {
-            throw new XMLParseException("[handleEventPush] xml parse failed, xmlStr:" + xmlStr, e);
-        }
-        Element root = document.getRootElement();
-
-        XmlData xmlData = new XmlData();
-        // 必有字段
-        xmlData.setAppId("wx1a4ff9ec0e369bd1");
-        xmlData.setFromUserName(root.elementText("FromUserName"));
-        xmlData.setToUserName(root.elementText("ToUserName"));
-        xmlData.setMsgType(root.elementText("MsgType"));
-        xmlData.setCreateTime(root.elementText("CreateTime"));
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(ApplicationConfig.WEIXIN_TEST_WEIXIN_APPID);
+        System.out.println("---->" + accountService.hasAuthority(WxAuthority.USER_MANAGEMENT, accountPO));
     }
 }

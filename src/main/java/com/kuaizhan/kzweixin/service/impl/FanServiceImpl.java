@@ -10,6 +10,7 @@ import com.kuaizhan.kzweixin.dao.po.auto.*;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.entity.fan.UserInfoDTO;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
+import com.kuaizhan.kzweixin.enums.WxAuthority;
 import com.kuaizhan.kzweixin.manager.WxFanManager;
 import com.kuaizhan.kzweixin.mq.dto.FanDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
@@ -295,8 +296,8 @@ public class FanServiceImpl implements FanService {
     public void refreshFan(String appId, String openId) {
         AccountPO accountPO = accountService.getAccountByAppId(appId);
 
-        // 只有认证的公众号才能获取粉丝信息
-        if (accountPO == null || accountPO.getVerifyType() != 0) {
+        // 接口权限判断
+        if (accountPO == null || !accountService.hasAuthority(WxAuthority.USER_MANAGEMENT, accountPO)) {
             return;
         }
 

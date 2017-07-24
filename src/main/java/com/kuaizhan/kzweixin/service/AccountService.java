@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
+import com.kuaizhan.kzweixin.enums.WxAuthority;
 import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 
 import java.util.List;
@@ -85,4 +86,9 @@ public interface AccountService {
      * (使用微信链接，页面上可能会出现无法显示)
      */
     void uploadQrcode2Kz(long weixinAppid);
+
+    /**
+     * 判断公众号是否拥有某些权限
+     */
+    boolean hasAuthority(WxAuthority authority, AccountPO accountPO);
 }
