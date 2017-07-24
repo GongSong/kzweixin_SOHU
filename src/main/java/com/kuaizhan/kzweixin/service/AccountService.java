@@ -40,6 +40,11 @@ public interface AccountService {
     PageV2<AccountPO> listAccountByPage(long userId, int offset, int limit);
 
     /**
+     * 获取已经授权的公众号数量
+     */
+    int getAuthorizedCount(long userId);
+
+    /**
      * 获取accessToken
      */
     String getAccessToken(long weixinAppId);

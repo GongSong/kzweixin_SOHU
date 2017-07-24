@@ -194,6 +194,7 @@
 
         ```
         "total": 12, // 总共的条数
+        "authorizedCount": 3, // 已授权的公众号数
         "accounts": [
              {
                 "isAuthorized": true,  // 是否是授权状态

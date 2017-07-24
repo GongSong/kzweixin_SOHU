@@ -111,7 +111,11 @@ public class AccountController extends BaseController {
             accountVO.setUserCount(101243220L);
             accountVOS.add(accountVO);
         }
-        return new JsonResponse(ImmutableMap.of("total", page.getTotal(), "account", accountVOS));
+
+        int authorizedCount = accountService.getAuthorizedCount(userId);
+        return new JsonResponse(ImmutableMap.of("total", page.getTotal(),
+                "authorizedCount", authorizedCount,
+                "accounts", accountVOS));
     }
 
     /**
