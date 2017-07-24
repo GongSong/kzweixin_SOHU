@@ -1,6 +1,5 @@
 package com.kuaizhan.kzweixin.service.impl;
 
-import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.cache.FanCache;
@@ -314,12 +313,12 @@ public class FanServiceImpl implements FanService {
         fanPO.setAppId(appId);
         fanPO.setOpenId(openId);
         fanPO.setStatus(userInfoDTO.getSubscribe() == 1 ? 1 : 2);
-        String nickname = StrUtil.removeEmojis(userInfoDTO.getNickName());
+        String nickname = StrUtil.replaceUtf8mb4(userInfoDTO.getNickName());
         nickname = StrUtil.chopStr(nickname, 45);
         fanPO.setNickName(nickname);
-        fanPO.setCity(StrUtil.removeEmojis(userInfoDTO.getCity()));
-        fanPO.setProvince(StrUtil.removeEmojis(userInfoDTO.getProvince()));
-        fanPO.setCountry(StrUtil.removeEmojis(userInfoDTO.getCountry()));
+        fanPO.setCity(StrUtil.replaceUtf8mb4(userInfoDTO.getCity()));
+        fanPO.setProvince(StrUtil.replaceUtf8mb4(userInfoDTO.getProvince()));
+        fanPO.setCountry(StrUtil.replaceUtf8mb4(userInfoDTO.getCountry()));
         fanPO.setHeadImgUrl(userInfoDTO.getHeadImgUrl());
         fanPO.setGroupId(userInfoDTO.getGroupId());
         fanPO.setLanguage(userInfoDTO.getLanguage());

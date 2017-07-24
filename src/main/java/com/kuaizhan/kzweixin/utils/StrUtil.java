@@ -25,4 +25,21 @@ public class StrUtil {
         }
         return str.length() > max ? str.substring(0, max): str;
     }
+
+    /**
+     * 把需要4个字节编码的utf8字符用'�'代替
+     */
+    public static String replaceUtf8mb4(String str) {
+        return replaceUtf8mb4(str, "\uFFFD");
+    }
+
+    /**
+     * 把需要4个字节编码的utf8字符用指定字符替换
+     */
+    public static String replaceUtf8mb4(String str, String replacement) {
+        if (str == null) {
+            return null;
+        }
+        return str.replaceAll("[^\\u0000-\\uFFFF]", replacement);
+    }
 }
