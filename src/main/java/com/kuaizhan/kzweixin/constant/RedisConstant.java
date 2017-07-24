@@ -47,6 +47,9 @@ public class RedisConstant {
     public static final String KEY_COULD_SYNC_WX_POST = ApplicationConfig.REDIS_PREFIX + "kzweixin:could_sync_wx_post:";
     public static final String KEY_GUIDE_FOLLOW_POST = ApplicationConfig.REDIS_PREFIX + "kzweixin:guide_follow_post:";
 
+    // 授权登录
+    public static final String KEY_AUTH_LOGIN_INFO = ApplicationConfig.REDIS_PREFIX + "kzweixin:auth_login_info:";
+
 
     /* ------------ php缓存key ------------*/
     public static final String KEY_PHP_ACCOUNT_BY_SITE_ID = ApplicationConfig.REDIS_PREFIX + "kz_weixin:plugin_by_site_id:";

@@ -196,6 +196,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public int getAuthorizedCount(long userId) {
+        AccountPOExample example = new AccountPOExample();
+        example.createCriteria()
+                .andUserIdEqualTo(userId)
+                .andIsDelEqualTo(0);
+        return (int) accountMapper.countByExample(example);
+    }
+
+    @Override
     public String getAccessToken(long weixinAppId) {
         //存在高并发场景下access_token失效的问题
         String accessToken = accountCache.getAccessToken(weixinAppId);

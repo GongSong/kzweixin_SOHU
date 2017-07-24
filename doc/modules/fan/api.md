@@ -54,7 +54,7 @@
 * **参数**：
     * tagId 要修改的标签id
     * weixinAppid 主键
-    * newTag 新标签名
+    * tagName 新标签名
 
 * **返回**：
     * 获取成功时返回:

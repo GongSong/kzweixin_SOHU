@@ -11,4 +11,5 @@
 * [图文模块](post/api.md)
 * [微信回调](weixin/api.md)
 * [微信Action](action/api.md)
+* [授权登录](auth-login/api.md)
 
