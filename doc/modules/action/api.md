@@ -7,7 +7,7 @@
 * **方法**：POST
 * **URL**：kzweixin/v1/actions
 * **参数**：
-    * weixinAppid: 公众号主键  必传
+    * accountId: 公众号appid或weixinAppid  必传
     * bizCode: 业务类型, 目前支持`"vote"` 必传
     * keyword: 回复关键字，支持正则表达式  actionType=1时必传
     * actionType: 动作类型，支持`1(用户关注), 2(用户回复)` 必传
@@ -61,7 +61,7 @@
 * **方法**：PUT
 * **URL**：kzweixin/v1/actions/`<actionId>`
 * **参数**：
-    * weixinAppid: 公众号主键  必传
+    * accountId: 公众号appid或weixinAppid  必传
     * bizCode: 业务类型, 目前支持`"vote"` 传则修改
     * keyword: 回复关键字，支持正则表达式  传则修改
     * actionType: 动作类型，支持`1(用户关注), 2(用户回复)` 传则修改
