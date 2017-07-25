@@ -80,13 +80,7 @@
 * **协议**：HTTP
 * **方法**：GET
 * **URL**：kzweixin/v1/actions/`<actionId>`
-* **参数**：
-    * accountId: 公众号appid或weixinAppid  必传
-    * bizCode: 业务类型, 目前支持`"vote"` 传则修改
-    * keyword: 回复关键字，支持正则表达式  传则修改
-    * actionType: 动作类型，支持`1(用户关注), 2(用户回复)` 传则修改
-    * responseType: 回复类型, 支持`1(文本), 2(图片), 3(链接组)` 传则修改
-    * responseJson: 回复数据 传则修改
+* **参数**：无
 
 * **返回**：
     * 获取成功时返回:
