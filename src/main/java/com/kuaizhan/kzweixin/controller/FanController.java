@@ -82,12 +82,12 @@ public class FanController extends BaseController {
      * 按标签搜索粉丝
      */
     @RequestMapping(value = "/fans", method = RequestMethod.GET)
-    public JsonResponse fanTagSearch(@RequestParam long weixinAppid,
+    public JsonResponse listFansByPage(@RequestParam long weixinAppid,
                                      @RequestParam(defaultValue = "0") int offset,
                                      @RequestParam(defaultValue = "20") int limit,
                                      @RequestParam(required = false) List<Integer> tagIds,
                                      @RequestParam(required = false) String queryStr,
-                                     @RequestParam(defaultValue = "0") int isBlacklist) {
+                                     @RequestParam(defaultValue = "false") Boolean isBlacklist) {
         PageV2<FanPO> fanPage = fansService.listFansByPage(weixinAppid, offset, limit, tagIds, queryStr, isBlacklist);
         List<FanVO> fanVOList = new ArrayList<>();
 

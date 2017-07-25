@@ -251,12 +251,12 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public PageV2<FanPO> listFansByPage(long weixinAppid, int offset, int limit, List<Integer> tagIds, String queryStr, int isBlacklist) {
+    public PageV2<FanPO> listFansByPage(long weixinAppid, int offset, int limit, List<Integer> tagIds, String queryStr, Boolean isBlacklist) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());
 
-        long totalCount = fanDao.countFan(accountPO.getAppId(), isBlacklist, tagIds, queryStr, table);
-        List<FanPO> fanPOList = fanDao.listFansByPage(accountPO.getAppId(), offset, limit, isBlacklist, tagIds, queryStr, table);
+        long totalCount = fanDao.countFan(accountPO.getAppId(), isBlacklist? 1: 0, tagIds, queryStr, table);
+        List<FanPO> fanPOList = fanDao.listFansByPage(accountPO.getAppId(), offset, limit, isBlacklist? 1: 0, tagIds, queryStr, table);
 
         return new PageV2<>(totalCount, fanPOList);
     }
