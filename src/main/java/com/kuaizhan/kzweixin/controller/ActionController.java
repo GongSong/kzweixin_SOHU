@@ -3,7 +3,9 @@ package com.kuaizhan.kzweixin.controller;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
+import com.kuaizhan.kzweixin.controller.converter.ActionConverter;
 import com.kuaizhan.kzweixin.controller.param.AddActionParam;
+import com.kuaizhan.kzweixin.controller.vo.ActionVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
@@ -13,10 +15,7 @@ import com.kuaizhan.kzweixin.enums.ResponseType;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -61,5 +60,12 @@ public class ActionController extends BaseController {
 
         int id = actionService.addAction(weixinAppid, actionPO, responseObj);
         return new JsonResponse(ImmutableMap.of("id", id));
+    }
+
+    @RequestMapping(value = "/actions/{actionId}", method = RequestMethod.GET)
+    public JsonResponse getAction(@PathVariable int actionId) {
+        ActionPO actionPO = actionService.getActionById(actionId);
+        ActionVO actionVO = ActionConverter.toActionVo(actionPO);
+        return new JsonResponse(actionVO);
     }
 }

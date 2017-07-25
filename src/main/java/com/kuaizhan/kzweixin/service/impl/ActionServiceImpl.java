@@ -76,6 +76,12 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
+    public ActionPO getActionById(int actionId) {
+        // 不论启用状态，直接返回
+        return actionMapper.selectByPrimaryKey(actionId);
+    }
+
+    @Override
     public List<ActionPO> getActions(long weixinAppid, ActionType actionType) {
         ActionPOExample example = new ActionPOExample();
         example.createCriteria()

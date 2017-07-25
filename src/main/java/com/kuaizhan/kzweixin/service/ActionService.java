@@ -22,6 +22,11 @@ public interface ActionService {
 
 
     /**
+     * 获取action详情
+     */
+    ActionPO getActionById(int actionId);
+
+    /**
      * 获取指定类型action列表
      */
     List<ActionPO> getActions(long weixinAppid, ActionType actionType);
