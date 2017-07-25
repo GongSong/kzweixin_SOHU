@@ -16,9 +16,9 @@ public interface ActionService {
 
     /**
      * 修改Action
-     * @param action action对象
+     * @param actionPO action对象
      */
-    void updateAction(long weixinAppid, ActionPO action, Object responseObj);
+    void updateAction(ActionPO actionPO);
 
 
     /**

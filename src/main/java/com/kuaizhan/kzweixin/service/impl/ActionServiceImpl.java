@@ -72,7 +72,11 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public void updateAction(long weixinAppid, ActionPO action, Object responseObj) {
+    public void updateAction(ActionPO actionPO) {
+        if (actionPO.getId() == null) {
+            throw new IllegalArgumentException("actionId can not be null");
+        }
+        actionMapper.updateByPrimaryKeySelective(actionPO);
     }
 
     @Override
