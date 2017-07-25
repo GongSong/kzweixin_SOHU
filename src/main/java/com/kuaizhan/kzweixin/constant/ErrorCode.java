@@ -76,7 +76,7 @@ public class ErrorCode {
     public static final ErrorCode MASS_OPENID_INVALID = new ErrorCode(109003, "无效的OpenId");
     public static final ErrorCode MASS_POSTID_INVALID = new ErrorCode(109004, "无效的PostId");
     public static final ErrorCode CUSTOM_MASS_NOT_EXIST = new ErrorCode(109005, "客服群发消息不存在");
-
+    public static final ErrorCode MASS_SEND_FAILED = new ErrorCode(109010, "消息发送失败");
     //
     // 二维码（10）
 

@@ -1,13 +1,14 @@
-package com.kuaizhan.kzweixin.dao.po;
+package com.kuaizhan.kzweixin.entity.mass;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * Created by steffanchen on 2017/7/19.
+ * Created by steffanchen on 2017/7/24.
  */
 @Data
-public class MassArticlePO {
+public class CustomMassArticleDTO {
 
     @JsonProperty("title")
     private String title;
@@ -15,8 +16,11 @@ public class MassArticlePO {
     @JsonProperty("description")
     private String description;
 
-    @JsonProperty("picUrl")
-    private String picUrl;
+    @JsonProperty("picurl")
+    private String picurl;
+
+    @JsonProperty("cover")
+    private String cover;
 
     @JsonProperty("url")
     private String url;
@@ -35,7 +39,4 @@ public class MassArticlePO {
 
     @JsonProperty("summary")
     private String summary;
-
-    @JsonProperty("cover")
-    private String cover;
 }

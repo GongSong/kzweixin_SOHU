@@ -140,4 +140,43 @@ public class CustomMassPO {
     public void setMsgJson(String msgJson) {
         this.msgJson = msgJson;
     }
+
+    /*
+    * 兼容旧数据库的msg_type: 1文字 2微信图文 3图片 4链接组
+    * */
+    public enum MsgType {
+        TEXT(1),
+        ARTICLES(2),
+        IMAGE(3),
+        LINKS(4);
+
+        private int code;
+
+        MsgType(int code) {
+            this.code = code;
+        }
+        public int getCode() {
+            return code;
+        }
+    }
+
+    /*
+    * 兼容旧数据库的status: 0 删除，1 发送成功，2 发送失败，3 已发送，4 未发送
+    * */
+    public enum Status {
+        DELETED(0),
+        SUCCESS(1),
+        FAILED(2),
+        SENDED(3),
+        UNSEND(4);
+        private int code;
+
+        Status(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
 }

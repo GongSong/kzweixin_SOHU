@@ -25,7 +25,7 @@ public class WxInternalManager {
     protected static String getCreateJobUrl() {
         return "http://" + KZCRON_SERVICE_IP + "/cron/jobs";
     }
-s
+
     /**
      * 创建定时任务接口
      * @param jobName string 任务名（id）

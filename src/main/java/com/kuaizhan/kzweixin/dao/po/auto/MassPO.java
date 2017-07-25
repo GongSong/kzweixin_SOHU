@@ -1,5 +1,8 @@
 package com.kuaizhan.kzweixin.dao.po.auto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MassPO {
     private Long massId;
 
@@ -162,24 +165,40 @@ public class MassPO {
     }
 
     /*
-    * 兼容旧接口的response_type
+    * 兼容旧数据库的response_type: 1 文章列表，2 页面，3 文字，4 图片
     * */
     public enum RespType {
-        ARTICLE_LIST(1),
+        ARTICLES(1),
         PAGE(2),
-        WORDS(3),
-        PICTURE(4);
+        TEXT(3),
+        IMAGE(4);
 
         private int code;
+
+        private static Map<Integer, RespType> respTypeMap = new HashMap<>();
+
+        static {
+            for(RespType t : RespType.values()) {
+                respTypeMap.put(t.getCode(), t);
+            }
+        }
 
         RespType(int code) {
             this.code = code;
         }
+
         public int getCode() {
             return code;
         }
+
+        public static RespType fromValue(int code) {
+            return respTypeMap.get(code);
+        }
     }
 
+    /*
+    * 兼容旧数据库的status: 0 删除，1 发送成功，2 发送失败，3 已发送，4 未发送
+    * */
     public enum Status {
         DELETED(0),
         SUCCESS(1),

@@ -10,6 +10,8 @@ import com.kuaizhan.kzweixin.exception.weixin.WxOutOfResponseLimitException;
 import com.kuaizhan.kzweixin.utils.HttpClientUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,7 @@ import java.util.Map;
  */
 public class WxMsgManager {
 
+    private static Logger logger = LoggerFactory.getLogger(WxMsgManager.class);
     /**
      * 给用户发送客服消息
      * @param openId 用户的openId
@@ -54,7 +57,8 @@ public class WxMsgManager {
         }
     }
 
-    public static void sendMassMsg(String accessToken, int tagId, WxMsgType msgType, Object contentObj) {
+    public static String sendMassMsg(String accessToken, int tagId, WxMsgType msgType, Object contentObj) {
+
         Map<String, Object> paramMap = new HashMap<>();
 
         if(tagId == 0) {
@@ -80,10 +84,13 @@ public class WxMsgManager {
         JSONObject resultJson = new JSONObject(result);
         int errCode = resultJson.optInt("errcode");
         String errMsg = resultJson.optString("errmsg");
+        String msgId = resultJson.optString("msg_id");
 
         if (errCode != 0) {
-            throw new WxApiException("[Weixin:sendMassMsg] unexpected result:" + resultJson + " paramStr:" + paramStr + " errCode:" + errCode + " errMsg:" + errMsg);
+            logger.warn("[Weixin:sendMassMsg] unexpected result:" + resultJson + " paramStr:" + paramStr + " errCode:" + errCode + " errMsg:" + errMsg);
+            return null;
         }
 
+        return msgId;
     }
 }

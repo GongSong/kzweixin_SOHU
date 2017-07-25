@@ -6,6 +6,8 @@ import com.kuaizhan.kzweixin.dao.mapper.auto.MassMapper;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.dao.po.auto.*;
+import com.kuaizhan.kzweixin.entity.mass.MassPostDTO;
+import com.kuaizhan.kzweixin.entity.mass.ResponseJson;
 import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
 import com.kuaizhan.kzweixin.entity.msg.MassMsg;
 import com.kuaizhan.kzweixin.enums.MsgType;
@@ -108,9 +110,38 @@ public class MassServiceImpl implements MassService {
     }
 
     @Override
-    public String wrapPreviewMsg(long weixinAppid, MsgType type, String json, int isMulti) {
+    public String formatMassResponseJson(String json, MassPO.RespType type) {
+        String responseJson = json;
+        if(type == MassPO.RespType.ARTICLES) {
+            List<Long> postIds = JsonUtil.string2List(json, Long.class);
+            if(postIds == null) {
+                throw new BusinessException(ErrorCode.MASS_POSTID_INVALID);
+            }
+            ResponseJson.Articles articles = new ResponseJson.Articles();
+            List<MassPostDTO> postDTOList = new ArrayList<>();
+            for(Long id : postIds) {
+                PostPO post = postService.getPostByPageId(id);
+                if(post != null) {
+                    MassPostDTO postDTO = new MassPostDTO();
+                    postDTO.setPostId(post.getPageId());
+                    postDTO.setPostTitle(post.getTitle());
+                    postDTO.setPostDescription(null);
+                    postDTO.setPostPicUrl(post.getThumbUrl());
+                    postDTO.setPostType(post.getType());
+                    postDTO.setPostUrl(post.getPostUrl());
+                    postDTOList.add(postDTO);
+                }
+            }
+            articles.setPostList(postDTOList);
+            return JsonUtil.bean2String(articles);
+        }
+        return responseJson;
+    }
+
+    @Override
+    public String wrapPreviewMsg(long weixinAppid, MassPO.RespType type, String json, int isMulti) {
         String msg = json;
-        if(type == MsgType.MP_NEWS) {
+        if(type == MassPO.RespType.ARTICLES) {
             List<Long> postIds = JsonUtil.string2List(json, Long.class);
             if(postIds == null) {
                 throw new BusinessException(ErrorCode.MASS_POSTID_INVALID);
@@ -118,13 +149,13 @@ public class MassServiceImpl implements MassService {
             CustomMsg.MpNews mpNews = new CustomMsg.MpNews(postIds);
             return JsonUtil.bean2String(mpNews);
         }
-        return JsonUtil.bean2String(json);
+        return msg;
     }
 
     @Override
-    public Object wrapMassMsg(long wxAppId, MsgType type, String json, int isMulti) {
+    public Object wrapMassMsg(long wxAppId, MassPO.RespType type, String json, int isMulti) {
         Object msg = null;
-        if(type == MsgType.MP_NEWS) {
+        if(type == MassPO.RespType.ARTICLES) {
             List<Long> postIds = JsonUtil.string2List(json, Long.class);
             if(postIds == null) {
                 throw new BusinessException(ErrorCode.MASS_POSTID_INVALID);
@@ -140,9 +171,9 @@ public class MassServiceImpl implements MassService {
                 MassMsg.MpNews mpNews = new MassMsg.MpNews(postService.getPostMediaId(pageId), postIds);
                 return mpNews;
             }
-        } else if(type == MsgType.IMAGE) {
+        } else if(type == MassPO.RespType.IMAGE) {
             msg = JsonUtil.string2Bean(json, MassMsg.Image.class);
-        } else if(type == MsgType.TEXT) {
+        } else if(type == MassPO.RespType.TEXT) {
             msg = JsonUtil.string2Bean(json, CustomMsg.Text.class);
         } else {
             throw new BusinessException(ErrorCode.MASS_TYPE_INVALID);
@@ -151,12 +182,31 @@ public class MassServiceImpl implements MassService {
     }
 
     @Override
-    public void sendMassMsg(long weixinAppid, int tagId, MsgType msgType, Object contentObj) {
+    public MsgType convert2WxMsgType(MassPO.RespType respType) {
+        MsgType type = null;
+        switch (respType) {
+            case ARTICLES:
+                type = MsgType.MP_NEWS;
+                break;
+            case IMAGE:
+                type = MsgType.IMAGE;
+                break;
+            case TEXT:
+                type = MsgType.TEXT;
+                break;
+            default:
+                throw new BusinessException(ErrorCode.OPERATION_FAILED, "不允许的消息类型");
+        }
+        return type;
+    }
+
+    @Override
+    public String sendMassMsg(long weixinAppid, int tagId, MassPO.RespType type, Object contentObj) {
         String accessToken = accountService.getAccessToken(weixinAppid);
 
         WxMsgType wxMsgType;
-        switch(msgType) {
-            case MP_NEWS:
+        switch(type) {
+            case ARTICLES:
                 wxMsgType = WxMsgType.MP_NEWS;
                 break;
             case IMAGE:
@@ -169,21 +219,10 @@ public class MassServiceImpl implements MassService {
                 throw new BusinessException(ErrorCode.OPERATION_FAILED, "不允许的消息类型");
         }
 
-        WxMsgManager.sendMassMsg(accessToken, tagId, wxMsgType, contentObj);
+        String msgId = WxMsgManager.sendMassMsg(accessToken, tagId, wxMsgType, contentObj);
 
-        // 存储消息
-        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
-        String appId = accountPO.getAppId();
+        return msgId;
 
-        MassPO massPO = new MassPO();
-        massPO.setWeixinAppid(weixinAppid);
-        massPO.setResponseType((int)msgType.getValue());
-        massPO.setResponseJson(JsonUtil.bean2String(contentObj));
-        massPO.setGroupId(tagId);
-       /* massPO.setIsTiming();
-        massPO.setPublishTime(); */
-        massPO.setCreateTime(new Date().getTime()/1000);
-        massMapper.insert(massPO);
     }
 
     @Override
@@ -193,8 +232,10 @@ public class MassServiceImpl implements MassService {
     }
 
     @Override
-    public void CreateTimingJob(long time){
-
+    public void CreateTimingJob(long pubTime, long massId){
+        String jobName =  "mass-" + massId + "-" + pubTime;
+        String jobUrl = "http://service.kuaizhan.sohuno.com/weixin/service-mass-msg-timing-publish?mass_id=" + massId;
+        WxInternalManager.createTimingJob(jobName, jobUrl, pubTime);
     }
 
     @Override
@@ -216,8 +257,18 @@ public class MassServiceImpl implements MassService {
     }
 
     @Override
-    public boolean checkSupportType(MsgType type){
-        if(type == null || type != MsgType.TEXT || type != MsgType.IMAGE || type != MsgType.MP_NEWS) {
+    public void updateMass(MassPO mass) {
+        massMapper.updateByPrimaryKey(mass);
+    }
+
+    @Override
+    public void insertMass(MassPO mass) {
+        massMapper.insert(mass);
+    }
+
+    @Override
+    public boolean checkSupportType(MassPO.RespType type){
+        if(type == null || type != MassPO.RespType.TEXT || type != MassPO.RespType.IMAGE || type != MassPO.RespType.ARTICLES) {
             return false;
         }
         return true;

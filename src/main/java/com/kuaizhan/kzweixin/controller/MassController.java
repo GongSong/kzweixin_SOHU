@@ -6,15 +6,16 @@ import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.controller.vo.CustomMassVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.controller.vo.MassVO;
-import com.kuaizhan.kzweixin.dao.po.MassArticlePO;
-import com.kuaizhan.kzweixin.dao.po.MassRespPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
 import com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
-import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
-import com.kuaizhan.kzweixin.enums.MsgType;
+import com.kuaizhan.kzweixin.entity.mass.CustomMassPostDTO;
+import com.kuaizhan.kzweixin.entity.mass.MassPostDTO;
+import com.kuaizhan.kzweixin.entity.mass.MsgJson;
+import com.kuaizhan.kzweixin.entity.mass.ResponseJson;
+import com.kuaizhan.kzweixin.manager.WxInternalManager;
 import com.kuaizhan.kzweixin.service.*;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.PojoSwitcher;
@@ -59,10 +60,11 @@ public class MassController extends BaseController {
     @RequestMapping(value = "/mass/hasMulti/{massId}", method = RequestMethod.GET)
     public JsonResponse hasMulti (@PathVariable long massId) {
         MassPO massPO = massService.getMassById(massId);
-        if(massPO != null && massPO.getResponseType() == MassPO.RespType.ARTICLE_LIST.getCode()) {
-            List<MassRespPO> massRespPOS = JsonUtil.string2List(massPO.getResponseJson(), MassRespPO.class);
-            if(massRespPOS != null && massRespPOS.size() > 0) {
-                PostPO postPO = postService.getPostByPageId(massRespPOS.get(0).getPostId());
+        if(massPO != null && massPO.getResponseType() == MassPO.RespType.ARTICLES.getCode()) {
+            ResponseJson.Articles articles =  JsonUtil.string2Bean(massPO.getResponseJson(), ResponseJson.Articles.class);
+            List<MassPostDTO> postList = articles.getPostList();
+            if(postList != null && postList.size() > 0) {
+                PostPO postPO = postService.getPostByPageId(postList.get(0).getPostId());
                 if(postPO != null && postPO.getType() == PostPO.Type.Multi_One.getCode()) {
                     return new JsonResponse(true);
                 }
@@ -115,8 +117,8 @@ public class MassController extends BaseController {
     /**
      * 消息预览&群发 @url: ajax-mass-msg-new
      * @param siteId 站点id
-     * @param respType 旧接口类型, 1图文 3文字 4图片, 新接口类型 9图文 1文字 2图片
-     * @param respJson 如果是图文应为PostId数组, 如果其他类型请参考 MassMsg和CustomMsg的内部类, 示例: 图文{[1,2,3]} 文字{"content":"sss.."} 图片{"media_id":"xxx"}
+     * @param respType 旧接口类型, 1图文 3文字 4图片
+     * @param respJson 如果是图文应为PostId数组, 如果其他类型请参考 MassMsg和CustomMsg的内部类, 示例: 图文{[1,2,3]} 文字{"content":"sss.."} 图片{"pic_id": 123, "media_id":"xxx","pic_url":"xxx"}
      * @param tagId 发送用户的标签id, 0为发送给全部标签
      * @param publishTime 发布时间，定时群发时才有意义
      * @param isPreview 1表示预览 0表示群发
@@ -127,7 +129,7 @@ public class MassController extends BaseController {
      */
     @RequestMapping(value = "/mass/msg/send", method = RequestMethod.POST)
     public JsonResponse sendMassMsg(@RequestParam(value = "siteId") long siteId,
-                                     @RequestParam(value = "response_type") short respType,
+                                     @RequestParam(value = "response_type") int respType,
                                      @RequestParam(value = "response_json", required = false, defaultValue = "") String respJson,
                                      @RequestParam(value = "tag_id") int tagId,
                                      @RequestParam(value = "publish_time") long publishTime,
@@ -154,7 +156,7 @@ public class MassController extends BaseController {
             }
         }
 
-        MsgType type = MsgType.fromValue(respType);
+        MassPO.RespType type = MassPO.RespType.fromValue(respType);
         if(massService.checkSupportType(type) == false) {
             return new JsonResponse(ErrorCode.MASS_TYPE_INVALID.getCode(), ErrorCode.MASS_NOT_EXIST.getMessage(), ImmutableMap.of());
         }
@@ -162,30 +164,75 @@ public class MassController extends BaseController {
         if(isPreview != 0) {
             // 预览群发
             String msg = massService.wrapPreviewMsg(accountPO.getWeixinAppid(), type, respJson, isMulti);
-            msgService.sendCustomMsg(accountPO.getWeixinAppid(), accountPO.getPreviewOpenId(), type, msg);
+            msgService.sendCustomMsg(accountPO.getWeixinAppid(), accountPO.getPreviewOpenId(), massService.convert2WxMsgType(type), msg);
         } else {
+            MassPO massPO = null;
+
             boolean isNew = (massId == 0)?true:false;
-            if(isNew) {
+            if(isNew == true) {
                 massId = massService.genMassId();
+                massPO = new MassPO();
+                massPO.setMassId(massId);
+            } else {
+                massPO = massService.getMassById(massId);
             }
+
             if(isTiming != 0) {
                 // 定时群发
-                // TODO
+                massPO.setStatus(MassPO.Status.UNSEND.getCode());
+                if(isNew == false) {
+                    long oldPublishTime = massPO.getPublishTime();
+                    massService.deleteTimingJob(oldPublishTime, massId);
+                    massService.updateMass(massPO);
+                } else {
+                    massPO.setWeixinAppid(accountPO.getWeixinAppid());
+                    massPO.setResponseType(respType);
+                    massPO.setResponseJson(massService.formatMassResponseJson(respJson, type));
+                    massPO.setPublishTime(publishTime);
+                    massPO.setCreateTime(new Date().getTime()/1000);
+                    massPO.setUpdateTime(new Date().getTime()/1000);
+                    massPO.setIsTiming(isTiming);
+                    massPO.setGroupId(tagId);
+                    massService.insertMass(massPO);
+                }
+                massService.CreateTimingJob(publishTime, massId);
+                // TODO 定时任务创建失败后的处理
             } else {
-                if(isNew != true) {
-                    MassPO massPO = massService.getMassById(massId);
-                    if(massPO != null && massPO.getIsTiming() ==1) {
+                if(isNew == false) {
+                    MassPO oldMass = massService.getMassById(massId);
+                    if(oldMass != null && oldMass.getIsTiming() ==1) {
                         // 删除旧任务
-                        Long oldPublishTime = massPO.getPublishTime();
+                        Long oldPublishTime = oldMass.getPublishTime();
                         massService.deleteTimingJob(oldPublishTime, massId);
                     }
                 }
-
                 Object msg = massService.wrapMassMsg(accountPO.getWeixinAppid(), type, respJson, isMulti);
-                massService.sendMassMsg(accountPO.getWeixinAppid(), tagId, type, msg);
+                String msgId = massService.sendMassMsg(accountPO.getWeixinAppid(), tagId, type, msg);
+                if(msgId == null) {
+                    if(isNew == false) {
+                        massPO.setStatus(MassPO.Status.FAILED.getCode());
+                        massService.updateMass(massPO);
+                    }
+                    return new JsonResponse(ErrorCode.MASS_SEND_FAILED.getCode(), ErrorCode.MASS_SEND_FAILED.getMessage(), ImmutableMap.of());
+                } else {
+                    massPO.setMsgId(msgId);
+                }
+                if(isNew == false) {
+                    massService.updateMass(massPO);
+                } else {
+                    massPO.setWeixinAppid(accountPO.getWeixinAppid());
+                    massPO.setResponseType(respType);
+                    massPO.setResponseJson(massService.formatMassResponseJson(respJson, type));
+                    massPO.setPublishTime(isTiming==1?publishTime:new Date().getTime()/1000);
+                    massPO.setCreateTime(new Date().getTime()/1000);
+                    massPO.setUpdateTime(new Date().getTime()/1000);
+                    massPO.setIsTiming(isTiming);
+                    massPO.setStatus(MassPO.Status.SENDED.getCode());
+                    massPO.setGroupId(tagId);
+                    massService.insertMass(massPO);
+                }
             }
         }
-
         return new JsonResponse(ErrorCode.SUCCESS.getCode(), "success", ImmutableMap.of());
     }
 
@@ -199,11 +246,16 @@ public class MassController extends BaseController {
     @RequestMapping(value = "/mass/hasCustomMulti/{massId}", method = RequestMethod.GET)
     public JsonResponse hasCustomMulti (@PathVariable long massId) {
         CustomMassPO massPO = massService.getCustomMassById(massId);
-        if(massPO != null && massPO.getTagId() == 2) {
-            List<MassArticlePO> massArticleList = JsonUtil.string2List(massPO.getMsgJson(), MassArticlePO.class);
-            if(massArticleList != null && massArticleList.size() > 0) {
-                // TODO
+        if(massPO != null && massPO.getMsgType() == 2) {
+            MsgJson.Articles articles = JsonUtil.string2Bean(massPO.getMsgJson(), MsgJson.Articles.class);
+            List<CustomMassPostDTO> postList = articles.getArticles();
+            if(postList !=null && postList.size()>0) {
+                PostPO post = postService.getPostByPageId(postList.get(0).getPostId());
+                if(post !=null && post.getType() == 3) {
+                    return new JsonResponse(true);
+                }
             }
+
         }
         return new JsonResponse(false);
     }
