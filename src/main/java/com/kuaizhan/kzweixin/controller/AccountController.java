@@ -30,20 +30,23 @@ public class AccountController extends BaseController {
     private AccountService accountService;
 
     /**
-     * 根据weixinAppid获取账号信息
+     * 获取公众号详情
+     * @param accountId: appid或者weixinAppid
      */
-    @RequestMapping(value = "/accounts/{weixinAppid}", method = RequestMethod.GET)
-    public JsonResponse getAccountInfo(@PathVariable long weixinAppid) {
+    @RequestMapping(value = "/accounts/{accountId}", method = RequestMethod.GET)
+    public JsonResponse getAccountInfo(@PathVariable String accountId) {
+        long weixinAppid = accountService.getWeixinAppidFromAccountId(accountId);
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         AccountVO accountVO = PojoSwitcher.accountPOToVO(accountPO);
         return new JsonResponse(accountVO);
     }
 
     /**
-     * 根据weixinAppid获取账号设置信息
+     * 获取公众号设置详情
      */
-    @RequestMapping(value = "/accounts/{weixinAppid}/settings", method = RequestMethod.GET)
-    public JsonResponse getAccountSettings(@PathVariable long weixinAppid) {
+    @RequestMapping(value = "/accounts/{accountId}/settings", method = RequestMethod.GET)
+    public JsonResponse getAccountSettings(@PathVariable String accountId) {
+        long weixinAppid = accountService.getWeixinAppidFromAccountId(accountId);
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         AccountSettingVO settingVO = PojoSwitcher.toAccountSettingVO(accountPO);
         return new JsonResponse(settingVO);

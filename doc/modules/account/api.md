@@ -24,12 +24,12 @@
     * 异常情况:
         * siteId不存在或未绑定公众号，返回码 102002 
         
-#### 2 根据weixinAppid获取账号信息
+#### 2 获取公众号详情
 * **协议**：HTTP
 * **方法**：GET
-* **URL**：/v1/accounts/`<weixinAppid>`
+* **URL**：/v1/accounts/`<accountId>`
 * **参数**：
-    * weixinAppid 主键
+    * accountId 公众号的appid或者weixinAppid
 
 * **返回**：
     * 获取成功时返回:
@@ -72,9 +72,9 @@
 
 * **协议**：HTTP
 * **方法**：GET
-* **URL**：/v1/accounts/`<weixinAppid>`/settings
+* **URL**：/v1/accounts/`<accountId>`/settings
 * **参数**：
-    * weixinAppid 主键
+    * accountId 公众号的appid或者weixinAppid
 
 * **返回**：
     * 获取成功时返回:
