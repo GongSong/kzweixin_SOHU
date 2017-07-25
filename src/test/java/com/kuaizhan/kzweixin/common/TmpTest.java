@@ -1,5 +1,7 @@
 package com.kuaizhan.kzweixin.common;
 
+import com.kuaizhan.kzweixin.entity.action.NewsResponse;
+import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
 import com.kuaizhan.kzweixin.utils.StrUtil;
 import org.junit.Test;
@@ -40,5 +42,7 @@ public class TmpTest {
 
     @Test
     public void testInt() throws Exception {
+        String str = "{\"news\":[{\"title\":\"我的投票\",\"description\":\"null\",\"picUrl\":\"http://www.baidu.com\",\"url\":\"https://vote15d39e4b0f5.kuaizhan.com/mobile.html#/list\"}]}\n";
+        System.out.println("---->" + JsonUtil.string2Bean(str, NewsResponse.class));
     }
 }

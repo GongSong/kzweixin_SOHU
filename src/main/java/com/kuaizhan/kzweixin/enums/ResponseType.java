@@ -33,7 +33,7 @@ public enum ResponseType {
     }
 
     @JsonCreator
-    public ResponseType fromValue(int value) {
+    public static ResponseType fromValue(int value) {
         return valueMap.get(value);
     }
 }

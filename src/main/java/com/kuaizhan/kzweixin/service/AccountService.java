@@ -91,4 +91,10 @@ public interface AccountService {
      * 判断公众号是否拥有某些权限
      */
     boolean hasAuthority(WxAuthority authority, AccountPO accountPO);
+
+    /**
+     * 把accountId转换为weixinAppid
+     * accountId既有可能是appid，也可能是weixinAppid
+     */
+    long getWeixinAppidFromAccountId(String accountId);
 }

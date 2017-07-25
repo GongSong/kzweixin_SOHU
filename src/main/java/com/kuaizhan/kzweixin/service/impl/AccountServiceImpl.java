@@ -388,6 +388,18 @@ public class AccountServiceImpl implements AccountService {
         return false;
     }
 
+    @Override
+    public long getWeixinAppidFromAccountId(String accountId) {
+        long weixinAppid;
+        try {
+            weixinAppid = Long.parseLong(accountId);
+        } catch (NumberFormatException e) {
+            AccountPO accountPO = getAccountByAppId(accountId);
+            weixinAppid = accountPO.getWeixinAppid();
+        }
+        return weixinAppid;
+    }
+
     private boolean isAuthorizedToKz(String funcInfoJson, WxAuthority authority) {
         // 授权给快站的信息存储在json序列化后的字符串中，这种比对字符串的方式，也许还是效率最高的
         return funcInfoJson.contains(":" + authority.getValue() + "}");

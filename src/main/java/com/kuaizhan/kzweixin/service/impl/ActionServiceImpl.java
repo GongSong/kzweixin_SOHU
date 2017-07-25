@@ -82,6 +82,7 @@ public class ActionServiceImpl implements ActionService {
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andActionTypeEqualTo(actionType.getValue())
                 .andStatusEqualTo(true);
+        example.setOrderByClause("create_time DESC");
         return actionMapper.selectByExample(example);
     }
 

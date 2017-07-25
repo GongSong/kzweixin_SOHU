@@ -120,18 +120,12 @@ public class AccountController extends BaseController {
 
     /**
      * 获取公众号的access_token
-     * @param id appId或者weixinAppid
+     * @param accountId appId或者weixinAppid
      */
-    @RequestMapping(value = "/accounts/{id}/access_token")
-    public JsonResponse getAccessToken(@PathVariable String id) {
+    @RequestMapping(value = "/accounts/{accountId}/access_token")
+    public JsonResponse getAccessToken(@PathVariable String accountId) {
         // TODO: 从id获取weixinAppid的逻辑，考虑用guava做本地缓存
-        long weixinAppid;
-        try {
-            weixinAppid = Long.parseLong(id);
-        } catch (NumberFormatException e) {
-            AccountPO accountPO = accountService.getAccountByAppId(id);
-            weixinAppid = accountPO.getWeixinAppid();
-        }
+        long weixinAppid = accountService.getWeixinAppidFromAccountId(accountId);
         String access_token = accountService.getAccessToken(weixinAppid);
         return new JsonResponse(ImmutableMap.of("accessToken", access_token));
     }

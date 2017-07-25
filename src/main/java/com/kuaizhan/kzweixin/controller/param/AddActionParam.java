@@ -14,8 +14,8 @@ import java.util.Map;
  */
 @Data
 public class AddActionParam {
-    @NotNull(message = "weixinAppid can not be null")
-    private Long weixinAppid;
+    @NotNull(message = "accountId can not be null")
+    private String accountId;
     @NotNull(message = "bizCode can not be null")
     private BizCode bizCode;
     private String keyword;
@@ -27,15 +27,4 @@ public class AddActionParam {
     private Map responseJson;
 
     private Boolean status;
-
-    public ActionPO toActionPo() {
-        ActionPO actionPO = new ActionPO();
-        actionPO.setWeixinAppid(weixinAppid);
-        actionPO.setBizCode(bizCode.getValue());
-        actionPO.setKeyword(keyword);
-        actionPO.setActionType(actionType.getValue());
-        actionPO.setResponseType(responseType.getValue());
-        actionPO.setStatus(status);
-        return actionPO;
-    }
 }
