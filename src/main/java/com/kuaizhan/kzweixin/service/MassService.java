@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.service;
 
+import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
 import com.kuaizhan.kzweixin.enums.MsgType;
@@ -76,13 +77,13 @@ public interface MassService {
      * 删除定时任务
      * @param pubTime
      */
-    void deleteTimingJob(long pubTime, long massId);
+    JsonResponse deleteTimingJob(long pubTime, long massId);
 
     /**
      * 创建定时任务
      * @param pubTime
      */
-    void CreateTimingJob(long pubTime, long massId);
+    JsonResponse CreateTimingJob(long pubTime, long massId);
 
     /**
      * 生成MassID

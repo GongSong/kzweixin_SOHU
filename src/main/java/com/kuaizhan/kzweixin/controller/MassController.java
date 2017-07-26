@@ -15,6 +15,7 @@ import com.kuaizhan.kzweixin.entity.mass.CustomMassPostDTO;
 import com.kuaizhan.kzweixin.entity.mass.MassPostDTO;
 import com.kuaizhan.kzweixin.entity.mass.MsgJson;
 import com.kuaizhan.kzweixin.entity.mass.ResponseJson;
+import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.manager.WxInternalManager;
 import com.kuaizhan.kzweixin.service.*;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
@@ -145,7 +146,7 @@ public class MassController extends BaseController {
         }
 
         if(isTiming != 0) {
-            if(new Date(publishTime).before(new Date())) {
+            if(new Date(publishTime*1000).before(new Date())) {
                 return new JsonResponse(ErrorCode.MASS_TIMING_INVALID.getCode(),"", ImmutableMap.of());
             }
         }
@@ -158,7 +159,7 @@ public class MassController extends BaseController {
 
         MassPO.RespType type = MassPO.RespType.fromValue(respType);
         if(massService.checkSupportType(type) == false) {
-            return new JsonResponse(ErrorCode.MASS_TYPE_INVALID.getCode(), ErrorCode.MASS_NOT_EXIST.getMessage(), ImmutableMap.of());
+            return new JsonResponse(ErrorCode.MASS_TYPE_INVALID.getCode(), ErrorCode.MASS_TYPE_INVALID.getMessage(), ImmutableMap.of());
         }
 
         if(isPreview != 0) {
@@ -182,7 +183,11 @@ public class MassController extends BaseController {
                 massPO.setStatus(MassPO.Status.UNSEND.getCode());
                 if(isNew == false) {
                     long oldPublishTime = massPO.getPublishTime();
-                    massService.deleteTimingJob(oldPublishTime, massId);
+                    try{
+                        massService.deleteTimingJob(oldPublishTime, massId);
+                    } catch (BusinessException e) {
+                        return new JsonResponse(e.getCode(), e.getMessage(),ImmutableMap.of());
+                    }
                     massService.updateMass(massPO);
                 } else {
                     massPO.setWeixinAppid(accountPO.getWeixinAppid());
@@ -193,9 +198,20 @@ public class MassController extends BaseController {
                     massPO.setUpdateTime(new Date().getTime()/1000);
                     massPO.setIsTiming(isTiming);
                     massPO.setGroupId(tagId);
+                    massPO.setMsgId("");
+                    massPO.setStatus(3);
+                    massPO.setStatusMsg("");
+                    massPO.setTotalCount(0);
+                    massPO.setFilterCount(0);
+                    massPO.setSentCount(0);
+                    massPO.setErrorCount(0);
                     massService.insertMass(massPO);
                 }
-                massService.CreateTimingJob(publishTime, massId);
+                try{
+                    massService.CreateTimingJob(publishTime, massId);
+                } catch (BusinessException e) {
+                    return new JsonResponse(e.getCode(), e.getMessage(),ImmutableMap.of());
+                }
                 // TODO 定时任务创建失败后的处理
             } else {
                 if(isNew == false) {
@@ -203,7 +219,11 @@ public class MassController extends BaseController {
                     if(oldMass != null && oldMass.getIsTiming() ==1) {
                         // 删除旧任务
                         Long oldPublishTime = oldMass.getPublishTime();
-                        massService.deleteTimingJob(oldPublishTime, massId);
+                        try{
+                            massService.deleteTimingJob(oldPublishTime, massId);
+                        } catch (BusinessException e) {
+                            return new JsonResponse(e.getCode(), e.getMessage(),ImmutableMap.of());
+                        }
                     }
                 }
                 Object msg = massService.wrapMassMsg(accountPO.getWeixinAppid(), type, respJson, isMulti);

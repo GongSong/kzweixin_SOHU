@@ -1,12 +1,16 @@
 package com.kuaizhan.kzweixin.manager;
 
+import com.google.common.collect.ImmutableMap;
+import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.WxErrCode;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
+import com.kuaizhan.kzweixin.exception.BusinessException;
 import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidOpenIdException;
 import com.kuaizhan.kzweixin.exception.weixin.WxOutOfResponseLimitException;
 import com.kuaizhan.kzweixin.utils.HttpClientUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -41,14 +45,19 @@ public class WxInternalManager {
         String paramStr = JsonUtil.bean2String(param);
         String result = HttpClientUtil.postJson(getCreateJobUrl(), paramStr);
         if (result == null) {
-            throw new WxApiException("[WeiXin:createTimingJob] job is null");
+            throw new BusinessException(ErrorCode.TIMING_JOB_NOT_EXIST);
         }
-        JSONObject resultJson = new JSONObject(result);
-        int errCode = resultJson.optInt("errcode");
-        if (errCode != 0) {
-            throw new WxApiException("[Weixin:createTimingJob] unexpected result:" + resultJson + " paramStr:" + paramStr);
+        try{
+            JSONObject resultJson = new JSONObject(result);
+            int errCode = resultJson.optInt("errcode");
+            if (errCode != 0) {
+                throw new BusinessException(ErrorCode.WEIXIN_JOB_ERROR);
+            }
+        } catch (JSONException e) {
+            throw new BusinessException(ErrorCode.JSON_OBJECT_ERROR);
         }
-        return new JsonResponse(resultJson);
+
+        return new JsonResponse(ErrorCode.SUCCESS.getCode(), "creating timing job success", ImmutableMap.of());
     }
     /**
      * 删除定时任务接口
@@ -60,13 +69,17 @@ public class WxInternalManager {
         String paramStr = JsonUtil.bean2String(param);
         String result = HttpClientUtil.postJson(getDeleteJobUrl(), paramStr);
         if (result == null) {
-            throw new WxApiException("[WeiXin:deleteTimingJob] job is null");
+            throw new BusinessException(ErrorCode.TIMING_JOB_NOT_EXIST);
         }
-        JSONObject resultJson = new JSONObject(result);
-        int errCode = resultJson.optInt("errcode");
-        if (errCode != 0) {
-            throw new WxApiException("[Weixin:deleteTimingJob] unexpected result:" + resultJson + " paramStr:" + paramStr);
+        try{
+            JSONObject resultJson = new JSONObject(result);
+            int errCode = resultJson.optInt("errcode");
+            if (errCode != 0) {
+                throw new BusinessException(ErrorCode.WEIXIN_JOB_ERROR);
+            }
+        } catch (JSONException e) {
+            throw new BusinessException(ErrorCode.JSON_OBJECT_ERROR);
         }
-        return new JsonResponse(resultJson);
+        return new JsonResponse(ErrorCode.SUCCESS.getCode(), "delete timing job success", ImmutableMap.of());
     }
 }

@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.constant.ErrorCode;
+import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.dao.mapper.auto.CustomMassMapper;
 import com.kuaizhan.kzweixin.dao.mapper.auto.MassMapper;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
@@ -226,16 +227,24 @@ public class MassServiceImpl implements MassService {
     }
 
     @Override
-    public void deleteTimingJob(long pubTime, long massId){
+    public JsonResponse deleteTimingJob(long pubTime, long massId){
         String jobName = "mass-" + massId + "-" + pubTime;
-        WxInternalManager.deleteTimingJob(jobName);
+        try {
+            return WxInternalManager.deleteTimingJob(jobName);
+        } catch (BusinessException e) {
+            throw e;
+        }
     }
 
     @Override
-    public void CreateTimingJob(long pubTime, long massId){
+    public JsonResponse CreateTimingJob(long pubTime, long massId){
         String jobName =  "mass-" + massId + "-" + pubTime;
         String jobUrl = "http://service.kuaizhan.sohuno.com/weixin/service-mass-msg-timing-publish?mass_id=" + massId;
-        WxInternalManager.createTimingJob(jobName, jobUrl, pubTime);
+        try {
+            return WxInternalManager.createTimingJob(jobName, jobUrl, pubTime);
+        } catch (BusinessException e) {
+            throw e;
+        }
     }
 
     @Override
@@ -268,7 +277,7 @@ public class MassServiceImpl implements MassService {
 
     @Override
     public boolean checkSupportType(MassPO.RespType type){
-        if(type == null || type != MassPO.RespType.TEXT || type != MassPO.RespType.IMAGE || type != MassPO.RespType.ARTICLES) {
+        if(type == null || (type != MassPO.RespType.TEXT && type != MassPO.RespType.IMAGE && type != MassPO.RespType.ARTICLES)) {
             return false;
         }
         return true;
