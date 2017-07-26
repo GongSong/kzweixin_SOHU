@@ -20,7 +20,6 @@ import com.kuaizhan.kzweixin.utils.PojoSwitcher;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.print.attribute.standard.JobName;
 import javax.validation.Valid;
 
 import java.util.*;
