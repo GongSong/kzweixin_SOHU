@@ -15,7 +15,9 @@ import com.kuaizhan.kzweixin.mq.dto.FanDTO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.utils.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -255,8 +257,18 @@ public class FanServiceImpl implements FanService {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());
 
-        long totalCount = fanDao.countFan(accountPO.getAppId(), isBlacklist? 1: 0, tagIds, queryStr, table);
-        List<FanPO> fanPOList = fanDao.listFansByPage(accountPO.getAppId(), offset, limit, isBlacklist? 1: 0, tagIds, queryStr, table);
+        List<FanPO> fanPOList = fanDao.listFansByPage(accountPO.getAppId(),
+                offset,
+                limit,
+                isBlacklist ? 1: 0,
+                CollectionUtils.isEmpty(tagIds) ? null: tagIds,
+                StringUtils.isBlank(queryStr) ? null: queryStr,
+                table);
+        long totalCount = fanDao.countFan(accountPO.getAppId(),
+                isBlacklist ? 1: 0,
+                CollectionUtils.isEmpty(tagIds) ? null: tagIds,
+                StringUtils.isBlank(queryStr) ? null: queryStr,
+                table);
 
         return new PageV2<>(totalCount, fanPOList);
     }
