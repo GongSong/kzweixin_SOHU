@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.manager;
 
 import com.kuaizhan.kzweixin.constant.WxErrCode;
+import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidOpenIdException;
 import com.kuaizhan.kzweixin.exception.weixin.WxOutOfResponseLimitException;
@@ -30,9 +31,9 @@ public class WxInternalManager {
      * 创建定时任务接口
      * @param jobName string 任务名（id）
      * @param jobUrl string 定时执行的任务接口
-     * @param startTime int 任务执行时间(10位时间戳)
+     * @param startTime long 任务执行时间(10位时间戳)
      */
-    public static void createTimingJob(String jobName, String jobUrl, long startTime) {
+    public JsonResponse createTimingJob(String jobName, String jobUrl, long startTime) {
         Map<String, String> param = new HashMap<>();
         param.put("name", jobName);
         param.put("url", jobUrl);
@@ -47,12 +48,13 @@ public class WxInternalManager {
         if (errCode != 0) {
             throw new WxApiException("[Weixin:createTimingJob] unexpected result:" + resultJson + " paramStr:" + paramStr);
         }
+        return new JsonResponse(resultJson);
     }
     /**
      * 删除定时任务接口
      * @param jobName string 任务名（id）
      */
-    public static void deleteTimingJob(String jobName) {
+    public JsonResponse deleteTimingJob(String jobName) {
         Map<String, String> param = new HashMap<>();
         param.put("name", jobName);
         String paramStr = JsonUtil.bean2String(param);
@@ -65,5 +67,6 @@ public class WxInternalManager {
         if (errCode != 0) {
             throw new WxApiException("[Weixin:deleteTimingJob] unexpected result:" + resultJson + " paramStr:" + paramStr);
         }
+        return new JsonResponse(resultJson);
     }
 }
