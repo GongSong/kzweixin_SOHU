@@ -6,10 +6,11 @@
 ## 接口文档
 * [通用接口](common/api.md)
 * [账号模块](account/api.md)
+* [粉丝模块](fan/api.md)
 * [消息模块](msg/api.md)
 * [模板消息模块](tpl-msg/api.md)
 * [图文模块](post/api.md)
-* [微信回调](weixin/api.md)
 * [微信Action](action/api.md)
 * [授权登录](auth-login/api.md)
+* [微信回调](weixin/api.md)
 
