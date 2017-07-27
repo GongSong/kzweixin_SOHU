@@ -227,7 +227,7 @@ public class MassServiceImpl implements MassService {
     }
 
     @Override
-    public JsonResponse deleteTimingJob(long pubTime, long massId){
+    public JsonResponse deleteTimingJob(long pubTime, long massId) throws BusinessException {
         String jobName = "mass-" + massId + "-" + pubTime;
         try {
             return WxInternalManager.deleteTimingJob(jobName);
@@ -237,7 +237,7 @@ public class MassServiceImpl implements MassService {
     }
 
     @Override
-    public JsonResponse CreateTimingJob(long pubTime, long massId){
+    public JsonResponse CreateTimingJob(long pubTime, long massId) throws BusinessException {
         String jobName =  "mass-" + massId + "-" + pubTime;
         String jobUrl = "http://service.kuaizhan.sohuno.com/weixin/service-mass-msg-timing-publish?mass_id=" + massId;
         try {

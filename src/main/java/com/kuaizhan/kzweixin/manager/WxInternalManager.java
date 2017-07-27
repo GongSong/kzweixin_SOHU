@@ -37,7 +37,7 @@ public class WxInternalManager {
      * @param jobUrl string 定时执行的任务接口
      * @param startTime long 任务执行时间(10位时间戳)
      */
-    public static JsonResponse createTimingJob(String jobName, String jobUrl, long startTime) {
+    public static JsonResponse createTimingJob(String jobName, String jobUrl, long startTime) throws BusinessException {
         Map<String, String> param = new HashMap<>();
         param.put("name", jobName);
         param.put("url", jobUrl);
@@ -63,7 +63,7 @@ public class WxInternalManager {
      * 删除定时任务接口
      * @param jobName string 任务名（id）
      */
-    public static JsonResponse deleteTimingJob(String jobName) {
+    public static JsonResponse deleteTimingJob(String jobName) throws BusinessException {
         Map<String, String> param = new HashMap<>();
         param.put("name", jobName);
         String paramStr = JsonUtil.bean2String(param);

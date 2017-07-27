@@ -142,12 +142,12 @@ public class MassController extends BaseController {
         // TODO: 定时发送, 创建新MassID
         AccountPO accountPO = accountService.getAccountBySiteId(siteId);
         if(accountPO == null) {
-            return new JsonResponse(ErrorCode.ACCOUNT_NOT_EXIST.getCode(),"", ImmutableMap.of());
+            return new JsonResponse(ErrorCode.ACCOUNT_NOT_EXIST.getCode(),ErrorCode.ACCOUNT_NOT_EXIST.getMessage(), ImmutableMap.of());
         }
 
         if(isTiming != 0) {
             if(new Date(publishTime*1000).before(new Date())) {
-                return new JsonResponse(ErrorCode.MASS_TIMING_INVALID.getCode(),"", ImmutableMap.of());
+                return new JsonResponse(ErrorCode.MASS_TIMING_INVALID.getCode(),ErrorCode.MASS_TIMING_INVALID.getMessage(), ImmutableMap.of());
             }
         }
 
