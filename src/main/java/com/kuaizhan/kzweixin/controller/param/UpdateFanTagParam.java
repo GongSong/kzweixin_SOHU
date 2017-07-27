@@ -16,11 +16,11 @@ public class UpdateFanTagParam {
 
     @NotNull
     @Size(min = 1, max = 20)
-    private List<String> fansOpenId;
+    private List<String> openIds;
 
     @Size(max = 3)
-    private List<Integer> newTagsId;
+    private List<Integer> newTagIds;
 
     @Size(max = 3)
-    private List<Integer> deleteTagsId;
+    private List<Integer> deleteTagIds;
 }

@@ -46,17 +46,17 @@ public interface FanService {
 
     /**
      * 增加粉丝标签
-     * @param fansOpenId 待修改标签的粉丝OpenId
-     * @param newTagsId 新增标签Id
+     * @param openIds 待修改标签的粉丝OpenId
+     * @param newTagIds 新增标签Id
      */
-    void addFanTag(long weixinAppid, List<String> fansOpenId, List<Integer> newTagsId);
+    void addFanTag(long weixinAppid, List<String> openIds, List<Integer> newTagIds);
 
     /**
      * 删除粉丝标签
-     * @param fansOpenId 待修改标签的粉丝OpenId
-     * @param deleteTagsId 删除标签Id
+     * @param openIds 待修改标签的粉丝OpenId
+     * @param deleteTagIds 删除标签Id
      */
-    void deleteFanTag(long weixinAppid, List<String> fansOpenId, List<Integer> deleteTagsId);
+    void deleteFanTag(long weixinAppid, List<String> openIds, List<Integer> deleteTagIds);
 
     /**
      * 拉黑用户

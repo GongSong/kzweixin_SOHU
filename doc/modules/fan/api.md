@@ -91,9 +91,9 @@
 * **URL**：/v1/fan/fan_tags
 * **参数**：
     * weixinAppid 主键
-    * fansOpenId 要贴标签的粉丝openId
-    * newTagsId 增加的标签id
-    * deleteTagsId 删除的标签id
+    * openIds 要贴标签的粉丝openId列表
+    * newTagIds 增加的标签id列表
+    * deleteTagIds 删除的标签id列表
 
 * **返回**：
     * 获取成功时返回:

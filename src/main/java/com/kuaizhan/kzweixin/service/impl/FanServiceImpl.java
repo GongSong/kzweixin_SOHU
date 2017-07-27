@@ -124,16 +124,16 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void addFanTag(long weixinAppid, List<String> fansOpenId, List<Integer> newTagsId) {
+    public void addFanTag(long weixinAppid, List<String> openIds, List<Integer> newTagIds) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountService.getAccessToken(weixinAppid);
-        if (newTagsId == null) {
+        if (newTagIds == null) {
             return;
         }
 
         //发送给粉丝贴标签请求
-        for (int tagId: newTagsId) {
-            WxFanManager.addFanTag(accessToken, fansOpenId, tagId);
+        for (int tagId: newTagIds) {
+            WxFanManager.addFanTag(accessToken, openIds, tagId);
         }
 
         //更新粉丝标签信息到本地数据库
@@ -141,13 +141,13 @@ public class FanServiceImpl implements FanService {
         example.createCriteria()
                 .andStatusEqualTo(1)
                 .andAppIdEqualTo(accountPO.getAppId())
-                .andOpenIdIn(fansOpenId);
+                .andOpenIdIn(openIds);
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());
         List<FanPO> updateFans = fanMapper.selectByExample(example, table);
 
         for (FanPO fan: updateFans) {
             List<Integer> tagsList = JsonUtil.string2List(fan.getTagIdsJson(), Integer.class);
-            tagsList.addAll(newTagsId);
+            tagsList.addAll(newTagIds);
             Collections.sort(tagsList);
 
             FanPO fanPO = new FanPO();
@@ -160,15 +160,15 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public void deleteFanTag(long weixinAppid, List<String> fansOpenId, List<Integer> deleteTagsId) {
+    public void deleteFanTag(long weixinAppid, List<String> openIds, List<Integer> deleteTagIds) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String accessToken = accountService.getAccessToken(weixinAppid);
-        if (deleteTagsId == null) {
+        if (deleteTagIds == null) {
             return;
         }
 
-        for (int tagId: deleteTagsId) {
-            WxFanManager.deleteFanTag(accessToken, fansOpenId, tagId);
+        for (int tagId: deleteTagIds) {
+            WxFanManager.deleteFanTag(accessToken, openIds, tagId);
         }
 
         //更新粉丝标签信息到本地数据库
@@ -176,7 +176,7 @@ public class FanServiceImpl implements FanService {
         example.createCriteria()
                 .andStatusEqualTo(1)
                 .andAppIdEqualTo(accountPO.getAppId())
-                .andOpenIdIn(fansOpenId);
+                .andOpenIdIn(openIds);
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());
         List<FanPO> updateFans = fanMapper.selectByExample(example, table);
 
@@ -184,7 +184,7 @@ public class FanServiceImpl implements FanService {
             List<Integer> tagsList = JsonUtil.string2List(fan.getTagIdsJson(), Integer.class);
 
             //比较并删除粉丝标签列表里需要删除的标签
-            for (int curr: deleteTagsId) {
+            for (int curr: deleteTagIds) {
                 for (int i = 0; i < tagsList.size(); i++) {
                     if (tagsList.get(i) == curr) {
                         tagsList.remove(i);

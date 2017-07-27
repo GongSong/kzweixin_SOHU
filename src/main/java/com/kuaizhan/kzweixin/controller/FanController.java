@@ -73,8 +73,8 @@ public class FanController extends BaseController {
      */
     @RequestMapping(value = "/fan/fan_tags", method = RequestMethod.PUT)
     public JsonResponse updateFanTag(@Valid @RequestBody UpdateFanTagParam param) {
-        fansService.addFanTag(param.getWeixinAppid(), param.getFansOpenId(), param.getNewTagsId());
-        fansService.deleteFanTag(param.getWeixinAppid(), param.getFansOpenId(), param.getDeleteTagsId());
+        fansService.addFanTag(param.getWeixinAppid(), param.getOpenIds(), param.getNewTagIds());
+        fansService.deleteFanTag(param.getWeixinAppid(), param.getOpenIds(), param.getDeleteTagIds());
         return new JsonResponse(ImmutableMap.of());
     }
 
