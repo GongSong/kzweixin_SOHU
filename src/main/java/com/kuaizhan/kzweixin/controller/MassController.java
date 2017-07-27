@@ -249,6 +249,13 @@ public class MassController extends BaseController {
                     massPO.setIsTiming(isTiming);
                     massPO.setStatus(MassPO.Status.SENDED.getCode());
                     massPO.setGroupId(tagId);
+                    massPO.setMsgId("");
+                    massPO.setStatus(3);
+                    massPO.setStatusMsg("");
+                    massPO.setTotalCount(0);
+                    massPO.setFilterCount(0);
+                    massPO.setSentCount(0);
+                    massPO.setErrorCount(0);
                     massService.insertMass(massPO);
                 }
             }
