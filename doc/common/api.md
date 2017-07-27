@@ -1,1 +1,0 @@
-已经移动到[公众号接口约定](../modules/api-common.md)
