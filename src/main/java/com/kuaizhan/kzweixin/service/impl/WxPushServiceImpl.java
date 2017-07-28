@@ -1,7 +1,10 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.kuaizhan.kzweixin.dao.mapper.auto.MassMapper;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
+import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
+import com.kuaizhan.kzweixin.dao.po.auto.MassPOExample;
 import com.kuaizhan.kzweixin.entity.WxData;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
@@ -18,9 +21,11 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,6 +44,8 @@ public class WxPushServiceImpl implements WxPushService {
     private FanService fanService;
     @Resource
     private WxThirdPartServiceImpl wxThirdPartService;
+    @Resource
+    protected MassMapper massMapper;
 
     private static final String SUCCESS_RESULT = "success";
 
@@ -240,4 +247,32 @@ public class WxPushServiceImpl implements WxPushService {
         commonService.kzStat("weixin", traceKey);
         commonService.kzStat("weixin", traceKey + appId);
     }
+
+    /**
+    *处理群发结束相关任务
+     **/
+    private void handleMassJobFinish(MassPO massPO) {
+        Integer status = massPO.getStatusMsg().equals("send success")?1:2;
+        MassPOExample example = new MassPOExample();
+        example.createCriteria()
+                .andWeixinAppidEqualTo(massPO.getWeixinAppid())
+                .andMsgIdEqualTo(massPO.getMsgId());
+        List<MassPO> massPOList = massMapper.selectByExample(example);
+        if(massPOList.size() != 0) {
+            MassPOExample massPOExample = new MassPOExample();
+            massPOExample.createCriteria()
+                    .andStatusEqualTo(status)
+                    .andStatusMsgEqualTo(massPO.getStatusMsg())
+                    .andTotalCountEqualTo(massPO.getTotalCount())
+                    .andFilterCountEqualTo(massPO.getFilterCount())
+                    .andSentCountEqualTo(massPO.getSentCount())
+                    .andErrorCountEqualTo(massPO.getErrorCount())
+                    .andUpdateTimeEqualTo(new Date().getTime()/1000);
+            MassPO record = new MassPO();
+            record.setWeixinAppid(massPO.getWeixinAppid());
+            record.setMassId(massPOList.get(0).getMassId());
+            massMapper.updateByExample(record,massPOExample);
+        }
+    }
+
 }
