@@ -104,3 +104,23 @@
          }
         }
         ```
+        
+#### 4 根据token换取openId
+* **协议**：HTTP
+* **方法**：GET
+* **URL**：kzweixin/v1/action/open_id
+* **参数**：
+    * token 换取凭证
+* **说明**：
+    * 对于投票等业务，会在微信弹出图文的链接后追加三个参数，token(换取openId凭证), timestamp(token生成时间戳), expireIn(token过期时间,单位s)
+    * 此接口调用一次，token即生效
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {
+            "openId": "odfsdefdaefefda="  // token过期或无效，此指为null
+        }
+        ```
+

@@ -1,11 +1,14 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.kuaizhan.kzweixin.cache.ActionCache;
 import com.kuaizhan.kzweixin.dao.mapper.auto.ActionMapper;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPOExample;
+import com.kuaizhan.kzweixin.entity.action.ActionResponse;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
+import com.kuaizhan.kzweixin.enums.BizCode;
 import com.kuaizhan.kzweixin.enums.ResponseType;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
@@ -26,34 +29,22 @@ public class ActionServiceImpl implements ActionService {
     private AccountService accountService;
     @Resource
     private ActionMapper actionMapper;
+    @Resource
+    private ActionCache actionCache;
 
 
     @Override
-    public int addAction(long weixinAppid, ActionPO action, Object responseObj) {
+    public int addAction(long weixinAppid, ActionPO action, ActionResponse actionResponse) {
 
         accountService.getAccountByWeixinAppId(weixinAppid);
 
         action.setWeixinAppid(weixinAppid);
-        action.setExt(action.getExt() == null? "": action.getExt());
         action.setCreateTime(DateUtil.curSeconds());
         action.setUpdateTime(DateUtil.curSeconds());
-        action.setExt("");
+        action.setExt(action.getExt() == null ? "": action.getExt());
         action.setStatus(true);
 
-        int responseType = action.getResponseType();
-        if (responseType == ResponseType.TEXT.getValue()) {
-            if (!(responseObj instanceof TextResponse)) {
-                throw new IllegalArgumentException("illegal response type, should be TextResponse");
-            }
-        } else if (responseType == ResponseType.NEWS.getValue()) {
-            if (!(responseObj instanceof NewsResponse)) {
-                throw new IllegalArgumentException("illegal response type, should be NewsResponse");
-            }
-        } else {
-            throw new IllegalArgumentException("unsupported responseType:" + responseType);
-        }
-
-        String responseJson = JsonUtil.bean2String(responseObj);
+        String responseJson = JsonUtil.bean2String(actionResponse);
         checkResponseJson(responseJson);
 
         action.setResponseJson(responseJson);
@@ -76,6 +67,7 @@ public class ActionServiceImpl implements ActionService {
         if (actionPO.getId() == null) {
             throw new IllegalArgumentException("actionId can not be null");
         }
+        actionPO.setUpdateTime(DateUtil.curSeconds());
         actionMapper.updateByPrimaryKeySelective(actionPO);
     }
 
@@ -107,5 +99,42 @@ public class ActionServiceImpl implements ActionService {
             return keyword != null && keyword.matches(actionPO.getKeyword());
         }
         return false;
+    }
+
+    @Override
+    public ActionResponse getActionResponse(ActionPO actionPO, String openId) {
+        ResponseType responseType = ResponseType.fromValue(actionPO.getResponseType());
+        if (responseType == ResponseType.TEXT) {
+            return JsonUtil.string2Bean(actionPO.getResponseJson(), TextResponse.class);
+        } else if (responseType == ResponseType.NEWS) {
+            NewsResponse newsResponse = JsonUtil.string2Bean(actionPO.getResponseJson(), NewsResponse.class);
+            BizCode bizCode = BizCode.fromValue(actionPO.getBizCode());
+            return addOpenIdForNewsResponse(bizCode, newsResponse, openId);
+        }
+        return null;
+    }
+
+    @Override
+    public String getOpenIdByToken(String token) {
+        String openId = actionCache.getOpenId(token);
+        if (openId != null) {
+            // 只允许被查询一次
+            actionCache.deleteOpenId(token);
+        }
+        return openId;
+    }
+
+    private NewsResponse addOpenIdForNewsResponse(BizCode bizCode, NewsResponse newsResponse, String openId) {
+        // 目前只有投票需要
+        if (bizCode == BizCode.VOTE) {
+            String url = newsResponse.getNews().get(0).getUrl();
+            String separator = url.contains("?")? "&" : "?";
+
+            int expireIn = 24 * 60 * 60;
+            String token = actionCache.setOpenId(openId, expireIn);
+            url = url + separator + "token=" + token + "&timestamp=" + DateUtil.curSeconds() + "&expireIn=" + expireIn;
+            newsResponse.getNews().get(0).setUrl(url);
+        }
+        return newsResponse;
     }
 }

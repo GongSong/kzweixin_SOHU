@@ -2,17 +2,18 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.controller.converter.ActionConverter;
 import com.kuaizhan.kzweixin.controller.param.AddActionParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateActionParam;
 import com.kuaizhan.kzweixin.controller.vo.ActionVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
+import com.kuaizhan.kzweixin.entity.action.ActionResponse;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.ResponseType;
+import com.kuaizhan.kzweixin.exception.common.ParamException;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by zixiong on 2017/6/26.
@@ -39,10 +42,9 @@ public class ActionController extends BaseController {
      */
     @RequestMapping(value = "/actions", method = RequestMethod.POST)
     public JsonResponse addAction(@Valid @RequestBody AddActionParam param) {
+
         if (param.getActionType() == ActionType.REPLY && param.getKeyword() == null) {
-            return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(),
-                    "keyword can not be null",
-                    ImmutableMap.of());
+            throw new ParamException("keyword can not be null");
         }
 
         long weixinAppid = accountService.getWeixinAppidFromAccountId(param.getAccountId());
@@ -54,16 +56,20 @@ public class ActionController extends BaseController {
         actionPO.setResponseType(param.getResponseType().getValue());
         actionPO.setStatus(true);
 
-        Object responseObj = null;
-        String responseJson = JsonUtil.bean2String(param.getResponseJson());
-        if (param.getResponseType() == ResponseType.TEXT) {
-            responseObj = JsonUtil.string2Bean(responseJson, TextResponse.class);
-        } else if (param.getResponseType() == ResponseType.NEWS) {
-            responseObj = JsonUtil.string2Bean(responseJson, NewsResponse.class);
-        }
+        ActionResponse actionResponse = getActionResponse(param.getResponseType(),
+                JsonUtil.bean2String(param.getResponseJson()));
+        int id = actionService.addAction(weixinAppid, actionPO, actionResponse);
 
-        int id = actionService.addAction(weixinAppid, actionPO, responseObj);
         return new JsonResponse(ImmutableMap.of("id", id));
+    }
+
+    private ActionResponse getActionResponse(ResponseType responseType, String responseJson) {
+        if (responseType == ResponseType.TEXT) {
+            return JsonUtil.string2Bean(responseJson, TextResponse.class);
+        } else if (responseType == ResponseType.NEWS) {
+            return JsonUtil.string2Bean(responseJson, NewsResponse.class);
+        }
+        return null;
     }
 
     /**
@@ -99,8 +105,8 @@ public class ActionController extends BaseController {
         if (param.getResponseJson() != null) {
             String responseJson = JsonUtil.bean2String(param.getResponseJson());
             actionPO.setResponseJson(responseJson);
-            // 做下校验
 
+            // 做下校验
             if (param.getResponseType() == ResponseType.TEXT) {
                 JsonUtil.string2Bean(responseJson, TextResponse.class);
             } else if (param.getResponseType() == ResponseType.NEWS) {
@@ -109,5 +115,17 @@ public class ActionController extends BaseController {
         }
         actionService.updateAction(actionPO);
         return new JsonResponse(ImmutableMap.of());
+    }
+
+    /**
+     * 根据token换取缓存的openId
+     */
+    @RequestMapping(value = "/action/open_id", method = RequestMethod.GET)
+    public JsonResponse getOpenIdByToken(@RequestParam String token) {
+        String openId = actionService.getOpenIdByToken(token);
+
+        Map<String, String> result = new HashMap<>();
+        result.put("openId", openId);
+        return new JsonResponse(result);
     }
 }

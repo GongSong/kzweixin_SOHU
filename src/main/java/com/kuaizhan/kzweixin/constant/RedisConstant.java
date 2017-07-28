@@ -50,6 +50,9 @@ public class RedisConstant {
     // 授权登录
     public static final String KEY_AUTH_LOGIN_INFO = ApplicationConfig.REDIS_PREFIX + "kzweixin:auth_login_info:";
 
+    // action模块openId缓存
+    public static final String KEY_ACTION_OPEN_ID = ApplicationConfig.REDIS_PREFIX + "kzweixin:action_openid:";
+
 
     /* ------------ php缓存key ------------*/
     public static final String KEY_PHP_ACCOUNT_BY_SITE_ID = ApplicationConfig.REDIS_PREFIX + "kz_weixin:plugin_by_site_id:";

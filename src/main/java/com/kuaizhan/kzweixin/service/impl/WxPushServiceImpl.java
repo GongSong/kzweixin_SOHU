@@ -4,6 +4,7 @@ import com.kuaizhan.kzweixin.constant.KzExchange;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.entity.XmlData;
+import com.kuaizhan.kzweixin.entity.action.ActionResponse;
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.action.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
@@ -97,7 +98,6 @@ public class WxPushServiceImpl implements WxPushService {
             result = handleOtherMsg(xmlData, accountPO, wxMsgType);
         }
 
-
         // java代码成功处理了则返回，否则继续调用php
         if (result != null) {
             return result;
@@ -189,7 +189,7 @@ public class WxPushServiceImpl implements WxPushService {
 
         }
 
-            return null;
+        return null;
     }
 
     /**
@@ -209,18 +209,14 @@ public class WxPushServiceImpl implements WxPushService {
                 continue;
             }
 
-            int responseType = actionPO.getResponseType();
             String fromUserName = xmlData.getFromUserName();
             String toUserName = xmlData.getToUserName();
 
-            if (responseType == ResponseType.TEXT.getValue()) {
-
-                TextResponse textResponse = JsonUtil.string2Bean(actionPO.getResponseJson(), TextResponse.class);
-                return getTextResult(fromUserName, toUserName, textResponse.getContent());
-
-            } else if (responseType == ResponseType.NEWS.getValue()) {
-                NewsResponse newsResponse = JsonUtil.string2Bean(actionPO.getResponseJson(), NewsResponse.class);
-                return getNewsResult(fromUserName, toUserName, newsResponse.getNews());
+            ActionResponse actionResponse = actionService.getActionResponse(actionPO, xmlData.getOpenId());
+            if (actionResponse instanceof TextResponse) {
+                return getTextResult(fromUserName, toUserName, ((TextResponse) actionResponse).getContent());
+            } else if (actionResponse instanceof NewsResponse) {
+                return getNewsResult(fromUserName, toUserName, ((NewsResponse) actionResponse).getNews());
             }
         }
         return null;

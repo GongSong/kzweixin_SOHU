@@ -8,7 +8,7 @@ import java.util.List;
  * Created by zixiong on 2017/6/26.
  */
 @Data
-public class NewsResponse {
+public class NewsResponse implements ActionResponse {
 
     private List<News> news;
 

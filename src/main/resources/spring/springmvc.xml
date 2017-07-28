@@ -8,8 +8,12 @@
     <!--mvc专用的配置-->
     <mvc:annotation-driven/>
     <context:component-scan base-package="com.kuaizhan.kzweixin.controller"/>
+
     <!--apo自动代理-->
     <aop:aspectj-autoproxy/>
+
+    <!--controller Aspect-->
+    <bean id="controllerAspect" class="com.kuaizhan.kzweixin.aspect.ControllerAspect" />
 
     <!--web服务注册-->
     <bean id="consulRegister" class="com.kuaizhan.kzweixin.utils.ConsulRegister" />
