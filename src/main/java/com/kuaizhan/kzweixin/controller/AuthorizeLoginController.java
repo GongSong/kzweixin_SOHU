@@ -2,8 +2,11 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.cache.model.AuthLoginInfo;
+import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.enums.AuthorizeScope;
+import com.kuaizhan.kzweixin.exception.BusinessException;
+import com.kuaizhan.kzweixin.exception.weixin.WxInvalidCodeException;
 import com.kuaizhan.kzweixin.service.AuthorizeLoginService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +36,12 @@ public class AuthorizeLoginController extends BaseController {
 
     @RequestMapping(value = "public/v1/authorize_redirect")
     public RedirectView authorizeRedirect(@RequestParam String redirectUrl, @RequestParam String code, @RequestParam String appid) {
-        String redirectUrlWithToken = authorizeLoginService.getRedirectUrlWithToken(appid, code, redirectUrl);
+        String redirectUrlWithToken;
+        try {
+            redirectUrlWithToken = authorizeLoginService.getRedirectUrlWithToken(appid, code, redirectUrl);
+        } catch (WxInvalidCodeException e) {
+            throw new BusinessException(ErrorCode.OPERATION_FAILED, "请求已过期");
+        }
         return new RedirectView(redirectUrlWithToken);
     }
 

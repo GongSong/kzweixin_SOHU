@@ -6,6 +6,7 @@ import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.entity.api.response.AccessTokenResponse;
 import com.kuaizhan.kzweixin.entity.api.response.UserInfoResponse;
 import com.kuaizhan.kzweixin.enums.AuthorizeScope;
+import com.kuaizhan.kzweixin.exception.weixin.WxInvalidCodeException;
 import com.kuaizhan.kzweixin.manager.WxAuthorizeLoginManager;
 import com.kuaizhan.kzweixin.service.AuthorizeLoginService;
 import com.kuaizhan.kzweixin.service.WxThirdPartService;
@@ -45,7 +46,7 @@ public class AuthorizeLoginServiceImpl implements AuthorizeLoginService {
     }
 
     @Override
-    public String getRedirectUrlWithToken(String appId, String code, String redirectUrl) {
+    public String getRedirectUrlWithToken(String appId, String code, String redirectUrl) throws WxInvalidCodeException {
 
         // 参数分隔符
         String paramSep = redirectUrl.contains("?")? "&" : "?";

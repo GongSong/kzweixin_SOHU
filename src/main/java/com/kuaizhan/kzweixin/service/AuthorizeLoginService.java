@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.cache.model.AuthLoginInfo;
 import com.kuaizhan.kzweixin.enums.AuthorizeScope;
+import com.kuaizhan.kzweixin.exception.weixin.WxInvalidCodeException;
 
 /**
  * 授权登录相关service
@@ -23,10 +24,11 @@ public interface AuthorizeLoginService {
      * 获取授权登录完成后的回调地址，携带者授权信息
      * @param appId 授权登录的公众号
      * @param code 微信返回的
-     * @param redirectUrl
-     * @return
+     * @param redirectUrl 授权完成后要跳转的url
+     * @return 最终条条状的url
+     * @throws WxInvalidCodeException code非法或已过期
      */
-    String getRedirectUrlWithToken(String appId, String code, String redirectUrl);
+    String getRedirectUrlWithToken(String appId, String code, String redirectUrl) throws WxInvalidCodeException;
 
 
     /**
