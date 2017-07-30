@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.common;
 
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
+import com.kuaizhan.kzweixin.entity.api.response.AccessTokenResponse;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
 import com.kuaizhan.kzweixin.utils.StrUtil;
@@ -36,8 +37,8 @@ public class TmpTest {
 
     @Test
     public void testXml() throws Exception {
-        String str = "da\uD83E\uDD17fa";
-        System.out.println("---->" + StrUtil.removeEmojis(str));
+        String str = "{\"errmsg\": 1}";
+        System.out.println("---->" + JsonUtil.string2Bean(str, AccessTokenResponse.class));
     }
 
     @Test

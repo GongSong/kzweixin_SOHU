@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AccessTokenResponse extends WxBaseResponse {
+public class AccessTokenResponse {
     @JsonProperty("access_token")
     private String accessToken;
     @JsonProperty("refresh_token")
@@ -19,4 +19,7 @@ public class AccessTokenResponse extends WxBaseResponse {
     private String openId;
 
     private String scope;
+
+    private int errcode; // 默认0
+    private String errmsg;
 }

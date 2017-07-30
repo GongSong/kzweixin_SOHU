@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserInfoResponse extends WxBaseResponse {
+public class UserInfoResponse {
     private String openid;
     private String unionid;
     private String nickname;
@@ -18,6 +18,10 @@ public class UserInfoResponse extends WxBaseResponse {
     private String city;
     private String country;
     private String headimgurl;
+
+    // 出错的情况
+    private int errcode;
+    private String errmsg;
 
     public AuthLoginInfo toAuthLogoinInfo() {
         AuthLoginInfo authLoginInfo = new AuthLoginInfo();
