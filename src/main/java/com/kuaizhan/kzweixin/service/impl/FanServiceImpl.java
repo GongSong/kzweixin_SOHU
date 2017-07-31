@@ -253,18 +253,26 @@ public class FanServiceImpl implements FanService {
     }
 
     @Override
-    public PageV2<FanPO> listFansByPage(long weixinAppid, int offset, int limit, List<Integer> tagIds, String queryStr, Boolean isBlacklist) {
+    public PageV2<FanPO> listFansByPage(long weixinAppid, int offset, int limit, List<Integer> tagIds,
+                                        String queryStr, Boolean isBlacklist, Boolean hasInteract) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());
 
+        //计算当前时间前48小时的时间，最近互动时间大于此时间的符合筛选条件
+        Integer baseInteractTime = null;
+        if (hasInteract) {
+            baseInteractTime = DateUtil.curSeconds() - 48 * 3600;
+        }
         List<FanPO> fanPOList = fanDao.listFansByPage(accountPO.getAppId(),
                 offset,
                 limit,
+                baseInteractTime,
                 isBlacklist ? 1: 0,
                 CollectionUtils.isEmpty(tagIds) ? null: tagIds,
                 StringUtils.isBlank(queryStr) ? null: queryStr,
                 table);
         long totalCount = fanDao.countFan(accountPO.getAppId(),
+                baseInteractTime,
                 isBlacklist ? 1: 0,
                 CollectionUtils.isEmpty(tagIds) ? null: tagIds,
                 StringUtils.isBlank(queryStr) ? null: queryStr,

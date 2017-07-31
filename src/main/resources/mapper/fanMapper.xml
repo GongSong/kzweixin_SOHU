@@ -6,9 +6,9 @@
     <select id="countFan" parameterType="Long" resultType="Long">
         SELECT COUNT(*)
         FROM ${tableName}
-        WHERE `app_id` = #{appId} AND `status` = 1
-        <if test="isBlacklist != null">
-            AND `in_blacklist` = #{isBlacklist}
+        WHERE `app_id` = #{appId} AND `status` = 1 AND `in_blacklist` = #{isBlacklist}
+        <if test="baseInteractTime != null">
+            AND `last_interact_time` >= #{baseInteractTime}
         </if>
         <if test="tagIds != null">
             AND
@@ -35,9 +35,9 @@
             resultType="com.kuaizhan.kzweixin.dao.po.auto.FanPO">
         SELECT *
         FROM ${tableName}
-        WHERE `app_id` = #{appId} AND `status` = 1
-        <if test="isBlacklist != null">
-            AND `in_blacklist` = #{isBlacklist}
+        WHERE `app_id` = #{appId} AND `status` = 1 AND `in_blacklist` = #{isBlacklist}
+        <if test="baseInteractTime != null">
+            AND `last_interact_time` >= #{baseInteractTime}
         </if>
         <if test="tagIds != null">
             AND

@@ -118,7 +118,8 @@
     * limit 分页的每页大小
     * tagIds 要查找的标签id
     * queryStr 要查找的昵称字符串
-    * isBlacklist 是否在黑名单里查找 
+    * isBlacklist 是否在黑名单里查找
+    * hasInteract 是否在48小时内互动过的粉丝里查找
 
 * **返回**：
     * 获取成功时返回:

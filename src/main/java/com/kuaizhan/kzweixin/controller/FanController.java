@@ -87,8 +87,9 @@ public class FanController extends BaseController {
                                      @RequestParam(defaultValue = "20") int limit,
                                      @RequestParam(required = false) List<Integer> tagIds,
                                      @RequestParam(required = false) String queryStr,
-                                     @RequestParam(defaultValue = "false") Boolean isBlacklist) {
-        PageV2<FanPO> fanPage = fansService.listFansByPage(weixinAppid, offset, limit, tagIds, queryStr, isBlacklist);
+                                     @RequestParam(defaultValue = "false") Boolean isBlacklist,
+                                     @RequestParam(defaultValue = "false") Boolean hasInteract) {
+        PageV2<FanPO> fanPage = fansService.listFansByPage(weixinAppid, offset, limit, tagIds, queryStr, isBlacklist, hasInteract);
         List<FanVO> fanVOList = new ArrayList<>();
 
         for(FanPO fanPO: fanPage.getDataSet()) {

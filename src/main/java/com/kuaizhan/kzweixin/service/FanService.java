@@ -77,9 +77,11 @@ public interface FanService {
      * @param tagIds 粉丝所在的标签组
      * @param queryStr 关键字搜索字符串
      * @param isBlacklist 是否在黑名单里查找
+     * @param hasInteract 是否在48小时内互动过的粉丝里查找
      * @return 粉丝信息列表
      * */
-    PageV2<FanPO> listFansByPage(long weixinAppid, int offset, int limit, List<Integer> tagIds, String queryStr, Boolean isBlacklist);
+    PageV2<FanPO> listFansByPage(long weixinAppid, int offset, int limit, List<Integer> tagIds,
+                                 String queryStr, Boolean isBlacklist, Boolean hasInteract);
 
     /**
      * 粉丝关注后，保存openId
