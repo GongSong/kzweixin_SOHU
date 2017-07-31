@@ -343,7 +343,7 @@
 * **方法**： POST
 * **URL**： /v1/guide_follow_posts
 * **参数**：
-    * weixinAppid 公众号唯一识别
+    * accountId weixinAppid或者appid
 * **说明**: 此接口为幂等操作，如果已存在可用的引导关注图文，不会重复添加
          
 * **返回**：
@@ -360,7 +360,7 @@
 * **方法**： GET
 * **URL**： /v1/guide_follow_post
 * **参数**：
-    * weixinAppid 公众号唯一识别
+    * accountId weixinAppid或者appid
          
 * **返回**：
     * 获取成功时返回:

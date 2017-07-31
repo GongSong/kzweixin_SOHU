@@ -2,10 +2,7 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
-import com.kuaizhan.kzweixin.controller.param.PostsParam;
-import com.kuaizhan.kzweixin.controller.param.UploadPicParam;
-import com.kuaizhan.kzweixin.controller.param.WeixinAppidParam;
-import com.kuaizhan.kzweixin.controller.param.WxSyncsPostParam;
+import com.kuaizhan.kzweixin.controller.param.*;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.entity.common.Page;
@@ -242,8 +239,9 @@ public class PostController extends BaseController {
      * 新增引导关注图文
      */
     @RequestMapping(value = "/guide_follow_posts", method = RequestMethod.POST)
-    public JsonResponse addGuideFollowPost(@Valid @RequestBody WeixinAppidParam param) {
-        String url = postService.addGuideFollowPost(param.getWeixinAppid());
+    public JsonResponse addGuideFollowPost(@Valid @RequestBody AccountIdParam param) {
+        long weixinAppid = accountService.getWeixinAppidFromAccountId(param.getAccountId());
+        String url = postService.addGuideFollowPost(weixinAppid);
         return new JsonResponse(ImmutableMap.of("url", url));
     }
 
@@ -251,7 +249,8 @@ public class PostController extends BaseController {
      * 获取引导关注图文
      */
     @RequestMapping(value = "/guide_follow_post", method = RequestMethod.GET)
-    public JsonResponse getGuideFollowPost(@RequestParam Long weixinAppid) {
+    public JsonResponse getGuideFollowPost(@RequestParam String accountId) {
+        long weixinAppid = accountService.getWeixinAppidFromAccountId(accountId);
         String url = postService.getGuideFollowPost(weixinAppid);
         return new JsonResponse(ImmutableMap.of("url", url));
     }
