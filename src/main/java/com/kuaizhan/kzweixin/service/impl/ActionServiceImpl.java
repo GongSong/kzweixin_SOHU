@@ -82,7 +82,7 @@ public class ActionServiceImpl implements ActionService {
         ActionPOExample example = new ActionPOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
-                .andActionTypeEqualTo(actionType.getValue())
+                .andActionTypeEqualTo(actionType)
                 .andStatusEqualTo(true);
         example.setOrderByClause("create_time DESC");
         return actionMapper.selectByExample(example);
@@ -91,11 +91,11 @@ public class ActionServiceImpl implements ActionService {
     @Override
     public boolean shouldAction(ActionPO actionPO, String keyword) {
         // 订阅类型，都触发
-        if (actionPO.getActionType() == ActionType.SUBSCRIBE.getValue()) {
+        if (actionPO.getActionType() == ActionType.SUBSCRIBE) {
             return true;
         }
         // 回复类型，正则匹配keyword时触发
-        if (actionPO.getActionType() == ActionType.REPLY.getValue()) {
+        if (actionPO.getActionType() == ActionType.REPLY) {
             return keyword != null && keyword.matches(actionPO.getKeyword());
         }
         return false;
@@ -103,13 +103,11 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public ActionResponse getActionResponse(ActionPO actionPO, String openId) {
-        ResponseType responseType = ResponseType.fromValue(actionPO.getResponseType());
-        if (responseType == ResponseType.TEXT) {
+        if (actionPO.getResponseType() == ResponseType.TEXT) {
             return JsonUtil.string2Bean(actionPO.getResponseJson(), TextResponse.class);
-        } else if (responseType == ResponseType.NEWS) {
+        } else if (actionPO.getResponseType() == ResponseType.NEWS) {
             NewsResponse newsResponse = JsonUtil.string2Bean(actionPO.getResponseJson(), NewsResponse.class);
-            BizCode bizCode = BizCode.fromValue(actionPO.getBizCode());
-            return addOpenIdForNewsResponse(bizCode, newsResponse, openId);
+            return addOpenIdForNewsResponse(actionPO.getBizCode(), newsResponse, openId);
         }
         return null;
     }

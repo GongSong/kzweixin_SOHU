@@ -25,10 +25,10 @@ public class ActionServiceTest {
     public void shouldAction() throws Exception {
 
         ActionPO actionPO = new ActionPO();
-        actionPO.setActionType(ActionType.SUBSCRIBE.getValue());
+        actionPO.setActionType(ActionType.SUBSCRIBE);
         Assert.assertTrue(actionService.shouldAction(actionPO, null));
 
-        actionPO.setActionType(ActionType.REPLY.getValue());
+        actionPO.setActionType(ActionType.REPLY);
         actionPO.setKeyword(".*投票.*");
         Assert.assertTrue(actionService.shouldAction(actionPO, "我们来投票啊"));
         Assert.assertFalse(actionService.shouldAction(actionPO, ""));

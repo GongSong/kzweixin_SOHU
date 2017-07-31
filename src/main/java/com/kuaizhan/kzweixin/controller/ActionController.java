@@ -50,10 +50,10 @@ public class ActionController extends BaseController {
         long weixinAppid = accountService.getWeixinAppidFromAccountId(param.getAccountId());
         ActionPO actionPO = new ActionPO();
         actionPO.setWeixinAppid(weixinAppid);
-        actionPO.setBizCode(param.getBizCode().getValue());
+        actionPO.setBizCode(param.getBizCode());
         actionPO.setKeyword(param.getKeyword());
-        actionPO.setActionType(param.getActionType().getValue());
-        actionPO.setResponseType(param.getResponseType().getValue());
+        actionPO.setActionType(param.getActionType());
+        actionPO.setResponseType(param.getResponseType());
         actionPO.setStatus(true);
 
         ActionResponse actionResponse = getActionResponse(param.getResponseType(),
@@ -91,15 +91,9 @@ public class ActionController extends BaseController {
         ActionPO actionPO = new ActionPO();
         actionPO.setId(actionId);
         actionPO.setKeyword(param.getKeyword());
-        if (param.getBizCode() != null) {
-            actionPO.setBizCode(param.getBizCode().getValue());
-        }
-        if (param.getActionType() != null) {
-            actionPO.setActionType(param.getActionType().getValue());
-        }
-        if (param.getResponseType() != null) {
-            actionPO.setResponseType(param.getResponseType().getValue());
-        }
+        actionPO.setBizCode(param.getBizCode());
+        actionPO.setActionType(param.getActionType());
+        actionPO.setResponseType(param.getResponseType());
         actionPO.setStatus(param.getStatus());
 
         if (param.getResponseJson() != null) {

@@ -59,6 +59,7 @@ public abstract class BaseController {
     @ExceptionHandler({HttpMessageNotReadableException.class, HttpMediaTypeNotSupportedException.class})
     @ResponseBody
     public JsonResponse handleMessageBodyMissing(Exception e) {
+        // 字段类型转换错误，也会走这里
         return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(),
                 "request body can not be null and only accept application/json",
                 ImmutableMap.of());

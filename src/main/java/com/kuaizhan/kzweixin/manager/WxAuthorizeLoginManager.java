@@ -1,9 +1,11 @@
 package com.kuaizhan.kzweixin.manager;
 
 import com.kuaizhan.kzweixin.config.WxApiConfig;
+import com.kuaizhan.kzweixin.constant.WxErrCode;
 import com.kuaizhan.kzweixin.entity.api.response.AccessTokenResponse;
 import com.kuaizhan.kzweixin.entity.api.response.UserInfoResponse;
 import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
+import com.kuaizhan.kzweixin.exception.weixin.WxInvalidCodeException;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -16,8 +18,11 @@ public class WxAuthorizeLoginManager {
 
     /**
      * 根据code换取accessToken
+     * @throws WxInvalidCodeException code过期
      */
-    public static AccessTokenResponse getAccessToken(String appid, String code, String componentAppid, String componentAccessToken) {
+    public static AccessTokenResponse getAccessToken(String appid, String code,
+                                                     String componentAppid,
+                                                     String componentAccessToken) throws WxInvalidCodeException {
 
         String url = WxApiConfig.DOMAIN_WEIXIN_API + WxApiConfig.WEIXIN_AUTHORIZE_ACCESS_TOKEN +
                 "?appid=" + appid +
@@ -34,11 +39,16 @@ public class WxAuthorizeLoginManager {
         }
         AccessTokenResponse response = httpResponse.getBody();
 
-        if (response.getErrcode() != 0) {
-            throw new WxApiException("[Wx:AuthorizeLogin] unexpected response:" + response);
+        int errCode = response.getErrcode();
+        if (errCode == 0) {
+            return response;
         }
 
-        return response;
+        if (errCode == WxErrCode.INVALID_CODE) {
+            throw new WxInvalidCodeException();
+        } else {
+            throw new WxApiException("[Wx:AuthorizeLogin] unexpected response:" + response);
+        }
     }
 
     public static UserInfoResponse getUserInfo(String openid, String accessToken) {

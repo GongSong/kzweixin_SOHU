@@ -1,17 +1,21 @@
 package com.kuaizhan.kzweixin.dao.po.auto;
 
+import com.kuaizhan.kzweixin.enums.ActionType;
+import com.kuaizhan.kzweixin.enums.BizCode;
+import com.kuaizhan.kzweixin.enums.ResponseType;
+
 public class ActionPO {
     private Integer id;
 
     private Long weixinAppid;
 
-    private String bizCode;
+    private BizCode bizCode;
 
     private String keyword;
 
-    private Integer actionType;
+    private ActionType actionType;
 
-    private Integer responseType;
+    private ResponseType responseType;
 
     private String responseJson;
 
@@ -39,11 +43,11 @@ public class ActionPO {
         this.weixinAppid = weixinAppid;
     }
 
-    public String getBizCode() {
+    public BizCode getBizCode() {
         return bizCode;
     }
 
-    public void setBizCode(String bizCode) {
+    public void setBizCode(BizCode bizCode) {
         this.bizCode = bizCode;
     }
 
@@ -55,19 +59,19 @@ public class ActionPO {
         this.keyword = keyword;
     }
 
-    public Integer getActionType() {
+    public ActionType getActionType() {
         return actionType;
     }
 
-    public void setActionType(Integer actionType) {
+    public void setActionType(ActionType actionType) {
         this.actionType = actionType;
     }
 
-    public Integer getResponseType() {
+    public ResponseType getResponseType() {
         return responseType;
     }
 
-    public void setResponseType(Integer responseType) {
+    public void setResponseType(ResponseType responseType) {
         this.responseType = responseType;
     }
 

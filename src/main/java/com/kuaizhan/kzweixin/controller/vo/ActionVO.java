@@ -1,5 +1,8 @@
 package com.kuaizhan.kzweixin.controller.vo;
 
+import com.kuaizhan.kzweixin.enums.ActionType;
+import com.kuaizhan.kzweixin.enums.BizCode;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 import lombok.Data;
 
 import java.util.Map;
@@ -10,10 +13,10 @@ import java.util.Map;
 @Data
 public class ActionVO {
     private Integer id;
-    private String bizCode;
+    private BizCode bizCode;
     private String keyword;
-    private Integer actionType;
-    private Integer responseType;
+    private ActionType actionType;
+    private ResponseType responseType;
     private Map responseJson;
     private Boolean status;
 }

@@ -1,12 +1,15 @@
 package com.kuaizhan.kzweixin.common;
 
 import com.kuaizhan.kzweixin.entity.action.NewsResponse;
+import com.kuaizhan.kzweixin.entity.api.response.AccessTokenResponse;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
-import com.kuaizhan.kzweixin.utils.StrUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -36,8 +39,9 @@ public class TmpTest {
 
     @Test
     public void testXml() throws Exception {
-        String str = "da\uD83E\uDD17fa";
-        System.out.println("---->" + StrUtil.removeEmojis(str));
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(1,1);
+        System.out.println("---->" + map.get(2));
     }
 
     @Test

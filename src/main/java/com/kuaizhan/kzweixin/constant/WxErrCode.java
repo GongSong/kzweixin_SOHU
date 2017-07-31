@@ -63,6 +63,8 @@ public class WxErrCode {
     // 图文已经被删除
     public static final int POST_ALREADY_DELETED = 40007;
 
+    // 授权登录时code非法
+    public static final int INVALID_CODE = 40029;
 
     // 公众号没有授权此功能
     public static final int API_UNAUTHORIZED_TO_COMPONENT= 61007;

@@ -1,5 +1,8 @@
 package com.kuaizhan.kzweixin.dao.po.auto;
 
+import com.kuaizhan.kzweixin.enums.ActionType;
+import com.kuaizhan.kzweixin.enums.BizCode;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,19 +67,100 @@ public class ActionPOExample {
     }
 
     protected abstract static class GeneratedCriteria {
+        protected List<Criterion> bizCodeCriteria;
+
+        protected List<Criterion> actionTypeCriteria;
+
+        protected List<Criterion> responseTypeCriteria;
+
+        protected List<Criterion> allCriteria;
+
         protected List<Criterion> criteria;
 
         protected GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
+            bizCodeCriteria = new ArrayList<Criterion>();
+            actionTypeCriteria = new ArrayList<Criterion>();
+            responseTypeCriteria = new ArrayList<Criterion>();
+        }
+
+        public List<Criterion> getBizCodeCriteria() {
+            return bizCodeCriteria;
+        }
+
+        protected void addBizCodeCriterion(String condition, Object value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            bizCodeCriteria.add(new Criterion(condition, value, "com.kuaizhan.kzweixin.dao.typehandler.BizCodeTypeHandler"));
+            allCriteria = null;
+        }
+
+        protected void addBizCodeCriterion(String condition, BizCode value1, BizCode value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            bizCodeCriteria.add(new Criterion(condition, value1, value2, "com.kuaizhan.kzweixin.dao.typehandler.BizCodeTypeHandler"));
+            allCriteria = null;
+        }
+
+        public List<Criterion> getActionTypeCriteria() {
+            return actionTypeCriteria;
+        }
+
+        protected void addActionTypeCriterion(String condition, Object value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            actionTypeCriteria.add(new Criterion(condition, value, "com.kuaizhan.kzweixin.dao.typehandler.ActionTypeHandler"));
+            allCriteria = null;
+        }
+
+        protected void addActionTypeCriterion(String condition, ActionType value1, ActionType value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            actionTypeCriteria.add(new Criterion(condition, value1, value2, "com.kuaizhan.kzweixin.dao.typehandler.ActionTypeHandler"));
+            allCriteria = null;
+        }
+
+        public List<Criterion> getResponseTypeCriteria() {
+            return responseTypeCriteria;
+        }
+
+        protected void addResponseTypeCriterion(String condition, Object value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            responseTypeCriteria.add(new Criterion(condition, value, "com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler"));
+            allCriteria = null;
+        }
+
+        protected void addResponseTypeCriterion(String condition, ResponseType value1, ResponseType value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            responseTypeCriteria.add(new Criterion(condition, value1, value2, "com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler"));
+            allCriteria = null;
         }
 
         public boolean isValid() {
-            return criteria.size() > 0;
+            return criteria.size() > 0
+                || bizCodeCriteria.size() > 0
+                || actionTypeCriteria.size() > 0
+                || responseTypeCriteria.size() > 0;
         }
 
         public List<Criterion> getAllCriteria() {
-            return criteria;
+            if (allCriteria == null) {
+                allCriteria = new ArrayList<Criterion>();
+                allCriteria.addAll(criteria);
+                allCriteria.addAll(bizCodeCriteria);
+                allCriteria.addAll(actionTypeCriteria);
+                allCriteria.addAll(responseTypeCriteria);
+            }
+            return allCriteria;
         }
 
         public List<Criterion> getCriteria() {
@@ -88,6 +172,7 @@ public class ActionPOExample {
                 throw new RuntimeException("Value for condition cannot be null");
             }
             criteria.add(new Criterion(condition));
+            allCriteria = null;
         }
 
         protected void addCriterion(String condition, Object value, String property) {
@@ -95,6 +180,7 @@ public class ActionPOExample {
                 throw new RuntimeException("Value for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value));
+            allCriteria = null;
         }
 
         protected void addCriterion(String condition, Object value1, Object value2, String property) {
@@ -102,6 +188,7 @@ public class ActionPOExample {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value1, value2));
+            allCriteria = null;
         }
 
         public Criteria andIdIsNull() {
@@ -234,63 +321,63 @@ public class ActionPOExample {
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeEqualTo(String value) {
-            addCriterion("biz_code =", value, "bizCode");
+        public Criteria andBizCodeEqualTo(BizCode value) {
+            addBizCodeCriterion("biz_code =", value, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeNotEqualTo(String value) {
-            addCriterion("biz_code <>", value, "bizCode");
+        public Criteria andBizCodeNotEqualTo(BizCode value) {
+            addBizCodeCriterion("biz_code <>", value, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeGreaterThan(String value) {
-            addCriterion("biz_code >", value, "bizCode");
+        public Criteria andBizCodeGreaterThan(BizCode value) {
+            addBizCodeCriterion("biz_code >", value, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeGreaterThanOrEqualTo(String value) {
-            addCriterion("biz_code >=", value, "bizCode");
+        public Criteria andBizCodeGreaterThanOrEqualTo(BizCode value) {
+            addBizCodeCriterion("biz_code >=", value, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeLessThan(String value) {
-            addCriterion("biz_code <", value, "bizCode");
+        public Criteria andBizCodeLessThan(BizCode value) {
+            addBizCodeCriterion("biz_code <", value, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeLessThanOrEqualTo(String value) {
-            addCriterion("biz_code <=", value, "bizCode");
+        public Criteria andBizCodeLessThanOrEqualTo(BizCode value) {
+            addBizCodeCriterion("biz_code <=", value, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeLike(String value) {
-            addCriterion("biz_code like", value, "bizCode");
+        public Criteria andBizCodeLike(BizCode value) {
+            addBizCodeCriterion("biz_code like", value, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeNotLike(String value) {
-            addCriterion("biz_code not like", value, "bizCode");
+        public Criteria andBizCodeNotLike(BizCode value) {
+            addBizCodeCriterion("biz_code not like", value, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeIn(List<String> values) {
-            addCriterion("biz_code in", values, "bizCode");
+        public Criteria andBizCodeIn(List<BizCode> values) {
+            addBizCodeCriterion("biz_code in", values, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeNotIn(List<String> values) {
-            addCriterion("biz_code not in", values, "bizCode");
+        public Criteria andBizCodeNotIn(List<BizCode> values) {
+            addBizCodeCriterion("biz_code not in", values, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeBetween(String value1, String value2) {
-            addCriterion("biz_code between", value1, value2, "bizCode");
+        public Criteria andBizCodeBetween(BizCode value1, BizCode value2) {
+            addBizCodeCriterion("biz_code between", value1, value2, "bizCode");
             return (Criteria) this;
         }
 
-        public Criteria andBizCodeNotBetween(String value1, String value2) {
-            addCriterion("biz_code not between", value1, value2, "bizCode");
+        public Criteria andBizCodeNotBetween(BizCode value1, BizCode value2) {
+            addBizCodeCriterion("biz_code not between", value1, value2, "bizCode");
             return (Criteria) this;
         }
 
@@ -374,53 +461,53 @@ public class ActionPOExample {
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeEqualTo(Integer value) {
-            addCriterion("action_type =", value, "actionType");
+        public Criteria andActionTypeEqualTo(ActionType value) {
+            addActionTypeCriterion("action_type =", value, "actionType");
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeNotEqualTo(Integer value) {
-            addCriterion("action_type <>", value, "actionType");
+        public Criteria andActionTypeNotEqualTo(ActionType value) {
+            addActionTypeCriterion("action_type <>", value, "actionType");
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeGreaterThan(Integer value) {
-            addCriterion("action_type >", value, "actionType");
+        public Criteria andActionTypeGreaterThan(ActionType value) {
+            addActionTypeCriterion("action_type >", value, "actionType");
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeGreaterThanOrEqualTo(Integer value) {
-            addCriterion("action_type >=", value, "actionType");
+        public Criteria andActionTypeGreaterThanOrEqualTo(ActionType value) {
+            addActionTypeCriterion("action_type >=", value, "actionType");
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeLessThan(Integer value) {
-            addCriterion("action_type <", value, "actionType");
+        public Criteria andActionTypeLessThan(ActionType value) {
+            addActionTypeCriterion("action_type <", value, "actionType");
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeLessThanOrEqualTo(Integer value) {
-            addCriterion("action_type <=", value, "actionType");
+        public Criteria andActionTypeLessThanOrEqualTo(ActionType value) {
+            addActionTypeCriterion("action_type <=", value, "actionType");
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeIn(List<Integer> values) {
-            addCriterion("action_type in", values, "actionType");
+        public Criteria andActionTypeIn(List<ActionType> values) {
+            addActionTypeCriterion("action_type in", values, "actionType");
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeNotIn(List<Integer> values) {
-            addCriterion("action_type not in", values, "actionType");
+        public Criteria andActionTypeNotIn(List<ActionType> values) {
+            addActionTypeCriterion("action_type not in", values, "actionType");
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeBetween(Integer value1, Integer value2) {
-            addCriterion("action_type between", value1, value2, "actionType");
+        public Criteria andActionTypeBetween(ActionType value1, ActionType value2) {
+            addActionTypeCriterion("action_type between", value1, value2, "actionType");
             return (Criteria) this;
         }
 
-        public Criteria andActionTypeNotBetween(Integer value1, Integer value2) {
-            addCriterion("action_type not between", value1, value2, "actionType");
+        public Criteria andActionTypeNotBetween(ActionType value1, ActionType value2) {
+            addActionTypeCriterion("action_type not between", value1, value2, "actionType");
             return (Criteria) this;
         }
 
@@ -434,53 +521,53 @@ public class ActionPOExample {
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeEqualTo(Integer value) {
-            addCriterion("response_type =", value, "responseType");
+        public Criteria andResponseTypeEqualTo(ResponseType value) {
+            addResponseTypeCriterion("response_type =", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeNotEqualTo(Integer value) {
-            addCriterion("response_type <>", value, "responseType");
+        public Criteria andResponseTypeNotEqualTo(ResponseType value) {
+            addResponseTypeCriterion("response_type <>", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeGreaterThan(Integer value) {
-            addCriterion("response_type >", value, "responseType");
+        public Criteria andResponseTypeGreaterThan(ResponseType value) {
+            addResponseTypeCriterion("response_type >", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeGreaterThanOrEqualTo(Integer value) {
-            addCriterion("response_type >=", value, "responseType");
+        public Criteria andResponseTypeGreaterThanOrEqualTo(ResponseType value) {
+            addResponseTypeCriterion("response_type >=", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeLessThan(Integer value) {
-            addCriterion("response_type <", value, "responseType");
+        public Criteria andResponseTypeLessThan(ResponseType value) {
+            addResponseTypeCriterion("response_type <", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeLessThanOrEqualTo(Integer value) {
-            addCriterion("response_type <=", value, "responseType");
+        public Criteria andResponseTypeLessThanOrEqualTo(ResponseType value) {
+            addResponseTypeCriterion("response_type <=", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeIn(List<Integer> values) {
-            addCriterion("response_type in", values, "responseType");
+        public Criteria andResponseTypeIn(List<ResponseType> values) {
+            addResponseTypeCriterion("response_type in", values, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeNotIn(List<Integer> values) {
-            addCriterion("response_type not in", values, "responseType");
+        public Criteria andResponseTypeNotIn(List<ResponseType> values) {
+            addResponseTypeCriterion("response_type not in", values, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeBetween(Integer value1, Integer value2) {
-            addCriterion("response_type between", value1, value2, "responseType");
+        public Criteria andResponseTypeBetween(ResponseType value1, ResponseType value2) {
+            addResponseTypeCriterion("response_type between", value1, value2, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeNotBetween(Integer value1, Integer value2) {
-            addCriterion("response_type not between", value1, value2, "responseType");
+        public Criteria andResponseTypeNotBetween(ResponseType value1, ResponseType value2) {
+            addResponseTypeCriterion("response_type not between", value1, value2, "responseType");
             return (Criteria) this;
         }
 
