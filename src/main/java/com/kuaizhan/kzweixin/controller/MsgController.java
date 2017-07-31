@@ -32,7 +32,7 @@ import java.util.*;
  * Created by Mr.Jadyn on 2016/12/29.
  */
 @RestController
-@RequestMapping(value = AppConstant.VERSION + "/msg", produces = "application/json")
+@RequestMapping(value = AppConstant.VERSION, produces = "application/json")
 public class MsgController extends BaseController {
 
     @Resource
@@ -45,7 +45,7 @@ public class MsgController extends BaseController {
     /**
      * 获取消息列表
      */
-    @RequestMapping(value = "/msgs", method = RequestMethod.GET)
+    @RequestMapping(value = "/msg/msgs", method = RequestMethod.GET)
     public JsonResponse getMsgs(@RequestParam long weixinAppid, @RequestParam int page,
                                 @RequestParam(required = false) String queryStr,
                                 @RequestParam(required = false, defaultValue = "0") boolean filterKeywords) {
@@ -66,7 +66,7 @@ public class MsgController extends BaseController {
     /**
      * 获取和用户的聊天列表
      */
-    @RequestMapping(value = "/chat_list", method = RequestMethod.GET)
+    @RequestMapping(value = "/msg/chat_list", method = RequestMethod.GET)
     public JsonResponse getChatList(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam String openId) {
         Page<MsgPO> msgPOPage = msgService.listMsgsByOpenId(weixinAppid, openId, page);
         List<MsgPO> msgPOS = msgPOPage.getResult();
@@ -91,7 +91,7 @@ public class MsgController extends BaseController {
     /**
      * 获取未读消息数
      */
-    @RequestMapping(value = "/unread_msg_count", method = RequestMethod.GET)
+    @RequestMapping(value = "/msg/unread_msg_count", method = RequestMethod.GET)
     public JsonResponse getUnreadCount(@RequestParam long weixinAppid) {
         long count = msgService.getUnreadMsgCount(weixinAppid);
         return new JsonResponse(ImmutableMap.of("count", count));
@@ -100,7 +100,7 @@ public class MsgController extends BaseController {
     /**
      * 标记消息已读(更新last_read_time)
      */
-    @RequestMapping(value = "/msg_reads", method = RequestMethod.POST)
+    @RequestMapping(value = "/msg/msg_reads", method = RequestMethod.POST)
     public JsonResponse markMsgsRead(@Valid @RequestBody WeixinAppidParam param) {
         msgService.markMsgRead(param.getWeixinAppid());
         return new JsonResponse(ImmutableMap.of());
@@ -110,7 +110,7 @@ public class MsgController extends BaseController {
     /**
      * 获取快速回复配置的接口
      */
-    @RequestMapping(value = "/quick_replies", method = RequestMethod.GET)
+    @RequestMapping(value = "/msg/quick_replies", method = RequestMethod.GET)
     public JsonResponse getQuickReplies(@RequestParam long weixinAppid) {
         List<String> quickReplies = msgService.getQuickReplies(weixinAppid);
         return new JsonResponse(ImmutableMap.of("quickReplies", quickReplies));
@@ -119,7 +119,7 @@ public class MsgController extends BaseController {
     /**
      * 修改快速回复配置
      */
-    @RequestMapping(value = "/quick_replies", method = RequestMethod.PUT)
+    @RequestMapping(value = "/msg/quick_replies", method = RequestMethod.PUT)
     public JsonResponse updateQuickReplies(@Valid @RequestBody UpdateQuickRepliesParam param) {
         msgService.updateQuickReplies(param.getWeixinAppid(), param.getQuickReplies());
         return new JsonResponse(ImmutableMap.of());
@@ -128,7 +128,7 @@ public class MsgController extends BaseController {
     /**
      * 发送客服消息
      */
-    @RequestMapping(value = "/msgs", method = RequestMethod.POST)
+    @RequestMapping(value = "/msg/msgs", method = RequestMethod.POST)
     public JsonResponse insertCustomMsg(@Valid @RequestBody SendCustomMsgParam param) {
         MsgType msgType = MsgType.fromValue(param.getMsgType());
         String contentJsonStr = JsonUtil.bean2String(param.getContent());
@@ -153,7 +153,7 @@ public class MsgController extends BaseController {
     /**
      * 获取快站推送token
      */
-    @RequestMapping(value = "push_token", method = RequestMethod.GET)
+    @RequestMapping(value = "/msg/push_token", method = RequestMethod.GET)
     public JsonResponse getPushToken(@RequestParam long weixinAppid, @RequestParam String openId) {
         String token = msgService.getPushToken(weixinAppid, openId);
         return new JsonResponse(ImmutableMap.of("token", token));
@@ -162,7 +162,7 @@ public class MsgController extends BaseController {
     /**
      * 关闭推送token
      */
-    @RequestMapping(value = "push_token", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/msg/push_token", method = RequestMethod.DELETE)
     public JsonResponse deletePushToken(@RequestParam long weixinAppid, @RequestParam String openId) {
         msgService.deletePushToken(weixinAppid, openId);
         return new JsonResponse(ImmutableMap.of());
