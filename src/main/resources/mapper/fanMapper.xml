@@ -61,4 +61,17 @@
         limit #{offset}, #{limit}
     </select>
 
+    <!--根据openId列表查粉丝列表-->
+    <select id="listFansByOpenIds"
+            resultType="com.kuaizhan.kzweixin.dao.po.auto.FanPO">
+        SELECT *
+        FROM ${tableName}
+        WHERE `app_id` = #{appId} AND `status` = 1
+        AND `open_id` in
+        <foreach collection="openIds" item="openId" open="(" separator="," close=")">
+            '"' + #{openId} + '"'
+        </foreach>
+
+    </select>
+
 </mapper>
