@@ -8,15 +8,15 @@
 * **URL**：kzweixin/v1/actions
 * **参数**：
     * accountId: 公众号appid或weixinAppid  必传
-    * bizCode: 业务类型, 目前支持`"vote"` 必传
+    * bizCode: 业务类型, 目前支持`"VOTE"` 必传
     * keyword: 回复关键字，支持正则表达式  actionType=1时必传
-    * actionType: 动作类型，支持`1(用户关注), 2(用户回复)` 必传
-    * responseType: 回复类型, 支持`1(文本), 2(图片), 3(链接组)` 必传
+    * actionType: 动作类型，支持`SUBSCRIBE(用户关注), REPLY(用户回复)` 必传
+    * responseType: 回复类型, 支持`TEXT(文本), IMAGE(图片), NEWS(链接组)` 必传
     * responseJson: 回复数据 必传
     
 * **参数说明**:
     当responseType不同值时，responseJson有不同数据结构，以下为例
-    * responseType == 1
+    * responseType == "TEXT"
     
     ```
     {
@@ -24,7 +24,7 @@
     }
     ```
     
-    * responseType == 2
+    * responseType == "IMAGE"
     
     ```
     {
@@ -32,7 +32,7 @@
     }
     ```
     
-    * responseType == 3 
+    * responseType ==  "NEWS"
     
     ```
     {
@@ -64,8 +64,8 @@
     * accountId: 公众号appid或weixinAppid  必传
     * bizCode: 业务类型, 目前支持`"vote"` 传则修改
     * keyword: 回复关键字，支持正则表达式  传则修改
-    * actionType: 动作类型，支持`1(用户关注), 2(用户回复)` 传则修改
-    * responseType: 回复类型, 支持`1(文本), 2(图片), 3(链接组)` 传则修改
+    * actionType: 动作类型，支持`SUBSCRIBE(用户关注), REPLY(用户回复)` 传则修改
+    * responseType: 回复类型, 支持`TEXT(文本), IMAGE(图片), NEWS(链接组)` 传则修改
     * responseJson: 回复数据 传则修改
     * status: 启用状态，1开启，2关闭
 
@@ -88,10 +88,10 @@
         ```
         {
          "id" : 132,
-         "bizCode": "vote",
+         "bizCode": "VOTE",
          "keyword": "投票",
-         "actionType": 1,
-         "responseType": 3,
+         "actionType": "SUBSCRIBE",
+         "responseType": "NEWS",
          "responseJson": {
               "news": [
                 {

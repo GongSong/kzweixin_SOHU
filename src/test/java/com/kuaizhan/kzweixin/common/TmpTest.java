@@ -4,10 +4,12 @@ import com.kuaizhan.kzweixin.entity.action.NewsResponse;
 import com.kuaizhan.kzweixin.entity.api.response.AccessTokenResponse;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
-import com.kuaizhan.kzweixin.utils.StrUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -37,8 +39,9 @@ public class TmpTest {
 
     @Test
     public void testXml() throws Exception {
-        String str = "{\"errmsg\": 1}";
-        System.out.println("---->" + JsonUtil.string2Bean(str, AccessTokenResponse.class));
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(1,1);
+        System.out.println("---->" + map.get(2));
     }
 
     @Test
