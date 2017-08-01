@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.cache.MsgCache;
 import com.kuaizhan.kzweixin.config.KzApiConfig;
 import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.dao.mapper.MsgDao;
@@ -72,9 +73,8 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public Page<MsgPO> listMsgsByPagination(long weixinAppid, String queryStr, boolean filterKeywords, int pageNum) {
+    public PageV2<MsgPO> listMsgsByPage(long weixinAppid, String queryStr, boolean filterKeywords, int offset, int limit) {
 
-        Page<MsgPO> page = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
 
         long lastReadTime = getLastReadTime(weixinAppid);
@@ -84,17 +84,15 @@ public class MsgServiceImpl implements MsgService {
         // 查询消息列表
         List<MsgPO> msgPOS = msgDao.listMsgsByPagination(appId, msgTableName, null, 1,
                 queryStr, filterKeywords,
-                lastReadTime, page.getOffset(), page.getLimit());
+                lastReadTime, offset, limit);
         // 查询消息总数
-        long count = msgDao.countMsgs(appId, msgTableName, null, 1,
+        long total = msgDao.countMsgs(appId, msgTableName, null, 1,
                 queryStr, filterKeywords, null, lastReadTime);
-        page.setTotalCount(count);
 
         // 封装粉丝信息
         setMsgUserInfo(appId, msgPOS, accountPO);
 
-        page.setResult(msgPOS);
-        return page;
+        return new PageV2<>(total, msgPOS);
     }
 
     @Override
@@ -212,12 +210,12 @@ public class MsgServiceImpl implements MsgService {
 
                     newsFromMp.getArticles().add(article);
                 }
-                customMsg.setMsgType(MsgType.NEWS);
+                customMsg.setMsgType(MsgType.LINK_GROUP);
                 customMsg.setNews(newsFromMp);
                 customMsg.setContentJsonStr(JsonUtil.bean2String(newsFromMp));
                 break;
             // 链接组类型
-            case NEWS:
+            case LINK_GROUP:
                 // TODO: 校验下参数
                 CustomMsg.News news = new CustomMsg.News();
                 customMsg.setContentJsonStr(JsonUtil.bean2String(news));

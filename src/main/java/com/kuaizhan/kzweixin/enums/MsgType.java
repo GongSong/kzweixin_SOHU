@@ -15,7 +15,7 @@ public enum MsgType {
     LOCATION((short) 6),
     LINK((short) 7),
     MP_NEWS((short) 9),
-    NEWS((short) 10),
+    LINK_GROUP((short) 10),
     KEYWORD_TEXT((short) 12),
     TPL_MSG((short) 15);
 

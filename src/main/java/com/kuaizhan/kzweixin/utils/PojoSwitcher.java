@@ -9,6 +9,8 @@ import com.kuaizhan.kzweixin.controller.vo.AccountVO;
 import com.kuaizhan.kzweixin.controller.vo.MsgVO;
 import com.kuaizhan.kzweixin.controller.vo.PostVO;
 import com.kuaizhan.kzweixin.controller.vo.FanVO;
+import com.kuaizhan.kzweixin.enums.MsgSendType;
+import com.kuaizhan.kzweixin.enums.MsgType;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -114,8 +116,8 @@ public class PojoSwitcher {
             return null;
         }
         MsgVO msgVO = new MsgVO();
-        msgVO.setMsgType(msgPO.getType());
-        msgVO.setSendType(msgPO.getSendType());
+        msgVO.setMsgType(MsgType.fromValue(msgPO.getType().shortValue()));
+        msgVO.setSendType(MsgSendType.fromCode(msgPO.getSendType()));
         msgVO.setOpenId(msgPO.getOpenId());
         msgVO.setHeadImgUrl(msgPO.getHeadImgUrl());
         msgVO.setNickname(msgPO.getNickName());

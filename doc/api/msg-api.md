@@ -6,23 +6,22 @@
 * **URL**： /v1/msg/msgs
 * **参数**：  
         * weixinAppid  
-        * page：要获取的页数  
         * queryStr: 按内容模糊查询  
         * filterKeywords: 是否过滤关键词消息(1或0)
+        * offset 分页偏移量
+        * limit 每页大小
 
 * **返回**：
     * 获取成功时返回:
 
         ```
         {
-            "totalNum": 370,
-            "currentPage": 1,
-            "totalPage": 19,
+            "total": 370,
             "msgs": [
               {
-                "msgType": 1, // 消息类型，可能值为1: 文本消息 2:图片消息 10: 链接组消息 12: 关键词消息, 以及其他前端不需要处理的类型   
-                "sendType": 1, //  1为粉丝发给公众号  2位公众号发给粉丝
-                "nickname": "子雄",
+                "msgType": "TEXT", // 消息类型，可能值为TEXT(文本消息) IMAGE:(图片消息) "LINK_GROUP"(链接组消息) KEYWORD_TEXT(关键词消息), 以及其他前端不需要处理的类型   
+                "sendType": "TO_FAN", //  "TO_ACCOUNT"为粉丝发给公众号  "TO_FAN"为公众号发给粉丝
+                "nickname": "子雄"****,
                 "headImgUrl": "http://wx.qlogo.cn/mmopen/PiajxS/0",  // 头像
                 "openId": "oBGGJt5SLU9P_wGu71Xo82m_Zq1s",
                 "content": {
@@ -36,9 +35,9 @@
         
     * 返回数据说明
     
-        * msgType为1和12时, content示例 `{"content": "你说什么"}`
-        * msgType为2时，content示例 `{"pic_url": "http://pic.kuaizhan.com/fdae3fdaf"}`
-        * msgType为10时, content示例 `{"articles":[{"title":"我是链接组","description":"","picurl":"//pic.kuaizhan.com00x500","url":"http:www.kuaizhan.com/club/apiv1/sites/4142239921/me/notices/jump-to"}]}`
+        * msgType为TEXT和KEYWORD_TEXT时, content示例 `{"content": "你说什么"}`
+        * msgType为IMAGE时，content示例 `{"pic_url": "http://pic.kuaizhan.com/fdae3fdaf"}`
+        * msgType为LINK_GROUP时, content示例 `{"articles":[{"title":"我是链接组","description":"","picurl":"//pic.kuaizhan.com00x500","url":"http:www.kuaizhan.com/club/apiv1/sites/4142239921/me/notices/jump-to"}]}`
         * 其他类型时, content示例 `{"content": "[收到暂不支持的消息类型，请在微信公众平台上查看]"}`
             
    
@@ -88,15 +87,13 @@
 
         ```
         {
-            "totalNum": 370,
-            "currentPage": 1,
-            "totalPage": 19,
+            "total": 370,
             "lastInteractTime": 1493005476, // 上次聊天的时间
             "msgs": [
               {
-                "msgType": 1,
-                "sendType": 1,
-                "nickname": "子雄",
+                "msgType": "TEXT", // 消息类型，可能值为TEXT(文本消息) IMAGE:(图片消息) "LINK_GROUP"(链接组消息) KEYWORD_TEXT(关键词消息), 以及其他前端不需要处理的类型   
+                "sendType": "TO_FAN", //  "TO_ACCOUNT"为粉丝发给公众号  "TO_FAN"为公众号发给粉丝
+                "nickname": "子雄"****,
                 "headImgUrl": "http://wx.qlogo.cn/mmopen/PiajxS/0",  // 头像
                 "openId": "oBGGJt5SLU9P_wGu71Xo82m_Zq1s",
                 "content": {
@@ -104,7 +101,7 @@
                 },
                 "createTime": 1493005476
               }
-             ]
+           ]
         }
         ```
    

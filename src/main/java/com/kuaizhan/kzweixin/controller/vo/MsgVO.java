@@ -1,5 +1,7 @@
 package com.kuaizhan.kzweixin.controller.vo;
 
+import com.kuaizhan.kzweixin.enums.MsgSendType;
+import com.kuaizhan.kzweixin.enums.MsgType;
 import lombok.Data;
 
 import java.util.Map;
@@ -10,8 +12,8 @@ import java.util.Map;
  */
 @Data
 public class MsgVO {
-    private int msgType;
-    private int sendType;
+    private MsgType msgType;
+    private MsgSendType sendType;
     private String nickname;
     private String headImgUrl;
     private String openId;

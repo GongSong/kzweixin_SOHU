@@ -40,7 +40,7 @@ public class WxMsgManager {
         } else if (msgType == MsgType.IMAGE) {
             paramMap.put("msgtype", "image");
             paramMap.put("image", customMsg.getImage());
-        } else if (msgType == MsgType.NEWS) {
+        } else if (msgType == MsgType.LINK_GROUP) {
             paramMap.put("msgtype", "news");
             paramMap.put("news", customMsg.getNews());
         } else {

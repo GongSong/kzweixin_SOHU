@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
 
+import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.dao.po.MsgPO;
@@ -29,10 +30,8 @@ public interface MsgService {
      * 分页查询公众号消息列表
      * @param queryStr 内容筛选条件
      * @param filterKeywords 是否过滤关键词回复
-     * @param pageNum 页码
-     * @return
      */
-    Page<MsgPO> listMsgsByPagination(long weixinAppid, String queryStr, boolean filterKeywords, int pageNum);
+    PageV2<MsgPO> listMsgsByPage(long weixinAppid, String queryStr, boolean filterKeywords, int offset, int limit);
 
     /**
      * 获取和单个用户的聊天列表

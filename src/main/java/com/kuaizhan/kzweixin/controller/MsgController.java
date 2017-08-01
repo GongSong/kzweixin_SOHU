@@ -3,7 +3,9 @@ package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.controller.vo.MsgVO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
+import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
@@ -46,21 +48,21 @@ public class MsgController extends BaseController {
      * 获取消息列表
      */
     @RequestMapping(value = "/msg/msgs", method = RequestMethod.GET)
-    public JsonResponse getMsgs(@RequestParam long weixinAppid, @RequestParam int page,
+    public JsonResponse getMsgs(@RequestParam long weixinAppid,
+                                @RequestParam(defaultValue = "0") int offset,
+                                @RequestParam(defaultValue = "20") int limit,
                                 @RequestParam(required = false) String queryStr,
                                 @RequestParam(required = false, defaultValue = "0") boolean filterKeywords) {
-        Page<MsgPO> msgPOPage = msgService.listMsgsByPagination(weixinAppid, queryStr, filterKeywords, page);
-        List<MsgPO> msgPOS = msgPOPage.getResult();
 
-        MsgListVO msgListVO = new MsgListVO();
-        msgListVO.setTotalNum(msgPOPage.getTotalCount());
-        msgListVO.setTotalPage(msgPOPage.getTotalPages());
-        msgListVO.setCurrentPage(msgPOPage.getPageNo());
+        PageV2<MsgPO> msgPOPage = msgService.listMsgsByPage(weixinAppid, queryStr, filterKeywords, offset, limit);
 
+        List<MsgPO> msgPOS = msgPOPage.getDataSet();
+
+        List<MsgVO> msgVOS = new ArrayList<>();
         for(MsgPO msgPO: msgPOS) {
-            msgListVO.getMsgs().add(PojoSwitcher.msgPOToVO(msgPO));
+            msgVOS.add(PojoSwitcher.msgPOToVO(msgPO));
         }
-        return new JsonResponse(msgListVO);
+        return new JsonResponse(ImmutableMap.of("total", msgPOPage.getTotal(), "msgs", msgVOS));
     }
 
     /**
@@ -142,7 +144,7 @@ public class MsgController extends BaseController {
             customMsg.setImage(JsonUtil.string2Bean(contentJsonStr, CustomMsg.Image.class));
         } else if (msgType == MsgType.MP_NEWS) {
             customMsg.setMpNews(JsonUtil.string2Bean(contentJsonStr, CustomMsg.MpNews.class));
-        } else if (msgType == MsgType.NEWS) {
+        } else if (msgType == MsgType.LINK_GROUP) {
             customMsg.setNews(JsonUtil.string2Bean(contentJsonStr, CustomMsg.News.class));
         }
 
