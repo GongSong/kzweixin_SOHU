@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
-import com.kuaizhan.kzweixin.entity.action.ActionResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.CallbackResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public interface ActionService {
     /**
      * 新增Action
      */
-    int addAction(long weixinAppid, ActionPO action, ActionResponse actionResponse);
+    int addAction(long weixinAppid, ActionPO action, CallbackResponse callbackResponse);
 
     /**
      * 修改Action
@@ -41,7 +41,7 @@ public interface ActionService {
      * 根据actionPO对象获取ActionResponse
      * @param openId news消息类型，有可能会在url带上openId
      */
-    ActionResponse getActionResponse(ActionPO actionPO, String openId);
+    CallbackResponse getActionResponse(ActionPO actionPO, String openId);
 
     /**
      * 根据token换取

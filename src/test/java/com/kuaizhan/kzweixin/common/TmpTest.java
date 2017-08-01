@@ -1,15 +1,11 @@
 package com.kuaizhan.kzweixin.common;
 
-import com.kuaizhan.kzweixin.entity.action.NewsResponse;
-import com.kuaizhan.kzweixin.entity.api.response.AccessTokenResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.NewsResponse;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -39,14 +35,11 @@ public class TmpTest {
 
     @Test
     public void testXml() throws Exception {
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(1,1);
-        System.out.println("---->" + map.get(2));
     }
 
     @Test
     public void testInt() throws Exception {
-        String str = "{\"news\":[{\"title\":\"我的投票\",\"description\":\"null\",\"picUrl\":\"http://www.baidu.com\",\"url\":\"https://vote15d39e4b0f5.kuaizhan.com/mobile.html#/list\"}]}\n";
+        String str = "{\"news\":[{\"oldTitle\":\"我的投票\",\"oldDescription\":\"null\",\"oldPicUrl\":\"http://www.baidu.com\",\"oldUrl\":\"https://vote15d39e4b0f5.kuaizhan.com/mobile.html#/list\"}]}\n";
         System.out.println("---->" + JsonUtil.string2Bean(str, NewsResponse.class));
     }
 }

@@ -82,7 +82,7 @@ public class PostController extends BaseController {
 
                     // 获取图文总记录下面的多图文
                     if (postPO.getType() == 2) {
-                        List<PostPO> multiPostPOList = postService.getMultiPosts(weixinAppid, postPO.getMediaId(), false);
+                        List<PostPO> multiPostPOList = postService.getPostsByMediaId(weixinAppid, postPO.getMediaId(), false);
                         if (multiPostPOList != null) {
                             for (PostPO multiPostPO : multiPostPOList) {
                                 PostVO multiPostVO = PojoSwitcher.postPOToVO(multiPostPO);
@@ -128,7 +128,7 @@ public class PostController extends BaseController {
         if (postPO != null) {
             // 如果图文type为3（多图文中的一条），根据mediaId找出多图文
             if (postPO.getType() == 3) {
-                List<PostPO> multiPostPOList = postService.getMultiPosts(postPO.getWeixinAppid(), postPO.getMediaId(), true);
+                List<PostPO> multiPostPOList = postService.getPostsByMediaId(postPO.getWeixinAppid(), postPO.getMediaId(), true);
                 for (PostPO multiPostPO : multiPostPOList) {
                     multiPostVOList.add(PojoSwitcher.postPOToVO(multiPostPO));
                 }

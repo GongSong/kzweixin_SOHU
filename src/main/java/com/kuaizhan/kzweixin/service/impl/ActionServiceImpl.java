@@ -4,9 +4,9 @@ import com.kuaizhan.kzweixin.cache.ActionCache;
 import com.kuaizhan.kzweixin.dao.mapper.auto.ActionMapper;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPOExample;
-import com.kuaizhan.kzweixin.entity.action.ActionResponse;
-import com.kuaizhan.kzweixin.entity.action.NewsResponse;
-import com.kuaizhan.kzweixin.entity.action.TextResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.CallbackResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.NewsResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.BizCode;
 import com.kuaizhan.kzweixin.enums.ResponseType;
@@ -34,7 +34,7 @@ public class ActionServiceImpl implements ActionService {
 
 
     @Override
-    public int addAction(long weixinAppid, ActionPO action, ActionResponse actionResponse) {
+    public int addAction(long weixinAppid, ActionPO action, CallbackResponse callbackResponse) {
 
         accountService.getAccountByWeixinAppId(weixinAppid);
 
@@ -44,7 +44,7 @@ public class ActionServiceImpl implements ActionService {
         action.setExt(action.getExt() == null ? "": action.getExt());
         action.setStatus(true);
 
-        String responseJson = JsonUtil.bean2String(actionResponse);
+        String responseJson = JsonUtil.bean2String(callbackResponse);
         checkResponseJson(responseJson);
 
         action.setResponseJson(responseJson);
@@ -102,7 +102,7 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public ActionResponse getActionResponse(ActionPO actionPO, String openId) {
+    public CallbackResponse getActionResponse(ActionPO actionPO, String openId) {
         if (actionPO.getResponseType() == ResponseType.TEXT) {
             return JsonUtil.string2Bean(actionPO.getResponseJson(), TextResponse.class);
         } else if (actionPO.getResponseType() == ResponseType.NEWS) {

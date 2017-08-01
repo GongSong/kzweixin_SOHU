@@ -4,12 +4,11 @@ import com.kuaizhan.kzweixin.constant.KzExchange;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
 import com.kuaizhan.kzweixin.entity.XmlData;
-import com.kuaizhan.kzweixin.entity.action.ActionResponse;
-import com.kuaizhan.kzweixin.entity.action.NewsResponse;
-import com.kuaizhan.kzweixin.entity.action.TextResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.CallbackResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.NewsResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.MsgType;
-import com.kuaizhan.kzweixin.enums.ResponseType;
 import com.kuaizhan.kzweixin.enums.WxMsgType;
 import com.kuaizhan.kzweixin.exception.account.AccountNotExistException;
 import com.kuaizhan.kzweixin.manager.KzManager;
@@ -212,11 +211,11 @@ public class WxPushServiceImpl implements WxPushService {
             String fromUserName = xmlData.getFromUserName();
             String toUserName = xmlData.getToUserName();
 
-            ActionResponse actionResponse = actionService.getActionResponse(actionPO, xmlData.getOpenId());
-            if (actionResponse instanceof TextResponse) {
-                return getTextResult(fromUserName, toUserName, ((TextResponse) actionResponse).getContent());
-            } else if (actionResponse instanceof NewsResponse) {
-                return getNewsResult(fromUserName, toUserName, ((NewsResponse) actionResponse).getNews());
+            CallbackResponse callbackResponse = actionService.getActionResponse(actionPO, xmlData.getOpenId());
+            if (callbackResponse instanceof TextResponse) {
+                return getTextResult(fromUserName, toUserName, ((TextResponse) callbackResponse).getContent());
+            } else if (callbackResponse instanceof NewsResponse) {
+                return getNewsResult(fromUserName, toUserName, ((NewsResponse) callbackResponse).getNews());
             }
         }
         return null;

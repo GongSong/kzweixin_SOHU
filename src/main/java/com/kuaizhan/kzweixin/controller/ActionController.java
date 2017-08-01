@@ -8,9 +8,9 @@ import com.kuaizhan.kzweixin.controller.param.UpdateActionParam;
 import com.kuaizhan.kzweixin.controller.vo.ActionVO;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.dao.po.auto.ActionPO;
-import com.kuaizhan.kzweixin.entity.action.ActionResponse;
-import com.kuaizhan.kzweixin.entity.action.NewsResponse;
-import com.kuaizhan.kzweixin.entity.action.TextResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.CallbackResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.NewsResponse;
+import com.kuaizhan.kzweixin.entity.wxresponse.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.ResponseType;
 import com.kuaizhan.kzweixin.exception.common.ParamException;
@@ -56,14 +56,14 @@ public class ActionController extends BaseController {
         actionPO.setResponseType(param.getResponseType());
         actionPO.setStatus(true);
 
-        ActionResponse actionResponse = getActionResponse(param.getResponseType(),
+        CallbackResponse callbackResponse = getActionResponse(param.getResponseType(),
                 JsonUtil.bean2String(param.getResponseJson()));
-        int id = actionService.addAction(weixinAppid, actionPO, actionResponse);
+        int id = actionService.addAction(weixinAppid, actionPO, callbackResponse);
 
         return new JsonResponse(ImmutableMap.of("id", id));
     }
 
-    private ActionResponse getActionResponse(ResponseType responseType, String responseJson) {
+    private CallbackResponse getActionResponse(ResponseType responseType, String responseJson) {
         if (responseType == ResponseType.TEXT) {
             return JsonUtil.string2Bean(responseJson, TextResponse.class);
         } else if (responseType == ResponseType.NEWS) {

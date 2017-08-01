@@ -1,14 +1,15 @@
-package com.kuaizhan.kzweixin.entity.action;
+package com.kuaizhan.kzweixin.entity.wxresponse;
 
 import lombok.Data;
 
 import java.util.List;
 
 /**
+ * news类型的返回
  * Created by zixiong on 2017/6/26.
  */
 @Data
-public class NewsResponse implements ActionResponse {
+public class NewsResponse implements CallbackResponse {
 
     private List<News> news;
 

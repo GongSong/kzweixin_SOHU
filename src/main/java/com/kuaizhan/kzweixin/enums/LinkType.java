@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ public enum LinkType {
 
     private String value;
 
-    private static Map<String, LinkType> valueMap;
+    private static Map<String, LinkType> valueMap = new HashMap<>();
 
     static {
         for (LinkType type: LinkType.values()) {

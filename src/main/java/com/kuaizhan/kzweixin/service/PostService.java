@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.service;
 
 
+import com.kuaizhan.kzweixin.entity.responsejson.PostResponseJson;
 import com.kuaizhan.kzweixin.exception.kuaizhan.GetKzArticleException;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.entity.post.ArticleDTO;
@@ -26,10 +27,16 @@ public interface PostService {
     Page<PostPO> listPostsByPage(long weixinAppid, String title, Integer pageNum, Boolean flat);
 
     /**
-     * 根据mediaId获取所有的多图文
+     * 根据mediaId获取多图文的所有图文
      * @param withContent 是否获取content字段
      */
-    List<PostPO> getMultiPosts(long weixinAppid, String mediaId, Boolean withContent);
+    List<PostPO> getPostsByMediaId(long weixinAppid, String mediaId, Boolean withContent);
+
+    /**
+     * 根据mediaId获取单篇图文(单图文，或者多图文的总图文)
+     * @param weixinAppid: 需要weixinAppid才能查询，否则因为老数据的存在(同样的mediaId在不同的weixinAppid下)会出现重复数据
+     */
+    PostPO getOnePostByMediaId(long weixinAppid, String mediaId);
 
     /**
      * 删除图文
@@ -46,11 +53,6 @@ public interface PostService {
      * 获取图文
      */
     PostPO getPostByPageId(long pageId);
-
-    /**
-     * 根据mediaId获取单篇图文(单图文，或者多图文的第一篇)
-     */
-    PostPO getPostByMediaId(long weixinAppid, String mediaId);
 
     /**
      * 临时接口，根据pageId, 获取图文内容
@@ -111,7 +113,7 @@ public interface PostService {
 
     /**
      * 上传微信永久素材，如缩略图
-     * @return map: mediaId,素材的id url,素材的url
+     * @return map: oldMediaId,素材的id oldUrl,素材的url
      */
     HashMap<String, String> uploadWxMaterial(long weixinAppid, String imgUrl);
 
@@ -133,4 +135,9 @@ public interface PostService {
      * @return 新增的引导关注图文url
      */
     String addGuideFollowPost(long weixinAppid);
+
+    /**
+     * 根据mediaId列表，组装PostResponse对象
+     */
+    PostResponseJson getPostResponseJson(long weixinAppid, List<String> mediaIds);
 }
