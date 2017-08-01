@@ -7,9 +7,9 @@
 * **参数**：  
         * weixinAppid  
         * queryStr: 按内容模糊查询  
-        * filterKeywords: 是否过滤关键词消息(1或0)
-        * offset 分页偏移量
-        * limit 每页大小
+        * filterKeywords: 是否过滤关键词消息(true或false)  
+        * offset 分页偏移量  
+        * limit 每页大小  
 
 * **返回**：
     * 获取成功时返回:
@@ -79,8 +79,9 @@
 * **URL**： /v1/msg/chat_list
 * **参数**：  
         * weixinAppid  
-        * page：要获取的页数  
         * openId: 粉丝的openId
+        * offset 分页偏移量  
+        * limit 每页大小  
         
 * **返回**：
     * 获取成功时返回:
