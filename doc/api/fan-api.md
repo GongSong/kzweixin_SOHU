@@ -116,7 +116,7 @@
     * weixinAppid 主键
     * offset 分页偏移量
     * limit 分页的每页大小
-    * tagIds 要查找的标签id
+    * tagIds 要查找的标签id, 使用Json序列化后的list，或者以','号为分隔符
     * queryStr 要查找的昵称字符串
     * isBlacklist 是否在黑名单里查找
     * hasInteract 是否在48小时内互动过的粉丝里查找

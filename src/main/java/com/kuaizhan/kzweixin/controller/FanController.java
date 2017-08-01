@@ -12,6 +12,8 @@ import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.entity.fan.TagDTO;
 import com.kuaizhan.kzweixin.service.FanService;
+import com.kuaizhan.kzweixin.utils.ParamUtil;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.web.bind.annotation.*;
 import com.kuaizhan.kzweixin.utils.PojoSwitcher;
 
@@ -85,10 +87,13 @@ public class FanController extends BaseController {
     public JsonResponse listFansByPage(@RequestParam long weixinAppid,
                                      @RequestParam(defaultValue = "0") int offset,
                                      @RequestParam(defaultValue = "20") int limit,
-                                     @RequestParam(required = false) List<Integer> tagIds,
+                                     @RequestParam(required = false, name = "tagIds") String tagIdsStr,
                                      @RequestParam(required = false) String queryStr,
                                      @RequestParam(defaultValue = "false") Boolean isBlacklist,
                                      @RequestParam(defaultValue = "false") Boolean hasInteract) {
+        // 前端node转发不方便传list，遂通过Json字符串来传
+        List<Integer> tagIds = ParamUtil.getIntList(tagIdsStr);
+
         PageV2<FanPO> fanPage = fansService.listFansByPage(weixinAppid, offset, limit, tagIds, queryStr, isBlacklist, hasInteract);
         List<FanVO> fanVOList = new ArrayList<>();
 
