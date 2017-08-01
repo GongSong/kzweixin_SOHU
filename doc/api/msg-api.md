@@ -79,7 +79,7 @@
 * **URL**： /v1/msg/chat_list
 * **参数**：  
         * weixinAppid  
-        * openId: 粉丝的openId
+        * openId: 粉丝的openId  
         * offset 分页偏移量  
         * limit 每页大小  
         

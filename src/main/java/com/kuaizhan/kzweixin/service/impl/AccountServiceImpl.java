@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.security.auth.login.AccountException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -398,6 +399,12 @@ public class AccountServiceImpl implements AccountService {
             weixinAppid = accountPO.getWeixinAppid();
         }
         return weixinAppid;
+    }
+
+    @Override
+    public boolean userCheck(long weixinAppid, long userId) {
+        AccountPO accountPO = accountMapper.selectByPrimaryKey(weixinAppid);
+        return accountPO != null && accountPO.getUserId() == userId;
     }
 
     private boolean isAuthorizedToKz(String funcInfoJson, WxAuthority authority) {

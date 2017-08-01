@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.controller;
 
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.param.*;
@@ -144,7 +145,7 @@ public class AccountController extends BaseController {
 
     /**
      * 修改用户自定义分享开启／关闭状态
-     * */
+     */
     @RequestMapping(value = "/accounts/{weixinAppid}/customize_share", method = RequestMethod.PUT)
     public JsonResponse updateCustomizeShare(@PathVariable("weixinAppid") long weixinAppid, @Valid @RequestBody UpdateOpenShareParam param) {
         accountService.updateCustomizeShare(weixinAppid, param.getOpenShare());
@@ -153,11 +154,18 @@ public class AccountController extends BaseController {
 
     /**
      * 修改服务号授权登录开启／关闭状态
-     * */
+     *
+     */
     @RequestMapping(value = "/accounts/{weixinAppid}/authorize_login", method = RequestMethod.PUT)
     public JsonResponse updateAuthLogin(@PathVariable("weixinAppid") long weixinAppid, @Valid @RequestBody UpdateAuthLoginParam param) {
         accountService.updateAuthLogin(weixinAppid, param.getOpenLogin());
         return new JsonResponse(ImmutableMap.of());
+    }
+
+    @RequestMapping(value = "/accounts/{weixinAppid}/user_check_info", method = RequestMethod.GET)
+    public JsonResponse userCheck(@PathVariable Long weixinAppid, @RequestParam Long userId){
+        boolean status = accountService.userCheck(weixinAppid, userId);
+        return new JsonResponse(ImmutableMap.of("status", status));
     }
 
     /* --------------- deprecated ---------------- */

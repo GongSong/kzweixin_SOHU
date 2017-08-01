@@ -228,3 +228,20 @@
             "accessToken": "fda3fdavdw3fdafv3rdfadfa3fdadfa=="
         }
         ```
+
+#### 12 检查公众号是否属于用户
+* **协议**：HTTP
+* **方法**：GET
+* **URL**：/v1/accounts/`<weixinAppid>`/user_check_info
+* **参数**： 
+    * weixinAppid 主键
+    * userId 用户id
+    
+
+* **返回**：
+    * 获取成功时返回:
+
+        ```
+        {
+            "status": true
+        }

@@ -97,4 +97,9 @@ public interface AccountService {
      * accountId既有可能是appid，也可能是weixinAppid
      */
     long getWeixinAppidFromAccountId(String accountId);
+
+    /**
+     * 判断公众号是否属于用户
+     */
+    boolean userCheck(long weixinAppid, long userId);
 }
