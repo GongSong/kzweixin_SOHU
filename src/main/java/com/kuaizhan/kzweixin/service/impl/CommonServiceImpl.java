@@ -2,11 +2,7 @@ package com.kuaizhan.kzweixin.service.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.KzExchange;
-import com.kuaizhan.kzweixin.entity.responsejson.ImageResponseJson;
-import com.kuaizhan.kzweixin.entity.responsejson.LinkGroupResponseJson;
-import com.kuaizhan.kzweixin.entity.responsejson.PostResponseJson;
-import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
-import com.kuaizhan.kzweixin.entity.wxresponse.TextResponse;
+import com.kuaizhan.kzweixin.entity.responsejson.*;
 import com.kuaizhan.kzweixin.enums.ComponentResponseType;
 import com.kuaizhan.kzweixin.service.CommonService;
 import com.kuaizhan.kzweixin.service.PostService;
@@ -41,7 +37,7 @@ public class CommonServiceImpl implements CommonService {
         String responseJsonStr = JsonUtil.bean2String(responseJsonMap);
         switch (responseType) {
             case TEXT:
-                return JsonUtil.string2Bean(responseJsonStr, TextResponse.class);
+                return JsonUtil.string2Bean(responseJsonStr, TextResponseJson.class);
             case IMAGE:
                 return JsonUtil.string2Bean(responseJsonStr, ImageResponseJson.class);
             case POST:
@@ -59,7 +55,7 @@ public class CommonServiceImpl implements CommonService {
         ResponseJson responseJson;
         switch (responseType) {
             case TEXT:
-                responseJson = JsonUtil.string2Bean(responseJsonStr, TextResponse.class);
+                responseJson = JsonUtil.string2Bean(responseJsonStr, TextResponseJson.class);
                 break;
             case IMAGE:
                 responseJson = JsonUtil.string2Bean(responseJsonStr, ImageResponseJson.class);
