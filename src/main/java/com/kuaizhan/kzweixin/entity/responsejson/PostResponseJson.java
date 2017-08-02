@@ -72,7 +72,7 @@ public class PostResponseJson implements ResponseJson {
                 post.setPageId(post.getOldPageId());
                 post.setTitle(post.getOldTitle());
                 post.setDescription(post.getOldDescription());
-                post.setPicUrl(post.getPicUrl());
+                post.setPicUrl(post.getOldPicUrl());
                 post.setUrl(post.getOldUrl());
             }
 

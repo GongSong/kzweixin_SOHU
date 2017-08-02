@@ -36,7 +36,6 @@ json结构示例:
           "url": "http://www.sohu.com/news",  // 链接组跳转链接
           "linkType": "SHOP",  // 链接组类型，见详细说明
           "linkId": "WIMVcFhO2jV2A7j_,ORDER",
-          "linkName": "我的店铺" // 链接展示名 
       }
   ]
 }
@@ -58,16 +57,3 @@ json结构示例:
 | 电商SHOP |  `<店铺ID>,<首页(HOME)/购物车(CART)/我的订单(ORDER)>`, 例如`123,ORDER`的含义是id为123店铺的购物车 |
 | 海报POSTER | 海报的ID |
 | 快文ARTICLE | 快文首页值为`HOME`, 快文栏目为`COLUMN,<栏目ID>`, 快文文章为`ARTICLE,<文章ID>` |
-    
-#### linkName
-
-| linkName | 含义 |
-| --- | --- |
-| 网址URL | 无意义，不传自此字段 |
-| 页面PAGE | 页面的title |
-| 社区CLUB | 社区的名称 |
-| 电商SHOP | 店铺的名称 |
-| 海报POSTER | 海报的名称 |
-| 快文ARTICLE | 找产品确认 |
-   
-
