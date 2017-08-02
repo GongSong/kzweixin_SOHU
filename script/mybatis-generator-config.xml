@@ -67,15 +67,15 @@
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
-            <table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">
-                <generatedKey column="id" sqlStatement="MySql" identity="true" />
-                <columnOverride column="action_type" javaType="com.kuaizhan.kzweixin.enums.ActionType"
-                                typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ActionTypeHandler" />
-                <columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ResponseType"
-                                typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler"/>
-                <columnOverride column="biz_code" javaType="com.kuaizhan.kzweixin.enums.BizCode"
-                                typeHandler="com.kuaizhan.kzweixin.dao.typehandler.BizCodeTypeHandler" />
-            </table>
+            <!--<table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">-->
+                <!--<generatedKey column="id" sqlStatement="MySql" identity="true" />-->
+                <!--<columnOverride column="action_type" javaType="com.kuaizhan.kzweixin.enums.ActionType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ActionTypeHandler" />-->
+                <!--<columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ResponseType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler"/>-->
+                <!--<columnOverride column="biz_code" javaType="com.kuaizhan.kzweixin.enums.BizCode"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.BizCodeTypeHandler" />-->
+            <!--</table>-->
 
             <!--<table tableName="weixin_fans_0" domainObjectName="FanPO" mapperName="FanMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
@@ -90,6 +90,14 @@
             <!--<table tableName="weixin_tpl_msg" domainObjectName="TplMsgPO" mapperName="TplMsgMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
+
+            <table tableName="weixin_keywords" domainObjectName="KeywordPO" mapperName="KeywordMapper">
+                <generatedKey column="rule_id" sqlStatement="MySql" identity="true" />
+                <columnOverride column="status" javaType="java.lang.Integer"/>
+                <columnOverride column="keywords_json" jdbcType="VARCHAR" />
+                <columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ComponentResponseType"
+                                typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />
+            </table>
 
         </context>
 </generatorConfiguration>
