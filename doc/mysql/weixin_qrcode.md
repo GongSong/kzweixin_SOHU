@@ -11,7 +11,7 @@
 | qrcode_name | varchar(60) | - | No | - | 二维码名称 | - |
 | scene_id | bigint(10) | - | No | - | 二维码场景ID | - |
 | ticket | varchar(128) | - | No | - | 向微信获取二维码图片的凭据 | - |
-| response_type | int(10) | - | No | 0 | 1文章列表2页面3文字4图片5链接组 | - |
+| response_type | int(10) | - | No | 0 | 回复类型 | 1 文章列表，2 页面列表，3 文字，4 图片, 5链接组 |
 | response_json | text | - | No | - | 返回数据 | - |
 | status | tinyint(1) | - | No | 1 | 状态(1正常2删除) | - |
 | create_time | int( 10 ) | - | No | 0 | 创建时间 | - |
