@@ -1,52 +1,32 @@
 package com.kuaizhan.kzweixin.enums;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 链接组类型
  * Created by zixiong on 2017/07/30.
  */
-public enum LinkType {
+public enum LinkType implements BaseEnum {
     // 普通链接类型
-    URL("url"),
+    URL(1),
     // 页面
-    PAGE("page"),
+    PAGE(2),
     // 社区
-    CLUB("club"),
+    CLUB(3),
     // 电商
-    SHOP("shop"),
+    SHOP(4),
     // 海报
-    POSTER("poster"),
-    // 快文首页
-    KW_MAIN("kw_home"),
-    // 快文栏目
-    KW_COLUMN("kw_column"),
+    POSTER(5),
     // 快文
-    KW("kw_post");
+    ARTICLE(8);
 
-    private String value;
+    private int code;
 
-    private static Map<String, LinkType> valueMap = new HashMap<>();
-
-    static {
-        for (LinkType type: LinkType.values()) {
-            valueMap.put(type.getValue(), type);
-        }
+    LinkType(int code) {
+        this.code = code;
     }
 
-    LinkType(String value) {
-        this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-        return value;
-    }
-
-    public static LinkType fromValue(String value) {
-        return valueMap.get(value);
+    @Override
+    public int getCode() {
+        return code;
     }
 }
