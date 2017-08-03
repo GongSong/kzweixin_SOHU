@@ -4,25 +4,20 @@ package com.kuaizhan.kzweixin.service.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.cache.MsgCache;
-import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.dao.mapper.auto.MsgMapper;
 import com.kuaizhan.kzweixin.dao.po.auto.*;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.enums.MsgSendType;
 import com.kuaizhan.kzweixin.enums.MsgType;
-import com.kuaizhan.kzweixin.dao.mapper.MsgDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.MsgConfigMapper;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxCommonManager;
 import com.kuaizhan.kzweixin.manager.WxMsgManager;
 import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
-import com.kuaizhan.kzweixin.dao.po.MsgPO_;
-import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.MsgService;
 import com.kuaizhan.kzweixin.service.PostService;
-import com.kuaizhan.kzweixin.utils.DBTableUtil;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.UrlUtil;
@@ -42,8 +37,6 @@ import java.util.*;
 @Service("msgService")
 public class MsgServiceImpl implements MsgService {
 
-    @Resource
-    private MsgDao msgDao;
     @Resource
     private MsgMapper msgMapper;
     @Resource
@@ -152,14 +145,16 @@ public class MsgServiceImpl implements MsgService {
         // 存储消息
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String appId = accountPO.getAppId();
-        MsgPO_ msgPO = new MsgPO_();
-        msgPO.setAppId(appId);
-        msgPO.setContent(customMsg.getContentJsonStr());
-        msgPO.setOpenId(openId);
-        msgPO.setSendType(2);
-        msgPO.setType(customMsg.getMsgType().getCode());
-        String tableName = DBTableUtil.getMsgTableName(appId);
-        msgDao.insertMsg(tableName, msgPO);
+
+        MsgPO record = new MsgPO();
+        record.setAppId(appId);
+        record.setOpenId(openId);
+        record.setContent(customMsg.getContentJsonStr());
+        record.setSendType(MsgSendType.TO_FAN);
+        record.setType(customMsg.getMsgType());
+        record.setCreateTime(DateUtil.curSeconds());
+        record.setUpdateTime(DateUtil.curSeconds());
+        msgMapper.insertSelective(record);
     }
 
     /**
