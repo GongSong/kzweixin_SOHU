@@ -18,5 +18,5 @@ public class MsgVO {
     private String headImgUrl;
     private String openId;
     private Map content;
-    private Long createTime;
+    private Integer createTime;
 }

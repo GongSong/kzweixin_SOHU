@@ -1,10 +1,10 @@
 package com.kuaizhan.kzweixin.service;
 
 
+import com.kuaizhan.kzweixin.dao.po.auto.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
-import com.kuaizhan.kzweixin.enums.MsgType;
-import com.kuaizhan.kzweixin.dao.po.MsgPO;
+import com.kuaizhan.kzweixin.dao.po.MsgPO_;
 import com.kuaizhan.kzweixin.entity.common.Page;
 
 import java.util.List;
@@ -35,10 +35,8 @@ public interface MsgService {
 
     /**
      * 获取和单个用户的聊天列表
-     *
-     * @param openId 用户openId
      */
-    Page<MsgPO> listMsgsByOpenId(long weixinAppid, String openId, int pageNum);
+    PageV2<MsgPO> listMsgsByOpenId(long weixinAppid, String openId, int offset, int limit);
 
     /**
      * 获取用户的快速回复设置

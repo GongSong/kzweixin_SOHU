@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.dao.mapper;
 
-import com.kuaizhan.kzweixin.dao.po.MsgPO;
+import com.kuaizhan.kzweixin.dao.po.MsgPO_;
 import com.kuaizhan.kzweixin.entity.common.Page;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -43,13 +43,13 @@ public interface MsgDao {
      * @param filterKeywords 是否过滤关键词消息
      * @param endTime createTime的最大时间
      */
-    List<MsgPO> listMsgsByPagination(@Param("appId") String appId,
-                                     @Param("tableName") String tableName,
-                                     @Param("openId") String openId,
-                                     @Param("sendType") Integer sendType,
-                                     @Param("queryStr") String queryStr,
-                                     @Param("filterKeywords") Boolean filterKeywords, @Param("endTime") Long endTime,
-                                     @Param("offset") Integer offset, @Param("limit") Integer limit);
+    List<MsgPO_> listMsgsByPagination(@Param("appId") String appId,
+                                      @Param("tableName") String tableName,
+                                      @Param("openId") String openId,
+                                      @Param("sendType") Integer sendType,
+                                      @Param("queryStr") String queryStr,
+                                      @Param("filterKeywords") Boolean filterKeywords, @Param("endTime") Long endTime,
+                                      @Param("offset") Integer offset, @Param("limit") Integer limit);
 
     /**
      * 获取用户已发消息列表
@@ -57,7 +57,7 @@ public interface MsgDao {
      * @param tables 表列表
      * @return
      */
-    List<MsgPO> listMsgsByOpenId(@Param("pageEntity") Page pageEntity, @Param("tables") List<String> tables);
+    List<MsgPO_> listMsgsByOpenId(@Param("pageEntity") Page pageEntity, @Param("tables") List<String> tables);
 
     /**
      * 添加一条消息
@@ -66,5 +66,5 @@ public interface MsgDao {
      * @param msg       消息
      * @return
      */
-    int insertMsg(@Param("tableName") String tableName, @Param("msg") MsgPO msg);
+    int insertMsg(@Param("tableName") String tableName, @Param("msg") MsgPO_ msg);
 }

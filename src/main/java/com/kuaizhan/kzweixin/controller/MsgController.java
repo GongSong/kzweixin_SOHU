@@ -2,11 +2,14 @@ package com.kuaizhan.kzweixin.controller;
 
 
 import com.google.common.collect.ImmutableMap;
+import com.kuaizhan.kzweixin.config.KzApiConfig;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.vo.MsgVO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
+import com.kuaizhan.kzweixin.dao.po.auto.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
 import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
+import com.kuaizhan.kzweixin.enums.MsgSendType;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.controller.vo.MsgListVO;
@@ -14,8 +17,6 @@ import com.kuaizhan.kzweixin.controller.param.WeixinAppidParam;
 import com.kuaizhan.kzweixin.controller.param.SendCustomMsgParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateQuickRepliesParam;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
-import com.kuaizhan.kzweixin.dao.po.MsgPO;
-import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.service.MsgService;
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 消息模块接口
@@ -49,42 +51,80 @@ public class MsgController extends BaseController {
      */
     @RequestMapping(value = "/msg/msgs", method = RequestMethod.GET)
     public JsonResponse getMsgs(@RequestParam long weixinAppid,
-                                @RequestParam(defaultValue = "0") int offset,
-                                @RequestParam(defaultValue = "20") int limit,
                                 @RequestParam(required = false) String queryStr,
-                                @RequestParam(required = false, defaultValue = "0") boolean filterKeywords) {
+                                @RequestParam(required = false, defaultValue = "0") boolean filterKeywords,
+                                @RequestParam(defaultValue = "0") int offset,
+                                @RequestParam(defaultValue = "20") int limit) {
 
         PageV2<MsgPO> msgPOPage = msgService.listMsgsByPage(weixinAppid, queryStr, filterKeywords, offset, limit);
-
         List<MsgPO> msgPOS = msgPOPage.getDataSet();
 
         List<MsgVO> msgVOS = new ArrayList<>();
         for(MsgPO msgPO: msgPOS) {
             msgVOS.add(PojoSwitcher.msgPOToVO(msgPO));
         }
+        // 封装粉丝信息
+        setFanVoInfo(weixinAppid, msgVOS);
+
         return new JsonResponse(ImmutableMap.of("total", msgPOPage.getTotal(), "msgs", msgVOS));
+    }
+
+    private void setFanVoInfo(long weixinAppid, List<MsgVO> msgVOS) {
+        List<String> openIds = msgVOS.stream().map(MsgVO::getOpenId).collect(Collectors.toList());
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+
+        List<FanPO> fanPOS = fanService.listFansByOpenIds(weixinAppid, openIds);
+        Map<String, FanPO> fanMap = new HashMap<>();
+        for (FanPO fanPO: fanPOS) {
+            fanMap.put(fanPO.getOpenId(), fanPO);
+        }
+
+        for (MsgVO msgVO: msgVOS) {
+            FanPO fanPO = fanMap.get(msgVO.getOpenId());
+            // 公众号发送
+            if (msgVO.getSendType() == MsgSendType.TO_FAN) {
+                msgVO.setNickname(accountPO.getNickName());
+                msgVO.setHeadImgUrl(accountPO.getHeadImg());
+
+            } else if (fanPO != null) {
+                msgVO.setNickname(fanPO.getNickName());
+                msgVO.setHeadImgUrl(fanPO.getHeadImgUrl());
+
+            } else {
+                String openId = msgVO.getOpenId();
+                msgVO.setNickname("粉丝" + openId.substring(openId.length() - 4, openId.length()));
+                msgVO.setHeadImgUrl(KzApiConfig.getResUrl("/res/weixin/images/kuaizhan-logo.png"));
+            }
+
+        }
     }
 
     /**
      * 获取和用户的聊天列表
      */
     @RequestMapping(value = "/msg/chat_list", method = RequestMethod.GET)
-    public JsonResponse getChatList(@RequestParam long weixinAppid, @RequestParam int page, @RequestParam String openId) {
-        Page<MsgPO> msgPOPage = msgService.listMsgsByOpenId(weixinAppid, openId, page);
-        List<MsgPO> msgPOS = msgPOPage.getResult();
+    public JsonResponse getChatList(@RequestParam long weixinAppid,
+                                    @RequestParam String openId,
+                                    @RequestParam(defaultValue = "0") int offset,
+                                    @RequestParam(defaultValue = "20") int limit) {
 
-        MsgListVO msgListVO = new MsgListVO();
-        msgListVO.setTotalNum(msgPOPage.getTotalCount());
-        msgListVO.setTotalPage(msgPOPage.getTotalPages());
-        msgListVO.setCurrentPage(msgPOPage.getPageNo());
+        PageV2<MsgPO> msgPOPage = msgService.listMsgsByOpenId(weixinAppid, openId, offset, limit);
+        List<MsgPO> msgPOS = msgPOPage.getDataSet();
 
+        List<MsgVO> msgVOS = new ArrayList<>();
         for(MsgPO msgPO: msgPOS) {
-            msgListVO.getMsgs().add(PojoSwitcher.msgPOToVO(msgPO));
+            msgVOS.add(PojoSwitcher.msgPOToVO(msgPO));
         }
+        // 封装粉丝信息
+        setFanVoInfo(weixinAppid, msgVOS);
 
         // 获取粉丝的最后交互时间
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         FanPO fanPO = fanService.getFanByOpenId(accountPO.getAppId(), openId);
+
+        MsgListVO msgListVO = new MsgListVO();
+        msgListVO.setTotal(msgPOPage.getTotal());
+        msgListVO.setMsgs(msgVOS);
         msgListVO.setLastInteractTime(fanPO.getLastInteractTime());
 
         return new JsonResponse(msgListVO);

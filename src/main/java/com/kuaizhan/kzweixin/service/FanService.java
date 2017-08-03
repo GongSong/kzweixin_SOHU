@@ -84,6 +84,13 @@ public interface FanService {
                                  String queryStr, Boolean isBlacklist, Boolean hasInteract);
 
     /**
+     * 根据openIds列表获取粉丝列表
+     * @param weixinAppid
+     * @param openIds
+     */
+    List<FanPO> listFansByOpenIds(long weixinAppid, List<String> openIds);
+
+    /**
      * 粉丝关注后，保存openId
      * 因为未认证号不能获取粉丝信息，所以冗余了open_id表
      * @param appId 公众号Id

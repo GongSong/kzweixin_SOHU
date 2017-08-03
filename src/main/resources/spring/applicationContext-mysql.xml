@@ -21,11 +21,16 @@
     </bean>
 
     <!--分表分库sharding配置-->
-    <rdb:strategy id="fanTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.AppidTableAlgorithm"/>
+    <rdb:strategy id="fanTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.FanShardingAlgorithm"/>
+    <rdb:strategy id="msgTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.MsgShardingAlgorithm"/>
+    <rdb:strategy id="openIdTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.OpenIdShardingAlgorithm"/>
+
     <rdb:data-source id="shardingDataSource">
         <rdb:sharding-rule data-sources="dataSource">
             <rdb:table-rules>
-                <rdb:table-rule logic-table="weixin_fans_1" actual-tables="weixin_fans_${0..1}" table-strategy="fanTableStrategy"/>
+                <rdb:table-rule logic-table="weixin_fans_0" actual-tables="${jdbc.table.fan}" table-strategy="fanTableStrategy"/>
+                <rdb:table-rule logic-table="weixin_msg_0" actual-tables="${jdbc.table.msg}" table-strategy="msgTableStrategy"/>
+                <rdb:table-rule logic-table="weixin_open_ids_0" actual-tables="${jdbc.table.openid}" table-strategy="openIdTableStrategy"/>
             </rdb:table-rules>
             <rdb:default-database-strategy sharding-columns="none" algorithm-class="com.dangdang.ddframe.rdb.sharding.api.strategy.database.NoneDatabaseShardingAlgorithm"/>
         </rdb:sharding-rule>
@@ -51,7 +56,7 @@
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
     </bean>
+    <!--TODO: sharding-jdbc后测试事务-->
     <!--定义注解驱动事务-->
-    <!--TODO: 换位sharding-jdbc后测试事务-->
     <tx:annotation-driven />
 </beans>
