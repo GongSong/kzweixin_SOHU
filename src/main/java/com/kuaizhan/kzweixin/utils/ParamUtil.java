@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -15,6 +16,10 @@ public class ParamUtil {
      * 从json字符串获取list，或者以','号为分隔符的字符串
      */
     public static List<Integer> getIntList(String listStr) {
+        if (StringUtils.isBlank(listStr)) {
+            return null;
+        }
+
         List<Integer> result = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(listStr);
