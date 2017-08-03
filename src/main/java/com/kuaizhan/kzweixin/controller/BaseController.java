@@ -1,6 +1,7 @@
 package com.kuaizhan.kzweixin.controller;
 
 import com.google.common.collect.ImmutableMap;
+import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 
 import com.kuaizhan.kzweixin.exception.BusinessException;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
  * 做统一的controller输出处理
@@ -45,28 +47,31 @@ public abstract class BaseController {
     }
 
     /**
-     * 自定义spring @RequestParam 异常
+     * 处理RequestParam类型参数错误、ContentType错误
      */
-    @ExceptionHandler(ServletRequestBindingException.class)
+    @ExceptionHandler({ServletRequestBindingException.class, HttpMediaTypeNotSupportedException.class})
     @ResponseBody
-    public JsonResponse handleRequestParamException(ServletRequestBindingException e) {
-        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), ErrorCode.PARAM_ERROR.getMessage(), ImmutableMap.of());
+    public JsonResponse handleRequestParamException(Exception e) {
+        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), e.getMessage(), ImmutableMap.of());
     }
 
     /**
-     * Json body 不符合要求
+     * 处理body参数错误、PathVariable类型参数错误
+     * body为空 | 类型转换错误
      */
-    @ExceptionHandler({HttpMessageNotReadableException.class, HttpMediaTypeNotSupportedException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
     @ResponseBody
     public JsonResponse handleMessageBodyMissing(Exception e) {
-        // 字段类型转换错误，也会走这里
-        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(),
-                "request body can not be null and only accept application/json",
-                ImmutableMap.of());
+        String msg = e.getLocalizedMessage();
+        if ("production".equals(ApplicationConfig.ENV_ALIAS)) {
+            // 生产环境不向外暴露此异常信息
+            msg = ErrorCode.PARAM_ERROR.getMessage();
+        }
+        return new JsonResponse(ErrorCode.PARAM_ERROR.getCode(), msg, ImmutableMap.of());
     }
 
     /**
-     * 其他异常
+     * 其他未知异常
      */
     @ExceptionHandler
     @ResponseBody
