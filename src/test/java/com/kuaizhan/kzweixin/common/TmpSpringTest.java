@@ -13,10 +13,13 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 
 
 /**
@@ -30,18 +33,19 @@ public class TmpSpringTest {
     private AccountService accountService;
     @Resource
     private WxPushService wxPushService;
+    @Resource
+    ApplicationContext applicationContext;
 
     @Test
     public void getAccessToken() throws Exception {
         String accessToken = accountService.getAccessToken(ApplicationConfig.WEIXIN_TEST_WEIXIN_APPID);
-        String openId = "oBGGJt5SLU9P_wGu71Xo82m_Zq1s";
-        System.out.println("---->" + accessToken);
 
     }
 
     @Test
-    public void tmp() throws Exception {
-        AccountPO accountPO = accountService.getAccountByWeixinAppId(ApplicationConfig.WEIXIN_TEST_WEIXIN_APPID);
-        System.out.println("---->" + accountService.hasAuthority(WxAuthority.USER_MANAGEMENT, accountPO));
+    public void getBeans() throws Exception {
+        System.out.println("---->" + "##########################################################");
+        System.out.println("---->" + Arrays.asList(applicationContext.getBeanDefinitionNames()));
+        System.out.println("---->" + "##########################################################");
     }
 }
