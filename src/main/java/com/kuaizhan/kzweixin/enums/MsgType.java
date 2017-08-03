@@ -6,37 +6,38 @@ import java.util.Map;
 /**
  * Created by zixiong on 2017/5/18.
  */
-public enum MsgType {
-    TEXT((short) 1),
-    IMAGE((short) 2),
-    VOICE((short) 3),
-    VIDEO((short) 4),
-    SHORT_VIDEO((short) 5),
-    LOCATION((short) 6),
-    LINK((short) 7),
-    MP_NEWS((short) 9),
-    LINK_GROUP((short) 10),
-    KEYWORD_TEXT((short) 12),
-    TPL_MSG((short) 15);
+public enum MsgType implements BaseEnum {
+    TEXT(1),
+    IMAGE(2),
+    VOICE(3),
+    VIDEO(4),
+    SHORT_VIDEO(5),
+    LOCATION(6),
+    LINK(7),
+    MP_NEWS(9),
+    LINK_GROUP(10),
+    KEYWORD_TEXT(12),
+    TPL_MSG(15);
 
 
-    private short value;
-    private static Map<Short, MsgType> msgTypeMap = new HashMap<>();
+    private int code;
+    private static Map<Integer, MsgType> msgTypeMap = new HashMap<>();
 
     static {
         for (MsgType type: MsgType.values()) {
-            msgTypeMap.put(type.getValue(), type);
+            msgTypeMap.put(type.getCode(), type);
         }
     }
 
-    MsgType(short value) {
-        this.value = value;
+    MsgType(int code) {
+        this.code = code;
     }
 
-    public short getValue() {
-        return value;
+    @Override
+    public int getCode() {
+        return code;
     }
-    public static MsgType fromValue(short value) {
-        return msgTypeMap.get(value);
+    public static MsgType fromValue(int code) {
+        return msgTypeMap.get(code);
     }
 }

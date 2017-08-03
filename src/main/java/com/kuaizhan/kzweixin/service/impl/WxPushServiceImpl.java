@@ -290,7 +290,7 @@ public class WxPushServiceImpl implements WxPushService {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("app_id", appId);
         resultMap.put("open_id", xmlData.getOpenId());
-        resultMap.put("type", msgType.getValue());
+        resultMap.put("type", msgType.getCode());
         resultMap.put("content", JsonUtil.bean2String(content));
         resultMap.put("send_type", 1);
         resultMap.put("create_time", xmlData.getCreateTime());

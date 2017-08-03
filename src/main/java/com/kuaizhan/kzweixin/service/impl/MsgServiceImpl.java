@@ -151,7 +151,7 @@ public class MsgServiceImpl implements MsgService {
         msgPO.setContent(customMsg.getContentJsonStr());
         msgPO.setOpenId(openId);
         msgPO.setSendType(2);
-        msgPO.setType((int) customMsg.getMsgType().getValue());
+        msgPO.setType(customMsg.getMsgType().getCode());
         String tableName = DBTableUtil.getMsgTableName(appId);
         msgDao.insertMsg(tableName, msgPO);
     }
