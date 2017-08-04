@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.entity.responsejson;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kuaizhan.kzweixin.enums.LinkType;
@@ -24,6 +25,7 @@ public class LinkGroupResponseJson implements ResponseJson {
 
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class LinkGroup {
 
         @NotNull

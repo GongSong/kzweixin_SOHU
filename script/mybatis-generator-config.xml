@@ -90,21 +90,35 @@
                 <!--<columnOverride column="in_blacklist" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
-            <!--<table tableName="weixin_guide_follow" domainObjectName="GuideFollowPostPO" mapperName="GuideFollowPostMapper">-->
-                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
-            <!--</table>-->
+            <table tableName="weixin_guide_follow" domainObjectName="GuideFollowPostPO" mapperName="GuideFollowPostMapper">
+                <columnOverride column="status" javaType="java.lang.Integer"/>
+            </table>
 
             <!--<table tableName="weixin_tpl_msg" domainObjectName="TplMsgPO" mapperName="TplMsgMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
-            <table tableName="weixin_keywords" domainObjectName="KeywordPO" mapperName="KeywordMapper">
-                <generatedKey column="rule_id" sqlStatement="MySql" identity="true" />
-                <columnOverride column="status" javaType="java.lang.Integer"/>
-                <columnOverride column="keywords_json" jdbcType="VARCHAR" />
-                <columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ComponentResponseType"
-                                typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />
-            </table>
+            <!--<table tableName="weixin_keywords" domainObjectName="KeywordReplyPO" mapperName="KeywordReplyMapper">-->
+                <!--<generatedKey column="rule_id" sqlStatement="MySql" identity="true" />-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="keywords_json" jdbcType="VARCHAR" />-->
+                <!--<columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ComponentResponseType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />-->
+            <!--</table>-->
+
+            <!--<table tableName="weixin_follow" domainObjectName="FollowReplyPO" mapperName="FollowReplyMapper">-->
+                <!--<generatedKey column="id" sqlStatement="MySql" identity="true" />-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ComponentResponseType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />-->
+            <!--</table>-->
+
+            <!--<table tableName="weixin_auto_reply" domainObjectName="MsgReplyPO" mapperName="MsgReplyMapper">-->
+                <!--<generatedKey column="id" sqlStatement="MySql" identity="true" />-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ComponentResponseType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />-->
+            <!--</table>-->
 
         </context>
 </generatorConfiguration>
