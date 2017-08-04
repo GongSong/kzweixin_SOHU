@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kuaizhan.kzweixin.dao.mapper.auto.KeywordReplyMapper">
+  <resultMap id="BaseResultMap" type="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO">
+    <id column="rule_id" jdbcType="BIGINT" property="ruleId" />
+    <result column="weixin_appid" jdbcType="BIGINT" property="weixinAppid" />
+    <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+    <result column="keywords_json" jdbcType="VARCHAR" property="keywordsJson" />
+    <result column="response_type" jdbcType="INTEGER" property="responseType" typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="create_time" jdbcType="INTEGER" property="createTime" />
+    <result column="update_time" jdbcType="INTEGER" property="updateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO">
+    <result column="response_json" jdbcType="LONGVARCHAR" property="responseJson" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+            <foreach collection="criteria.responseTypeCriteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler} and #{criterion.secondValue,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+            <foreach collection="criteria.responseTypeCriteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler} and #{criterion.secondValue,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    rule_id, weixin_appid, rule_name, keywords_json, response_type, status, create_time, 
+    update_time
+  </sql>
+  <sql id="Blob_Column_List">
+    response_json
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPOExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from weixin_keywords
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from weixin_keywords
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from weixin_keywords
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from weixin_keywords
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPOExample">
+    delete from weixin_keywords
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO">
+    <selectKey keyProperty="ruleId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into weixin_keywords (weixin_appid, rule_name, keywords_json, 
+      response_type, 
+      status, create_time, update_time, 
+      response_json)
+    values (#{weixinAppid,jdbcType=BIGINT}, #{ruleName,jdbcType=VARCHAR}, #{keywordsJson,jdbcType=VARCHAR}, 
+      #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+      #{status,jdbcType=BIT}, #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, 
+      #{responseJson,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO">
+    <selectKey keyProperty="ruleId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into weixin_keywords
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="weixinAppid != null">
+        weixin_appid,
+      </if>
+      <if test="ruleName != null">
+        rule_name,
+      </if>
+      <if test="keywordsJson != null">
+        keywords_json,
+      </if>
+      <if test="responseType != null">
+        response_type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="responseJson != null">
+        response_json,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="weixinAppid != null">
+        #{weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="ruleName != null">
+        #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="keywordsJson != null">
+        #{keywordsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="responseType != null">
+        #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="responseJson != null">
+        #{responseJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPOExample" resultType="java.lang.Long">
+    select count(*) from weixin_keywords
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update weixin_keywords
+    <set>
+      <if test="record.ruleId != null">
+        rule_id = #{record.ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="record.weixinAppid != null">
+        weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="record.ruleName != null">
+        rule_name = #{record.ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.keywordsJson != null">
+        keywords_json = #{record.keywordsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="record.responseType != null">
+        response_type = #{record.responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.responseJson != null">
+        response_json = #{record.responseJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update weixin_keywords
+    set rule_id = #{record.ruleId,jdbcType=BIGINT},
+      weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
+      rule_name = #{record.ruleName,jdbcType=VARCHAR},
+      keywords_json = #{record.keywordsJson,jdbcType=VARCHAR},
+      response_type = #{record.responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      status = #{record.status,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=INTEGER},
+      response_json = #{record.responseJson,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update weixin_keywords
+    set rule_id = #{record.ruleId,jdbcType=BIGINT},
+      weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
+      rule_name = #{record.ruleName,jdbcType=VARCHAR},
+      keywords_json = #{record.keywordsJson,jdbcType=VARCHAR},
+      response_type = #{record.responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      status = #{record.status,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO">
+    update weixin_keywords
+    <set>
+      <if test="weixinAppid != null">
+        weixin_appid = #{weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="ruleName != null">
+        rule_name = #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="keywordsJson != null">
+        keywords_json = #{keywordsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="responseType != null">
+        response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="responseJson != null">
+        response_json = #{responseJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO">
+    update weixin_keywords
+    set weixin_appid = #{weixinAppid,jdbcType=BIGINT},
+      rule_name = #{ruleName,jdbcType=VARCHAR},
+      keywords_json = #{keywordsJson,jdbcType=VARCHAR},
+      response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      status = #{status,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=INTEGER},
+      response_json = #{responseJson,jdbcType=LONGVARCHAR}
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO">
+    update weixin_keywords
+    set weixin_appid = #{weixinAppid,jdbcType=BIGINT},
+      rule_name = #{ruleName,jdbcType=VARCHAR},
+      keywords_json = #{keywordsJson,jdbcType=VARCHAR},
+      response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      status = #{status,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=INTEGER}
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithBLOBsWithRowbounds" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPOExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from weixin_keywords
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExampleWithRowbounds" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from weixin_keywords
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <insert id="upsert" keyColumn="rule_id" keyProperty="ruleId" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO" useGeneratedKeys="true">
+    <!--
+      WARNING - @mbg.generated
+      This element is automatically generated by MyBatis Generator, do not modify.
+      @project https://github.com/itfsw/mybatis-generator-plugin
+    -->
+    insert into weixin_keywords
+    (rule_id, weixin_appid, rule_name, keywords_json, response_type, status, create_time, 
+      update_time, response_json)
+    values
+    (#{ruleId,jdbcType=BIGINT}, #{weixinAppid,jdbcType=BIGINT}, #{ruleName,jdbcType=VARCHAR}, 
+      #{keywordsJson,jdbcType=VARCHAR}, #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+      #{status,jdbcType=BIT}, #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, 
+      #{responseJson,jdbcType=LONGVARCHAR})
+    on duplicate key update 
+    rule_id = #{ruleId,jdbcType=BIGINT}, 
+    weixin_appid = #{weixinAppid,jdbcType=BIGINT}, 
+    rule_name = #{ruleName,jdbcType=VARCHAR}, 
+    keywords_json = #{keywordsJson,jdbcType=VARCHAR}, 
+    response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+    status = #{status,jdbcType=BIT}, 
+    create_time = #{createTime,jdbcType=INTEGER}, 
+    update_time = #{updateTime,jdbcType=INTEGER}, 
+    response_json = #{responseJson,jdbcType=LONGVARCHAR}
+  </insert>
+  <insert id="upsertSelective" keyColumn="rule_id" keyProperty="ruleId" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO" useGeneratedKeys="true">
+    <!--
+      WARNING - @mbg.generated
+      This element is automatically generated by MyBatis Generator, do not modify.
+      @project https://github.com/itfsw/mybatis-generator-plugin
+    -->
+    insert into weixin_keywords
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ruleId != null">
+        rule_id,
+      </if>
+      <if test="weixinAppid != null">
+        weixin_appid,
+      </if>
+      <if test="ruleName != null">
+        rule_name,
+      </if>
+      <if test="keywordsJson != null">
+        keywords_json,
+      </if>
+      <if test="responseType != null">
+        response_type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="responseJson != null">
+        response_json,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ruleId != null">
+        #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="weixinAppid != null">
+        #{weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="ruleName != null">
+        #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="keywordsJson != null">
+        #{keywordsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="responseType != null">
+        #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="responseJson != null">
+        #{responseJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="ruleId != null">
+        rule_id = #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="weixinAppid != null">
+        weixin_appid = #{weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="ruleName != null">
+        rule_name = #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="keywordsJson != null">
+        keywords_json = #{keywordsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="responseType != null">
+        response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="responseJson != null">
+        response_json = #{responseJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <insert id="upsertWithBLOBs" keyColumn="rule_id" keyProperty="ruleId" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO" useGeneratedKeys="true">
+    <!--
+      WARNING - @mbg.generated
+      This element is automatically generated by MyBatis Generator, do not modify.
+      @project https://github.com/itfsw/mybatis-generator-plugin
+    -->
+    insert into weixin_keywords
+    (rule_id, weixin_appid, rule_name, keywords_json, response_type, status, create_time, 
+      update_time, response_json)
+    values
+    (#{ruleId,jdbcType=BIGINT}, #{weixinAppid,jdbcType=BIGINT}, #{ruleName,jdbcType=VARCHAR}, 
+      #{keywordsJson,jdbcType=VARCHAR}, #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+      #{status,jdbcType=BIT}, #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, 
+      #{responseJson,jdbcType=LONGVARCHAR})
+    on duplicate key update 
+    rule_id = #{ruleId,jdbcType=BIGINT}, 
+    weixin_appid = #{weixinAppid,jdbcType=BIGINT}, 
+    rule_name = #{ruleName,jdbcType=VARCHAR}, 
+    keywords_json = #{keywordsJson,jdbcType=VARCHAR}, 
+    response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+    status = #{status,jdbcType=BIT}, 
+    create_time = #{createTime,jdbcType=INTEGER}, 
+    update_time = #{updateTime,jdbcType=INTEGER}, 
+    response_json = #{responseJson,jdbcType=LONGVARCHAR}
+  </insert>
+  <insert id="upsertSelectiveWithBLOBs" keyColumn="rule_id" keyProperty="ruleId" parameterType="com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO" useGeneratedKeys="true">
+    <!--
+      WARNING - @mbg.generated
+      This element is automatically generated by MyBatis Generator, do not modify.
+      @project https://github.com/itfsw/mybatis-generator-plugin
+    -->
+    insert into weixin_keywords
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ruleId != null">
+        rule_id,
+      </if>
+      <if test="weixinAppid != null">
+        weixin_appid,
+      </if>
+      <if test="ruleName != null">
+        rule_name,
+      </if>
+      <if test="keywordsJson != null">
+        keywords_json,
+      </if>
+      <if test="responseType != null">
+        response_type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="responseJson != null">
+        response_json,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ruleId != null">
+        #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="weixinAppid != null">
+        #{weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="ruleName != null">
+        #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="keywordsJson != null">
+        #{keywordsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="responseType != null">
+        #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="responseJson != null">
+        #{responseJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="ruleId != null">
+        rule_id = #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="weixinAppid != null">
+        weixin_appid = #{weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="ruleName != null">
+        rule_name = #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="keywordsJson != null">
+        keywords_json = #{keywordsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="responseType != null">
+        response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="responseJson != null">
+        response_json = #{responseJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

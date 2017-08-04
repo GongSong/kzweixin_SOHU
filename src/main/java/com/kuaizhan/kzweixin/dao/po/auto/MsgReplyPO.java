@@ -2,14 +2,10 @@ package com.kuaizhan.kzweixin.dao.po.auto;
 
 import com.kuaizhan.kzweixin.enums.ComponentResponseType;
 
-public class KeywordPO {
-    private Long ruleId;
+public class MsgReplyPO {
+    private Integer id;
 
     private Long weixinAppid;
-
-    private String ruleName;
-
-    private String keywordsJson;
 
     private ComponentResponseType responseType;
 
@@ -21,12 +17,12 @@ public class KeywordPO {
 
     private String responseJson;
 
-    public Long getRuleId() {
-        return ruleId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setRuleId(Long ruleId) {
-        this.ruleId = ruleId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Long getWeixinAppid() {
@@ -35,22 +31,6 @@ public class KeywordPO {
 
     public void setWeixinAppid(Long weixinAppid) {
         this.weixinAppid = weixinAppid;
-    }
-
-    public String getRuleName() {
-        return ruleName;
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
-
-    public String getKeywordsJson() {
-        return keywordsJson;
-    }
-
-    public void setKeywordsJson(String keywordsJson) {
-        this.keywordsJson = keywordsJson;
     }
 
     public ComponentResponseType getResponseType() {
