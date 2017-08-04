@@ -2,7 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+       xmlns:rdb="http://www.dangdang.com/schema/ddframe/rdb"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.dangdang.com/schema/ddframe/rdb
+                           http://www.dangdang.com/schema/ddframe/rdb/rdb.xsd">
 
     <!-- 数据库连接池 -->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
@@ -14,25 +20,43 @@
         <property name="minIdle" value="5"/>
     </bean>
 
-    <!-- 配置sqlsessionFactory -->
+    <!--分表分库sharding配置-->
+    <rdb:strategy id="fanTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.FanShardingAlgorithm"/>
+    <rdb:strategy id="msgTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.MsgShardingAlgorithm"/>
+    <rdb:strategy id="openIdTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.OpenIdShardingAlgorithm"/>
+
+    <rdb:data-source id="shardingDataSource">
+        <rdb:sharding-rule data-sources="dataSource">
+            <rdb:table-rules>
+                <rdb:table-rule logic-table="weixin_fans_0" actual-tables="${jdbc.table.fan}" table-strategy="fanTableStrategy"/>
+                <rdb:table-rule logic-table="weixin_msg_0" actual-tables="${jdbc.table.msg}" table-strategy="msgTableStrategy"/>
+                <rdb:table-rule logic-table="weixin_open_ids_0" actual-tables="${jdbc.table.openid}" table-strategy="openIdTableStrategy"/>
+            </rdb:table-rules>
+            <rdb:default-database-strategy sharding-columns="none" algorithm-class="com.dangdang.ddframe.rdb.sharding.api.strategy.database.NoneDatabaseShardingAlgorithm"/>
+        </rdb:sharding-rule>
+    </rdb:data-source>
+
+
+    <!-- 配置mybatis sqlsessionFactory -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
-        <property name="dataSource" ref="dataSource"/>
+        <!--使用当当的sharding-jdbc-core datasource-->
+        <property name="dataSource" ref="shardingDataSource"/>
         <property name="mapperLocations" value="classpath:mapper/**/*.xml"/>
         <property name="typeAliasesPackage" value="com.kuaizhan.kzweixin.dao.po"/>
     </bean>
-
-    <!--事务管理器-->
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource" />
-    </bean>
-
-    <!--定义注解驱动事务-->
-    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!-- 配置扫描包，加载mapper代理对象 -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.kuaizhan.kzweixin.dao.mapper"/>
     </bean>
 
+
+    <!--事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <!--TODO: sharding-jdbc后测试事务-->
+    <!--定义注解驱动事务-->
+    <tx:annotation-driven />
 </beans>

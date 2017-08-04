@@ -10,9 +10,7 @@ import java.util.List;
  */
 @Data
 public class MsgListVO {
-    private Long totalNum;
-    private Integer currentPage;
-    private Integer totalPage;
+    private Long total;
     private List<MsgVO> msgs = new ArrayList<>();
     private Integer lastInteractTime;
 }

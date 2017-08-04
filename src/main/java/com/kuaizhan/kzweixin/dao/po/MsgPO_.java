@@ -8,7 +8,7 @@ import lombok.Data;
  * Created by Mr.Jadyn on 2017/1/10.
  */
 @Data
-public class MsgPO {
+public class MsgPO_ {
 
     private Long msgId;
     private String appId;

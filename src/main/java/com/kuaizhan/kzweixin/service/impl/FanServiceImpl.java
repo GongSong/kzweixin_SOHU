@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.service.impl;
 
+import com.google.common.collect.ImmutableList;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.FanDao;
 import com.kuaizhan.kzweixin.cache.FanCache;
@@ -279,6 +280,19 @@ public class FanServiceImpl implements FanService {
                 table);
 
         return new PageV2<>(totalCount, fanPOList);
+    }
+
+    @Override
+    public List<FanPO> listFansByOpenIds(long weixinAppid, List<String> openIds) {
+        AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
+
+        // 未认证的返回空列表
+        if (accountPO.getVerifyType() != 0 || CollectionUtils.isEmpty(openIds)) {
+            return ImmutableList.of();
+        }
+
+        String tableName = DBTableUtil.getFanTableName(accountPO.getAppId());
+        return fanDao.listFansByOpenIds(accountPO.getAppId(), openIds, tableName);
     }
 
     @Override

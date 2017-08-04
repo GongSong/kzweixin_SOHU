@@ -1,7 +1,6 @@
 package com.kuaizhan.kzweixin.utils;
 
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
-import com.kuaizhan.kzweixin.dao.po.MsgPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.controller.vo.AccountSettingVO;
@@ -9,7 +8,7 @@ import com.kuaizhan.kzweixin.controller.vo.AccountVO;
 import com.kuaizhan.kzweixin.controller.vo.MsgVO;
 import com.kuaizhan.kzweixin.controller.vo.PostVO;
 import com.kuaizhan.kzweixin.controller.vo.FanVO;
-import com.kuaizhan.kzweixin.enums.MsgSendType;
+import com.kuaizhan.kzweixin.dao.po.auto.MsgPO;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -116,16 +115,14 @@ public class PojoSwitcher {
             return null;
         }
         MsgVO msgVO = new MsgVO();
-        msgVO.setMsgType(MsgType.fromValue(msgPO.getType().shortValue()));
-        msgVO.setSendType(MsgSendType.fromCode(msgPO.getSendType()));
+        msgVO.setMsgType(msgPO.getType());
+        msgVO.setSendType(msgPO.getSendType());
         msgVO.setOpenId(msgPO.getOpenId());
-        msgVO.setHeadImgUrl(msgPO.getHeadImgUrl());
-        msgVO.setNickname(msgPO.getNickName());
         msgVO.setCreateTime(msgPO.getCreateTime());
 
-        int msgType = msgPO.getType();
+        MsgType msgType = msgPO.getType();
         // 文本消息、关键词消息、外链消息、图文消息都直接返回
-        if (msgType == 1 || msgType == 12 || msgType == 2 || msgType == 10) {
+        if (msgType == MsgType.TEXT || msgType == MsgType.KEYWORD_TEXT || msgType == MsgType.IMAGE || msgType == MsgType.LINK_GROUP) {
             JSONObject contentJson;
             try {
                contentJson = new JSONObject(msgPO.getContent());

@@ -113,7 +113,7 @@ public interface PostService {
 
     /**
      * 上传微信永久素材，如缩略图
-     * @return map: oldMediaId,素材的id oldUrl,素材的url
+     * @return map: mediaId,素材的id url,素材的url
      */
     HashMap<String, String> uploadWxMaterial(long weixinAppid, String imgUrl);
 

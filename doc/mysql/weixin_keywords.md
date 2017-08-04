@@ -10,7 +10,7 @@
 | weixin_appid | bigint(10) | - | No | - | 微信插件id | - |
 | rule_name | varchar | 60 | No | '' | 规则名称 | - |
 | keywords_json | text | - | No | - | 关键字及匹配方式列表 | 以键值对形式存储关键词与其匹配方式，"0"为模糊匹配，"1"为完全匹配 |
-| response_type | int(10) | - | No | 0 | 回复类型 | 1 文章列表，2 页面，3 文字，4 图片 |
+| response_type | int(10) | - | No | 0 | 回复类型 | 1 文章列表，2 页面列表，3 文字，4 图片, 5链接组 |
 | response_json | text | - | No | - | 返回数据 | - |
 | status | tinyint(1) | - | No | 0 | 状态 | 1 正常，2 删除 |
 | create_time | int( 10 ) | - | No | 0 | 创建时间 | - |

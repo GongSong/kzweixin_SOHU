@@ -301,7 +301,7 @@ public class PostServiceImpl implements PostService {
             if (curUpdateTime == 0) {
                 // 尝试新建
                 mediaId = WxPostManager.uploadPosts(accessToken, wxPosts);
-                // 清空post oldUrl
+                // 清空post url
                 for (PostPO postPO : posts) {
                     postPO.setPostUrl("");
                 }
@@ -407,7 +407,7 @@ public class PostServiceImpl implements PostService {
             String thumbMediaId = postPO.getThumbMediaId();
             if (thumbMediaId == null || thumbMediaId.equals("")) {
                 HashMap<String, String> retMap = WxPostManager.uploadMaterial(accessToken, postPO.getThumbUrl());
-                thumbMediaId = retMap.get("oldMediaId");
+                thumbMediaId = retMap.get("mediaId");
             }
             postPO.setThumbMediaId(thumbMediaId);
 
@@ -555,7 +555,7 @@ public class PostServiceImpl implements PostService {
         content = callbackMatcher.replaceMatches(content, callback);
 
         // 替换background-image
-        regex = "(background-image: oldUrl\\()([^\\)]+)(\\))";
+        regex = "(background-image: url\\()([^\\)]+)(\\))";
         callbackMatcher = new ReplaceCallbackMatcher(regex);
         content = callbackMatcher.replaceMatches(content,
                 matcher -> matcher.group(1) +
@@ -854,7 +854,7 @@ public class PostServiceImpl implements PostService {
             imageCache.setImageUploaded(url);
             return url;
         } catch (KZPicUploadException e) {
-            logger.warn("[getKzImageUrl] upload kz image failed, oldUrl: {}", kzPicUrl, e);
+            logger.warn("[getKzImageUrl] upload kz image failed, url: {}", kzPicUrl, e);
         }
 
         // 上传失败，返回原始url
@@ -882,10 +882,10 @@ public class PostServiceImpl implements PostService {
         );
 
         // 背景图中的微信图片转成快站链接
-        regex = "oldUrl\\(\"?'?(?:&quot;)?(https?:\\/\\/mmbiz[^)]+?)(?:&quot;)?\"?'?\\)";
+        regex = "url\\(\"?'?(?:&quot;)?(https?:\\/\\/mmbiz[^)]+?)(?:&quot;)?\"?'?\\)";
         replaceCallbackMatcher = new ReplaceCallbackMatcher(regex);
         content = replaceCallbackMatcher.replaceMatches(content,
-                matcher -> "oldUrl(" + getKzImageUrl(matcher.group(1)) + ")"
+                matcher -> "url(" + getKzImageUrl(matcher.group(1)) + ")"
         );
 
         // 视频链接

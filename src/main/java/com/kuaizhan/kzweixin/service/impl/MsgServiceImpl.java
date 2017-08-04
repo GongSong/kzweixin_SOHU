@@ -1,33 +1,29 @@
 package com.kuaizhan.kzweixin.service.impl;
 
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.cache.MsgCache;
-import com.kuaizhan.kzweixin.config.KzApiConfig;
-import com.kuaizhan.kzweixin.constant.AppConstant;
+import com.kuaizhan.kzweixin.dao.mapper.auto.MsgMapper;
+import com.kuaizhan.kzweixin.dao.po.auto.*;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
+import com.kuaizhan.kzweixin.enums.MsgSendType;
 import com.kuaizhan.kzweixin.enums.MsgType;
-import com.kuaizhan.kzweixin.dao.mapper.FanDao;
-import com.kuaizhan.kzweixin.dao.mapper.MsgDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.MsgConfigMapper;
 import com.kuaizhan.kzweixin.manager.KzManager;
 import com.kuaizhan.kzweixin.manager.WxCommonManager;
 import com.kuaizhan.kzweixin.manager.WxMsgManager;
 import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
-import com.kuaizhan.kzweixin.dao.po.MsgPO;
-import com.kuaizhan.kzweixin.entity.common.Page;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
-import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
-import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
-import com.kuaizhan.kzweixin.dao.po.auto.MsgConfigPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.MsgService;
 import com.kuaizhan.kzweixin.service.PostService;
-import com.kuaizhan.kzweixin.utils.DBTableUtil;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.UrlUtil;
 import com.vdurmont.emoji.EmojiParser;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -42,13 +38,11 @@ import java.util.*;
 public class MsgServiceImpl implements MsgService {
 
     @Resource
-    private MsgDao msgDao;
+    private MsgMapper msgMapper;
     @Resource
     private MsgConfigMapper msgConfigMapper;
     @Resource
     private AccountService accountService;
-    @Resource
-    private FanDao fanDao;
     @Resource
     private PostService postService;
     @Resource
@@ -57,11 +51,16 @@ public class MsgServiceImpl implements MsgService {
     @Override
     public long getUnreadMsgCount(long weixinAppid) {
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
-        String appId = accountPO.getAppId();
-        long lastReadTime = getLastReadTime(weixinAppid);
 
-        String msgTableName = DBTableUtil.getMsgTableName(appId);
-        return msgDao.countMsgs(appId, msgTableName, null, 1,null, false, lastReadTime, null);
+        int lastReadTime = getLastReadTime(weixinAppid);
+
+        MsgPOExample example = new MsgPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(accountPO.getAppId())
+                .andSendTypeEqualTo(MsgSendType.TO_ACCOUNT)
+                .andCreateTimeGreaterThan(lastReadTime);
+
+        return msgMapper.countByExample(example);
     }
 
     @Override
@@ -77,46 +76,46 @@ public class MsgServiceImpl implements MsgService {
 
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
 
-        long lastReadTime = getLastReadTime(weixinAppid);
+        int lastReadTime = getLastReadTime(weixinAppid);
         String appId = accountPO.getAppId();
-        String msgTableName = DBTableUtil.getMsgTableName(appId);
 
-        // 查询消息列表
-        List<MsgPO> msgPOS = msgDao.listMsgsByPagination(appId, msgTableName, null, 1,
-                queryStr, filterKeywords,
-                lastReadTime, offset, limit);
-        // 查询消息总数
-        long total = msgDao.countMsgs(appId, msgTableName, null, 1,
-                queryStr, filterKeywords, null, lastReadTime);
+        // 组装查询条件
+        MsgPOExample example = new MsgPOExample();
+        MsgPOExample.Criteria criteria = example.createCriteria();
+        criteria.andAppIdEqualTo(appId);
+        criteria.andSendTypeEqualTo(MsgSendType.TO_ACCOUNT);
+        criteria.andCreateTimeLessThan(lastReadTime);
+        // 模糊查询不为空
+        if (!StringUtils.isBlank(queryStr)) {
+            criteria.andContentLike("%" + queryStr + "%");
+            criteria.andTypeIn(ImmutableList.of(MsgType.TEXT, MsgType.KEYWORD_TEXT));
+        }
+        // 过滤关键词
+        if (filterKeywords) {
+            criteria.andTypeNotEqualTo(MsgType.KEYWORD_TEXT);
+        }
+        example.setOrderByClause("create_time desc");
 
-        // 封装粉丝信息
-        setMsgUserInfo(appId, msgPOS, accountPO);
+        List<MsgPO> msgPOS = msgMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, limit));
+        long total = msgMapper.countByExample(example);
 
         return new PageV2<>(total, msgPOS);
     }
 
     @Override
-    public Page<MsgPO> listMsgsByOpenId(long weixinAppid, String openId, int pageNum) {
-        Page<MsgPO> page = new Page<>(pageNum, AppConstant.PAGE_SIZE_LARGE);
+    public PageV2<MsgPO> listMsgsByOpenId(long weixinAppid, String openId, int offset, int limit) {
+
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
 
-        String appId = accountPO.getAppId();
-        String msgTableName = DBTableUtil.getMsgTableName(appId);
+        MsgPOExample example = new MsgPOExample();
+        example.createCriteria()
+                .andAppIdEqualTo(accountPO.getAppId())
+                .andOpenIdEqualTo(openId);
 
-        // 查询消息列表
-        List<MsgPO> msgPOS = msgDao.listMsgsByPagination(appId, msgTableName, openId,
-                null, null, null, null,
-                page.getOffset(), page.getLimit());
-        // 查询消息总数
-        long count = msgDao.countMsgs(appId, msgTableName, openId, 1,
-                null, null, null, null);
-        page.setTotalCount(count);
+        List<MsgPO> msgPOS = msgMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, limit));
+        long total = msgMapper.countByExample(example);
 
-        // 封装粉丝信息
-        setMsgUserInfo(appId, msgPOS, accountPO);
-
-        page.setResult(msgPOS);
-        return page;
+        return new PageV2<>(total, msgPOS);
     }
 
     @Override
@@ -146,14 +145,16 @@ public class MsgServiceImpl implements MsgService {
         // 存储消息
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String appId = accountPO.getAppId();
-        MsgPO msgPO = new MsgPO();
-        msgPO.setAppId(appId);
-        msgPO.setContent(customMsg.getContentJsonStr());
-        msgPO.setOpenId(openId);
-        msgPO.setSendType(2);
-        msgPO.setType((int) customMsg.getMsgType().getValue());
-        String tableName = DBTableUtil.getMsgTableName(appId);
-        msgDao.insertMsg(tableName, msgPO);
+
+        MsgPO record = new MsgPO();
+        record.setAppId(appId);
+        record.setOpenId(openId);
+        record.setContent(customMsg.getContentJsonStr());
+        record.setSendType(MsgSendType.TO_FAN);
+        record.setType(customMsg.getMsgType());
+        record.setCreateTime(DateUtil.curSeconds());
+        record.setUpdateTime(DateUtil.curSeconds());
+        msgMapper.insertSelective(record);
     }
 
     /**
@@ -269,46 +270,5 @@ public class MsgServiceImpl implements MsgService {
             msgConfigMapper.insert(config);
         }
         return config.getLastReadTime();
-    }
-
-    /**
-     * 封装消息列表的用户信息
-     */
-    private void setMsgUserInfo(String appId, List<MsgPO> msgPOS, AccountPO accountPO) {
-
-        String fanTableName = DBTableUtil.getFanTableName(appId);
-
-        Map<String, FanPO> openIdMap = new HashMap<>();
-        List<String> openIds = new ArrayList<>();
-        for(MsgPO msgPO: msgPOS) {
-            openIds.add(msgPO.getOpenId());
-        }
-
-        // 查询粉丝信息
-        if (accountPO.getServiceType() == 2 && openIds.size() > 0) {
-            List<FanPO> fanPOS = fanDao.listFansByOpenIds(appId, openIds, fanTableName);
-            for (FanPO fanPO: fanPOS) {
-                openIdMap.put(fanPO.getOpenId(), fanPO);
-            }
-        }
-
-        // 封装消息的头像和昵称信息
-        for (MsgPO msgPO: msgPOS) {
-            FanPO fanPO = openIdMap.getOrDefault(msgPO.getOpenId(), null);
-            // 公众号发送
-            if (msgPO.getSendType() == 2) {
-                msgPO.setNickName(accountPO.getNickName());
-                msgPO.setHeadImgUrl(accountPO.getHeadImg());
-
-            } else if (fanPO != null) {
-                msgPO.setNickName(fanPO.getNickName());
-                msgPO.setHeadImgUrl(fanPO.getHeadImgUrl());
-
-            } else {
-                String openId = msgPO.getOpenId();
-                msgPO.setNickName("粉丝" + openId.substring(openId.length() - 4, openId.length()));
-                msgPO.setHeadImgUrl(KzApiConfig.getResUrl("/res/weixin/images/kuaizhan-logo.png"));
-            }
-        }
     }
 }

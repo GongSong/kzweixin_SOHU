@@ -42,8 +42,6 @@ public class LinkGroupResponseJson implements ResponseJson {
         // 链接类型
         @NotNull
         private LinkType linkType;
-        // 链接别名
-        private String linkName;
 
 
         /* php老代码兼容字段 */
@@ -68,7 +66,7 @@ public class LinkGroupResponseJson implements ResponseJson {
         for (LinkGroup linkGroup: linkGroups) {
             linkGroup.setOldTitle(linkGroup.getTitle());
             linkGroup.setOldDescription(linkGroup.getDescription());
-            linkGroup.setOldPicUrl(linkGroup.getOldPicUrl());
+            linkGroup.setOldPicUrl(linkGroup.getPicUrl());
             linkGroup.setOldUrl(linkGroup.getUrl());
             // 兼容的linkType全部设置为URL
             linkGroup.setOldLinkType(1);
@@ -89,7 +87,7 @@ public class LinkGroupResponseJson implements ResponseJson {
                 linkGroup.setTitle(linkGroup.getOldTitle());
                 linkGroup.setDescription(linkGroup.getOldDescription());
                 linkGroup.setPicUrl(linkGroup.getOldPicUrl());
-                linkGroup.setUrl(linkGroup.getOldPicUrl());
+                linkGroup.setUrl(linkGroup.getOldUrl());
                 // 老数据转新数据，全部改为url类型
                 linkGroup.setLinkType(LinkType.URL);
             }
