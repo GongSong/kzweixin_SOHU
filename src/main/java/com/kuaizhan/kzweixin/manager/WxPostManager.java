@@ -56,7 +56,7 @@ public class WxPostManager {
             throw new WxPostUsedException();
         } else {
             // 未知错误
-            throw new WxApiException("[WxPostManager.deletePost] 删除多图文失败, oldMediaId:" + mediaId + " result:" + returnJson);
+            throw new WxApiException("[WxPostManager.deletePost] 删除多图文失败, mediaId:" + mediaId + " result:" + returnJson);
         }
     }
 
@@ -72,7 +72,7 @@ public class WxPostManager {
 
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
-        String result = HttpClientUtil.postFile(WxApiConfig.addMaterialUrl(accessToken, "image"), address.get("oldUrl"), address.get("host"));
+        String result = HttpClientUtil.postFile(WxApiConfig.addMaterialUrl(accessToken, "image"), address.get("url"), address.get("host"));
 
         if (result == null) {
             throw new WxApiException("[WeiXin:uploadTmpImage] result is null");
@@ -91,13 +91,13 @@ public class WxPostManager {
             if (errCode == WxErrCode.INVALID_IMAGE_FORMAT) {
                 throw new BusinessException(ErrorCode.OPERATION_FAILED, "图片格式不对，上传到微信失败");
             }
-            logger.error("[微信] 上传永久图片素材失败: result:{} oldUrl:{}", returnJson, imgUrl);
+            logger.error("[微信] 上传永久图片素材失败: result:{} url:{}", returnJson, imgUrl);
             throw new BusinessException(ErrorCode.OPERATION_FAILED, "上传图片失败，请重试");
         }
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("oldMediaId", returnJson.getString("media_id"));
-        map.put("oldUrl", returnJson.getString("oldUrl"));
+        map.put("mediaId", returnJson.getString("media_id"));
+        map.put("url", returnJson.getString("url"));
         return map;
     }
 
@@ -114,14 +114,14 @@ public class WxPostManager {
 
         // 获取内部地址
         Map<String ,String> address = UrlUtil.getPicIntranetAddress(imgUrl);
-        String result = HttpClientUtil.postFile(WxApiConfig.getAddPostImageUrl(accessToken), address.get("oldUrl"), address.get("host"));
+        String result = HttpClientUtil.postFile(WxApiConfig.getAddPostImageUrl(accessToken), address.get("url"), address.get("host"));
 
         JSONObject returnJson = new JSONObject(result);
 
         int errCode = returnJson.optInt("errcode");
 
         if (errCode == 0) {
-            return returnJson.getString("oldUrl");
+            return returnJson.getString("url");
         }
 
         if (errCode == WxErrCode.MEDIA_SIZE_OUT_OF_LIMIT) {
@@ -144,7 +144,7 @@ public class WxPostManager {
         JSONArray jsonArray = new JSONArray();
         for (PostPO postPO : posts) {
             JSONObject postJson = new JSONObject();
-            postJson.put("oldTitle", postPO.getTitle());
+            postJson.put("title", postPO.getTitle());
             postJson.put("thumb_media_id", postPO.getThumbMediaId());
             postJson.put("author", postPO.getAuthor());
             postJson.put("digest", postPO.getDigest());
@@ -197,7 +197,7 @@ public class WxPostManager {
 
         // 组装articles
         JSONObject postJson = new JSONObject();
-        postJson.put("oldTitle", postPO.getTitle());
+        postJson.put("title", postPO.getTitle());
         postJson.put("thumb_media_id", postPO.getThumbMediaId());
         postJson.put("author", postPO.getAuthor());
         postJson.put("digest", postPO.getDigest());

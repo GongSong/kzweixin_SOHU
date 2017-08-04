@@ -22,7 +22,5 @@ public class TmpTest {
 
     @Test
     public void testInt() throws Exception {
-        String str = "{\"news\":[{\"oldTitle\":\"我的投票\",\"oldDescription\":\"null\",\"oldPicUrl\":\"http://www.baidu.com\",\"oldUrl\":\"https://vote15d39e4b0f5.kuaizhan.com/mobile.html#/list\"}]}\n";
-        System.out.println("---->" + JsonUtil.string2Bean(str, NewsResponse.class));
     }
 }
