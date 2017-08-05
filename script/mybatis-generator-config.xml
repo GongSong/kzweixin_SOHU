@@ -60,22 +60,22 @@
                 <!--<columnOverride column="is_del" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
-            <table tableName="weixin_msg_0" domainObjectName="MsgPO" mapperName="MsgMapper">
-                <generatedKey column="msg_id" sqlStatement="MySql" identity="true" />
-                <columnOverride column="status" javaType="java.lang.Integer"/>
-                <columnOverride column="content" jdbcType="VARCHAR" />
-                <columnOverride column="type" javaType="com.kuaizhan.kzweixin.enums.MsgType"
-                                typeHandler="com.kuaizhan.kzweixin.dao.typehandler.MsgTypeHandler" />
-                <columnOverride column="send_type" javaType="com.kuaizhan.kzweixin.enums.MsgSendType"
-                                typeHandler="com.kuaizhan.kzweixin.dao.typehandler.MsgSendTypeHandler" />
-            </table>
+            <!--<table tableName="weixin_msg_0" domainObjectName="MsgPO" mapperName="MsgMapper">-->
+                <!--<generatedKey column="msg_id" sqlStatement="JDBC" />-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="content" jdbcType="VARCHAR" />-->
+                <!--<columnOverride column="type" javaType="com.kuaizhan.kzweixin.enums.MsgType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.MsgTypeHandler" />-->
+                <!--<columnOverride column="send_type" javaType="com.kuaizhan.kzweixin.enums.MsgSendType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.MsgSendTypeHandler" />-->
+            <!--</table>-->
 
             <!--<table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
             <!--</table>-->
 
             <!--<table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">-->
-                <!--<generatedKey column="id" sqlStatement="MySql" identity="true" />-->
+                <!--<generatedKey column="id" sqlStatement="JDBC" />-->
                 <!--<columnOverride column="action_type" javaType="com.kuaizhan.kzweixin.enums.ActionType"-->
                                 <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ActionTypeHandler" />-->
                 <!--<columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ResponseType"-->

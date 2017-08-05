@@ -181,10 +181,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.kuaizhan.kzweixin.dao.po.auto.MsgPO">
-    <selectKey keyProperty="msgId" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insert" keyColumn="msg_id" keyProperty="msgId" parameterType="com.kuaizhan.kzweixin.dao.po.auto.MsgPO" useGeneratedKeys="true">
     insert into weixin_msg_0 (app_id, open_id, type, 
       content, send_type, 
       is_collect, status, create_time, 
@@ -194,10 +191,7 @@
       #{isCollect,jdbcType=BIT}, #{status,jdbcType=BIT}, #{createTime,jdbcType=INTEGER}, 
       #{updateTime,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.kuaizhan.kzweixin.dao.po.auto.MsgPO">
-    <selectKey keyProperty="msgId" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insertSelective" keyColumn="msg_id" keyProperty="msgId" parameterType="com.kuaizhan.kzweixin.dao.po.auto.MsgPO" useGeneratedKeys="true">
     insert into weixin_msg_0
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="appId != null">
