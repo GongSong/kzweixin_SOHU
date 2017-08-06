@@ -40,13 +40,6 @@
     <bean id="routingDataSource" class="com.kuaizhan.kzweixin.dao.base.RoutingDataSource" >
         <property name="defaultDataSource" ref="druidDataSource" />
         <property name="shardingDataSource" ref="shardingDataSource" />
-        <property name="shardingMappers" >
-            <list value-type="java.lang.String">
-                <value>com.kuaizhan.kzweixin.dao.mapper.auto.MsgMapper</value>
-                <value>com.kuaizhan.kzweixin.dao.mapper.auto.FanMapper</value>
-                <value>com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper</value>
-            </list>
-        </property>
     </bean>
 
     <!-- 配置mybatis sqlsessionFactory -->

@@ -1,11 +1,13 @@
 package com.kuaizhan.kzweixin.dao.base;
 
+import com.kuaizhan.kzweixin.enums.DataSourceEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,21 +20,14 @@ public class RoutingDataSource extends AbstractRoutingDataSource implements Init
 
     private DataSource shardingDataSource;
 
-    private List<String> shardingMappers;
+    private ThreadLocal<DataSourceEnum> dataSourceKeyThreadLocal = new InheritableThreadLocal<>();
 
-    public static final String SHARDING_DATASOURCE_KEY = "shardingDataSource";
-
-    public static final String DEFAULT_DATASOURCE_KEY = "defaultDataSource";
-
-    private ThreadLocal<String> dataSourceKeyThreadLocal = new InheritableThreadLocal<>();
+    private static Logger logger = LoggerFactory.getLogger(RoutingDataSource.class);
 
     @Override
     protected Object determineCurrentLookupKey() {
-        String dataSourceKey = dataSourceKeyThreadLocal.get();
-        // 强制指定dataSourceKey
-        if (! SHARDING_DATASOURCE_KEY.equals(dataSourceKey) && ! DEFAULT_DATASOURCE_KEY.equals(dataSourceKey)) {
-            throw new IllegalStateException("[RoutingDataSource] dataSourceKey must be 'shardingDataSource' or 'defaultDataSource'");
-        }
+        DataSourceEnum dataSourceKey = dataSourceKeyThreadLocal.get();
+        logger.info("[RoutingDataSource] determine to use {}", dataSourceKey);
         return dataSourceKey;
     }
 
@@ -42,8 +37,8 @@ public class RoutingDataSource extends AbstractRoutingDataSource implements Init
         this.setDefaultTargetDataSource(defaultDataSource);
         // key与数据源的映射关系
         Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put(SHARDING_DATASOURCE_KEY, shardingDataSource);
-        targetDataSources.put(DEFAULT_DATASOURCE_KEY, defaultDataSource);
+        targetDataSources.put(DataSourceEnum.DEFAULT_DATASOURCE, defaultDataSource);
+        targetDataSources.put(DataSourceEnum.SHARDING_DATASOURCE, shardingDataSource);
         this.setTargetDataSources(targetDataSources);
 
         super.afterPropertiesSet();
@@ -51,10 +46,11 @@ public class RoutingDataSource extends AbstractRoutingDataSource implements Init
 
     /**
      * 暴露接口设置DataSourceKey
-     * @param key DataSourceKey
+     * @param dataSourceKey DataSourceKey
      */
-    public void setDataSourceKey(String key) {
-        dataSourceKeyThreadLocal.set(key);
+    public void setDataSourceKey(DataSourceEnum dataSourceKey) {
+        dataSourceKeyThreadLocal.set(dataSourceKey);
+        logger.info("[RoutingDataSource] DataSource be set to {}", dataSourceKey);
     }
 
     /* ----- getter and setter --- */
@@ -65,13 +61,4 @@ public class RoutingDataSource extends AbstractRoutingDataSource implements Init
     public void setShardingDataSource(DataSource shardingDataSource) {
         this.shardingDataSource = shardingDataSource;
     }
-
-    public List<String> getShardingMappers() {
-        return shardingMappers;
-    }
-
-    public void setShardingMappers(List<String> shardingMappers) {
-        this.shardingMappers = shardingMappers;
-    }
-
 }

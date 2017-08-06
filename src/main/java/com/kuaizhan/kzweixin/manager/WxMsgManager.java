@@ -52,6 +52,7 @@ public class WxMsgManager {
 
         System.out.println("---->" + response);
         int errCode = response.getErrcode();
+        // TODO: errcode=45015, errmsg=response out of time limit or subscription is canceled
         // 数据错误时，微信竟然回返回这个错误码，垃圾!!!
         if (errCode == WxErrCode.INVALID_OPEN_ID) {
             throw new WxInvalidOpenIdException("[Weixin:sendCustomMsg] invalid openId:" + openId);
