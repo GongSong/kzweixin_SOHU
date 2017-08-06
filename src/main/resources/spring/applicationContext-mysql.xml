@@ -10,8 +10,8 @@
                            http://www.dangdang.com/schema/ddframe/rdb
                            http://www.dangdang.com/schema/ddframe/rdb/rdb.xsd">
 
-    <!-- 数据库连接池 -->
-    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+    <!-- 默认的 Druid DataSource -->
+    <bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
         <property name="url" value="${jdbc.url}"/>
         <property name="username" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
@@ -20,13 +20,13 @@
         <property name="minIdle" value="5"/>
     </bean>
 
-    <!--分表分库sharding配置-->
+    <!-- 分库分表的 sharding DataSource-->
     <rdb:strategy id="fanTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.FanShardingAlgorithm"/>
     <rdb:strategy id="msgTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.MsgShardingAlgorithm"/>
     <rdb:strategy id="openIdTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.OpenIdShardingAlgorithm"/>
 
     <rdb:data-source id="shardingDataSource">
-        <rdb:sharding-rule data-sources="dataSource">
+        <rdb:sharding-rule data-sources="druidDataSource">
             <rdb:table-rules>
                 <rdb:table-rule logic-table="weixin_fans_0" actual-tables="${jdbc.table.fan}" table-strategy="fanTableStrategy"/>
                 <rdb:table-rule logic-table="weixin_msg_0" actual-tables="${jdbc.table.msg}" table-strategy="msgTableStrategy"/>
@@ -36,12 +36,23 @@
         </rdb:sharding-rule>
     </rdb:data-source>
 
+    <!--自定义的 Routing DataSource-->
+    <bean id="routingDataSource" class="com.kuaizhan.kzweixin.dao.base.RoutingDataSource" >
+        <property name="defaultDataSource" ref="druidDataSource" />
+        <property name="shardingDataSource" ref="shardingDataSource" />
+        <property name="shardingMappers" >
+            <list value-type="java.lang.String">
+                <value>com.kuaizhan.kzweixin.dao.mapper.auto.MsgMapper</value>
+                <value>com.kuaizhan.kzweixin.dao.mapper.auto.FanMapper</value>
+                <value>com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper</value>
+            </list>
+        </property>
+    </bean>
 
     <!-- 配置mybatis sqlsessionFactory -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
-        <!--使用当当的sharding-jdbc-core datasource-->
-        <property name="dataSource" ref="shardingDataSource"/>
+        <property name="dataSource" ref="routingDataSource"/>
         <property name="mapperLocations" value="classpath:mapper/**/*.xml"/>
         <property name="typeAliasesPackage" value="com.kuaizhan.kzweixin.dao.po"/>
     </bean>
@@ -51,12 +62,10 @@
         <property name="basePackage" value="com.kuaizhan.kzweixin.dao.mapper"/>
     </bean>
 
-
-    <!--事务管理器-->
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource" />
-    </bean>
-    <!--TODO: sharding-jdbc后测试事务-->
     <!--定义注解驱动事务-->
     <tx:annotation-driven />
+    <!--事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="druidDataSource" />
+    </bean>
 </beans>

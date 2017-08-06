@@ -22,7 +22,7 @@ public class ControllerAspect {
     }
 
     @Before("controllerMethod()")
-    public void before(){
+    public void before() {
     }
 
     @Around("controllerMethod()")
