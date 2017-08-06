@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.controller.param;
 
+import com.kuaizhan.kzweixin.enums.MsgType;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ public class SendCustomMsgParam {
     @NotNull(message = "openId can not be null")
     private String openId;
     @NotNull(message = "msgType can not be null")
-    private Short msgType;
+    private MsgType msgType;
     @NotNull(message = "content can not be null")
     private Map content;
 }

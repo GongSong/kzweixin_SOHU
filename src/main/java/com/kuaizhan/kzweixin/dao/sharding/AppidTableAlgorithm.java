@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.utils.base;
+package com.kuaizhan.kzweixin.dao.sharding;
 
 import com.dangdang.ddframe.rdb.sharding.api.ShardingValue;
 import com.dangdang.ddframe.rdb.sharding.api.strategy.table.SingleKeyTableShardingAlgorithm;

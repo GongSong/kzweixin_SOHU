@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.entity.api.response;
+package com.kuaizhan.kzweixin.entity.wx.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

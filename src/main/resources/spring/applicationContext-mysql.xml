@@ -21,9 +21,9 @@
     </bean>
 
     <!-- 分库分表的 sharding DataSource-->
-    <rdb:strategy id="fanTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.FanShardingAlgorithm"/>
-    <rdb:strategy id="msgTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.MsgShardingAlgorithm"/>
-    <rdb:strategy id="openIdTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.utils.base.OpenIdShardingAlgorithm"/>
+    <rdb:strategy id="fanTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.dao.sharding.FanShardingAlgorithm"/>
+    <rdb:strategy id="msgTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.dao.sharding.MsgShardingAlgorithm"/>
+    <rdb:strategy id="openIdTableStrategy" sharding-columns="app_id" algorithm-class="com.kuaizhan.kzweixin.dao.sharding.OpenIdShardingAlgorithm"/>
 
     <rdb:data-source id="shardingDataSource">
         <rdb:sharding-rule data-sources="druidDataSource">
@@ -60,6 +60,7 @@
     <!-- 配置扫描包，加载mapper代理对象 -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.kuaizhan.kzweixin.dao.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
     <!--定义注解驱动事务-->

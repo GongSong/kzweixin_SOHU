@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.utils.base;
+package com.kuaizhan.kzweixin.dao.sharding;
 
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 

@@ -2,12 +2,9 @@ package com.kuaizhan.kzweixin.service.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.KzExchange;
-import com.kuaizhan.kzweixin.entity.responsejson.ImageResponseJson;
-import com.kuaizhan.kzweixin.entity.responsejson.LinkGroupResponseJson;
-import com.kuaizhan.kzweixin.entity.responsejson.PostResponseJson;
-import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
-import com.kuaizhan.kzweixin.entity.wxresponse.TextResponse;
+import com.kuaizhan.kzweixin.entity.responsejson.*;
 import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.service.CommonService;
 import com.kuaizhan.kzweixin.service.PostService;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
@@ -41,7 +38,7 @@ public class CommonServiceImpl implements CommonService {
         String responseJsonStr = JsonUtil.bean2String(responseJsonMap);
         switch (responseType) {
             case TEXT:
-                return JsonUtil.string2Bean(responseJsonStr, TextResponse.class);
+                return JsonUtil.string2Bean(responseJsonStr, TextResponseJson.class);
             case IMAGE:
                 return JsonUtil.string2Bean(responseJsonStr, ImageResponseJson.class);
             case POST:
@@ -59,7 +56,7 @@ public class CommonServiceImpl implements CommonService {
         ResponseJson responseJson;
         switch (responseType) {
             case TEXT:
-                responseJson = JsonUtil.string2Bean(responseJsonStr, TextResponse.class);
+                responseJson = JsonUtil.string2Bean(responseJsonStr, TextResponseJson.class);
                 break;
             case IMAGE:
                 responseJson = JsonUtil.string2Bean(responseJsonStr, ImageResponseJson.class);
@@ -69,6 +66,49 @@ public class CommonServiceImpl implements CommonService {
                 break;
             case POST:
                 responseJson = JsonUtil.string2Bean(responseJsonStr, PostResponseJson.class);
+                break;
+            default:
+                // TODO: 异常处理
+                return null;
+        }
+        // 数据清洗
+        responseJson.cleanAfterSelect();
+        return responseJson;
+    }
+
+    @Override
+    public ResponseJson getMsgResponseJsonFromParam(long weixinAppid, Map responseJsonMap, MsgType msgType) {
+        String responseJsonStr = JsonUtil.bean2String(responseJsonMap);
+        switch (msgType) {
+            case POST:
+                PostResponseJson postResponseJson = JsonUtil.string2Bean(responseJsonStr, PostResponseJson.class);
+                return postService.getPostResponseJson(weixinAppid, postResponseJson.getMediaIds());
+            case LINK_GROUP:
+                return JsonUtil.string2Bean(responseJsonStr, LinkGroupResponseJson.class);
+            case TEXT:
+                return JsonUtil.string2Bean(responseJsonStr, TextResponseJson.class);
+            case IMAGE:
+                return JsonUtil.string2Bean(responseJsonStr, ImageResponseJson.class);
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public ResponseJson getMsgResponseJsonFromDB(String responseJsonStr, MsgType msgType) {
+        ResponseJson responseJson;
+        switch (msgType) {
+            case TEXT:
+                responseJson = JsonUtil.string2Bean(responseJsonStr, TextResponseJson.class);
+                break;
+            case KEYWORD_TEXT:
+                responseJson = JsonUtil.string2Bean(responseJsonStr, TextResponseJson.class);
+                break;
+            case IMAGE:
+                responseJson = JsonUtil.string2Bean(responseJsonStr, ImageResponseJson.class);
+                break;
+            case LINK_GROUP:
+                responseJson = JsonUtil.string2Bean(responseJsonStr, LinkGroupResponseJson.class);
                 break;
             default:
                 // TODO: 异常处理

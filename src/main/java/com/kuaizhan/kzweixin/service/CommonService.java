@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
 import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.MsgType;
 
 import java.util.Map;
 
@@ -29,4 +30,16 @@ public interface CommonService {
      * 把数据库查出来的responseJson格式化
      */
     ResponseJson getResponseJsonFromDB(String responseJson, ComponentResponseType responseType);
+
+
+    /**
+     * 客服消息模块，把ResponseJson格式化
+     */
+    ResponseJson getMsgResponseJsonFromParam(long weixinAppid, Map responseJsonMap, MsgType msgType);
+
+
+    /**
+     * 把数据库查出来的responseJson格式化
+     */
+    ResponseJson getMsgResponseJsonFromDB(String responseJson, MsgType msgType);
 }

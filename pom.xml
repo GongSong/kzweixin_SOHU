@@ -20,8 +20,8 @@
         <spring.redis.version>1.8.1.RELEASE</spring.redis.version>
         <spring.rabbit.version>1.7.1.RELEASE</spring.rabbit.version>
         <redis.version>2.9.0</redis.version>
-        <mybatis.version>3.2.8</mybatis.version>
-        <mybatis.spring.version>1.2.2</mybatis.spring.version>
+        <mybatis.version>3.3.0</mybatis.version>
+        <mybatis.spring.version>1.3.1</mybatis.spring.version>
         <mysql.version>5.1.32</mysql.version>
         <sharding-jdbc.version>1.5.0</sharding-jdbc.version>
         <slf4j.version>1.6.4</slf4j.version>
