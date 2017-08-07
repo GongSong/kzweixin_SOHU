@@ -35,7 +35,7 @@ json结构示例:
           "picUrl": "http://pic.kuaizhan.com/fda2df23432.jpg",  // 封面图
           "url": "http://www.sohu.com/news",  // 链接组跳转链接
           "linkType": "SHOP",  // 链接组类型，见详细说明
-          "linkId": "WIMVcFhO2jV2A7j_,ORDER",
+          "linkIds": ["WIMVcFhO2jV2A7j_", "ORDER"]  // 链接的id列表
       }
   ]
 }
@@ -47,13 +47,13 @@ json结构示例:
 
 链接类型，可选值为`URL、PAGE、CLUB、SHOP、POSTER、ARTICLE`，各自的含义见上表
 
-#### linkId 
+#### linkIds 
 
-| linkId | 含义 |
+| linkIds | 含义 |
 | --- | --- |
-| 网址URL | linkId无意义，不传此字段 |
-| 页面PAGE | 页面的ID |
-| 社区CLUB | 社区的ID |
-| 电商SHOP |  `<店铺ID>,<首页(HOME)/购物车(CART)/我的订单(ORDER)>`, 例如`123,ORDER`的含义是id为123店铺的购物车 |
-| 海报POSTER | 海报的ID |
-| 快文ARTICLE | 快文首页值为`HOME`, 快文栏目为`COLUMN,<栏目ID>`, 快文文章为`ARTICLE,<文章ID>` |
+| 网址URL | linkIds无意义，不传此字段 |
+| 页面PAGE | 页面的ID, 如`["12343"]` |
+| 社区CLUB | 社区的ID, 如`["12343"]`|
+| 电商SHOP | 第一个值为`<店铺ID>`, 第二个值为`<首页(HOME)/购物车(CART)/我的订单(ORDER)>`, 例如`["123", "ORDER"]`的含义是id为123店铺的购物车 |
+| 海报POSTER | 海报的ID, 如`["12343"]` |
+| 快文ARTICLE | 快文首页值为`["HOME"]`, 快文栏目为`["COLUMN", "<栏目ID>"]`, 快文文章为`["ARTICLE", "<文章ID>"]` |

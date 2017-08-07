@@ -41,7 +41,7 @@ public class LinkGroupResponseJson implements ResponseJson {
         private String url;
 
         // 链接标识
-        private String linkId;
+        private List<String> linkIds;
         // 链接类型
         @NotNull
         private LinkType linkType;
