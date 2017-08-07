@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.service;
 
-import com.kuaizhan.kzweixin.controller.param.KeywordParamItem;
+import com.kuaizhan.kzweixin.entity.autoreply.KeywordItem;
 import com.kuaizhan.kzweixin.dao.po.auto.FollowReplyPO;
 import com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MsgReplyPO;
@@ -22,7 +22,7 @@ public interface AutoReplyService {
      * @param responseJson 自动回复消息内容
      * @return 规则Id
      * */
-    long createRule(long weixinAppid, String ruleName, List<KeywordParamItem> keywords,
+    long createKeywordRule(long weixinAppid, String ruleName, List<KeywordItem> keywords,
                    ComponentResponseType responseType, ResponseJson responseJson);
 
     /**
@@ -30,7 +30,7 @@ public interface AutoReplyService {
      * @param query 规则名及关键词匹配
      * @return 规则列表
      * */
-    List<KeywordReplyPO> getRules(long weixinAppid, String query);
+    List<KeywordReplyPO> getKeywordRules(long weixinAppid, String query);
 
     /**
      * 更新规则
@@ -40,29 +40,29 @@ public interface AutoReplyService {
      * @param responseType 自动回复消息种类
      * @param responseJson 自动回复消息内容
      * */
-    void updateRule(long ruleId, String ruleName, List<KeywordParamItem> keywords,
+    void updateKeywordRule(long ruleId, String ruleName, List<KeywordItem> keywords,
                     ComponentResponseType responseType, ResponseJson responseJson);
 
     /**
      * 删除规则
      * */
-    void deleteRule(long ruleId);
+    void deleteKeywordRule(long ruleId);
 
     /**
      * 创建/更新被关注自动回复
      * */
-    int createSubscribeReply(long weixinAppid, ComponentResponseType responseType,
+    int createFollowReply(long weixinAppid, ComponentResponseType responseType,
                              ResponseJson responseJson);
 
     /**
      * 获取被关注自动回复内容
      * */
-    FollowReplyPO getSubscribeReply(long weixinAppid);
+    FollowReplyPO getFollowReply(long weixinAppid);
 
     /**
      * 删除被关注自动回复
      * */
-    void deleteSubscribeReply(int followReplyId);
+    void deleteFollowReply(long weixinAppid);
 
     /**
      * 创建/更新消息自动回复
@@ -78,5 +78,5 @@ public interface AutoReplyService {
     /**
      * 删除消息自动回复
      * */
-    void deleteMsgReply(int msgReplyId);
+    void deleteMsgReply(long weixinAppid);
 }

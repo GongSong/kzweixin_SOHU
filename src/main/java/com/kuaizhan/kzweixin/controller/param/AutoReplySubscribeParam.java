@@ -17,6 +17,5 @@ public class AutoReplySubscribeParam {
     @NotNull
     private ComponentResponseType responseType;
     @NotNull
-    @Size(max = 1000, message = "文字内容不能超过1000个字符")
     private Map<String, Object> responseJson;
 }

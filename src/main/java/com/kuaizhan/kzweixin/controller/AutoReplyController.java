@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.AppConstant;
 import com.kuaizhan.kzweixin.controller.param.KeywordReplyRuleParam;
 import com.kuaizhan.kzweixin.controller.param.AutoReplySubscribeParam;
-import com.kuaizhan.kzweixin.controller.param.KeywordParamItem;
+import com.kuaizhan.kzweixin.entity.autoreply.KeywordItem;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.entity.responsejson.*;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
@@ -39,10 +39,10 @@ public class AutoReplyController extends BaseController {
      * 创建新规则
      */
     @RequestMapping(value = "/autoreply/keyword_replies", method = RequestMethod.POST)
-    public JsonResponse createRule(@Valid @RequestBody KeywordReplyRuleParam param) {
+    public JsonResponse createKeywordRule(@Valid @RequestBody KeywordReplyRuleParam param) {
         ResponseJson responseJson = commonService.getResponseJsonFromParam(param.getWeixinAppid(),
                 param.getResponseJson(), param.getResponseType());
-        long ruleId = autoReplyService.createRule(param.getWeixinAppid(), param.getRuleName(),
+        long ruleId = autoReplyService.createKeywordRule(param.getWeixinAppid(), param.getRuleName(),
                 param.getKeywords(), param.getResponseType(), responseJson);
         return new JsonResponse(ImmutableMap.of("ruleId", ruleId, "ruleName", param.getRuleName()));
     }
@@ -51,8 +51,8 @@ public class AutoReplyController extends BaseController {
      * 获取规则列表
      * */
     @RequestMapping(value = "/autoreply/keyword_replies", method = RequestMethod.GET)
-    public JsonResponse getRules(@RequestParam long weixinAppid, @RequestParam(required = false) String query) {
-        List<KeywordReplyPO> keywordReplyPOList = autoReplyService.getRules(weixinAppid, query);
+    public JsonResponse getKeywordRules(@RequestParam long weixinAppid, @RequestParam(required = false) String query) {
+        List<KeywordReplyPO> keywordReplyPOList = autoReplyService.getKeywordRules(weixinAppid, query);
         List<KeywordVO> keywordVOList = new ArrayList<>();
 
         for (KeywordReplyPO keywordReplyPO: keywordReplyPOList) {
@@ -63,9 +63,9 @@ public class AutoReplyController extends BaseController {
             keywordVO.setResponseType(keywordReplyPO.getResponseType());
 
             Map<String, String> keywordsMap = JsonUtil.string2Bean(keywordReplyPO.getKeywordsJson(), Map.class);
-            List<KeywordParamItem> keywords = new ArrayList<>();
+            List<KeywordItem> keywords = new ArrayList<>();
             for (Map.Entry<String, String> curr: keywordsMap.entrySet()) {
-                KeywordParamItem item = new KeywordParamItem();
+                KeywordItem item = new KeywordItem();
                 item.setKeyword(curr.getKey());
                 item.setType(curr.getValue());
                 keywords.add(item);
@@ -84,10 +84,10 @@ public class AutoReplyController extends BaseController {
      * 更新规则
      * */
     @RequestMapping(value = "/autoreply/keyword_replies/{ruleId}", method = RequestMethod.PUT)
-    public JsonResponse updateRule(@PathVariable("ruleId") long ruleId, @Valid @RequestBody KeywordReplyRuleParam param) {
+    public JsonResponse updateKeywordRule(@PathVariable("ruleId") long ruleId, @Valid @RequestBody KeywordReplyRuleParam param) {
         ResponseJson responseJson = commonService.getResponseJsonFromParam(param.getWeixinAppid(),
                 param.getResponseJson(), param.getResponseType());
-        autoReplyService.updateRule(ruleId, param.getRuleName(), param.getKeywords(), param.getResponseType(), responseJson);
+        autoReplyService.updateKeywordRule(ruleId, param.getRuleName(), param.getKeywords(), param.getResponseType(), responseJson);
         return new JsonResponse(ImmutableMap.of());
     }
 
@@ -95,8 +95,8 @@ public class AutoReplyController extends BaseController {
      * 删除规则
      * */
     @RequestMapping(value = "/autoreply/keyword_replies/{ruleId}", method = RequestMethod.DELETE)
-    public JsonResponse deleteRule(@PathVariable("ruleId") long ruleId, @RequestParam long weixinAppid) {
-        autoReplyService.deleteRule(ruleId);
+    public JsonResponse deleteKeywordRule(@PathVariable("ruleId") long ruleId, @RequestParam long weixinAppid) {
+        autoReplyService.deleteKeywordRule(ruleId);
         return new JsonResponse(ImmutableMap.of());
     }
 
@@ -104,10 +104,10 @@ public class AutoReplyController extends BaseController {
      * 创建/更新被关注自动回复
      * */
     @RequestMapping(value = "/autoreply/follow_reply", method = RequestMethod.PUT)
-    public JsonResponse createSubscribeReply(@Valid @RequestBody AutoReplySubscribeParam param) {
+    public JsonResponse createFollowReply(@Valid @RequestBody AutoReplySubscribeParam param) {
         ResponseJson responseJson = commonService.getResponseJsonFromParam(param.getWeixinAppid(),
                 param.getResponseJson(), param.getResponseType());
-        int followReplyId = autoReplyService.createSubscribeReply(param.getWeixinAppid(), param.getResponseType(), responseJson);
+        int followReplyId = autoReplyService.createFollowReply(param.getWeixinAppid(), param.getResponseType(), responseJson);
         return new JsonResponse(ImmutableMap.of("followReplyId", followReplyId));
     }
 
@@ -115,8 +115,8 @@ public class AutoReplyController extends BaseController {
      * 获取被关注自动回复内容
      * */
     @RequestMapping(value = "/autoreply/follow_reply", method = RequestMethod.GET)
-    public JsonResponse getSubscribeReply(@RequestParam long weixinAppid) {
-        FollowReplyPO followReplyPO = autoReplyService.getSubscribeReply(weixinAppid);
+    public JsonResponse getFollowReply(@RequestParam long weixinAppid) {
+        FollowReplyPO followReplyPO = autoReplyService.getFollowReply(weixinAppid);
         if (followReplyPO == null) {
             return new JsonResponse(ImmutableMap.of());
         }
@@ -134,9 +134,9 @@ public class AutoReplyController extends BaseController {
     /**
      * 删除被关注自动回复
      * */
-    @RequestMapping(value = "/autoreply/follow_reply/{followReplyId}", method = RequestMethod.DELETE)
-    public JsonResponse deleteSubscribeReply(@PathVariable("followReplyId") int followReplyId, @RequestParam long weixinAppid) {
-        autoReplyService.deleteSubscribeReply(followReplyId);
+    @RequestMapping(value = "/autoreply/follow_reply", method = RequestMethod.DELETE)
+    public JsonResponse deleteFollowReply(@RequestParam long weixinAppid) {
+        autoReplyService.deleteFollowReply(weixinAppid);
         return new JsonResponse(ImmutableMap.of());
     }
 
@@ -174,9 +174,9 @@ public class AutoReplyController extends BaseController {
     /**
      * 删除消息自动回复
      * */
-    @RequestMapping(value = "/autoreply/msg_reply/{msgReplyId}", method = RequestMethod.DELETE)
-    public JsonResponse deleteMsgReply(@PathVariable("msgReplyId") int msgReplyId, @RequestParam long weixinAppid) {
-        autoReplyService.deleteMsgReply(msgReplyId);
+    @RequestMapping(value = "/autoreply/msg_reply", method = RequestMethod.DELETE)
+    public JsonResponse deleteMsgReply(@RequestParam long weixinAppid) {
+        autoReplyService.deleteMsgReply(weixinAppid);
         return new JsonResponse(ImmutableMap.of());
     }
 }

@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.controller.param;
 
+import com.kuaizhan.kzweixin.entity.autoreply.KeywordItem;
 import com.kuaizhan.kzweixin.enums.ComponentResponseType;
 import lombok.Data;
 
@@ -19,7 +20,7 @@ public class KeywordReplyRuleParam {
     @Size(max = 60, message = "规则名不能超过60个字符")
     private String ruleName;
     @NotNull
-    private List<KeywordParamItem> keywords;
+    private List<KeywordItem> keywords;
     @NotNull
     private ComponentResponseType responseType;
     @NotNull

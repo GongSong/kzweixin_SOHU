@@ -4,7 +4,7 @@ import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
 import com.kuaizhan.kzweixin.enums.ComponentResponseType;
 import lombok.Data;
 
-import com.kuaizhan.kzweixin.controller.param.KeywordParamItem;
+import com.kuaizhan.kzweixin.entity.autoreply.KeywordItem;
 import java.util.List;
 
 /**
@@ -16,6 +16,6 @@ public class KeywordVO {
     private Long weixinAppid;
     private String ruleName;
     private ComponentResponseType responseType;
-    private List<KeywordParamItem> keywords;
+    private List<KeywordItem> keywords;
     private ResponseJson responseJson;
 }

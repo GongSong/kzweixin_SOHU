@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.service.impl;
 
-import com.kuaizhan.kzweixin.controller.param.KeywordParamItem;
+import com.kuaizhan.kzweixin.entity.autoreply.KeywordItem;
 import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
 import com.kuaizhan.kzweixin.enums.ComponentResponseType;
 import com.kuaizhan.kzweixin.service.AutoReplyService;
@@ -36,7 +36,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     private MsgReplyMapper msgReplyMapper;
 
     @Override
-    public long createRule(long weixinAppid, String ruleName, List<KeywordParamItem> keywords,
+    public long createKeywordRule(long weixinAppid, String ruleName, List<KeywordItem> keywords,
                            ComponentResponseType responseType, ResponseJson responseJson) {
         String keywordStr = convertBeforeInsert(keywords);
 
@@ -57,18 +57,15 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public List<KeywordReplyPO> getRules(long weixinAppid, String query) {
+    public List<KeywordReplyPO> getKeywordRules(long weixinAppid, String query) {
         KeywordReplyPOExample example = new KeywordReplyPOExample();
+        KeywordReplyPOExample.Criteria criteria = example.createCriteria();
 
-        if (query == null || "".equals(query)) {
-            example.createCriteria()
-                    .andWeixinAppidEqualTo(weixinAppid)
-                    .andStatusEqualTo(1);
-        } else {
-            example.createCriteria()
-                    .andWeixinAppidEqualTo(weixinAppid)
-                    .andStatusEqualTo(1)
-                    .andRuleNameLike(query)
+        criteria.andWeixinAppidEqualTo(weixinAppid)
+                .andStatusEqualTo(1);
+
+        if (query != null && !"".equals(query)) {
+            criteria.andRuleNameLike(query)
                     .andKeywordsJsonLike(query);
         }
 
@@ -76,7 +73,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public void updateRule(long ruleId, String ruleName, List<KeywordParamItem> keywords,
+    public void updateKeywordRule(long ruleId, String ruleName, List<KeywordItem> keywords,
                            ComponentResponseType responseType, ResponseJson responseJson) {
         String keywordStr = convertBeforeInsert(keywords);
 
@@ -94,7 +91,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public void deleteRule(long ruleId) {
+    public void deleteKeywordRule(long ruleId) {
         KeywordReplyPO record = new KeywordReplyPO();
         record.setRuleId(ruleId);
         record.setStatus(2);
@@ -102,18 +99,18 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
 
-    private String convertBeforeInsert(List<KeywordParamItem> keywords) {
+    private String convertBeforeInsert(List<KeywordItem> keywords) {
         Map<String, String> keywordsMap = new HashMap<>();
-        for (KeywordParamItem curr : keywords) {
+        for (KeywordItem curr : keywords) {
             keywordsMap.put(curr.getKeyword(), curr.getType());
         }
         return JsonUtil.bean2String(keywordsMap);
     }
 
     @Override
-    public int createSubscribeReply(long weixinAppid, ComponentResponseType responseType,
+    public int createFollowReply(long weixinAppid, ComponentResponseType responseType,
                                     ResponseJson responseJson) {
-        List<FollowReplyPO> followReplyPOList = getFollowPOByWeixinAppid(weixinAppid);
+        FollowReplyPO followReplyPO = getFollowReply(weixinAppid);
 
         FollowReplyPO record = new FollowReplyPO();
         record.setResponseType(responseType);
@@ -121,13 +118,13 @@ public class AutoReplyServiceImpl implements AutoReplyService {
         record.setResponseJson(JsonUtil.bean2String(responseJson));
         record.setUpdateTime(DateUtil.curSeconds());
 
-        if (followReplyPOList == null || followReplyPOList.size() == 0) {
+        if (followReplyPO == null) {
             record.setWeixinAppid(weixinAppid);
             record.setStatus(0);
             record.setCreateTime(DateUtil.curSeconds());
             followReplyMapper.insert(record);
         } else {
-            record.setId(followReplyPOList.get(0).getId());
+            record.setId(followReplyPO.getId());
             followReplyMapper.updateByPrimaryKeySelective(record);
         }
 
@@ -136,32 +133,32 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public FollowReplyPO getSubscribeReply(long weixinAppid) {
-        List<FollowReplyPO> followPOList = getFollowPOByWeixinAppid(weixinAppid);
-        return followPOList == null || followPOList.size() == 0 ? null : followPOList.get(0);
-    }
-
-    @Override
-    public void deleteSubscribeReply(int followReplyId) {
-        FollowReplyPO record = new FollowReplyPO();
-        record.setId(followReplyId);
-        record.setStatus(1);
-        followReplyMapper.updateByPrimaryKeySelective(record);
-    }
-
-    private List<FollowReplyPO> getFollowPOByWeixinAppid(long weixinAppid) {
+    public FollowReplyPO getFollowReply(long weixinAppid) {
         FollowReplyPOExample example = new FollowReplyPOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andStatusEqualTo(0);
         example.setOrderByClause("update_time");
-        return followReplyMapper.selectByExampleWithBLOBs(example);
+        List<FollowReplyPO> followPOList =  followReplyMapper.selectByExampleWithBLOBs(example);
+        return followPOList == null || followPOList.size() == 0 ? null : followPOList.get(0);
+    }
+
+    @Override
+    public void deleteFollowReply(long weixinAppid) {
+        FollowReplyPOExample example = new FollowReplyPOExample();
+        example.createCriteria()
+                .andWeixinAppidEqualTo(weixinAppid);
+
+        FollowReplyPO record = new FollowReplyPO();
+        record.setStatus(1);
+
+        followReplyMapper.updateByExampleSelective(record, example);
     }
 
     @Override
     public int createMsgReply(long weixinAppid, ComponentResponseType responseType,
                               ResponseJson responseJson) {
-        List<MsgReplyPO> msgReplyPOList = getMsgPOByWeixinAppid(weixinAppid);
+        MsgReplyPO msgReplyPO = getMsgReply(weixinAppid);
 
         MsgReplyPO record = new MsgReplyPO();
         record.setResponseType(responseType);
@@ -169,13 +166,13 @@ public class AutoReplyServiceImpl implements AutoReplyService {
         record.setResponseJson(JsonUtil.bean2String(responseJson));
         record.setUpdateTime(DateUtil.curSeconds());
 
-        if (msgReplyPOList == null || msgReplyPOList.size() == 0) {
+        if (msgReplyPO == null) {
             record.setWeixinAppid(weixinAppid);
             record.setStatus(0);
             record.setCreateTime(DateUtil.curSeconds());
             msgReplyMapper.insert(record);
         } else {
-            record.setId(msgReplyPOList.get(0).getId());
+            record.setId(msgReplyPO.getId());
             msgReplyMapper.updateByPrimaryKeySelective(record);
         }
 
@@ -184,26 +181,25 @@ public class AutoReplyServiceImpl implements AutoReplyService {
 
     @Override
     public MsgReplyPO getMsgReply(long weixinAppid) {
-        List<MsgReplyPO> msgReplyPOList = getMsgPOByWeixinAppid(weixinAppid);
-        return msgReplyPOList == null || msgReplyPOList.size() == 0 ? null : msgReplyPOList.get(0);
-    }
-
-    @Override
-    public void deleteMsgReply(int msgReplyId) {
-        MsgReplyPO record = new MsgReplyPO();
-        record.setId(msgReplyId);
-        record.setStatus(1);
-        msgReplyMapper.updateByPrimaryKeySelective(record);
-    }
-
-    private List<MsgReplyPO> getMsgPOByWeixinAppid(long weixinAppid) {
         MsgReplyPOExample example = new MsgReplyPOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andStatusEqualTo(0);
         example.setOrderByClause("update_time");
-        return msgReplyMapper.selectByExampleWithBLOBs(example);
+        List<MsgReplyPO> msgReplyPOList = msgReplyMapper.selectByExampleWithBLOBs(example);
+        return msgReplyPOList == null || msgReplyPOList.size() == 0 ? null : msgReplyPOList.get(0);
     }
 
+    @Override
+    public void deleteMsgReply(long weixinAppid) {
+        MsgReplyPOExample example = new MsgReplyPOExample();
+        example.createCriteria()
+                .andWeixinAppidEqualTo(weixinAppid);
+
+        MsgReplyPO record = new MsgReplyPO();
+        record.setStatus(1);
+
+        msgReplyMapper.updateByExampleSelective(record, example);
+    }
 
 }
