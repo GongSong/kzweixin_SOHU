@@ -36,8 +36,8 @@
     * 返回数据说明
     
         * msgType为TEXT和KEYWORD_TEXT时, content示例 `{"content": "你说什么"}`
-        * msgType为IMAGE时，content示例 `{"pic_url": "http://pic.kuaizhan.com/fdae3fdaf"}`
-        * msgType为LINK_GROUP时, content示例 `{"articles":[{"title":"我是链接组","description":"","picurl":"//pic.kuaizhan.com00x500","url":"http:www.kuaizhan.com/club/apiv1/sites/4142239921/me/notices/jump-to"}]}`
+        * msgType为IMAGE时，content示例 `{"picUrl": "http://pic.kuaizhan.com/fdae3fdaf"}`
+        * msgType为LINK_GROUP时, content示例 `{"linkGroups":[{"title":"我是链接组","description":"","picUrl":"//pic.kuaizhan.com00x500","url":"http:www.kuaizhan.com/club/apiv1/sites/4142239921/me/notices/jump-to"}]}`
         * 其他类型时, content示例 `{"content": "[收到暂不支持的消息类型，请在微信公众平台上查看]"}`
             
    

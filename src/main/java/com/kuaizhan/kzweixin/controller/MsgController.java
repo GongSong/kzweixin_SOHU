@@ -61,8 +61,13 @@ public class MsgController extends BaseController {
         List<MsgPO> msgPOS = msgPOPage.getDataSet();
 
         List<MsgVO> msgVOS = new ArrayList<>();
-        for(MsgPO msgPO: msgPOS) {
-            msgVOS.add(PojoSwitcher.msgPOToVO(msgPO));
+        for (MsgPO msgPO: msgPOS) {
+            MsgVO msgVO = PojoSwitcher.msgPOToVO(msgPO);
+            if (msgVO.getContent() == null) {
+                // TODO: 加上异常处理
+                msgVO.setContent(commonService.getMsgResponseJsonFromDB(msgPO.getContent(), msgPO.getType()));
+            }
+            msgVOS.add(msgVO);
         }
         // 封装粉丝信息
         setFanVoInfo(weixinAppid, msgVOS);
@@ -114,7 +119,12 @@ public class MsgController extends BaseController {
 
         List<MsgVO> msgVOS = new ArrayList<>();
         for(MsgPO msgPO: msgPOS) {
-            msgVOS.add(PojoSwitcher.msgPOToVO(msgPO));
+            MsgVO msgVO = PojoSwitcher.msgPOToVO(msgPO);
+            if (msgVO.getContent() == null) {
+                // TODO: 加上异常处理
+                msgVO.setContent(commonService.getMsgResponseJsonFromDB(msgPO.getContent(), msgPO.getType()));
+            }
+            msgVOS.add(msgVO);
         }
         // 封装粉丝信息
         setFanVoInfo(weixinAppid, msgVOS);

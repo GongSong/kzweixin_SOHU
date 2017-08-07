@@ -9,6 +9,8 @@ import com.kuaizhan.kzweixin.controller.vo.MsgVO;
 import com.kuaizhan.kzweixin.controller.vo.PostVO;
 import com.kuaizhan.kzweixin.controller.vo.FanVO;
 import com.kuaizhan.kzweixin.dao.po.auto.MsgPO;
+import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
+import com.kuaizhan.kzweixin.entity.responsejson.TextResponseJson;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -122,21 +124,10 @@ public class PojoSwitcher {
 
         MsgType msgType = msgPO.getType();
         // 文本消息、关键词消息、外链消息、图文消息都直接返回
-        if (msgType == MsgType.TEXT || msgType == MsgType.KEYWORD_TEXT || msgType == MsgType.IMAGE || msgType == MsgType.LINK_GROUP) {
-            JSONObject contentJson;
-            try {
-               contentJson = new JSONObject(msgPO.getContent());
-            } catch (JSONException e) {
-                contentJson = new JSONObject();
-                contentJson.put("content", "*************");
-                logger.warn("[msgPOToVo] 垃圾数据, msgType:{} content:{}", msgType, msgPO.getContent(), e);
-            }
-            msgVO.setContent(contentJson.toMap());
-        } else {
-            // 不支持的消息
-            JSONObject contentJson = new JSONObject();
-            contentJson.put("content", "[收到暂不支持的消息类型，请在微信公众平台上查看]");
-            msgVO.setContent(contentJson.toMap());
+        if (msgType != MsgType.TEXT && msgType != MsgType.KEYWORD_TEXT && msgType != MsgType.IMAGE & msgType != MsgType.LINK_GROUP) {
+            TextResponseJson textResponseJson = new TextResponseJson();
+            textResponseJson.setContent("[收到暂不支持的消息类型，请在微信公众平台上查看]");
+            msgVO.setContent(textResponseJson);
         }
         return msgVO;
     }

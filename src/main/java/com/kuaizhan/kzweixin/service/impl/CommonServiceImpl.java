@@ -2,6 +2,7 @@ package com.kuaizhan.kzweixin.service.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.KzExchange;
+import com.kuaizhan.kzweixin.entity.msg.MsgLinkGroupResponseJson;
 import com.kuaizhan.kzweixin.entity.responsejson.*;
 import com.kuaizhan.kzweixin.enums.ComponentResponseType;
 import com.kuaizhan.kzweixin.enums.MsgType;
@@ -99,8 +100,6 @@ public class CommonServiceImpl implements CommonService {
         ResponseJson responseJson;
         switch (msgType) {
             case TEXT:
-                responseJson = JsonUtil.string2Bean(responseJsonStr, TextResponseJson.class);
-                break;
             case KEYWORD_TEXT:
                 responseJson = JsonUtil.string2Bean(responseJsonStr, TextResponseJson.class);
                 break;
@@ -108,7 +107,7 @@ public class CommonServiceImpl implements CommonService {
                 responseJson = JsonUtil.string2Bean(responseJsonStr, ImageResponseJson.class);
                 break;
             case LINK_GROUP:
-                responseJson = JsonUtil.string2Bean(responseJsonStr, LinkGroupResponseJson.class);
+                responseJson = JsonUtil.string2Bean(responseJsonStr, MsgLinkGroupResponseJson.class);
                 break;
             default:
                 // TODO: 异常处理
