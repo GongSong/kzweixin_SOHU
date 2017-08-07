@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.utils;
+package com.kuaizhan.kzweixin.dao.typehandler;
 
 import com.kuaizhan.kzweixin.annotation.EnumTypeHandler;
 import com.kuaizhan.kzweixin.enums.BaseEnum;

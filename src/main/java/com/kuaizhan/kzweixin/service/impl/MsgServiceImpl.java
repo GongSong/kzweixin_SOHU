@@ -7,21 +7,20 @@ import com.kuaizhan.kzweixin.cache.MsgCache;
 import com.kuaizhan.kzweixin.dao.mapper.auto.MsgMapper;
 import com.kuaizhan.kzweixin.dao.po.auto.*;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
+import com.kuaizhan.kzweixin.entity.msg.MsgLinkGroupResponseJson;
+import com.kuaizhan.kzweixin.entity.responsejson.LinkGroupResponseJson;
+import com.kuaizhan.kzweixin.entity.responsejson.PostResponseJson;
+import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
 import com.kuaizhan.kzweixin.enums.MsgSendType;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.dao.mapper.auto.MsgConfigMapper;
 import com.kuaizhan.kzweixin.manager.KzManager;
-import com.kuaizhan.kzweixin.manager.WxCommonManager;
 import com.kuaizhan.kzweixin.manager.WxMsgManager;
-import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
-import com.kuaizhan.kzweixin.dao.po.PostPO;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.MsgService;
 import com.kuaizhan.kzweixin.service.PostService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
-import com.kuaizhan.kzweixin.utils.UrlUtil;
-import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.json.JSONObject;
@@ -133,99 +132,68 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public void sendCustomMsg(long weixinAppid, String openId, CustomMsg customMsg) throws IllegalArgumentException {
+    public void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, ResponseJson responseJson) {
 
+        // 对于发送的图文消息，转为PHP兼容的LinkGroup
+        if (responseJson instanceof PostResponseJson) {
+            msgType = MsgType.LINK_GROUP;
+            responseJson = convert2MsgLinkGroup(responseJson);
+        }
+        // 对于LinkGroup， 转为PHP兼容的LinkGroup
+        if (responseJson instanceof LinkGroupResponseJson) {
+            responseJson = convert2MsgLinkGroup(responseJson);
+        }
+
+        // 调用微信接口发送客服消息
         String accessToken = accountService.getAccessToken(weixinAppid);
+        WxMsgManager.sendCustomMsg(accessToken, openId, responseJson);
 
-        // 数据清理
-        customMsg = cleanCustomMsg(customMsg, accessToken);
-        // 发送消息
-        WxMsgManager.sendCustomMsg(accessToken, openId, customMsg);
-
-        // 存储消息
+        // 入库
         AccountPO accountPO = accountService.getAccountByWeixinAppId(weixinAppid);
         String appId = accountPO.getAppId();
 
         MsgPO record = new MsgPO();
         record.setAppId(appId);
         record.setOpenId(openId);
-        record.setContent(customMsg.getContentJsonStr());
         record.setSendType(MsgSendType.TO_FAN);
-        record.setType(customMsg.getMsgType());
+        record.setType(msgType);
+        responseJson.cleanBeforeInsert();
+        record.setContent(JsonUtil.bean2String(responseJson));
         record.setCreateTime(DateUtil.curSeconds());
         record.setUpdateTime(DateUtil.curSeconds());
         msgMapper.insertSelective(record);
     }
 
     /**
-     * 清理客服消息数据
-     * @throws IllegalArgumentException 客服消息数据有误
+     * 把LinkGroupResponseJson、PostResponseJson转换为兼容的MsgLinkGroup
      */
-    private CustomMsg cleanCustomMsg(CustomMsg customMsg, String accessToken) throws IllegalArgumentException {
-        switch (customMsg.getMsgType()) {
-            // 文本类型
-            case TEXT:
-                CustomMsg.Text text = customMsg.getText();
-                if (text == null || text.getContent() == null) {
-                    throw new IllegalArgumentException("content不能为空");
-                }
-                // 去除emoji
-                text.setContent(EmojiParser.removeAllEmojis(text.getContent()));
-                customMsg.setContentJsonStr(JsonUtil.bean2String(text));
-                break;
-            // 图片类型
-            case IMAGE:
-                CustomMsg.Image image = customMsg.getImage();
+    private MsgLinkGroupResponseJson convert2MsgLinkGroup(ResponseJson responseJson) {
+        MsgLinkGroupResponseJson msgLinkGroupResponseJson = new MsgLinkGroupResponseJson();
+        List<MsgLinkGroupResponseJson.LinkGroup> linkGroups = new ArrayList<>();
+        msgLinkGroupResponseJson.setLinkGroups(linkGroups);
 
-                if (image == null || image.getPicUrl() == null) {
-                    throw new IllegalArgumentException("pic_url不能为空");
-                }
-
-                // 上传图片
-                if (image.getMediaId() == null) {
-                    String picUrl = UrlUtil.fixProtocol(image.getPicUrl());
-                    String mediaId = WxCommonManager.uploadTmpImage(accessToken, picUrl);
-                    image.setMediaId(mediaId);
-                }
-                customMsg.setContentJsonStr(JsonUtil.bean2String(image));
-                break;
-            // 多图文类型
-            case MP_NEWS:
-
-                CustomMsg.MpNews mpNews = customMsg.getMpNews();
-
-                if (mpNews == null || mpNews.getPosts().size() == 0) {
-                    throw new IllegalArgumentException("图文列表不能为空");
-                }
-
-                // 转换为链接组类型
-                CustomMsg.News newsFromMp = new CustomMsg.News();
-                for(Long pageId: mpNews.getPosts()) {
-
-                    PostPO postPO = postService.getPostByPageId(pageId);
-                    CustomMsg.Article article = new CustomMsg.Article();
-                    article.setTitle(postPO.getTitle());
-                    article.setDescription(postPO.getDigest());
-                    article.setUrl(postService.getPostWxUrl(pageId));
-                    article.setPicUrl(postPO.getThumbUrl());
-
-                    newsFromMp.getArticles().add(article);
-                }
-                customMsg.setMsgType(MsgType.LINK_GROUP);
-                customMsg.setNews(newsFromMp);
-                customMsg.setContentJsonStr(JsonUtil.bean2String(newsFromMp));
-                break;
-            // 链接组类型
-            case LINK_GROUP:
-                // TODO: 校验下参数
-                CustomMsg.News news = new CustomMsg.News();
-                customMsg.setContentJsonStr(JsonUtil.bean2String(news));
-                break;
-
-            default:
-                throw new IllegalArgumentException("不允许的消息类型:" + customMsg.getMsgType());
+        if (responseJson instanceof PostResponseJson) {
+            PostResponseJson postResponseJson = (PostResponseJson) responseJson;
+            for (PostResponseJson.Post post: postResponseJson.getPosts()) {
+                MsgLinkGroupResponseJson.LinkGroup msgLinkGroup = new MsgLinkGroupResponseJson.LinkGroup();
+                msgLinkGroup.setTitle(post.getTitle());
+                msgLinkGroup.setDescription(post.getDescription());
+                msgLinkGroup.setPicUrl(post.getPicUrl());
+                msgLinkGroup.setUrl(post.getUrl());
+                linkGroups.add(msgLinkGroup);
+            }
+        } else if (responseJson instanceof LinkGroupResponseJson) {
+            LinkGroupResponseJson linkGroupResponseJson = (LinkGroupResponseJson) responseJson;
+            for (LinkGroupResponseJson.LinkGroup linkGroup: linkGroupResponseJson.getLinkGroups()) {
+                MsgLinkGroupResponseJson.LinkGroup msgLinkGroup = new MsgLinkGroupResponseJson.LinkGroup();
+                msgLinkGroup.setTitle(linkGroup.getTitle());
+                msgLinkGroup.setDescription(linkGroup.getDescription());
+                msgLinkGroup.setUrl(linkGroup.getUrl());
+                msgLinkGroup.setPicUrl(linkGroup.getPicUrl());
+                linkGroups.add(msgLinkGroup);
+            }
         }
-        return customMsg;
+        return msgLinkGroupResponseJson;
     }
 
     @Override

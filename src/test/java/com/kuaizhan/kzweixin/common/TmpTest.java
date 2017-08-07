@@ -1,11 +1,12 @@
 package com.kuaizhan.kzweixin.common;
 
-import com.kuaizhan.kzweixin.entity.wxresponse.NewsResponse;
+import com.kuaizhan.kzweixin.entity.msg.MsgLinkGroupResponseJson;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
-import com.kuaizhan.kzweixin.utils.ReplaceCallbackMatcher;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 
 /**
@@ -18,6 +19,17 @@ public class TmpTest {
 
     @Test
     public void testXml() throws Exception {
+        MsgLinkGroupResponseJson responseJson = new MsgLinkGroupResponseJson();
+        responseJson.setLinkGroups(new ArrayList<>());
+        MsgLinkGroupResponseJson.LinkGroup linkGroup = new MsgLinkGroupResponseJson.LinkGroup();
+        linkGroup.setUrl("url");
+        linkGroup.setPicUrl("pic url");
+        linkGroup.setDescription("descri");
+        linkGroup.setTitle("title");
+        linkGroup.setOldPicUrl("oldPic");
+
+        responseJson.getLinkGroups().add(linkGroup);
+        System.out.println("---->" + JsonUtil.bean2String(responseJson));
     }
 
     @Test

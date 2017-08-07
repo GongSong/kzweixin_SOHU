@@ -8,9 +8,8 @@ import com.kuaizhan.kzweixin.controller.vo.MsgVO;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
-import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
+import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
 import com.kuaizhan.kzweixin.enums.MsgSendType;
-import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.controller.vo.JsonResponse;
 import com.kuaizhan.kzweixin.controller.vo.MsgListVO;
 import com.kuaizhan.kzweixin.controller.param.WeixinAppidParam;
@@ -18,10 +17,10 @@ import com.kuaizhan.kzweixin.controller.param.SendCustomMsgParam;
 import com.kuaizhan.kzweixin.controller.param.UpdateQuickRepliesParam;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.service.AccountService;
+import com.kuaizhan.kzweixin.service.CommonService;
 import com.kuaizhan.kzweixin.service.FanService;
 import com.kuaizhan.kzweixin.service.MsgService;
 
-import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.PojoSwitcher;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +40,8 @@ public class MsgController extends BaseController {
 
     @Resource
     private MsgService msgService;
+    @Resource
+    private CommonService commonService;
     @Resource
     private FanService fanService;
     @Resource
@@ -172,23 +173,13 @@ public class MsgController extends BaseController {
      */
     @RequestMapping(value = "/msg/msgs", method = RequestMethod.POST)
     public JsonResponse insertCustomMsg(@Valid @RequestBody SendCustomMsgParam param) {
-        MsgType msgType = MsgType.fromValue(param.getMsgType());
-        String contentJsonStr = JsonUtil.bean2String(param.getContent());
 
-        CustomMsg customMsg = new CustomMsg();
-        customMsg.setMsgType(msgType);
+        ResponseJson responseJson = commonService.getMsgResponseJsonFromParam(
+                param.getWeixinAppid(),
+                param.getContent(),
+                param.getMsgType());
 
-        if (msgType == MsgType.TEXT) {
-            customMsg.setText(JsonUtil.string2Bean(contentJsonStr, CustomMsg.Text.class));
-        } else if (msgType == MsgType.IMAGE) {
-            customMsg.setImage(JsonUtil.string2Bean(contentJsonStr, CustomMsg.Image.class));
-        } else if (msgType == MsgType.MP_NEWS) {
-            customMsg.setMpNews(JsonUtil.string2Bean(contentJsonStr, CustomMsg.MpNews.class));
-        } else if (msgType == MsgType.LINK_GROUP) {
-            customMsg.setNews(JsonUtil.string2Bean(contentJsonStr, CustomMsg.News.class));
-        }
-
-        msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), customMsg);
+        msgService.sendCustomMsg(param.getWeixinAppid(), param.getOpenId(), param.getMsgType(), responseJson);
         return new JsonResponse(ImmutableMap.of());
     }
 

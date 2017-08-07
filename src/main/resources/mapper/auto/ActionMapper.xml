@@ -220,10 +220,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.kuaizhan.kzweixin.dao.po.auto.ActionPO">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.kuaizhan.kzweixin.dao.po.auto.ActionPO" useGeneratedKeys="true">
     insert into weixin_action (weixin_appid, biz_code, 
       keyword, action_type, 
       response_type, 
@@ -235,10 +232,7 @@
       #{responseJson,jdbcType=VARCHAR}, #{ext,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, 
       #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.kuaizhan.kzweixin.dao.po.auto.ActionPO">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.kuaizhan.kzweixin.dao.po.auto.ActionPO" useGeneratedKeys="true">
     insert into weixin_action
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="weixinAppid != null">

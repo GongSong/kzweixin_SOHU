@@ -2,8 +2,8 @@ package com.kuaizhan.kzweixin.manager;
 
 import com.kuaizhan.kzweixin.config.WxApiConfig;
 import com.kuaizhan.kzweixin.constant.WxErrCode;
-import com.kuaizhan.kzweixin.entity.api.response.AccessTokenResponse;
-import com.kuaizhan.kzweixin.entity.api.response.UserInfoResponse;
+import com.kuaizhan.kzweixin.entity.wx.response.AccessTokenResponse;
+import com.kuaizhan.kzweixin.entity.wx.response.UserInfoResponse;
 import com.kuaizhan.kzweixin.exception.weixin.WxApiException;
 import com.kuaizhan.kzweixin.exception.weixin.WxInvalidCodeException;
 import com.mashape.unirest.http.HttpResponse;

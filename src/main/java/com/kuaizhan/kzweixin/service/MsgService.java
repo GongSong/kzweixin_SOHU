@@ -3,9 +3,8 @@ package com.kuaizhan.kzweixin.service;
 
 import com.kuaizhan.kzweixin.dao.po.auto.MsgPO;
 import com.kuaizhan.kzweixin.entity.common.PageV2;
-import com.kuaizhan.kzweixin.entity.msg.CustomMsg;
-import com.kuaizhan.kzweixin.dao.po.MsgPO_;
-import com.kuaizhan.kzweixin.entity.common.Page;
+import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
+import com.kuaizhan.kzweixin.enums.MsgType;
 
 import java.util.List;
 
@@ -52,10 +51,9 @@ public interface MsgService {
      * 发送客服消息
      * @param weixinAppid 微信appId
      * @param openId 用户openId
-     * @param customMsg 消息数据
-     * @throws IllegalArgumentException 客服消息数据有误
+     * @param responseJson 消息数据
      */
-    void sendCustomMsg(long weixinAppid, String openId, CustomMsg customMsg);
+    void sendCustomMsg(long weixinAppid, String openId, MsgType msgType, ResponseJson responseJson);
 
     /**
      * 获取快站推送token

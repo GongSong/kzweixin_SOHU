@@ -22,6 +22,17 @@
     -->
     <aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/>
 
+    <!--sharding aspect-->
+    <bean class="com.kuaizhan.kzweixin.aspect.ShardingAspect">
+        <property name="shardingMappers" >
+            <set value-type="java.lang.String">
+                <value>com.kuaizhan.kzweixin.dao.mapper.auto.MsgMapper</value>
+                <value>com.kuaizhan.kzweixin.dao.mapper.auto.FanMapper</value>
+                <value>com.kuaizhan.kzweixin.dao.mapper.auto.OpenIdMapper</value>
+            </set>
+        </property>
+    </bean>
+
 
     <!--appConfig 一些配置-->
     <bean id="appConfig" class="com.kuaizhan.kzweixin.config.AppConfig"/>
