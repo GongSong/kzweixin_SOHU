@@ -222,17 +222,11 @@ public class FanServiceImpl implements FanService {
                 .andAppIdEqualTo(accountPO.getAppId())
                 .andOpenIdIn(fansOpenId);
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());
-        List<FanPO> updateFans = fanMapper.selectByExample(example, table);
 
-        for (FanPO fan: updateFans) {
-            if (fan.getInBlacklist() == 0) {
-                FanPO fanPO = new FanPO();
-                fanPO.setFanId(fan.getFanId());
-                fanPO.setInBlacklist(1);
-                fanPO.setUpdateTime(DateUtil.curSeconds());
-                fanMapper.updateByPrimaryKeySelective(fanPO, table);
-            }
-        }
+        FanPO record = new FanPO();
+        record.setInBlacklist(1);
+        record.setUpdateTime(DateUtil.curSeconds());
+        fanMapper.updateByExampleSelective(record, example, table);
     }
 
     @Override
@@ -247,17 +241,11 @@ public class FanServiceImpl implements FanService {
                 .andAppIdEqualTo(accountPO.getAppId())
                 .andOpenIdIn(fansOpenId);
         String table = DBTableUtil.getFanTableName(accountPO.getAppId());
-        List<FanPO> updateFans = fanMapper.selectByExample(example, table);
 
-        for (FanPO fan: updateFans) {
-            if (fan.getInBlacklist() == 1) {
-                FanPO fanPO = new FanPO();
-                fanPO.setFanId(fan.getFanId());
-                fanPO.setInBlacklist(0);
-                fanPO.setUpdateTime(DateUtil.curSeconds());
-                fanMapper.updateByPrimaryKeySelective(fanPO, table);
-            }
-        }
+        FanPO record = new FanPO();
+        record.setInBlacklist(0);
+        record.setUpdateTime(DateUtil.curSeconds());
+        fanMapper.updateByExampleSelective(record, example, table);
     }
 
     @Override
