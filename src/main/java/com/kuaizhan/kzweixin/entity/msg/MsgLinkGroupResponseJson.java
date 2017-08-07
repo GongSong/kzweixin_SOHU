@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.entity.msg;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
@@ -13,6 +14,7 @@ import java.util.List;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MsgLinkGroupResponseJson implements ResponseJson {
 
     private List<LinkGroup> linkGroups;
@@ -23,6 +25,7 @@ public class MsgLinkGroupResponseJson implements ResponseJson {
 
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class LinkGroup {
 
         @NotNull
@@ -57,8 +60,8 @@ public class MsgLinkGroupResponseJson implements ResponseJson {
         for (LinkGroup linkGroup: linkGroups) {
             if (linkGroup.getPicUrl() == null) {
                 linkGroup.setPicUrl(linkGroup.getOldPicUrl());
-                linkGroup.setOldPicUrl(null);
             }
+            linkGroup.setOldPicUrl(null);
         }
     }
 }

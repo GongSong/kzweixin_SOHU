@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LinkGroupResponseJson implements ResponseJson {
 
     private List<LinkGroup> linkGroups;

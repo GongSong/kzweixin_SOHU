@@ -17,8 +17,8 @@
 
 * 页面 无文档  
 * 快文 无文档  
-* 社区 稍后给出  
-* 电商 [获取店铺列表] (http://c.sohuno.com/kuaizhan/kclub/blob/master/docs/shop_apis.md#1)  
+* 社区 [获取社区列表] (http://c.sohuno.com/kuaizhan/kclub/blob/master/docs/interface.md#4-3) 
+* 电商 [获取店铺列表] (http://c.sohuno.com/kuaizhan/kclub/blob/master/docs/shop_apis.md#7-1)  
 * 海报 暂无  
 
 

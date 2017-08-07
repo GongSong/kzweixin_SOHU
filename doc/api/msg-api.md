@@ -36,8 +36,8 @@
     * 返回数据说明
     
         * msgType为TEXT和KEYWORD_TEXT时, content示例 `{"content": "你说什么"}`
-        * msgType为IMAGE时，content示例 `{"pic_url": "http://pic.kuaizhan.com/fdae3fdaf"}`
-        * msgType为LINK_GROUP时, content示例 `{"articles":[{"title":"我是链接组","description":"","picurl":"//pic.kuaizhan.com00x500","url":"http:www.kuaizhan.com/club/apiv1/sites/4142239921/me/notices/jump-to"}]}`
+        * msgType为IMAGE时，content示例 `{"picUrl": "http://pic.kuaizhan.com/fdae3fdaf"}`
+        * msgType为LINK_GROUP时, content示例 `{"linkGroups":[{"title":"我是链接组","description":"","picUrl":"//pic.kuaizhan.com00x500","url":"http:www.kuaizhan.com/club/apiv1/sites/4142239921/me/notices/jump-to"}]}`
         * 其他类型时, content示例 `{"content": "[收到暂不支持的消息类型，请在微信公众平台上查看]"}`
             
    
@@ -111,16 +111,52 @@
 * **方法**： POST
 * **URL**： /v1/msg/msgs
 * **参数**：  
-        * weixinAppid  
-        * openId: 粉丝的openId  
-        * msgType: 消息类型, 可选值为1: 文本消息 2:图片消息 9: 多图文消息 10: 链接组消息   
-        * content: 消息数据    
-        
-            * msgType为1时, content示例 `{"content": "你说什么"}`
-            * msgType为2时，content示例 `{"pic_url": "http://pic.kuaizhan.com/fdae3fdaf"}`
-            * msgType为9时, content示例 `{"posts":[6939030655aa1, 12445342342]}`
-            * msgType为10时, content示例 `{"articles":[{"title":"我是链接组","description":"","picurl":"//pic.kuaizhan.com00x500","url":"http:www.kuaizhan.com/club/apiv1/sites/4142239921/me/notices/jump-to"}]}`
-        
+    * weixinAppid  
+    * openId: 粉丝的openId  
+    * msgType: 消息类型, 可选值为TEXT(文本消息) IMAGE(图片消息) POST(图文消息) LINK_GROUP(链接组消息)
+    * content: 消息数据    
+    
+* **参数说明**：
+    msgType不同，content字段的结构分别如下
+    
+    * msgType为TEXT时
+    
+    ```
+    {
+        "content": "你说什么"
+    }
+    ```
+    
+    * msgType为IMAGE时
+    
+    ```
+    {
+        "picUrl": "http://pic.kuaizhan.com/pz/23fafda132"
+     }
+    ```
+    
+    * msgType为POST时
+    
+    ```
+    {
+       "mediaIds": ["fa23r345fdaf4fad", "fda345fdaf4fda34"] // 图文的mediaId
+    }
+    ```
+    
+    * msgType为LINK_GROUP时
+    
+    ```
+    {
+       "linkGroups": [
+           {
+             "title": "新一轮投票来临",
+             "description": "每天都可以投哦",
+             "picUrl": "http://pic.kuaizhan.com/a1/c3/w3fdadfafda-fdafda", // 封面图
+             "url": "http://vote.kuaizhan.com/df23fdafda3fda"  // 用户点击链接组的跳转链接
+           }
+       ]
+     }
+    ```
         
 * **返回**：
     * 成功时返回:

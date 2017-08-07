@@ -1,5 +1,6 @@
 package com.kuaizhan.kzweixin.controller.vo;
 
+import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
 import com.kuaizhan.kzweixin.enums.MsgSendType;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import lombok.Data;
@@ -17,6 +18,6 @@ public class MsgVO {
     private String nickname;
     private String headImgUrl;
     private String openId;
-    private Map content;
+    private ResponseJson content;
     private Integer createTime;
 }

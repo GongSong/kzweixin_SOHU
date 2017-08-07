@@ -43,8 +43,6 @@ public class MsgServiceImpl implements MsgService {
     @Resource
     private AccountService accountService;
     @Resource
-    private PostService postService;
-    @Resource
     private MsgCache msgCache;
 
     @Override
@@ -93,7 +91,7 @@ public class MsgServiceImpl implements MsgService {
         if (filterKeywords) {
             criteria.andTypeNotEqualTo(MsgType.KEYWORD_TEXT);
         }
-        example.setOrderByClause("create_time desc");
+        example.setOrderByClause("create_time DESC");
 
         List<MsgPO> msgPOS = msgMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, limit));
         long total = msgMapper.countByExample(example);
@@ -110,6 +108,7 @@ public class MsgServiceImpl implements MsgService {
         example.createCriteria()
                 .andAppIdEqualTo(accountPO.getAppId())
                 .andOpenIdEqualTo(openId);
+        example.setOrderByClause("create_time DESC");
 
         List<MsgPO> msgPOS = msgMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, limit));
         long total = msgMapper.countByExample(example);
