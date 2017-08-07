@@ -137,6 +137,7 @@ public class MsgController extends BaseController {
         msgListVO.setTotal(msgPOPage.getTotal());
         msgListVO.setMsgs(msgVOS);
         msgListVO.setLastInteractTime(fanPO.getLastInteractTime());
+        msgListVO.setNickname(fanPO.getNickName());
 
         return new JsonResponse(msgListVO);
     }

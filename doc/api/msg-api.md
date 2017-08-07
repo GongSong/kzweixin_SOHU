@@ -89,6 +89,7 @@
         ```
         {
             "total": 370,
+            "nickname": "王老五", // 聊天者昵称
             "lastInteractTime": 1493005476, // 上次聊天的时间
             "msgs": [
               {

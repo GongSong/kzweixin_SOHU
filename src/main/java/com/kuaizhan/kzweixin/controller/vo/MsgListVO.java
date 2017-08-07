@@ -13,4 +13,5 @@ public class MsgListVO {
     private Long total;
     private List<MsgVO> msgs = new ArrayList<>();
     private Integer lastInteractTime;
+    private String nickname; // 粉丝的
 }
