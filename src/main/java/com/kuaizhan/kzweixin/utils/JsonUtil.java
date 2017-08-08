@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.kzweixin.exception.common.JsonConvertException;
-
+import com.fasterxml.jackson.core.JsonParser.Feature;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +22,7 @@ public class JsonUtil {
      */
     public static <T> List<T> string2List(String jsonStr, Class<?> cls) throws JsonConvertException {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
         JavaType javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, cls);
         try {
             return objectMapper.readValue(jsonStr, javaType);
@@ -50,6 +51,7 @@ public class JsonUtil {
     // TODO: 研究下，string2Bean并不强制返回class的类型
     public static <T> T string2Bean(String jsonStr, Class<?> cls) throws JsonConvertException {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
         try {
             return (T) objectMapper.readValue(jsonStr, cls);
         } catch (IOException e) {

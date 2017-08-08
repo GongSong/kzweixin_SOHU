@@ -89,8 +89,7 @@ public class FanServiceImpl implements FanService {
                 .andStatusEqualTo(1)
                 .andAppIdEqualTo(accountPO.getAppId())
                 .andTagIdsJsonLike("%" + tagId + "%");
-        String table = DBTableUtil.getFanTableName(accountPO.getAppId());
-        List<FanPO> taggedFans = fanMapper.selectByExample(example, table);
+        List<FanPO> taggedFans = fanMapper.selectByExample(example);
 
         //比较并删除粉丝拥有的已被删除的标签，同时更新到数据库
         for (FanPO fan: taggedFans) {
@@ -105,20 +104,19 @@ public class FanServiceImpl implements FanService {
             fanPO.setFanId(fan.getFanId());
             fanPO.setTagIdsJson(JsonUtil.list2Str(tagsList));
             fanPO.setUpdateTime(DateUtil.curSeconds());
-            fanMapper.updateByPrimaryKeySelective(fanPO, table);
+            fanMapper.updateByPrimaryKeySelective(fanPO);
         }
     }
 
     @Override
     public FanPO getFanByOpenId(String appId, String openId) {
-        String table = DBTableUtil.getFanTableName(appId);
         FanPOExample example = new FanPOExample();
         example.createCriteria()
                 .andAppIdEqualTo(appId)
                 .andOpenIdEqualTo(openId)
                 .andStatusEqualTo(1);
 
-        List<FanPO> fanPOList = fanMapper.selectByExample(example, table);
+        List<FanPO> fanPOList = fanMapper.selectByExample(example);
         return fanPOList.isEmpty() ? null : fanPOList.get(0);
     }
 
@@ -141,8 +139,7 @@ public class FanServiceImpl implements FanService {
                 .andStatusEqualTo(1)
                 .andAppIdEqualTo(accountPO.getAppId())
                 .andOpenIdIn(openIds);
-        String table = DBTableUtil.getFanTableName(accountPO.getAppId());
-        List<FanPO> updateFans = fanMapper.selectByExample(example, table);
+        List<FanPO> updateFans = fanMapper.selectByExample(example);
 
         for (FanPO fan: updateFans) {
             Set<Integer> tagSet = new HashSet<>();
@@ -162,7 +159,7 @@ public class FanServiceImpl implements FanService {
             fanPO.setFanId(fan.getFanId());
             fanPO.setTagIdsJson(JsonUtil.list2Str(tagList));
             fanPO.setUpdateTime(DateUtil.curSeconds());
-            fanMapper.updateByPrimaryKeySelective(fanPO, table);
+            fanMapper.updateByPrimaryKeySelective(fanPO);
         }
 
     }
@@ -185,8 +182,7 @@ public class FanServiceImpl implements FanService {
                 .andStatusEqualTo(1)
                 .andAppIdEqualTo(accountPO.getAppId())
                 .andOpenIdIn(openIds);
-        String table = DBTableUtil.getFanTableName(accountPO.getAppId());
-        List<FanPO> updateFans = fanMapper.selectByExample(example, table);
+        List<FanPO> updateFans = fanMapper.selectByExample(example);
 
         for (FanPO fan: updateFans) {
             List<Integer> tagsList = JsonUtil.string2List(fan.getTagIdsJson(), Integer.class);
@@ -205,7 +201,7 @@ public class FanServiceImpl implements FanService {
             fanPO.setFanId(fan.getFanId());
             fanPO.setTagIdsJson(JsonUtil.list2Str(tagsList));
             fanPO.setUpdateTime(DateUtil.curSeconds());
-            fanMapper.updateByPrimaryKeySelective(fanPO, table);
+            fanMapper.updateByPrimaryKeySelective(fanPO);
         }
 
     }
@@ -221,12 +217,11 @@ public class FanServiceImpl implements FanService {
                 .andStatusEqualTo(1)
                 .andAppIdEqualTo(accountPO.getAppId())
                 .andOpenIdIn(fansOpenId);
-        String table = DBTableUtil.getFanTableName(accountPO.getAppId());
 
         FanPO record = new FanPO();
         record.setInBlacklist(1);
         record.setUpdateTime(DateUtil.curSeconds());
-        fanMapper.updateByExampleSelective(record, example, table);
+        fanMapper.updateByExampleSelective(record, example);
     }
 
     @Override
@@ -240,12 +235,11 @@ public class FanServiceImpl implements FanService {
                 .andStatusEqualTo(1)
                 .andAppIdEqualTo(accountPO.getAppId())
                 .andOpenIdIn(fansOpenId);
-        String table = DBTableUtil.getFanTableName(accountPO.getAppId());
 
         FanPO record = new FanPO();
         record.setInBlacklist(0);
         record.setUpdateTime(DateUtil.curSeconds());
-        fanMapper.updateByExampleSelective(record, example, table);
+        fanMapper.updateByExampleSelective(record, example);
     }
 
     @Override
@@ -297,9 +291,7 @@ public class FanServiceImpl implements FanService {
         example.createCriteria()
                 .andAppIdEqualTo(appId)
                 .andOpenIdEqualTo(openId);
-
-        String table = DBTableUtil.getOpenIdTableName(appId);
-        List<OpenIdPO> updateFans = openIdMapper.selectByExample(example, table);
+        List<OpenIdPO> updateFans = openIdMapper.selectByExample(example);
 
         // 新建
         if (updateFans.size() == 0) {
@@ -309,14 +301,14 @@ public class FanServiceImpl implements FanService {
             newUserPO.setStatus(1);
             newUserPO.setCreateTime(DateUtil.curSeconds());
             newUserPO.setUpdateTime(DateUtil.curSeconds());
-            openIdMapper.insertSelective(newUserPO, table);
+            openIdMapper.insertSelective(newUserPO);
         // 已存在，修改
         } else {
             OpenIdPO oldUserPO = new OpenIdPO();
             oldUserPO.setId(updateFans.get(0).getId());
             oldUserPO.setStatus(1);
             oldUserPO.setUpdateTime(DateUtil.curSeconds());
-            openIdMapper.updateByPrimaryKeySelective(oldUserPO, table);
+            openIdMapper.updateByPrimaryKeySelective(oldUserPO);
         }
     }
 
@@ -362,8 +354,7 @@ public class FanServiceImpl implements FanService {
         example.createCriteria()
                 .andAppIdEqualTo(appId)
                 .andOpenIdEqualTo(openId);
-        String table = DBTableUtil.getFanTableName(appId);
-        List<FanPO> fanPOList = fanMapper.selectByExample(example, table);
+        List<FanPO> fanPOList = fanMapper.selectByExample(example);
 
         //自定义部分
         fanPO.setUpdateTime(DateUtil.curSeconds());
@@ -372,10 +363,10 @@ public class FanServiceImpl implements FanService {
 
         if (fanPOList.size() != 0) {
             fanPO.setFanId(fanPOList.get(0).getFanId());
-            fanMapper.updateByPrimaryKeySelective(fanPO, table);
+            fanMapper.updateByPrimaryKeySelective(fanPO);
         } else {
             fanPO.setCreateTime(DateUtil.curSeconds());
-            fanMapper.insertSelective(fanPO, table);
+            fanMapper.insertSelective(fanPO);
         }
     }
 
@@ -390,9 +381,7 @@ public class FanServiceImpl implements FanService {
                 .andAppIdEqualTo(appId)
                 .andOpenIdEqualTo(openId)
                 .andStatusEqualTo(1);
-
-        String table = DBTableUtil.getOpenIdTableName(appId);
-        openIdMapper.updateByExampleSelective(record, example, table);
+        openIdMapper.updateByExampleSelective(record, example);
 
         fanCache.deleteFan(appId, openId);
     }
@@ -408,8 +397,7 @@ public class FanServiceImpl implements FanService {
                 .andAppIdEqualTo(appId)
                 .andOpenIdEqualTo(openId)
                 .andStatusEqualTo(1);
-        String table = DBTableUtil.getFanTableName(appId);
-        fanMapper.updateByExampleSelective(record, example, table);
+        fanMapper.updateByExampleSelective(record, example);
 
         fanCache.deleteFan(appId, openId);
     }
@@ -427,8 +415,7 @@ public class FanServiceImpl implements FanService {
                 .andAppIdEqualTo(appId)
                 .andOpenIdEqualTo(openId)
                 .andStatusEqualTo(1);
-        String table = DBTableUtil.getOpenIdTableName(appId);
-        List<OpenIdPO> openIdPOS = openIdMapper.selectByExample(example, table);
+        List<OpenIdPO> openIdPOS = openIdMapper.selectByExample(example);
 
         // 未关注
         if (openIdPOS.size() == 0) {
@@ -478,7 +465,6 @@ public class FanServiceImpl implements FanService {
                 .andAppIdEqualTo(appId)
                 .andOpenIdEqualTo(openId)
                 .andStatusEqualTo(1);
-        String table = DBTableUtil.getFanTableName(appId);
-        fanMapper.updateByExampleSelective(record, example, table);
+        fanMapper.updateByExampleSelective(record, example);
     }
 }

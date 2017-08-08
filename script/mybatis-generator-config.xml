@@ -70,9 +70,9 @@
                                 <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.MsgSendTypeHandler" />-->
             <!--</table>-->
 
-            <!--<table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">-->
-                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
-            <!--</table>-->
+            <table tableName="weixin_open_ids_0" domainObjectName="OpenIdPO" mapperName="OpenIdMapper">
+                <columnOverride column="status" javaType="java.lang.Integer"/>
+            </table>
 
             <!--<table tableName="weixin_action" domainObjectName="ActionPO" mapperName="ActionMapper">-->
                 <!--<generatedKey column="id" sqlStatement="JDBC" />-->
@@ -84,11 +84,11 @@
                                 <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.BizCodeTypeHandler" />-->
             <!--</table>-->
 
-            <!--<table tableName="weixin_fans_0" domainObjectName="FanPO" mapperName="FanMapper">-->
-                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
-                <!--<columnOverride column="sex" javaType="java.lang.Integer"/>-->
-                <!--<columnOverride column="in_blacklist" javaType="java.lang.Integer"/>-->
-            <!--</table>-->
+            <table tableName="weixin_fans_0" domainObjectName="FanPO" mapperName="FanMapper">
+                <columnOverride column="status" javaType="java.lang.Integer"/>
+                <columnOverride column="sex" javaType="java.lang.Integer"/>
+                <columnOverride column="in_blacklist" javaType="java.lang.Integer"/>
+            </table>
 
             <!--<table tableName="weixin_guide_follow" domainObjectName="GuideFollowPostPO" mapperName="GuideFollowPostMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
@@ -96,6 +96,28 @@
 
             <!--<table tableName="weixin_tpl_msg" domainObjectName="TplMsgPO" mapperName="TplMsgMapper">-->
                 <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
+
+            <!--<table tableName="weixin_keywords" domainObjectName="KeywordReplyPO" mapperName="KeywordReplyMapper">-->
+                <!--<generatedKey column="rule_id" sqlStatement="MySql" identity="true" />-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="keywords_json" jdbcType="VARCHAR" />-->
+                <!--<columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ComponentResponseType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />-->
+            <!--</table>-->
+
+            <!--<table tableName="weixin_follow" domainObjectName="FollowReplyPO" mapperName="FollowReplyMapper">-->
+                <!--<generatedKey column="id" sqlStatement="MySql" identity="true" />-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ComponentResponseType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />-->
+            <!--</table>-->
+
+            <!--<table tableName="weixin_auto_reply" domainObjectName="MsgReplyPO" mapperName="MsgReplyMapper">-->
+                <!--<generatedKey column="id" sqlStatement="MySql" identity="true" />-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="response_type" javaType="com.kuaizhan.kzweixin.enums.ComponentResponseType"-->
+                                <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />-->
             <!--</table>-->
 
         </context>
