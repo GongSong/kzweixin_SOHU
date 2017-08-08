@@ -50,12 +50,14 @@ public interface AutoReplyService {
 
     /**
      * 创建/更新被关注自动回复
+     * @return 新增/更新自动回复Id
      * */
     int createFollowReply(long weixinAppid, ComponentResponseType responseType,
                              ResponseJson responseJson);
 
     /**
      * 获取被关注自动回复内容
+     * @return 自动回复内容PO对象
      * */
     FollowReplyPO getFollowReply(long weixinAppid);
 
@@ -66,12 +68,14 @@ public interface AutoReplyService {
 
     /**
      * 创建/更新消息自动回复
+     * @return 新增/更新自动回复Id
      * */
     int createMsgReply(long weixinAppid, ComponentResponseType responseType,
                         ResponseJson responseJson);
 
     /**
      * 获取消息自动回复内容
+     * @return 自动回复内容PO对象
      * */
     MsgReplyPO getMsgReply(long weixinAppid);
 
@@ -79,4 +83,22 @@ public interface AutoReplyService {
      * 删除消息自动回复
      * */
     void deleteMsgReply(long weixinAppid);
+
+    /**
+     * 提供关键词自动回复回调接口
+     * @return 自动回复消息内容ResponseJson
+     * */
+    ResponseJson getKeywordReplyService(String keyword, long weixinAppid);
+
+    /**
+     * 提供被关注自动回复回调接口
+     * @return 自动回复消息内容ResponseJson
+     * */
+    ResponseJson getFollowReplyService(long weixinAppid);
+
+    /**
+     * 提供消息自动回复回调接口
+     * @return 自动回复消息内容ResponseJson
+     * */
+    ResponseJson getMsgReplyService(long weixinAppid);
 }
