@@ -19,7 +19,6 @@ import com.kuaizhan.kzweixin.dao.mapper.auto.MsgReplyMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,16 +66,14 @@ public class AutoReplyServiceImpl implements AutoReplyService {
 
         criteria.andWeixinAppidEqualTo(weixinAppid)
                 .andStatusEqualTo(1);
-        example.setOrderByClause("update_time");
+        example.setOrderByClause("update_time DESC");
 
         if (query != null && !"".equals(query)) {
             criteria.andRuleNameLike(query)
                     .andKeywordsJsonLike(query);
         }
-        List<KeywordReplyPO> keywordReplyPOList = keywordReplyMapper.selectByExampleWithBLOBs(example);
-        Collections.reverse(keywordReplyPOList);
 
-        return keywordReplyPOList;
+        return keywordReplyMapper.selectByExampleWithBLOBs(example);
     }
 
     @Override
@@ -145,9 +142,10 @@ public class AutoReplyServiceImpl implements AutoReplyService {
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andStatusEqualTo(0);
-        example.setOrderByClause("update_time");
+        example.setOrderByClause("update_time DESC");
+
         List<FollowReplyPO> followPOList =  followReplyMapper.selectByExampleWithBLOBs(example);
-        return followPOList == null || followPOList.size() == 0 ? null : followPOList.get(0);
+        return followPOList.size() == 0 ? null : followPOList.get(0);
     }
 
     @Override
@@ -192,9 +190,10 @@ public class AutoReplyServiceImpl implements AutoReplyService {
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andStatusEqualTo(0);
-        example.setOrderByClause("update_time");
+        example.setOrderByClause("update_time DESC");
+
         List<MsgReplyPO> msgReplyPOList = msgReplyMapper.selectByExampleWithBLOBs(example);
-        return msgReplyPOList == null || msgReplyPOList.size() == 0 ? null : msgReplyPOList.get(0);
+        return msgReplyPOList.size() == 0 ? null : msgReplyPOList.get(0);
     }
 
     @Override
@@ -209,17 +208,16 @@ public class AutoReplyServiceImpl implements AutoReplyService {
         msgReplyMapper.updateByExampleSelective(record, example);
     }
 
-    public ResponseJson getKeywordReplyService(String keyword, long weixinAppid) {
+    public ResponseJson getKeywordResponse(String keyword, long weixinAppid) {
         KeywordReplyPOExample example = new KeywordReplyPOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andStatusEqualTo(1);
-        example.setOrderByClause("update_time");
+        example.setOrderByClause("update_time DESC");
 
         List<KeywordReplyPO> keywordReplyPOList = keywordReplyMapper.selectByExampleWithBLOBs(example);
 
-        for (int i = keywordReplyPOList.size() - 1; i >= 0; i--) {
-            KeywordReplyPO currPO = keywordReplyPOList.get(i);
+        for (KeywordReplyPO currPO: keywordReplyPOList) {
             Map<String, String> keywordMap = JsonUtil.string2Bean(currPO.getKeywordsJson(), Map.class);
             if (keywordMap.containsKey(keyword)) {
                 return commonService.getResponseJsonFromDB(currPO.getResponseJson(), currPO.getResponseType());
@@ -234,11 +232,12 @@ public class AutoReplyServiceImpl implements AutoReplyService {
         return null;
     }
 
-    public ResponseJson getFollowReplyService(long weixinAppid) {
+    public ResponseJson getFollowResponse(long weixinAppid) {
         FollowReplyPOExample example = new FollowReplyPOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andStatusEqualTo(0);
+        example.setOrderByClause("update_time DESC");
 
         List<FollowReplyPO> followReplyPOList = followReplyMapper.selectByExampleWithBLOBs(example);
 
@@ -249,11 +248,12 @@ public class AutoReplyServiceImpl implements AutoReplyService {
         return commonService.getResponseJsonFromDB(followReplyPO.getResponseJson(), followReplyPO.getResponseType());
     }
 
-    public ResponseJson getMsgReplyService(long weixinAppid) {
+    public ResponseJson getMsgResponse(long weixinAppid) {
         MsgReplyPOExample example = new MsgReplyPOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid)
                 .andStatusEqualTo(0);
+        example.setOrderByClause("update_time DESC");
 
         List<MsgReplyPO> msgReplyPOList = msgReplyMapper.selectByExampleWithBLOBs(example);
 

@@ -88,17 +88,17 @@ public interface AutoReplyService {
      * 提供关键词自动回复回调接口
      * @return 自动回复消息内容ResponseJson
      * */
-    ResponseJson getKeywordReplyService(String keyword, long weixinAppid);
+    ResponseJson getKeywordResponse(String keyword, long weixinAppid);
 
     /**
      * 提供被关注自动回复回调接口
      * @return 自动回复消息内容ResponseJson
      * */
-    ResponseJson getFollowReplyService(long weixinAppid);
+    ResponseJson getFollowResponse(long weixinAppid);
 
     /**
      * 提供消息自动回复回调接口
      * @return 自动回复消息内容ResponseJson
      * */
-    ResponseJson getMsgReplyService(long weixinAppid);
+    ResponseJson getMsgResponse(long weixinAppid);
 }
