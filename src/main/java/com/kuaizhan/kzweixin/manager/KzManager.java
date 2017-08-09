@@ -3,6 +3,7 @@ package com.kuaizhan.kzweixin.manager;
 import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.config.ApplicationConfig;
 import com.kuaizhan.kzweixin.config.KzApiConfig;
+import com.kuaizhan.kzweixin.entity.http.response.KzCallbackResponse;
 import com.kuaizhan.kzweixin.exception.kuaizhan.Export2KzException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.GetKzArticleException;
 import com.kuaizhan.kzweixin.exception.kuaizhan.KZPicUploadException;
@@ -189,29 +190,25 @@ public class KzManager {
      * @return php处理的结果
      */
     public static String kzResponseMsg(String appId, String timestamp, String nonce, String xmlStr) {
-        Map<String, Object> param =  new HashMap<>();
-        param.put("app_id", appId);
-        param.put("timestamp", timestamp);
-        param.put("nonce", nonce);
-        param.put("post_str", xmlStr);
 
-        Map<String, String> header = ImmutableMap.of("Host", ApplicationConfig.KZ_SERVICE_HOST);
-
-        String result = HttpClientUtil.post(KzApiConfig.KZ_OLD_WX_CALLBACK, param, header);
-        if (result == null) {
-            throw new KzApiException("[Kz:responseMsg] result is null");
-        }
-
-        JSONObject resultJson;
+        HttpResponse<KzCallbackResponse> httpResponse;
         try {
-            resultJson = new JSONObject(result);
-        } catch (JSONException e) {
-            throw new KzApiException("[Kz:responseMsg] Json Parse Error, result:" + result + " param: " + param, e);
+            httpResponse = Unirest.post(KzApiConfig.KZ_OLD_WX_CALLBACK)
+                    .header("Host", ApplicationConfig.KZ_SERVICE_HOST)
+                    .field("app_id", appId)
+                    .field("timestamp", timestamp)
+                    .field("nonce", nonce)
+                    .field("post_str", xmlStr)
+                    .asObject(KzCallbackResponse.class);
+        } catch (UnirestException e) {
+            throw new KzApiException("[Kz:responseMsg] Unrest failed", e);
         }
-        if (resultJson.optInt("ret") != 0) {
-            throw new KzApiException("[Kz:responseMsg] unexpected result, result:" + result + " param: " + param);
+
+        KzCallbackResponse response = httpResponse.getBody();
+        if (httpResponse.getStatus() != 200 || response.getRet() != 0) {
+            throw new KzApiException("[Kz:responseMsg]  unexpected result:" + httpResponse.getRawBody() + " xmlStr: " + xmlStr);
         }
-        return resultJson.getString("result");
+        return response.getResult();
     }
 
     /**

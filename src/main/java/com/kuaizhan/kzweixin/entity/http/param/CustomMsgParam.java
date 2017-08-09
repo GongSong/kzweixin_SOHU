@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.entity.wx.param;
+package com.kuaizhan.kzweixin.entity.http.param;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

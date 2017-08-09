@@ -1,7 +1,12 @@
 package com.kuaizhan.kzweixin.common;
 
+import com.kuaizhan.kzweixin.config.AppConfig;
+import com.kuaizhan.kzweixin.entity.http.response.KzCallbackResponse;
 import com.kuaizhan.kzweixin.entity.msg.MsgLinkGroupResponseJson;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,5 +39,18 @@ public class TmpTest {
 
     @Test
     public void testInt() throws Exception {
+        AppConfig appConfig = new AppConfig();
+        appConfig.init();
+        HttpResponse<KzCallbackResponse> httpResponse;
+        try {
+            httpResponse = Unirest.get("http://localhost:8080/public/v1/test").asObject(KzCallbackResponse.class);
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        KzCallbackResponse response = httpResponse.getBody();
+        System.out.println("---->" + httpResponse.getStatus());
+        System.out.println("---->" + httpResponse.getRawBody());
+        System.out.println("---->" + response.getResult());
     }
 }

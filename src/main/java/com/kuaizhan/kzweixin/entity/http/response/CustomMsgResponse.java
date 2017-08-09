@@ -1,4 +1,4 @@
-package com.kuaizhan.kzweixin.entity.wx.response;
+package com.kuaizhan.kzweixin.entity.http.response;
 
 import lombok.Data;
 
