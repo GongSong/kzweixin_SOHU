@@ -22,8 +22,8 @@ public interface AutoReplyService {
      * @param responseJson 自动回复消息内容
      * @return 规则Id
      * */
-    long createKeywordRule(long weixinAppid, String ruleName, List<KeywordItem> keywords,
-                   ComponentResponseType responseType, ResponseJson responseJson);
+    long addKeywordRule(long weixinAppid, String ruleName, List<KeywordItem> keywords,
+                        ComponentResponseType responseType, ResponseJson responseJson);
 
     /**
      * 获取规则列表
@@ -46,14 +46,14 @@ public interface AutoReplyService {
     /**
      * 删除规则
      * */
-    void deleteKeywordRule(long ruleId);
+    void delKeywordRule(long ruleId);
 
     /**
      * 创建/更新被关注自动回复
      * @return 新增/更新自动回复Id
      * */
-    int createFollowReply(long weixinAppid, ComponentResponseType responseType,
-                             ResponseJson responseJson);
+    int addFollowReply(long weixinAppid, ComponentResponseType responseType,
+                       ResponseJson responseJson);
 
     /**
      * 获取被关注自动回复内容
@@ -64,14 +64,14 @@ public interface AutoReplyService {
     /**
      * 删除被关注自动回复
      * */
-    void deleteFollowReply(long weixinAppid);
+    void delFollowReply(long weixinAppid);
 
     /**
      * 创建/更新消息自动回复
      * @return 新增/更新自动回复Id
      * */
-    int createMsgReply(long weixinAppid, ComponentResponseType responseType,
-                        ResponseJson responseJson);
+    int addMsgReply(long weixinAppid, ComponentResponseType responseType,
+                    ResponseJson responseJson);
 
     /**
      * 获取消息自动回复内容
@@ -82,7 +82,7 @@ public interface AutoReplyService {
     /**
      * 删除消息自动回复
      * */
-    void deleteMsgReply(long weixinAppid);
+    void delMsgReply(long weixinAppid);
 
     /**
      * 提供关键词自动回复回调接口

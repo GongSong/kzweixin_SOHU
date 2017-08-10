@@ -39,10 +39,10 @@ public class AutoReplyController extends BaseController {
      * 创建新规则
      */
     @RequestMapping(value = "/autoreply/keyword_replies", method = RequestMethod.POST)
-    public JsonResponse createKeywordRule(@Valid @RequestBody KeywordReplyRuleParam param) {
+    public JsonResponse addKeywordRule(@Valid @RequestBody KeywordReplyRuleParam param) {
         ResponseJson responseJson = commonService.getResponseJsonFromParam(param.getWeixinAppid(),
                 param.getResponseJson(), param.getResponseType());
-        long ruleId = autoReplyService.createKeywordRule(param.getWeixinAppid(), param.getRuleName(),
+        long ruleId = autoReplyService.addKeywordRule(param.getWeixinAppid(), param.getRuleName(),
                 param.getKeywords(), param.getResponseType(), responseJson);
         return new JsonResponse(ImmutableMap.of("ruleId", ruleId, "ruleName", param.getRuleName()));
     }
@@ -95,8 +95,8 @@ public class AutoReplyController extends BaseController {
      * 删除规则
      * */
     @RequestMapping(value = "/autoreply/keyword_replies/{ruleId}", method = RequestMethod.DELETE)
-    public JsonResponse deleteKeywordRule(@PathVariable("ruleId") long ruleId, @RequestParam long weixinAppid) {
-        autoReplyService.deleteKeywordRule(ruleId);
+    public JsonResponse delKeywordRule(@PathVariable("ruleId") long ruleId, @RequestParam long weixinAppid) {
+        autoReplyService.delKeywordRule(ruleId);
         return new JsonResponse(ImmutableMap.of());
     }
 
@@ -104,10 +104,10 @@ public class AutoReplyController extends BaseController {
      * 创建/更新被关注自动回复
      * */
     @RequestMapping(value = "/autoreply/follow_reply", method = RequestMethod.PUT)
-    public JsonResponse createFollowReply(@Valid @RequestBody AutoReplySubscribeParam param) {
+    public JsonResponse addFollowReply(@Valid @RequestBody AutoReplySubscribeParam param) {
         ResponseJson responseJson = commonService.getResponseJsonFromParam(param.getWeixinAppid(),
                 param.getResponseJson(), param.getResponseType());
-        int followReplyId = autoReplyService.createFollowReply(param.getWeixinAppid(), param.getResponseType(), responseJson);
+        int followReplyId = autoReplyService.addFollowReply(param.getWeixinAppid(), param.getResponseType(), responseJson);
         return new JsonResponse(ImmutableMap.of("followReplyId", followReplyId));
     }
 
@@ -135,8 +135,8 @@ public class AutoReplyController extends BaseController {
      * 删除被关注自动回复
      * */
     @RequestMapping(value = "/autoreply/follow_reply", method = RequestMethod.DELETE)
-    public JsonResponse deleteFollowReply(@RequestParam long weixinAppid) {
-        autoReplyService.deleteFollowReply(weixinAppid);
+    public JsonResponse delFollowReply(@RequestParam long weixinAppid) {
+        autoReplyService.delFollowReply(weixinAppid);
         return new JsonResponse(ImmutableMap.of());
     }
 
@@ -144,10 +144,10 @@ public class AutoReplyController extends BaseController {
      * 创建/更新消息自动回复
      * */
     @RequestMapping(value = "/autoreply/msg_reply", method = RequestMethod.PUT)
-    public JsonResponse createMsgReply(@Valid @RequestBody AutoReplySubscribeParam param) {
+    public JsonResponse addMsgReply(@Valid @RequestBody AutoReplySubscribeParam param) {
         ResponseJson responseJson = commonService.getResponseJsonFromParam(param.getWeixinAppid(),
                 param.getResponseJson(), param.getResponseType());
-        int msgReplyId = autoReplyService.createMsgReply(param.getWeixinAppid(), param.getResponseType(), responseJson);
+        int msgReplyId = autoReplyService.addMsgReply(param.getWeixinAppid(), param.getResponseType(), responseJson);
         return new JsonResponse(ImmutableMap.of("msgReplyId", msgReplyId));
     }
 
@@ -175,8 +175,8 @@ public class AutoReplyController extends BaseController {
      * 删除消息自动回复
      * */
     @RequestMapping(value = "/autoreply/msg_reply", method = RequestMethod.DELETE)
-    public JsonResponse deleteMsgReply(@RequestParam long weixinAppid) {
-        autoReplyService.deleteMsgReply(weixinAppid);
+    public JsonResponse delMsgReply(@RequestParam long weixinAppid) {
+        autoReplyService.delMsgReply(weixinAppid);
         return new JsonResponse(ImmutableMap.of());
     }
 }
