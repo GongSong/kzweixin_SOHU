@@ -14,8 +14,8 @@ public enum MsgType implements BaseEnum {
     POST(9),
     LINK_GROUP(10),
     KEYWORD_TEXT(12),
-    TPL_MSG(15);
-
+    TPL_MSG(15),
+    RESERVE(99);
     private int code;
 
     MsgType(int code) {

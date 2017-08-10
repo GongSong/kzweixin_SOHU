@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kuaizhan.kzweixin.dao.mapper.auto.CustomMassMapper">
+  <resultMap id="BaseResultMap" type="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO">
+    <id column="custom_mass_id" jdbcType="BIGINT" property="customMassId" />
+    <result column="weixin_appid" jdbcType="BIGINT" property="weixinAppid" />
+    <result column="tag_id" jdbcType="INTEGER" property="tagId" />
+    <result column="msg_type" jdbcType="TINYINT" property="msgType" />
+    <result column="total_count" jdbcType="INTEGER" property="totalCount" />
+    <result column="success_count" jdbcType="INTEGER" property="successCount" />
+    <result column="reject_fail_count" jdbcType="INTEGER" property="rejectFailCount" />
+    <result column="other_fail_count" jdbcType="INTEGER" property="otherFailCount" />
+    <result column="is_timing" jdbcType="BIT" property="isTiming" />
+    <result column="publish_time" jdbcType="INTEGER" property="publishTime" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="create_time" jdbcType="INTEGER" property="createTime" />
+    <result column="update_time" jdbcType="INTEGER" property="updateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO">
+    <result column="msg_json" jdbcType="LONGVARCHAR" property="msgJson" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    custom_mass_id, weixin_appid, tag_id, msg_type, total_count, success_count, reject_fail_count, 
+    other_fail_count, is_timing, publish_time, status, create_time, update_time
+  </sql>
+  <sql id="Blob_Column_List">
+    msg_json
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPOExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from weixin_custom_mass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from weixin_custom_mass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from weixin_custom_mass
+    where custom_mass_id = #{customMassId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from weixin_custom_mass
+    where custom_mass_id = #{customMassId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPOExample">
+    delete from weixin_custom_mass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO">
+    insert into weixin_custom_mass (custom_mass_id, weixin_appid, tag_id, 
+      msg_type, total_count, success_count, 
+      reject_fail_count, other_fail_count, is_timing, 
+      publish_time, status, create_time, 
+      update_time, msg_json)
+    values (#{customMassId,jdbcType=BIGINT}, #{weixinAppid,jdbcType=BIGINT}, #{tagId,jdbcType=INTEGER}, 
+      #{msgType,jdbcType=TINYINT}, #{totalCount,jdbcType=INTEGER}, #{successCount,jdbcType=INTEGER}, 
+      #{rejectFailCount,jdbcType=INTEGER}, #{otherFailCount,jdbcType=INTEGER}, #{isTiming,jdbcType=BIT}, 
+      #{publishTime,jdbcType=INTEGER}, #{status,jdbcType=BIT}, #{createTime,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=INTEGER}, #{msgJson,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO">
+    insert into weixin_custom_mass
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="customMassId != null">
+        custom_mass_id,
+      </if>
+      <if test="weixinAppid != null">
+        weixin_appid,
+      </if>
+      <if test="tagId != null">
+        tag_id,
+      </if>
+      <if test="msgType != null">
+        msg_type,
+      </if>
+      <if test="totalCount != null">
+        total_count,
+      </if>
+      <if test="successCount != null">
+        success_count,
+      </if>
+      <if test="rejectFailCount != null">
+        reject_fail_count,
+      </if>
+      <if test="otherFailCount != null">
+        other_fail_count,
+      </if>
+      <if test="isTiming != null">
+        is_timing,
+      </if>
+      <if test="publishTime != null">
+        publish_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="msgJson != null">
+        msg_json,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="customMassId != null">
+        #{customMassId,jdbcType=BIGINT},
+      </if>
+      <if test="weixinAppid != null">
+        #{weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="tagId != null">
+        #{tagId,jdbcType=INTEGER},
+      </if>
+      <if test="msgType != null">
+        #{msgType,jdbcType=TINYINT},
+      </if>
+      <if test="totalCount != null">
+        #{totalCount,jdbcType=INTEGER},
+      </if>
+      <if test="successCount != null">
+        #{successCount,jdbcType=INTEGER},
+      </if>
+      <if test="rejectFailCount != null">
+        #{rejectFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="otherFailCount != null">
+        #{otherFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="isTiming != null">
+        #{isTiming,jdbcType=BIT},
+      </if>
+      <if test="publishTime != null">
+        #{publishTime,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="msgJson != null">
+        #{msgJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPOExample" resultType="java.lang.Long">
+    select count(*) from weixin_custom_mass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update weixin_custom_mass
+    <set>
+      <if test="record.customMassId != null">
+        custom_mass_id = #{record.customMassId,jdbcType=BIGINT},
+      </if>
+      <if test="record.weixinAppid != null">
+        weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="record.tagId != null">
+        tag_id = #{record.tagId,jdbcType=INTEGER},
+      </if>
+      <if test="record.msgType != null">
+        msg_type = #{record.msgType,jdbcType=TINYINT},
+      </if>
+      <if test="record.totalCount != null">
+        total_count = #{record.totalCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.successCount != null">
+        success_count = #{record.successCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.rejectFailCount != null">
+        reject_fail_count = #{record.rejectFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.otherFailCount != null">
+        other_fail_count = #{record.otherFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.isTiming != null">
+        is_timing = #{record.isTiming,jdbcType=BIT},
+      </if>
+      <if test="record.publishTime != null">
+        publish_time = #{record.publishTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.msgJson != null">
+        msg_json = #{record.msgJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update weixin_custom_mass
+    set custom_mass_id = #{record.customMassId,jdbcType=BIGINT},
+      weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
+      tag_id = #{record.tagId,jdbcType=INTEGER},
+      msg_type = #{record.msgType,jdbcType=TINYINT},
+      total_count = #{record.totalCount,jdbcType=INTEGER},
+      success_count = #{record.successCount,jdbcType=INTEGER},
+      reject_fail_count = #{record.rejectFailCount,jdbcType=INTEGER},
+      other_fail_count = #{record.otherFailCount,jdbcType=INTEGER},
+      is_timing = #{record.isTiming,jdbcType=BIT},
+      publish_time = #{record.publishTime,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=INTEGER},
+      msg_json = #{record.msgJson,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update weixin_custom_mass
+    set custom_mass_id = #{record.customMassId,jdbcType=BIGINT},
+      weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
+      tag_id = #{record.tagId,jdbcType=INTEGER},
+      msg_type = #{record.msgType,jdbcType=TINYINT},
+      total_count = #{record.totalCount,jdbcType=INTEGER},
+      success_count = #{record.successCount,jdbcType=INTEGER},
+      reject_fail_count = #{record.rejectFailCount,jdbcType=INTEGER},
+      other_fail_count = #{record.otherFailCount,jdbcType=INTEGER},
+      is_timing = #{record.isTiming,jdbcType=BIT},
+      publish_time = #{record.publishTime,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO">
+    update weixin_custom_mass
+    <set>
+      <if test="weixinAppid != null">
+        weixin_appid = #{weixinAppid,jdbcType=BIGINT},
+      </if>
+      <if test="tagId != null">
+        tag_id = #{tagId,jdbcType=INTEGER},
+      </if>
+      <if test="msgType != null">
+        msg_type = #{msgType,jdbcType=TINYINT},
+      </if>
+      <if test="totalCount != null">
+        total_count = #{totalCount,jdbcType=INTEGER},
+      </if>
+      <if test="successCount != null">
+        success_count = #{successCount,jdbcType=INTEGER},
+      </if>
+      <if test="rejectFailCount != null">
+        reject_fail_count = #{rejectFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="otherFailCount != null">
+        other_fail_count = #{otherFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="isTiming != null">
+        is_timing = #{isTiming,jdbcType=BIT},
+      </if>
+      <if test="publishTime != null">
+        publish_time = #{publishTime,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=INTEGER},
+      </if>
+      <if test="msgJson != null">
+        msg_json = #{msgJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where custom_mass_id = #{customMassId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO">
+    update weixin_custom_mass
+    set weixin_appid = #{weixinAppid,jdbcType=BIGINT},
+      tag_id = #{tagId,jdbcType=INTEGER},
+      msg_type = #{msgType,jdbcType=TINYINT},
+      total_count = #{totalCount,jdbcType=INTEGER},
+      success_count = #{successCount,jdbcType=INTEGER},
+      reject_fail_count = #{rejectFailCount,jdbcType=INTEGER},
+      other_fail_count = #{otherFailCount,jdbcType=INTEGER},
+      is_timing = #{isTiming,jdbcType=BIT},
+      publish_time = #{publishTime,jdbcType=INTEGER},
+      status = #{status,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=INTEGER},
+      msg_json = #{msgJson,jdbcType=LONGVARCHAR}
+    where custom_mass_id = #{customMassId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO">
+    update weixin_custom_mass
+    set weixin_appid = #{weixinAppid,jdbcType=BIGINT},
+      tag_id = #{tagId,jdbcType=INTEGER},
+      msg_type = #{msgType,jdbcType=TINYINT},
+      total_count = #{totalCount,jdbcType=INTEGER},
+      success_count = #{successCount,jdbcType=INTEGER},
+      reject_fail_count = #{rejectFailCount,jdbcType=INTEGER},
+      other_fail_count = #{otherFailCount,jdbcType=INTEGER},
+      is_timing = #{isTiming,jdbcType=BIT},
+      publish_time = #{publishTime,jdbcType=INTEGER},
+      status = #{status,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=INTEGER}
+    where custom_mass_id = #{customMassId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithBLOBsWithRowbounds" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPOExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from weixin_custom_mass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExampleWithRowbounds" parameterType="com.kuaizhan.kzweixin.dao.po.auto.CustomMassPOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from weixin_custom_mass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

@@ -27,4 +27,24 @@ public class PostPO {
     private Integer createTime;
     private Integer updateTime;
     private String content; //图文的内容
+
+    /**
+     * 1.单图文 2. 多图文总记录 3.多图文中的一条
+     */
+    public enum Type {
+        Single(1),
+        Multi_Summary(2),
+        Multi_One(3);
+
+        private int code;
+
+        Type(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+    }
 }

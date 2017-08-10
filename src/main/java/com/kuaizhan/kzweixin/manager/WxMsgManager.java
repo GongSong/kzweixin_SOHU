@@ -15,9 +15,18 @@ import com.kuaizhan.kzweixin.exception.weixin.WxOutOfResponseLimitException;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.kuaizhan.kzweixin.entity.msg.MassMsg;
+import com.kuaizhan.kzweixin.enums.WxMsgType;
+import com.kuaizhan.kzweixin.utils.HttpClientUtil;
+import com.kuaizhan.kzweixin.utils.JsonUtil;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 微信消息管理相关接口封装
@@ -25,6 +34,7 @@ import java.util.List;
  */
 public class WxMsgManager {
 
+    private static Logger logger = LoggerFactory.getLogger(WxMsgManager.class);
     /**
      * 给用户发送客服消息
      * @param openId 用户的openId
@@ -76,17 +86,15 @@ public class WxMsgManager {
             TextResponseJson textResponseJson = (TextResponseJson) responseJson;
             customMsg.setMsgType("text");
             customMsg.setText(new CustomMsgParam.Text(textResponseJson.getContent()));
-        }
-        else if (responseJson instanceof ImageResponseJson) {
+        } else if (responseJson instanceof ImageResponseJson) {
             ImageResponseJson imageResponseJson = (ImageResponseJson) responseJson;
             customMsg.setMsgType("image");
             customMsg.setImage(new CustomMsgParam.Image(imageResponseJson.getMediaId()));
-        }
-        else if (responseJson instanceof MsgLinkGroupResponseJson) {
+        } else if (responseJson instanceof MsgLinkGroupResponseJson) {
             MsgLinkGroupResponseJson linkGroupResponseJson = (MsgLinkGroupResponseJson) responseJson;
             customMsg.setMsgType("news");
             List<CustomMsgParam.Article> articles = new ArrayList<>();
-            for (MsgLinkGroupResponseJson.LinkGroup linkGroup: linkGroupResponseJson.getLinkGroups()) {
+            for (MsgLinkGroupResponseJson.LinkGroup linkGroup : linkGroupResponseJson.getLinkGroups()) {
                 CustomMsgParam.Article article = new CustomMsgParam.Article();
                 article.setTitle(linkGroup.getTitle());
                 article.setDescription(linkGroup.getDescription());
@@ -95,11 +103,47 @@ public class WxMsgManager {
                 articles.add(article);
             }
             customMsg.setNews(new CustomMsgParam.News(articles));
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("[convertToCustomMsg] unsupported responseJson: " + responseJson);
         }
         return customMsg;
+    }
+
+    public static String sendMassMsg(String accessToken, int tagId, WxMsgType msgType, Object contentObj) {
+
+        Map<String, Object> paramMap = new HashMap<>();
+
+        if(tagId == 0) {
+            paramMap.put("filter", new MassMsg.Filter(true, 0));
+        } else {
+            paramMap.put("filter", new MassMsg.Filter(false, tagId));
+        }
+
+        paramMap.put(msgType.getValue(), contentObj);
+        paramMap.put("msgtype", msgType.getValue());
+
+        if(msgType == WxMsgType.MP_NEWS) {
+            paramMap.put("send_ignore_reprint", 0);
+        }
+
+        String paramStr = JsonUtil.bean2String(paramMap);
+        String result = HttpClientUtil.postJson(WxApiConfig.sendMassMsgUrl(accessToken), paramStr);
+
+        if (result == null) {
+            throw new WxApiException("[WeiXin:sendMassMsg] result is null");
+        }
+
+        JSONObject resultJson = new JSONObject(result);
+        int errCode = resultJson.optInt("errcode");
+        String errMsg = resultJson.optString("errmsg");
+        String msgId = resultJson.optString("msg_id");
+
+        if (errCode != 0) {
+            logger.warn("[Weixin:sendMassMsg] unexpected result:" + resultJson + " paramStr:" + paramStr + " errCode:" + errCode + " errMsg:" + errMsg);
+            return null;
+        }
+
+        return msgId;
     }
 }
 

@@ -211,4 +211,5 @@ public class MsgController extends BaseController {
         msgService.deletePushToken(weixinAppid, openId);
         return new JsonResponse(ImmutableMap.of());
     }
+
 }

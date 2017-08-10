@@ -54,12 +54,41 @@ public class WxCommonManager {
      * @param sceneId 场景id
      * @return
      */
-    public static String genTmpQrcode(String accessToken, int sceneId) {
+    public static String genTmpQrcode(String accessToken, long sceneId) {
         Map<String, Object> param = new HashMap<>();
         // 临时二维码最大30天
         param.put("expire_seconds", 30 * 24 * 60 * 60);
         param.put("action_name", "QR_SCENE");
         param.put("action_info", ImmutableMap.of("scene", ImmutableMap.of("scene_id", sceneId)));
+
+        String result = HttpClientUtil.postJson(WxApiConfig.getAddQrcodeUrl(accessToken), JsonUtil.bean2String(param));
+
+        if (result == null) {
+            throw new WxApiException("[Weixin:genTmpQrcode] result is null");
+        }
+
+        JSONObject resultJson = new JSONObject(result);
+        int errCode = resultJson.optInt("errcode");
+        String ticket =  resultJson.optString("ticket");
+
+        if (errCode != 0 || ticket == null) {
+            throw new WxApiException("[Weixin:genTmpQrcode] unexpected result:" + result);
+        }
+
+        return ticket;
+    }
+
+    /**
+     * 获取永久二维码ticket
+     * @param sceneId 场景id
+     * @return
+     */
+    public static String genLimitQrcode(String accessToken, long sceneId) {
+        Map<String, Object> param = new HashMap<>();
+        // 永久二维码
+        param.put("action_name", "QR_LIMIT_STR_SCENE");
+        String sceneIdString = Long.toString(sceneId);
+        param.put("action_info", ImmutableMap.of("scene", ImmutableMap.of("scene_str", sceneIdString)));
 
         String result = HttpClientUtil.postJson(WxApiConfig.getAddQrcodeUrl(accessToken), JsonUtil.bean2String(param));
 

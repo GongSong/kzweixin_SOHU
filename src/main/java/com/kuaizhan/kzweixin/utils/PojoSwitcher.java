@@ -1,7 +1,9 @@
 package com.kuaizhan.kzweixin.utils;
 
+import com.kuaizhan.kzweixin.controller.vo.*;
 import com.kuaizhan.kzweixin.dao.po.auto.AccountPO;
 import com.kuaizhan.kzweixin.dao.po.PostPO;
+import com.kuaizhan.kzweixin.dao.po.auto.CustomMassPO;
 import com.kuaizhan.kzweixin.dao.po.auto.FanPO;
 import com.kuaizhan.kzweixin.controller.vo.AccountSettingVO;
 import com.kuaizhan.kzweixin.controller.vo.AccountVO;
@@ -9,15 +11,16 @@ import com.kuaizhan.kzweixin.controller.vo.MsgVO;
 import com.kuaizhan.kzweixin.controller.vo.PostVO;
 import com.kuaizhan.kzweixin.controller.vo.FanVO;
 import com.kuaizhan.kzweixin.dao.po.auto.MsgPO;
-import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
 import com.kuaizhan.kzweixin.entity.responsejson.TextResponseJson;
 import com.kuaizhan.kzweixin.enums.MsgType;
-import org.json.JSONException;
+import com.kuaizhan.kzweixin.dao.po.auto.MassPO;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * pojo的转换组件
@@ -134,7 +137,7 @@ public class PojoSwitcher {
 
     /**
      * 粉丝管理
-     * */
+     */
     public static FanVO fanPOToVO(FanPO fanPO) {
         if (fanPO == null) {
             return null;
@@ -157,4 +160,61 @@ public class PojoSwitcher {
 
         return fanVO;
     }
+
+    /**
+     * 群发
+     */
+    public static MassVO MassPOToVO(MassPO massPO) {
+        if (massPO == null) {
+            return null;
+        }
+        MassVO massVO = new MassVO();
+        massVO.setWeixinAppid(massPO.getWeixinAppid());
+        massVO.setMassId(massPO.getMassId());
+        massVO.setResponseType(massPO.getResponseType());
+        massVO.setMsgId(massPO.getMsgId());
+        massVO.setStatusMsg(massPO.getStatusMsg());
+        massVO.setTotalCount(massPO.getTotalCount());
+        massVO.setFilterCount(massPO.getFilterCount());
+        massVO.setSentCount(massPO.getSentCount());
+        massVO.setErrorCount(massPO.getErrorCount());
+        massVO.setGroupId(massPO.getGroupId());
+        massVO.setIsTiming(massPO.getIsTiming());
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date publishDate = new Date(massPO.getPublishTime()*1000);
+        massVO.setPublishTime(sf.format(publishDate));
+        massVO.setStatus(massPO.getStatus());
+        Date createDate = new Date(massPO.getCreateTime()*1000);
+        massVO.setCreateTime(sf.format(createDate));
+        Date updateDate = new Date(massPO.getUpdateTime()*1000);
+        massVO.setCreateTime(sf.format(updateDate));
+        massVO.setResponseJson(massPO.getResponseJson());
+        return massVO;
+    }
+    public static CustomMassVO CustomMassPOToVO(CustomMassPO customMassPO) {
+        if (customMassPO == null) {
+            return null;
+        }
+        CustomMassVO customMassVO = new CustomMassVO();
+        customMassVO.setCustomMassId(customMassPO.getCustomMassId());
+        customMassVO.setWeixinAppid(customMassPO.getWeixinAppid());
+        customMassVO.setTagId(customMassPO.getTagId());
+        customMassVO.setMsgType(customMassPO.getMsgType());
+        customMassVO.setTotalCount(customMassPO.getTotalCount());
+        customMassVO.setSuccessCount(customMassPO.getSuccessCount());
+        customMassVO.setRejectFailCount(customMassPO.getRejectFailCount());
+        customMassVO.setOtherFailCount(customMassPO.getOtherFailCount());
+        customMassVO.setIsTiming(customMassPO.getIsTiming());
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date publishDate = new Date(customMassPO.getPublishTime()*1000);
+        customMassVO.setPublishTime(sf.format(publishDate));
+        customMassVO.setStatus(customMassPO.getStatus());
+        Date createDate = new Date(customMassPO.getCreateTime()*1000);
+        customMassVO.setCreateTime(sf.format(createDate));
+        Date updateDate = new Date(customMassPO.getUpdateTime()*1000);
+        customMassVO.setCreateTime(sf.format(updateDate));
+        customMassVO.setMsgJson(customMassPO.getMsgJson());
+        return customMassVO;
+    }
+
 }

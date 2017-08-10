@@ -60,6 +60,10 @@ public class WxApiConfig {
     // 添加模板id
     private static final String WEIXIN_ADD_TEMPLATE = "/cgi-bin/template/api_add_template?access_token=";
 
+    //群发
+    private static final String WEIXIN_SEND_MASS_MSG = "/cgi-bin/message/mass/sendall?access_token=";
+
+
     // 参数二维码
 
     // 新增参数二维码
@@ -222,6 +226,13 @@ public class WxApiConfig {
      */
     public static String sendCustomMsgUrl(String accessToken) {
         return DOMAIN_WEIXIN_API + WEIXIN_SEND_CUSTOM_MSG + accessToken;
+    }
+
+    /**
+     * 根据accessToken发送群发消息
+     */
+    public static String sendMassMsgUrl(String accessToken) {
+        return DOMAIN_WEIXIN_API + WEIXIN_SEND_MASS_MSG + accessToken;
     }
 
     /**

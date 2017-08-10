@@ -15,7 +15,11 @@ public enum WxMsgType {
     SHORT_VIDEO("shortvideo"),
     LOCATION("location"),
     LINK("link"),
-    NEWS("news");
+    NEWS("news"),
+
+    MP_NEWS("mpnews"),
+    MP_VIDEO("mpvideo"),
+    WXCARD("wxcard");
 
     private String value;
 

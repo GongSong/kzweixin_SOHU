@@ -120,5 +120,23 @@
                                 <!--typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />-->
             <!--</table>-->
 
+            <!--<table tableName="weixin_guide_follow" domainObjectName="GuideFollowPostPO" mapperName="GuideFollowPostMapper">-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
+
+            <!--<table tableName="weixin_mass" domainObjectName="MassPO" mapperName="MassMapper">-->
+                <!--<columnOverride column="response_type" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="group_id" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="is_timing" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+                <!--<columnOverride column="publish_time" javaType="java.lang.Long"/>-->
+                <!--<columnOverride column="create_time" javaType="java.lang.Long"/>-->
+                <!--<columnOverride column="update_time" javaType="java.lang.Long"/>-->
+            <!--</table>-->
+
+            <!--<table tableName="weixin_qrcode" domainObjectName="QrcodePO" mapperName="QrcodeMapper">-->
+                <!--<columnOverride column="status" javaType="java.lang.Integer"/>-->
+            <!--</table>-->
+
         </context>
 </generatorConfiguration>

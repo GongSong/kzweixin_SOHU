@@ -69,7 +69,22 @@ public class ErrorCode {
     public static final ErrorCode TEMPLATE_INDUSTRY_CONFLICT_ERROR = new ErrorCode(108005, "公众号行业设置错误");
     public static final ErrorCode INVALID_OPEN_ID_ERROR = new ErrorCode(108006, "非法的openId或用户未关注公众号");
 
+    // 群发(09)
+    public static final ErrorCode MASS_NOT_EXIST = new ErrorCode(109001, "群发消息不存在");
+    public static final ErrorCode MASS_TIMING_INVALID = new ErrorCode(109002, "无效的定时时间");
+    public static final ErrorCode MASS_TYPE_INVALID = new ErrorCode(109003, "无效的群发类型");
+    public static final ErrorCode MASS_OPENID_INVALID = new ErrorCode(109004, "无效的OpenId");
+    public static final ErrorCode MASS_POSTID_INVALID = new ErrorCode(109005, "无效的PostId");
+    public static final ErrorCode CUSTOM_MASS_NOT_EXIST = new ErrorCode(109006, "客服群发消息不存在");
+    public static final ErrorCode TIMING_JOB_NOT_EXIST = new ErrorCode(109007, "定时任务不存在");
+    public static final ErrorCode WEIXIN_JOB_ERROR = new ErrorCode(109008, "微信任务发生错误");
+    public static final ErrorCode JSON_OBJECT_ERROR = new ErrorCode(109009, "JSON读取发生错误");
+    public static final ErrorCode MASS_SEND_FAILED = new ErrorCode(109010, "消息发送失败");
+    //
+    // 二维码（10）
 
+    public static final ErrorCode QRCODE_NOT_EXIST = new ErrorCode(110001, "二维码不存在");
+    public static final ErrorCode QRCODE_INSERT_ERROR = new ErrorCode(110002, "二维码创建失败");
     private final int code;
     private final String message;
     private ErrorCode(int code, String message) {
