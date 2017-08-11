@@ -39,8 +39,8 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     private CommonService commonService;
 
     @Override
-    public long createKeywordRule(long weixinAppid, String ruleName, List<KeywordItem> keywords,
-                                  ResponseType responseType, ResponseJson responseJson) {
+    public long addKeywordRule(long weixinAppid, String ruleName, List<KeywordItem> keywords,
+                               ResponseType responseType, ResponseJson responseJson) {
         String keywordStr = convertBeforeInsert(keywords);
 
         KeywordReplyPO record = new KeywordReplyPO();
@@ -95,7 +95,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public void deleteKeywordRule(long ruleId) {
+    public void delKeywordRule(long ruleId) {
         KeywordReplyPO record = new KeywordReplyPO();
         record.setRuleId(ruleId);
         record.setStatus(2);
@@ -112,8 +112,8 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public int createFollowReply(long weixinAppid, ResponseType responseType,
-                                    ResponseJson responseJson) {
+    public int addFollowReply(long weixinAppid, ResponseType responseType,
+                              ResponseJson responseJson) {
         FollowReplyPO followReplyPO = getFollowReply(weixinAppid);
 
         FollowReplyPO record = new FollowReplyPO();
@@ -149,7 +149,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public void deleteFollowReply(long weixinAppid) {
+    public void delFollowReply(long weixinAppid) {
         FollowReplyPOExample example = new FollowReplyPOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid);
@@ -161,8 +161,8 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public int createMsgReply(long weixinAppid, ResponseType responseType,
-                              ResponseJson responseJson) {
+    public int addMsgReply(long weixinAppid, ResponseType responseType,
+                           ResponseJson responseJson) {
         MsgReplyPO msgReplyPO = getMsgReply(weixinAppid);
 
         MsgReplyPO record = new MsgReplyPO();
@@ -197,7 +197,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public void deleteMsgReply(long weixinAppid) {
+    public void delMsgReply(long weixinAppid) {
         MsgReplyPOExample example = new MsgReplyPOExample();
         example.createCriteria()
                 .andWeixinAppidEqualTo(weixinAppid);
