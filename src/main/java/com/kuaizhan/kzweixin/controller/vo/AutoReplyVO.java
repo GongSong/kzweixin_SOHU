@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.controller.vo;
 
 import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 import lombok.Data;
 
 /**
@@ -11,6 +11,6 @@ import lombok.Data;
 public class AutoReplyVO {
     private Integer id;
     private Long weixinAppid;
-    private ComponentResponseType responseType;
+    private ResponseType responseType;
     private ResponseJson responseJson;
 }

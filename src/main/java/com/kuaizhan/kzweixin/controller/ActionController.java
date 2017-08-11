@@ -12,7 +12,7 @@ import com.kuaizhan.kzweixin.entity.wxresponse.CallbackResponse;
 import com.kuaizhan.kzweixin.entity.wxresponse.NewsResponse;
 import com.kuaizhan.kzweixin.entity.wxresponse.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
-import com.kuaizhan.kzweixin.enums.ResponseType;
+import com.kuaizhan.kzweixin.enums.WxResponseType;
 import com.kuaizhan.kzweixin.exception.common.ParamException;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
@@ -63,10 +63,10 @@ public class ActionController extends BaseController {
         return new JsonResponse(ImmutableMap.of("id", id));
     }
 
-    private CallbackResponse getActionResponse(ResponseType responseType, String responseJson) {
-        if (responseType == ResponseType.TEXT) {
+    private CallbackResponse getActionResponse(WxResponseType responseType, String responseJson) {
+        if (responseType == WxResponseType.TEXT) {
             return JsonUtil.string2Bean(responseJson, TextResponse.class);
-        } else if (responseType == ResponseType.NEWS) {
+        } else if (responseType == WxResponseType.NEWS) {
             return JsonUtil.string2Bean(responseJson, NewsResponse.class);
         }
         return null;
@@ -101,9 +101,9 @@ public class ActionController extends BaseController {
             actionPO.setResponseJson(responseJson);
 
             // 做下校验
-            if (param.getResponseType() == ResponseType.TEXT) {
+            if (param.getResponseType() == WxResponseType.TEXT) {
                 JsonUtil.string2Bean(responseJson, TextResponse.class);
-            } else if (param.getResponseType() == ResponseType.NEWS) {
+            } else if (param.getResponseType() == WxResponseType.NEWS) {
                 JsonUtil.string2Bean(responseJson, NewsResponse.class);
             }
         }

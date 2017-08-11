@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.dao.po.auto;
 
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,15 +85,15 @@ public class KeywordReplyPOExample {
             if (value == null) {
                 throw new RuntimeException("Value for " + property + " cannot be null");
             }
-            responseTypeCriteria.add(new Criterion(condition, value, "com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler"));
+            responseTypeCriteria.add(new Criterion(condition, value, "com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler"));
             allCriteria = null;
         }
 
-        protected void addResponseTypeCriterion(String condition, ComponentResponseType value1, ComponentResponseType value2, String property) {
+        protected void addResponseTypeCriterion(String condition, ResponseType value1, ResponseType value2, String property) {
             if (value1 == null || value2 == null) {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
-            responseTypeCriteria.add(new Criterion(condition, value1, value2, "com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler"));
+            responseTypeCriteria.add(new Criterion(condition, value1, value2, "com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler"));
             allCriteria = null;
         }
 
@@ -409,52 +409,52 @@ public class KeywordReplyPOExample {
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeEqualTo(ComponentResponseType value) {
+        public Criteria andResponseTypeEqualTo(ResponseType value) {
             addResponseTypeCriterion("response_type =", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeNotEqualTo(ComponentResponseType value) {
+        public Criteria andResponseTypeNotEqualTo(ResponseType value) {
             addResponseTypeCriterion("response_type <>", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeGreaterThan(ComponentResponseType value) {
+        public Criteria andResponseTypeGreaterThan(ResponseType value) {
             addResponseTypeCriterion("response_type >", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeGreaterThanOrEqualTo(ComponentResponseType value) {
+        public Criteria andResponseTypeGreaterThanOrEqualTo(ResponseType value) {
             addResponseTypeCriterion("response_type >=", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeLessThan(ComponentResponseType value) {
+        public Criteria andResponseTypeLessThan(ResponseType value) {
             addResponseTypeCriterion("response_type <", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeLessThanOrEqualTo(ComponentResponseType value) {
+        public Criteria andResponseTypeLessThanOrEqualTo(ResponseType value) {
             addResponseTypeCriterion("response_type <=", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeIn(List<ComponentResponseType> values) {
+        public Criteria andResponseTypeIn(List<ResponseType> values) {
             addResponseTypeCriterion("response_type in", values, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeNotIn(List<ComponentResponseType> values) {
+        public Criteria andResponseTypeNotIn(List<ResponseType> values) {
             addResponseTypeCriterion("response_type not in", values, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeBetween(ComponentResponseType value1, ComponentResponseType value2) {
+        public Criteria andResponseTypeBetween(ResponseType value1, ResponseType value2) {
             addResponseTypeCriterion("response_type between", value1, value2, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeNotBetween(ComponentResponseType value1, ComponentResponseType value2) {
+        public Criteria andResponseTypeNotBetween(ResponseType value1, ResponseType value2) {
             addResponseTypeCriterion("response_type not between", value1, value2, "responseType");
             return (Criteria) this;
         }

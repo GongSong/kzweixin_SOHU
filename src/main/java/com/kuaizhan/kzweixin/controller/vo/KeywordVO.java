@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.controller.vo;
 
 import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 import lombok.Data;
 
 import com.kuaizhan.kzweixin.entity.autoreply.KeywordItem;
@@ -15,7 +15,7 @@ public class KeywordVO {
     private Long ruleId;
     private Long weixinAppid;
     private String ruleName;
-    private ComponentResponseType responseType;
+    private ResponseType responseType;
     private List<KeywordItem> keywords;
     private ResponseJson responseJson;
 }

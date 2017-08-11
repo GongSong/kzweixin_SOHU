@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.kuaizhan.kzweixin.constant.KzExchange;
 import com.kuaizhan.kzweixin.entity.msg.MsgLinkGroupResponseJson;
 import com.kuaizhan.kzweixin.entity.responsejson.*;
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 import com.kuaizhan.kzweixin.enums.MsgType;
 import com.kuaizhan.kzweixin.service.CommonService;
 import com.kuaizhan.kzweixin.service.PostService;
@@ -35,7 +35,7 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public ResponseJson getResponseJsonFromParam(long weixinAppid, Map responseJsonMap, ComponentResponseType responseType) {
+    public ResponseJson getResponseJsonFromParam(long weixinAppid, Map responseJsonMap, ResponseType responseType) {
         String responseJsonStr = JsonUtil.bean2String(responseJsonMap);
         switch (responseType) {
             case TEXT:
@@ -53,7 +53,7 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public ResponseJson getResponseJsonFromDB(String responseJsonStr, ComponentResponseType responseType) {
+    public ResponseJson getResponseJsonFromDB(String responseJsonStr, ResponseType responseType) {
         ResponseJson responseJson;
         switch (responseType) {
             case TEXT:
