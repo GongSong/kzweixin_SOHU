@@ -5,9 +5,7 @@ import com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPOExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public interface KeywordReplyMapper {
     long countByExample(KeywordReplyPOExample example);
 

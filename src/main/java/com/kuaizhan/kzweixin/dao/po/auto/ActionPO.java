@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.dao.po.auto;
 
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.BizCode;
-import com.kuaizhan.kzweixin.enums.ResponseType;
+import com.kuaizhan.kzweixin.enums.WxResponseType;
 
 public class ActionPO {
     private Integer id;
@@ -15,7 +15,7 @@ public class ActionPO {
 
     private ActionType actionType;
 
-    private ResponseType responseType;
+    private WxResponseType responseType;
 
     private String responseJson;
 
@@ -67,11 +67,11 @@ public class ActionPO {
         this.actionType = actionType;
     }
 
-    public ResponseType getResponseType() {
+    public WxResponseType getResponseType() {
         return responseType;
     }
 
-    public void setResponseType(ResponseType responseType) {
+    public void setResponseType(WxResponseType responseType) {
         this.responseType = responseType;
     }
 

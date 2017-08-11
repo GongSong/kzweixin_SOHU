@@ -5,7 +5,7 @@ import com.kuaizhan.kzweixin.dao.po.auto.FollowReplyPO;
 import com.kuaizhan.kzweixin.dao.po.auto.KeywordReplyPO;
 import com.kuaizhan.kzweixin.dao.po.auto.MsgReplyPO;
 import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public interface AutoReplyService {
      * @return 规则Id
      * */
     long createKeywordRule(long weixinAppid, String ruleName, List<KeywordItem> keywords,
-                   ComponentResponseType responseType, ResponseJson responseJson);
+                           ResponseType responseType, ResponseJson responseJson);
 
     /**
      * 获取规则列表
@@ -41,7 +41,7 @@ public interface AutoReplyService {
      * @param responseJson 自动回复消息内容
      * */
     void updateKeywordRule(long ruleId, String ruleName, List<KeywordItem> keywords,
-                    ComponentResponseType responseType, ResponseJson responseJson);
+                           ResponseType responseType, ResponseJson responseJson);
 
     /**
      * 删除规则
@@ -52,7 +52,7 @@ public interface AutoReplyService {
      * 创建/更新被关注自动回复
      * @return 新增/更新自动回复Id
      * */
-    int createFollowReply(long weixinAppid, ComponentResponseType responseType,
+    int createFollowReply(long weixinAppid, ResponseType responseType,
                              ResponseJson responseJson);
 
     /**
@@ -70,7 +70,7 @@ public interface AutoReplyService {
      * 创建/更新消息自动回复
      * @return 新增/更新自动回复Id
      * */
-    int createMsgReply(long weixinAppid, ComponentResponseType responseType,
+    int createMsgReply(long weixinAppid, ResponseType responseType,
                         ResponseJson responseJson);
 
     /**

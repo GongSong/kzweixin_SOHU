@@ -1,10 +1,9 @@
 package com.kuaizhan.kzweixin.controller.param;
 
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Map;
 
 /**
@@ -15,7 +14,7 @@ public class AutoReplySubscribeParam {
     @NotNull
     private Long weixinAppid;
     @NotNull
-    private ComponentResponseType responseType;
+    private ResponseType responseType;
     @NotNull
     private Map<String, Object> responseJson;
 }

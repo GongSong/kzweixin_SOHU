@@ -6,7 +6,7 @@
     <result column="weixin_appid" jdbcType="BIGINT" property="weixinAppid" />
     <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
     <result column="keywords_json" jdbcType="VARCHAR" property="keywordsJson" />
-    <result column="response_type" jdbcType="INTEGER" property="responseType" typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler" />
+    <result column="response_type" jdbcType="INTEGER" property="responseType" typeHandler="com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="create_time" jdbcType="INTEGER" property="createTime" />
     <result column="update_time" jdbcType="INTEGER" property="updateTime" />
@@ -44,15 +44,15 @@
                   and ${criterion.condition}
                 </when>
                 <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}
                 </when>
                 <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler} and #{criterion.secondValue,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler} and #{criterion.secondValue,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}
                 </when>
                 <when test="criterion.listValue">
                   and ${criterion.condition}
                   <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                    #{listItem,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}
                   </foreach>
                 </when>
               </choose>
@@ -92,15 +92,15 @@
                   and ${criterion.condition}
                 </when>
                 <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}
                 </when>
                 <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler} and #{criterion.secondValue,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                  and ${criterion.condition} #{criterion.value,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler} and #{criterion.secondValue,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}
                 </when>
                 <when test="criterion.listValue">
                   and ${criterion.condition}
                   <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}
+                    #{listItem,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}
                   </foreach>
                 </when>
               </choose>
@@ -174,7 +174,7 @@
       status, create_time, update_time, 
       response_json)
     values (#{weixinAppid,jdbcType=BIGINT}, #{ruleName,jdbcType=VARCHAR}, #{keywordsJson,jdbcType=VARCHAR}, 
-      #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+      #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}, 
       #{status,jdbcType=BIT}, #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, 
       #{responseJson,jdbcType=LONGVARCHAR})
   </insert>
@@ -220,7 +220,7 @@
         #{keywordsJson,jdbcType=VARCHAR},
       </if>
       <if test="responseType != null">
-        #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+        #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       </if>
       <if test="status != null">
         #{status,jdbcType=BIT},
@@ -258,7 +258,7 @@
         keywords_json = #{record.keywordsJson,jdbcType=VARCHAR},
       </if>
       <if test="record.responseType != null">
-        response_type = #{record.responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+        response_type = #{record.responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=BIT},
@@ -283,7 +283,7 @@
       weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
       rule_name = #{record.ruleName,jdbcType=VARCHAR},
       keywords_json = #{record.keywordsJson,jdbcType=VARCHAR},
-      response_type = #{record.responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      response_type = #{record.responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       status = #{record.status,jdbcType=BIT},
       create_time = #{record.createTime,jdbcType=INTEGER},
       update_time = #{record.updateTime,jdbcType=INTEGER},
@@ -298,7 +298,7 @@
       weixin_appid = #{record.weixinAppid,jdbcType=BIGINT},
       rule_name = #{record.ruleName,jdbcType=VARCHAR},
       keywords_json = #{record.keywordsJson,jdbcType=VARCHAR},
-      response_type = #{record.responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      response_type = #{record.responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       status = #{record.status,jdbcType=BIT},
       create_time = #{record.createTime,jdbcType=INTEGER},
       update_time = #{record.updateTime,jdbcType=INTEGER}
@@ -319,7 +319,7 @@
         keywords_json = #{keywordsJson,jdbcType=VARCHAR},
       </if>
       <if test="responseType != null">
-        response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+        response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=BIT},
@@ -341,7 +341,7 @@
     set weixin_appid = #{weixinAppid,jdbcType=BIGINT},
       rule_name = #{ruleName,jdbcType=VARCHAR},
       keywords_json = #{keywordsJson,jdbcType=VARCHAR},
-      response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       status = #{status,jdbcType=BIT},
       create_time = #{createTime,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=INTEGER},
@@ -353,7 +353,7 @@
     set weixin_appid = #{weixinAppid,jdbcType=BIGINT},
       rule_name = #{ruleName,jdbcType=VARCHAR},
       keywords_json = #{keywordsJson,jdbcType=VARCHAR},
-      response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+      response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       status = #{status,jdbcType=BIT},
       create_time = #{createTime,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=INTEGER}
@@ -400,7 +400,7 @@
       update_time, response_json)
     values
     (#{ruleId,jdbcType=BIGINT}, #{weixinAppid,jdbcType=BIGINT}, #{ruleName,jdbcType=VARCHAR}, 
-      #{keywordsJson,jdbcType=VARCHAR}, #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+      #{keywordsJson,jdbcType=VARCHAR}, #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}, 
       #{status,jdbcType=BIT}, #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, 
       #{responseJson,jdbcType=LONGVARCHAR})
     on duplicate key update 
@@ -408,7 +408,7 @@
     weixin_appid = #{weixinAppid,jdbcType=BIGINT}, 
     rule_name = #{ruleName,jdbcType=VARCHAR}, 
     keywords_json = #{keywordsJson,jdbcType=VARCHAR}, 
-    response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+    response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}, 
     status = #{status,jdbcType=BIT}, 
     create_time = #{createTime,jdbcType=INTEGER}, 
     update_time = #{updateTime,jdbcType=INTEGER}, 
@@ -465,7 +465,7 @@
         #{keywordsJson,jdbcType=VARCHAR},
       </if>
       <if test="responseType != null">
-        #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+        #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       </if>
       <if test="status != null">
         #{status,jdbcType=BIT},
@@ -495,7 +495,7 @@
         keywords_json = #{keywordsJson,jdbcType=VARCHAR},
       </if>
       <if test="responseType != null">
-        response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+        response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=BIT},
@@ -522,7 +522,7 @@
       update_time, response_json)
     values
     (#{ruleId,jdbcType=BIGINT}, #{weixinAppid,jdbcType=BIGINT}, #{ruleName,jdbcType=VARCHAR}, 
-      #{keywordsJson,jdbcType=VARCHAR}, #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+      #{keywordsJson,jdbcType=VARCHAR}, #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}, 
       #{status,jdbcType=BIT}, #{createTime,jdbcType=INTEGER}, #{updateTime,jdbcType=INTEGER}, 
       #{responseJson,jdbcType=LONGVARCHAR})
     on duplicate key update 
@@ -530,7 +530,7 @@
     weixin_appid = #{weixinAppid,jdbcType=BIGINT}, 
     rule_name = #{ruleName,jdbcType=VARCHAR}, 
     keywords_json = #{keywordsJson,jdbcType=VARCHAR}, 
-    response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler}, 
+    response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler}, 
     status = #{status,jdbcType=BIT}, 
     create_time = #{createTime,jdbcType=INTEGER}, 
     update_time = #{updateTime,jdbcType=INTEGER}, 
@@ -587,7 +587,7 @@
         #{keywordsJson,jdbcType=VARCHAR},
       </if>
       <if test="responseType != null">
-        #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+        #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       </if>
       <if test="status != null">
         #{status,jdbcType=BIT},
@@ -617,7 +617,7 @@
         keywords_json = #{keywordsJson,jdbcType=VARCHAR},
       </if>
       <if test="responseType != null">
-        response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ComponentResponseTypeHandler},
+        response_type = #{responseType,jdbcType=INTEGER,typeHandler=com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=BIT},

@@ -1,13 +1,13 @@
 package com.kuaizhan.kzweixin.dao.po.auto;
 
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 
 public class MsgReplyPO {
     private Integer id;
 
     private Long weixinAppid;
 
-    private ComponentResponseType responseType;
+    private ResponseType responseType;
 
     private Integer status;
 
@@ -33,11 +33,11 @@ public class MsgReplyPO {
         this.weixinAppid = weixinAppid;
     }
 
-    public ComponentResponseType getResponseType() {
+    public ResponseType getResponseType() {
         return responseType;
     }
 
-    public void setResponseType(ComponentResponseType responseType) {
+    public void setResponseType(ResponseType responseType) {
         this.responseType = responseType;
     }
 

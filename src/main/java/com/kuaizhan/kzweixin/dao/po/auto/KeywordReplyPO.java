@@ -1,6 +1,6 @@
 package com.kuaizhan.kzweixin.dao.po.auto;
 
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 
 public class KeywordReplyPO {
     private Long ruleId;
@@ -11,7 +11,7 @@ public class KeywordReplyPO {
 
     private String keywordsJson;
 
-    private ComponentResponseType responseType;
+    private ResponseType responseType;
 
     private Integer status;
 
@@ -53,11 +53,11 @@ public class KeywordReplyPO {
         this.keywordsJson = keywordsJson;
     }
 
-    public ComponentResponseType getResponseType() {
+    public ResponseType getResponseType() {
         return responseType;
     }
 
-    public void setResponseType(ComponentResponseType responseType) {
+    public void setResponseType(ResponseType responseType) {
         this.responseType = responseType;
     }
 

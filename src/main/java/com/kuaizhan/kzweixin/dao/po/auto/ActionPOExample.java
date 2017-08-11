@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.dao.po.auto;
 
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.BizCode;
-import com.kuaizhan.kzweixin.enums.ResponseType;
+import com.kuaizhan.kzweixin.enums.WxResponseType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,15 +133,15 @@ public class ActionPOExample {
             if (value == null) {
                 throw new RuntimeException("Value for " + property + " cannot be null");
             }
-            responseTypeCriteria.add(new Criterion(condition, value, "com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler"));
+            responseTypeCriteria.add(new Criterion(condition, value, "com.kuaizhan.kzweixin.dao.typehandler.WxResponseTypeHandler"));
             allCriteria = null;
         }
 
-        protected void addResponseTypeCriterion(String condition, ResponseType value1, ResponseType value2, String property) {
+        protected void addResponseTypeCriterion(String condition, WxResponseType value1, WxResponseType value2, String property) {
             if (value1 == null || value2 == null) {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
-            responseTypeCriteria.add(new Criterion(condition, value1, value2, "com.kuaizhan.kzweixin.dao.typehandler.ResponseTypeHandler"));
+            responseTypeCriteria.add(new Criterion(condition, value1, value2, "com.kuaizhan.kzweixin.dao.typehandler.WxResponseTypeHandler"));
             allCriteria = null;
         }
 
@@ -521,52 +521,52 @@ public class ActionPOExample {
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeEqualTo(ResponseType value) {
+        public Criteria andResponseTypeEqualTo(WxResponseType value) {
             addResponseTypeCriterion("response_type =", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeNotEqualTo(ResponseType value) {
+        public Criteria andResponseTypeNotEqualTo(WxResponseType value) {
             addResponseTypeCriterion("response_type <>", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeGreaterThan(ResponseType value) {
+        public Criteria andResponseTypeGreaterThan(WxResponseType value) {
             addResponseTypeCriterion("response_type >", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeGreaterThanOrEqualTo(ResponseType value) {
+        public Criteria andResponseTypeGreaterThanOrEqualTo(WxResponseType value) {
             addResponseTypeCriterion("response_type >=", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeLessThan(ResponseType value) {
+        public Criteria andResponseTypeLessThan(WxResponseType value) {
             addResponseTypeCriterion("response_type <", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeLessThanOrEqualTo(ResponseType value) {
+        public Criteria andResponseTypeLessThanOrEqualTo(WxResponseType value) {
             addResponseTypeCriterion("response_type <=", value, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeIn(List<ResponseType> values) {
+        public Criteria andResponseTypeIn(List<WxResponseType> values) {
             addResponseTypeCriterion("response_type in", values, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeNotIn(List<ResponseType> values) {
+        public Criteria andResponseTypeNotIn(List<WxResponseType> values) {
             addResponseTypeCriterion("response_type not in", values, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeBetween(ResponseType value1, ResponseType value2) {
+        public Criteria andResponseTypeBetween(WxResponseType value1, WxResponseType value2) {
             addResponseTypeCriterion("response_type between", value1, value2, "responseType");
             return (Criteria) this;
         }
 
-        public Criteria andResponseTypeNotBetween(ResponseType value1, ResponseType value2) {
+        public Criteria andResponseTypeNotBetween(WxResponseType value1, WxResponseType value2) {
             addResponseTypeCriterion("response_type not between", value1, value2, "responseType");
             return (Criteria) this;
         }

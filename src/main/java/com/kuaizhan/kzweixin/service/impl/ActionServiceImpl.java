@@ -9,7 +9,7 @@ import com.kuaizhan.kzweixin.entity.wxresponse.NewsResponse;
 import com.kuaizhan.kzweixin.entity.wxresponse.TextResponse;
 import com.kuaizhan.kzweixin.enums.ActionType;
 import com.kuaizhan.kzweixin.enums.BizCode;
-import com.kuaizhan.kzweixin.enums.ResponseType;
+import com.kuaizhan.kzweixin.enums.WxResponseType;
 import com.kuaizhan.kzweixin.service.AccountService;
 import com.kuaizhan.kzweixin.service.ActionService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
@@ -103,9 +103,9 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public CallbackResponse getActionResponse(ActionPO actionPO, String openId) {
-        if (actionPO.getResponseType() == ResponseType.TEXT) {
+        if (actionPO.getResponseType() == WxResponseType.TEXT) {
             return JsonUtil.string2Bean(actionPO.getResponseJson(), TextResponse.class);
-        } else if (actionPO.getResponseType() == ResponseType.NEWS) {
+        } else if (actionPO.getResponseType() == WxResponseType.NEWS) {
             NewsResponse newsResponse = JsonUtil.string2Bean(actionPO.getResponseJson(), NewsResponse.class);
             return addOpenIdForNewsResponse(actionPO.getBizCode(), newsResponse, openId);
         }

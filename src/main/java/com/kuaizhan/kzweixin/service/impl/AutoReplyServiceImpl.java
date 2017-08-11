@@ -2,7 +2,7 @@ package com.kuaizhan.kzweixin.service.impl;
 
 import com.kuaizhan.kzweixin.entity.autoreply.KeywordItem;
 import com.kuaizhan.kzweixin.entity.responsejson.ResponseJson;
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 import com.kuaizhan.kzweixin.service.AutoReplyService;
 import com.kuaizhan.kzweixin.service.CommonService;
 import com.kuaizhan.kzweixin.utils.DateUtil;
@@ -40,7 +40,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
 
     @Override
     public long createKeywordRule(long weixinAppid, String ruleName, List<KeywordItem> keywords,
-                           ComponentResponseType responseType, ResponseJson responseJson) {
+                                  ResponseType responseType, ResponseJson responseJson) {
         String keywordStr = convertBeforeInsert(keywords);
 
         KeywordReplyPO record = new KeywordReplyPO();
@@ -78,7 +78,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
 
     @Override
     public void updateKeywordRule(long ruleId, String ruleName, List<KeywordItem> keywords,
-                           ComponentResponseType responseType, ResponseJson responseJson) {
+                                  ResponseType responseType, ResponseJson responseJson) {
         String keywordStr = convertBeforeInsert(keywords);
 
         KeywordReplyPO record = new KeywordReplyPO();
@@ -112,7 +112,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public int createFollowReply(long weixinAppid, ComponentResponseType responseType,
+    public int createFollowReply(long weixinAppid, ResponseType responseType,
                                     ResponseJson responseJson) {
         FollowReplyPO followReplyPO = getFollowReply(weixinAppid);
 
@@ -161,7 +161,7 @@ public class AutoReplyServiceImpl implements AutoReplyService {
     }
 
     @Override
-    public int createMsgReply(long weixinAppid, ComponentResponseType responseType,
+    public int createMsgReply(long weixinAppid, ResponseType responseType,
                               ResponseJson responseJson) {
         MsgReplyPO msgReplyPO = getMsgReply(weixinAppid);
 

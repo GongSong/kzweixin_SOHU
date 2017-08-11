@@ -1,7 +1,7 @@
 package com.kuaizhan.kzweixin.controller.param;
 
 import com.kuaizhan.kzweixin.entity.autoreply.KeywordItem;
-import com.kuaizhan.kzweixin.enums.ComponentResponseType;
+import com.kuaizhan.kzweixin.enums.ResponseType;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -22,7 +22,7 @@ public class KeywordReplyRuleParam {
     @NotNull
     private List<KeywordItem> keywords;
     @NotNull
-    private ComponentResponseType responseType;
+    private ResponseType responseType;
     @NotNull
     @Size(max = 1000, message = "文字内容不能超过1000个字符")
     private Map<String, Object> responseJson;

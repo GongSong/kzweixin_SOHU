@@ -6,7 +6,7 @@ import com.kuaizhan.kzweixin.enums.ResponseType;
 import java.sql.Types;
 
 /**
- * Created by zixiong on 2017/07/30.
+ * Created by fangtianyu on 8/2/17.
  */
 @EnumTypeHandler(target = ResponseType.class, jdbcType = Types.INTEGER)
 public class ResponseTypeHandler extends BaseEnumTypeHandler {
