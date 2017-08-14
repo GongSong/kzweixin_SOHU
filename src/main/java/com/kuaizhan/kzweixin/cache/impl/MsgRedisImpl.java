@@ -11,7 +11,7 @@ import javax.annotation.Resource;
  * Created by zixiong on 2017/5/31.
  */
 @Repository("msgCache")
-public class msgRedisImpl implements MsgCache {
+public class MsgRedisImpl implements MsgCache {
 
     @Resource
     private RedisUtil redisUtil;
@@ -33,4 +33,17 @@ public class msgRedisImpl implements MsgCache {
         String key = RedisConstant.KEY_KZ_PUSH_TOKEN + appId + "-" + openId;
         redisUtil.delete(key);
     }
+
+    @Override
+    public Long getMsgIdMapper(String appId, long msgId) {
+        String key = RedisConstant.KEY_KZ_MSG_ID + appId + "-" + msgId;
+        return Long.parseLong(redisUtil.get(key));
+    }
+
+    @Override
+    public void setMsgIdMapper(String appId, long msgId, long massId) {
+        String key = RedisConstant.KEY_KZ_MSG_ID + appId + "-" + msgId;
+        redisUtil.setEx(key, 30 * 60, String.valueOf(massId));
+    }
+
 }

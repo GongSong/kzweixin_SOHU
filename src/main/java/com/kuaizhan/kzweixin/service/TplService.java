@@ -51,4 +51,24 @@ public interface TplService {
      * @param statusCode 消息状态码
      */
     void updateTplStatus(long msgId, int statusCode);
+
+    /**
+     * 更新Redis缓存
+     * */
+    void updateMassIdToCache(String appId, long msgId, long massId);
+
+    /**
+     * 获取Redis缓存的massId
+     * */
+    Long getMassIdFromCache(String appId, long msgId);
+
+    /**
+     * 更新群发数据库发送成功消息数量
+     * */
+    void updateMassSentCount(String appId, long massId);
+
+    /**
+     * 更新群发数据库发送失败消息数量
+     * */
+    void updateMassErrorCount(String appId, long massId);
 }

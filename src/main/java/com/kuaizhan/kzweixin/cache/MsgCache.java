@@ -18,4 +18,15 @@ public interface MsgCache {
      * 删除push token
      */
     void deletePushToken(String appId, String openId);
+
+    /**
+     * 获取msgId-massId键值对
+     * */
+    Long getMsgIdMapper(String appId, long msgId);
+
+    /**
+     * 增加msgId-massId键值对
+     * */
+    void setMsgIdMapper(String appId, long msgId, long massId);
+
 }

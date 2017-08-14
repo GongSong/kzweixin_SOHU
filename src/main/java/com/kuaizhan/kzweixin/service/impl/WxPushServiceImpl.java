@@ -190,6 +190,14 @@ public class WxPushServiceImpl implements WxPushService {
             }
 
             tplService.updateTplStatus(msgId, statusCode);
+            Long massId = tplService.getMassIdFromCache(xmlData.getAppId(), msgId);
+            if (massId != null) {
+                if (statusCode == 2) {
+                    tplService.updateMassSentCount(xmlData.getAppId(), massId);
+                } else {
+                    tplService.updateMassErrorCount(xmlData.getAppId(), massId);
+                }
+            }
             return SUCCESS_RESULT;
 
         }

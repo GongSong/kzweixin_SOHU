@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.TplDao;
+import com.kuaizhan.kzweixin.dao.mapper.MassDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.TplMsgMapper;
 import com.kuaizhan.kzweixin.dao.po.auto.TplMsgPO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
@@ -17,6 +18,7 @@ import com.kuaizhan.kzweixin.utils.DateUtil;
 import com.kuaizhan.kzweixin.utils.JsonUtil;
 import com.kuaizhan.kzweixin.utils.MqUtil;
 import com.kuaizhan.kzweixin.utils.StrUtil;
+import com.kuaizhan.kzweixin.cache.MsgCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,10 @@ public class TplServiceImpl implements TplService {
     private MqUtil mqUtil;
     @Resource
     private TplMsgMapper tplMsgMapper;
+    @Resource
+    private MsgCache msgCache;
+    @Resource
+    private MassDao massDao;
 
     private Map<String, Object> sysTplMap;
     private static final int TPL_MSG_URL_MAX_LENGTH = 200;
@@ -165,5 +171,27 @@ public class TplServiceImpl implements TplService {
         record.setStatus(statusCode);
         record.setUpdateTime(DateUtil.curSeconds());
         tplMsgMapper.updateByPrimaryKeySelective(record);
+    }
+
+    @Override
+    public void updateMassIdToCache(String appId, long msgId, long massId) {
+        msgCache.setMsgIdMapper(appId, msgId, massId);
+    }
+
+    @Override
+    public Long getMassIdFromCache(String appId, long msgId) {
+        return msgCache.getMsgIdMapper(appId, msgId);
+    }
+
+    @Override
+    public void updateMassSentCount(String appId, long massId) {
+        AccountPO accountPO = accountService.getAccountByAppId(appId);
+        massDao.incSentCount(accountPO.getWeixinAppid(), massId);
+    }
+
+    @Override
+    public void updateMassErrorCount(String appId, long massId) {
+        AccountPO accountPO = accountService.getAccountByAppId(appId);
+        massDao.incErrorCount(accountPO.getWeixinAppid(), massId);
     }
 }

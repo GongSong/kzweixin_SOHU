@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kuaizhan.kzweixin.dao.mapper.MassDao">
+
+    <!--根据massId原子性自增更新sent_count字段-->
+    <update id="incSentCount" parameterType="java.lang.Long">
+        UPDATE weixin_mass SET
+        sent_count = weixin_mass.sent_count + 1
+        WHERE mass_id = #{massId} AND weixin_appid = #{weixinAppid}
+    </update>
+
+    <!--根据massId原子性自增更新error_count字段-->
+    <update id="incErrorCount" parameterType="java.lang.Long">
+        UPDATE weixin_mass SET
+        error_count = weixin_mass.error_count + 1
+        WHERE mass_id = #{massId} AND weixin_appid = #{weixinAppid}
+    </update>
+
+</mapper>
