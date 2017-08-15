@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuaizhan.kzweixin.constant.ErrorCode;
 import com.kuaizhan.kzweixin.constant.MqConstant;
 import com.kuaizhan.kzweixin.dao.mapper.TplDao;
-import com.kuaizhan.kzweixin.dao.mapper.MassDao;
+import com.kuaizhan.kzweixin.dao.mapper.TplMassDao;
 import com.kuaizhan.kzweixin.dao.mapper.auto.TplMsgMapper;
 import com.kuaizhan.kzweixin.dao.po.auto.TplMsgPO;
 import com.kuaizhan.kzweixin.exception.BusinessException;
@@ -46,7 +46,7 @@ public class TplServiceImpl implements TplService {
     @Resource
     private MsgCache msgCache;
     @Resource
-    private MassDao massDao;
+    private TplMassDao tplMassDao;
 
     private Map<String, Object> sysTplMap;
     private static final int TPL_MSG_URL_MAX_LENGTH = 200;
@@ -174,24 +174,30 @@ public class TplServiceImpl implements TplService {
     }
 
     @Override
-    public void updateMassIdToCache(String appId, long msgId, long massId) {
-        msgCache.setMsgIdMapper(appId, msgId, massId);
+    public void updateTplMassIdToCache(String appId, long msgId, long tplMassId) {
+        msgCache.setMsgIdMapper(appId, msgId, tplMassId);
     }
 
     @Override
-    public Long getMassIdFromCache(String appId, long msgId) {
+    public Long getTplMassIdFromCache(String appId, long msgId) {
         return msgCache.getMsgIdMapper(appId, msgId);
     }
 
     @Override
-    public void updateMassSentCount(String appId, long massId) {
+    public void updateTplMassSuccessCount(String appId, long tplMassId) {
         AccountPO accountPO = accountService.getAccountByAppId(appId);
-        massDao.incSentCount(accountPO.getWeixinAppid(), massId);
+        tplMassDao.incSuccessCount(accountPO.getWeixinAppid(), tplMassId);
     }
 
     @Override
-    public void updateMassErrorCount(String appId, long massId) {
+    public void updateTplMassRejectCount(String appId, long tplMassId) {
         AccountPO accountPO = accountService.getAccountByAppId(appId);
-        massDao.incErrorCount(accountPO.getWeixinAppid(), massId);
+        tplMassDao.incRejectCount(accountPO.getWeixinAppid(), tplMassId);
+    }
+
+    @Override
+    public void updateTplMassOtherFailedCount(String appId, long tplMassId) {
+        AccountPO accountPO = accountService.getAccountByAppId(appId);
+        tplMassDao.incOtherFailedCount(accountPO.getWeixinAppid(), tplMassId);
     }
 }

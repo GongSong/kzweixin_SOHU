@@ -41,9 +41,9 @@ public class MsgRedisImpl implements MsgCache {
     }
 
     @Override
-    public void setMsgIdMapper(String appId, long msgId, long massId) {
+    public void setMsgIdMapper(String appId, long msgId, long tplMassId) {
         String key = RedisConstant.KEY_KZ_MSG_ID + appId + "-" + msgId;
-        redisUtil.setEx(key, 30 * 60, String.valueOf(massId));
+        redisUtil.setEx(key, 30 * 60, String.valueOf(tplMassId));
     }
 
 }

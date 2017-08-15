@@ -29,7 +29,7 @@ public class SendTplMsgForMassConsumer extends BaseConsumer {
         long msgId;
         try {
             msgId = tplService.sendTplMsg(dto.getWeixinAppid(), dto.getTplId(), dto.getOpenId(), dto.getMsgUrl(), dto.getDataMap());
-            tplService.updateMassIdToCache(dto.getAppId(), msgId, dto.getTplMassId());
+            tplService.updateTplMassIdToCache(dto.getAppId(), msgId, dto.getTplMassId());
         } catch (WxRequireRemoveBlackListException e) {
             logger.debug("[mq] openid in blacklist, abandon. appId: {} openId: {}", dto.getAppId(), dto.getOpenId());
             return;

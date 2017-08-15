@@ -20,13 +20,13 @@ public interface MsgCache {
     void deletePushToken(String appId, String openId);
 
     /**
-     * 获取msgId-massId键值对
+     * 获取msgId-tplMassId键值对
      * */
     Long getMsgIdMapper(String appId, long msgId);
 
     /**
-     * 增加msgId-massId键值对
+     * 增加msgId-tplMassId键值对
      * */
-    void setMsgIdMapper(String appId, long msgId, long massId);
+    void setMsgIdMapper(String appId, long msgId, long tplMassId);
 
 }

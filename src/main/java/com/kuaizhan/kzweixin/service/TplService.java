@@ -55,20 +55,25 @@ public interface TplService {
     /**
      * 更新Redis缓存
      * */
-    void updateMassIdToCache(String appId, long msgId, long massId);
+    void updateTplMassIdToCache(String appId, long msgId, long tplMassId);
 
     /**
-     * 获取Redis缓存的massId
+     * 获取Redis缓存的tplMassId
      * */
-    Long getMassIdFromCache(String appId, long msgId);
+    Long getTplMassIdFromCache(String appId, long msgId);
 
     /**
      * 更新群发数据库发送成功消息数量
      * */
-    void updateMassSentCount(String appId, long massId);
+    void updateTplMassSuccessCount(String appId, long tplMassId);
 
     /**
-     * 更新群发数据库发送失败消息数量
+     * 更新群发数据库发送失败（用户拒绝）消息数量
      * */
-    void updateMassErrorCount(String appId, long massId);
+    void updateTplMassRejectCount(String appId, long tplMassId);
+
+    /**
+     * 更新群发数据库发送失败（其他原因）消息数量
+     * */
+    void updateTplMassOtherFailedCount(String appId, long tplMassId);
 }
