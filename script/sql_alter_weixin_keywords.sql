@@ -1,1 +1,0 @@
-ALTER TABLE weixin_keywords MODIFY rule_id BIGINT(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '规则唯一标识符';
