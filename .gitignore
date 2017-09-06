@@ -1,0 +1,8 @@
+**/*.iml
+*.log
+out
+target
+.project
+.settings
+.idea
+.DS_Store
